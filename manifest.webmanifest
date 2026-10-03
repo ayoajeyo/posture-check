@@ -1,7 +1,7 @@
 {
   "id": "/posture-check/",
-  "name": "Physio Master Academy 체형분석",
-  "short_name": "PMA 체형분석",
+  "name": "AYO체형분석",
+  "short_name": "AYO체형분석",
   "description": "치료사용 정면·측면 체형 스크리닝 도구 (자동 기준점, 가늠자, 플럼라인)",
   "lang": "ko",
   "start_url": "./",

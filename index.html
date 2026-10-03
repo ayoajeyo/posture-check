@@ -498,7 +498,7 @@
   <div class="an-col">
   <section class="card" id="capture-card">
     <h2 id="capture-title">1. 정면 사진 촬영</h2>
-    <p class="sub" id="capture-sub">환자가 정면을 보고 편안히 선 상태에서, 카메라를 환자 배꼽 높이에 두고 수평(가늠자 초록)으로 맞춰 촬영하세요.</p>
+    <p class="sub" id="capture-sub">정면을 보고 편안히 선 자세에서, 카메라를 배꼽 높이에 두고 수평(가늠자 초록)으로 맞춰 촬영하세요.</p>
 
     <div class="stage" id="stage">
       <video id="video" autoplay playsinline muted hidden></video>
@@ -559,7 +559,7 @@
       <div class="dot" id="markingDot" style="background:#E0763F"></div>
       <div style="flex:1;">
         <span id="markingLabel">왼쪽 어깨를 탭하세요</span>
-        <em id="markingSub">환자 기준 좌/우로 짚어주세요</em>
+        <em id="markingSub">몸 기준 좌/우로 짚어주세요 (화면과 반대)</em>
       </div>
     </div>
 
@@ -603,7 +603,7 @@
   <div class="an-col">
   <section class="card" id="legendCard" hidden>
     <h2>판정 기준</h2>
-    <p class="sub" id="legendSub">각도는 촬영 조건(카메라 수평, 환자 정렬, 거리)에 따라 달라질 수 있는 스크리닝 참고값입니다.</p>
+    <p class="sub" id="legendSub">각도는 촬영 조건(카메라 수평, 서 있는 자세, 거리)에 따라 달라질 수 있는 스크리닝 참고값입니다.</p>
     <div class="legend" id="legendRows"></div>
   </section>
 
@@ -612,15 +612,15 @@
     <p class="sub">사진을 다시 촬영하거나 점을 다시 짚으면 결과가 즉시 갱신됩니다.</p>
     <div class="field-row" id="htRow" hidden style="margin:2px 0 12px;">
       <div class="field">
-        <label for="htField">환자 키(cm) · 편위를 cm로 환산할 때 사용</label>
+        <label for="htField">키(cm) · 편위를 cm로 환산할 때 사용</label>
         <input id="htField" type="number" inputmode="decimal" min="80" max="230" step="0.1" placeholder="미입력 시 170cm 기준" autocomplete="off">
       </div>
     </div>
     <div id="resultRows"></div>
     <div class="field-row" style="margin-top:14px;">
       <div class="field">
-        <label for="ptField">환자 식별(선택)</label>
-        <input id="ptField" type="text" placeholder="예: 이니셜 또는 차트번호" autocomplete="off">
+        <label for="ptField">이름·회원번호(선택)</label>
+        <input id="ptField" type="text" placeholder="예: 이니셜 또는 회원번호" autocomplete="off">
       </div>
       <div class="field">
         <label for="dtField">촬영일</label>
@@ -639,13 +639,13 @@
     <div class="body">
       <b>촬영 가이드</b>
       <ul>
-        <li>카메라를 <b>환자 배꼽 높이</b>에서 수평(가늠자 초록)으로 들고 촬영합니다. 화면 속 <b>사람을 자동으로 인식해 그 사람의 윤곽을 반투명 선으로</b> 따라 그리고 배경은 파랗게 처리합니다. 사람이 아직 인식되지 않으면 표준 체형 실루엣이 대신 보이니, 그 안에 머리부터 발끝까지 들어오도록 거리를 맞추세요.</li>
+        <li>카메라를 <b>배꼽 높이</b>에서 수평(가늠자 초록)으로 들고 촬영합니다. 화면 속 <b>사람을 자동으로 인식해 그 사람의 윤곽을 반투명 선으로</b> 따라 그리고 배경은 파랗게 처리합니다. 사람이 아직 인식되지 않으면 표준 체형 실루엣이 대신 보이니, 그 안에 머리부터 발끝까지 들어오도록 거리를 맞추세요.</li>
         <li><b>촬영하면 정면·측면 모두 기준점이 자동으로 찍힙니다.</b> 위치가 조금 다르면 점을 끌어서 고치면 됩니다. 인식이 부정확하거나 실패하면 자동 점을 넣지 않고 안내가 뜨니 직접 짚어주세요.</li>
         <li>사람 인식 기능은 처음 열 때 인식 모델(약 25MB)을 한 번 내려받습니다. 와이파이에서 한 번 열어두면 이후엔 빠르게 동작합니다. 인터넷이 안 되거나 모델을 못 불러오면 고정 실루엣과 수동 찍기로 그대로 사용할 수 있습니다.</li>
         <li><b>가늠자</b>: 화면 가운데 빨간 원과 좌우 빨간 선이 표적이고, 폰 기울기에 따라 <b>흰 십자</b>가 기울고 위아래로 움직입니다. 흰 십자를 빨간 표적에 겹치면 초록색으로 바뀌고 "수평 OK"가 뜨니 그때 촬영하세요. 좌우 1° 이내, 앞뒤 3° 이내일 때 초록입니다. 아이폰은 카메라를 켤 때 뜨는 <b>동작 및 방향 권한</b>을 허용해야 동작하며, 센서가 없는 기기에서는 가늠자 없이 촬영만 됩니다.</li>
-        <li>정면: 신발을 벗고 차렷 자세로 정면을 응시(귓볼·어깨·골반·무릎·발목이 잘 보이도록). 측면: 환자의 <b>정면이 화면 왼쪽을 향하도록</b> 서게 하고 귀·어깨·고관절·무릎·발목이 잘 보이도록 전신 옆모습을 촬영.</li>
+        <li>정면: 신발을 벗고 차렷 자세로 정면을 응시(귓볼·어깨·골반·무릎·발목이 잘 보이도록). 측면: <b>몸의 정면이 화면 왼쪽을 향하도록</b> 서고 귀·어깨·고관절·무릎·발목이 잘 보이도록 전신 옆모습을 촬영.</li>
         <li>경과 비교 시 <b>매번 동일한 거리·높이·복장 상태</b>로 촬영해야 각도 변화의 신뢰도가 높아집니다.</li>
-        <li>정면 좌우 쌍(귓볼/어깨/골반/무릎/발목)은 <b>탭 순서와 상관없이</b> 화면상 좌표로 자동 판별되며, 결과의 좌/우는 <b>환자 기준</b>(카메라를 보고 선 상태이므로 화면과 반대)으로 표시됩니다.</li>
+        <li>정면 좌우 쌍(귓볼/어깨/골반/무릎/발목)은 <b>탭 순서와 상관없이</b> 화면상 좌표로 자동 판별되며, 결과의 좌/우는 <b>몸 기준</b>(카메라를 보고 선 상태이므로 화면과 반대)으로 표시됩니다.</li>
         <li><b>점 찍기</b>: 한 번 탭하면 다음 기준점이 찍히고(기존 점 바로 옆을 탭해도 새 점으로 찍힘), 찍은 점을 <b>누른 채 끌면</b> 위치가 조정되며 손가락에 가려진 부분은 좌측/우측 상단 돋보기에 확대되어 보입니다. 우측 하단 +/− 버튼이나 두 손가락으로 확대하고, 확대 상태에서 빈 곳을 끌면 화면이 이동합니다. 잘못 찍었으면 <b>한 점 취소</b>(마지막 점), 처음부터 다시 하려면 <b>점 초기화</b>를 누르세요.</li>
       </ul>
       <b>카메라 권한 창이 매번 뜰 때</b>
@@ -659,7 +659,7 @@
       <b>중요 안내</b>
       <ul>
         <li>정면은 짚은 두 점 사이의 <b>각도</b>를, 측면은 외측복사뼈(발목)를 지나는 수직 기준선(플럼라인) 대비 각 지점이 벗어난 <b>편위 비율(%)</b>과 방향(화면 왼쪽=전방 이동, 오른쪽=후방 이동)을 계산한 스크리닝 참고 지표이며, 방사선 계측이나 정식 자세 평가 장비를 대체하지 않습니다.</li>
-        <li>카메라 기울어짐, 환자의 미세한 체중 이동, 옷차림 등에 따라 결과가 흔들릴 수 있어 <b>단일 수치보다는 동일 조건에서의 변화 추이</b>로 활용하는 것을 권장합니다.</li>
+        <li>카메라 기울어짐, 미세한 체중 이동, 옷차림 등에 따라 결과가 흔들릴 수 있어 <b>단일 수치보다는 동일 조건에서의 변화 추이</b>로 활용하는 것을 권장합니다.</li>
         <li>촬영된 사진과 좌표는 이 브라우저 화면 안에서만 계산되며 저장을 누르기 전까지 외부로 전송·보관되지 않습니다.</li>
       </ul>
     </div>
@@ -714,7 +714,7 @@
 
     <div class="rep-actions">
       <button type="button" class="btn primary" id="btnSaveReport">리포트 이미지 저장</button>
-      <button type="button" class="btn line" id="btnNewPatient">새 환자 측정</button>
+      <button type="button" class="btn line" id="btnNewPatient">새 측정 시작</button>
     </div>
     <details class="info">
       <summary>점수는 어떻게 계산하나요?</summary>
@@ -902,7 +902,7 @@
   var MODES = {
     front: {
       title: "정면 사진 촬영",
-      sub: "환자가 정면을 보고 편안히 선 상태에서, 카메라를 환자 배꼽 높이에 두고 수평(가늠자 초록)으로 맞춰 촬영하세요.",
+      sub: "정면을 보고 편안히 선 자세에서, 카메라를 배꼽 높이에 두고 수평(가늠자 초록)으로 맞춰 촬영하세요.",
       hint: "머리부터 발끝까지 흰 윤곽선 안에 맞추세요",
       facing: "environment",
       type: "pair",
@@ -916,7 +916,7 @@
     },
     side: {
       title: "측면 사진 촬영",
-      sub: "환자의 정면이 화면 왼쪽을 향하도록 옆모습 전신을 한 장 촬영하세요(왼쪽=전방, 오른쪽=후방 기준). 귀·어깨·고관절·무릎·발목이 화면 안에 들어와야 합니다.",
+      sub: "몸의 정면이 화면 왼쪽을 향하도록 옆모습 전신을 한 장 촬영하세요(왼쪽=전방, 오른쪽=후방 기준). 귀·어깨·고관절·무릎·발목이 화면 안에 들어와야 합니다.",
       hint: "복사뼈(발목)를 빨간 선에 맞추고 몸 전체가 화면 안에",
       facing: "environment",
       type: "chain",
@@ -2294,10 +2294,10 @@
   }
 
   // 탭 순서와 무관하게 화면상 x좌표로 좌/우를 판별한다.
-  // 정면 촬영에서는 환자가 카메라를 보고 서 있으므로(거울 관계),
-  // 화면 왼쪽 점 = 환자의 해부학적 오른쪽, 화면 오른쪽 점 = 환자의 해부학적 왼쪽이다.
-  // 각도와 높은 쪽(환자 기준)을 함께 계산: {deg, side:"오른쪽이 높음"|"왼쪽이 높음"|"수평", text:"3.0° 오른쪽이 높음"}
-  // 화면 왼쪽 점 = 환자 오른쪽, 화면 오른쪽 점 = 환자 왼쪽 (환자가 카메라를 보고 선 상태)
+  // 정면 촬영에서는 대상자가 카메라를 보고 서 있으므로(거울 관계),
+  // 화면 왼쪽 점 = 대상자의 해부학적 오른쪽, 화면 오른쪽 점 = 대상자의 해부학적 왼쪽이다.
+  // 각도와 높은 쪽(몸 기준)을 함께 계산: {deg, side:"오른쪽이 높음"|"왼쪽이 높음"|"수평", text:"3.0° 오른쪽이 높음"}
+  // 화면 왼쪽 점 = 대상자 오른쪽, 화면 오른쪽 점 = 대상자 왼쪽 (대상자가 카메라를 보고 선 상태)
   function pairSummary(pair, s){
     var sp = sortedPairPoints(pair, s);
     if(!sp) return null;
@@ -2585,7 +2585,7 @@
       table = THRESH.h;
       labels = ["정상 범위","경도 비대칭","중등도 이상"];
       ranges = ["0–1.5°","1.5–3.0°","3.0°+"];
-      legendSub.textContent = "각도는 촬영 조건(카메라 수평, 환자 정렬, 거리)에 따라 달라질 수 있는 스크리닝 참고값입니다.";
+      legendSub.textContent = "각도는 촬영 조건(카메라 수평, 서 있는 자세, 거리)에 따라 달라질 수 있는 스크리닝 참고값입니다.";
     }
     table.forEach(function(row, i){
       var it = document.createElement("div");
@@ -2635,7 +2635,7 @@
       if(!patientHeight()){
         var hn = document.createElement("p");
         hn.className = "sub"; hn.style.margin = "10px 0 0";
-        hn.textContent = "※ 키를 입력하지 않아 170cm 기준으로 환산했어요. 위 칸에 환자 키를 넣으면 더 정확해져요.";
+        hn.textContent = "※ 키를 입력하지 않아 170cm 기준으로 환산했어요. 위 칸에 키를 넣으면 더 정확해져요.";
         resultRows.appendChild(refRow); resultRows.appendChild(hn); refRow = null;
       }
       if(refRow) resultRows.appendChild(refRow);
@@ -2648,7 +2648,7 @@
         var g = grade(pair.axis, deg);
         var row = document.createElement("div");
         row.className = "result-row";
-        var higherSide = pairSummary(pair, s).text + " <span style=\"opacity:.7\">(환자 기준)</span>";
+        var higherSide = pairSummary(pair, s).text + " <span style=\"opacity:.7\">(몸 기준)</span>";
         row.innerHTML =
           '<div class="ico" style="background:'+pair.color+'22;">'+
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="'+pair.color+'" stroke-width="2.2"><path d="M4 18l7-9 4 5 5-7"/></svg>'+
@@ -2925,7 +2925,7 @@
   function renderReport(){
     var r = computeReport();
     var pt = $("ptField").value.trim();
-    $("repMeta").textContent = pt ? "환자 " + pt : ""; $("repHead").hidden = !pt;
+    $("repMeta").textContent = pt ? pt : ""; $("repHead").hidden = !pt;
     ["front", "side"].forEach(function(m){
       var list = m === "front" ? r.f : r.sd;
       var fig = $("rep-" + m).querySelector(".rep-fig");
@@ -3072,7 +3072,7 @@
     });
     $("ptField").value = ""; $("htField").value = "";
     showView("analyze"); if(state.mode !== "front") selectMode("front"); else resetToIdle();
-    toast("새 환자 측정을 시작해요.");
+    toast("새 측정을 시작해요.");
   });
   (function tickNow(){ $("nowChip").textContent = nowText(); setTimeout(tickNow, 30000); })();
 

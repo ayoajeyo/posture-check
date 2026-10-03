@@ -2,7 +2,7 @@
   "id": "/posture-check/",
   "name": "AYO체형분석",
   "short_name": "AYO체형분석",
-  "description": "치료사용 정면·측면 체형 스크리닝 도구 (자동 기준점, 가늠자, 플럼라인)",
+  "description": "정면·측면 자세·체형 체크 도구 (자동 기준점, 가늠자, 플럼라인)",
   "lang": "ko",
   "start_url": "./",
   "scope": "./",
@@ -10,7 +10,7 @@
   "orientation": "portrait",
   "background_color": "#EEF3FA",
   "theme_color": "#0A1121",
-  "categories": ["medical", "health", "productivity"],
+  "categories": ["health", "fitness", "lifestyle"],
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

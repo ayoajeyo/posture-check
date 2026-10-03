@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PMA 체형분석 앱 설치</title>
+<title>AYO체형분석 앱 설치</title>
 <meta name="theme-color" content="#17223D">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -31,7 +31,7 @@
   body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); padding-inline:16px; padding-block:28px 48px; -webkit-font-smoothing:antialiased;}
   .wrap{max-width:520px; margin:0 auto; display:flex; flex-direction:column; gap:18px;}
   header{display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px;}
-  header img{width:84px; height:84px; border-radius:50%; box-shadow:0 6px 18px -8px rgba(19,27,46,.45);}
+  header img{width:84px; height:84px; border-radius:20px; box-shadow:0 6px 18px -8px rgba(19,27,46,.45);}
   .eyebrow{font-size:11px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin:4px 0 0;}
   h1{margin:0; line-height:1.1; display:flex; flex-direction:column; gap:4px; text-wrap:balance;}
   h1 .en{font-family:var(--font-brand); font-weight:600; font-size:30px;}
@@ -39,7 +39,7 @@
   .card{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:20px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:14px;}
   .card h2{margin:0; font-family:var(--font-serif-kr); font-size:17px; font-weight:600; display:flex; align-items:center; gap:10px;}
   .tag{font-family:var(--font-body); font-size:11px; font-weight:700; letter-spacing:.04em; padding:3px 9px; border-radius:100px; background:var(--gold-soft); color:var(--gold);}
-  .btn{display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-weight:700; font-size:15.5px; border:0; font-family:inherit; width:100%;
+  .btn{display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-weight:700; font-size:15.5px;
     padding:15px 18px; border-radius:13px; background:var(--navy); color:var(--navy-ink); box-shadow:0 8px 18px -10px rgba(19,27,46,.7);}
   .btn.line{background:transparent; color:var(--ink); border:1px solid var(--line); box-shadow:none;}
   .btn:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
@@ -64,20 +64,22 @@
 <body>
 <div class="wrap">
   <header>
-    <img src="icons/icon-192.png" alt="Physio Master Academy 로고" width="84" height="84">
+    <img src="icons/icon-192.png" alt="AYO체형분석 아이콘" width="84" height="84">
     <p class="eyebrow">App Install</p>
-    <h1><span class="en">Physio Master Academy</span><span class="ko">체형분석 앱 설치</span></h1>
+    <h1><span class="en">AYO체형분석</span><span class="ko">체형분석 앱 설치</span></h1>
   </header>
 
+  <!-- 1순위: 원탭 설치 (크롬 공식 설치, 경고·권한 설정 없음) -->
   <section class="card" id="cardInstall" aria-labelledby="h-install">
     <h2 id="h-install">안드로이드 (갤럭시) <span class="tag">원탭 설치</span></h2>
     <button class="btn" id="btnInstall" type="button" disabled>설치 준비 중…</button>
     <p class="status" id="installStatus">버튼이 활성화되면 누르고, 뜨는 창에서 <b>설치</b>만 누르면 끝나요.</p>
-    <div class="ok" id="installDone" hidden>✅ 설치 완료! 홈 화면의 <b>PMA 체형분석</b> 아이콘으로 여세요.</div>
+    <div class="ok" id="installDone" hidden>✅ 설치 완료! 홈 화면의 <b>AYO체형분석</b> 아이콘으로 여세요.</div>
     <div id="installFallback" hidden>
       <a class="btn gold" id="btnChrome" href="#">크롬에서 열기</a>
       <p class="sub" style="margin-top:12px">이미 크롬이라면 오른쪽 위 <b>⋮ 메뉴 → 앱 설치</b>(또는 <b>홈 화면에 추가 → 설치</b>)를 누르세요. 이미 설치돼 있으면 이 버튼이 나오지 않아요.</p>
     </div>
+
     <details>
       <summary>예비: APK 파일로 설치하기</summary>
       <a class="btn line" href="PMA-posture.apk" download>APK 다운로드</a>
@@ -108,7 +110,7 @@
   var here = location.href.split("#")[0];
   var chromeIntent = "intent://" + here.replace(/^https?:\/\//, "") + "#Intent;scheme=https;package=com.android.chrome;end";
 
-  // 카카오톡 등 앱 안 브라우저에서는 설치가 안 되므로 크롬/사파리로 자동 이동
+  // 카카오톡 등 앱 안 브라우저 → 설치가 안 되므로 자동으로 크롬/사파리로 넘김
   if(inApp){
     if(/KAKAOTALK/i.test(ua)){ location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(here); }
     else if(isAndroid){ location.href = chromeIntent; }
@@ -146,7 +148,7 @@
   });
   window.addEventListener("appinstalled", showDone);
 
-  // 4초 안에 설치 창이 준비되지 않으면(삼성 인터넷·이미 설치됨 등) 대안 안내
+  // 몇 초 안에 설치 창이 준비되지 않으면(삼성 인터넷·이미 설치됨 등) 대안 안내
   setTimeout(function(){
     if(!deferred && !standalone && done.hidden){
       btn.hidden = true;

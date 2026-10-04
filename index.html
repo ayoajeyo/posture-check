@@ -863,6 +863,19 @@
   .rom-sum span{font-size:11px;} .rom-sum b{font-size:17px;}
   .rom-sum .rom-all-cmp{padding:9px; font-size:13px; border-radius:12px;}
   .rom-lr-btn{margin:0 0 10px;}
+  .rom-gridbtn{position:absolute; right:10px; bottom:10px; z-index:3; font-family:inherit; font-size:12.5px; font-weight:700; color:#fff; background:rgba(13,21,40,.82); border:1px solid rgba(255,255,255,.25); border-radius:100px; padding:7px 12px; cursor:pointer;}
+  .rc-open{cursor:pointer;} tr.rc-open:hover td{background:rgba(47,107,255,.08);} .scol-hist li.rc-open:hover, figure.rc-open:hover{outline:2px solid rgba(47,107,255,.6);}
+  .view.pv-lock > :not(.rep-lock){pointer-events:none; user-select:none; opacity:.55; filter:saturate(.6);}
+  .pv-demo small{font-size:10.5px; color:var(--warn); font-weight:700; margin-left:4px;}
+  .rep-pair{margin-top:14px;} .rep-pair h2 small{font-size:13px; color:var(--ink-soft); font-weight:600;}
+  .rp-sel{display:flex; flex-direction:column; gap:8px; margin:8px 0 10px;}
+  .rp-sel select{font-family:inherit; font-size:14px; border:1px solid var(--line); border-radius:10px; padding:9px 10px; background:var(--surface-2); color:var(--ink); width:100%;}
+  .rp-ab{display:flex; gap:8px;} .rp-ab label{flex:1; display:flex; align-items:center; gap:6px; font-size:13px; font-weight:800; color:var(--ink-soft);} .rp-ab select{flex:1; min-width:0;}
+  .rp-imgs{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .rp-imgs figure{margin:0; background:#0B1222; border-radius:12px; overflow:hidden; cursor:pointer;}
+  .rp-imgs img{display:block; width:100%; min-height:120px; object-fit:contain;}
+  .rp-imgs figcaption{font-size:12px; font-weight:700; padding:6px 8px;}
+  .rp-delta{margin:10px 0 0; font-size:16px; font-weight:800; text-align:center;} .rp-delta.up{color:var(--good);} .rp-delta.down{color:var(--crit);}
   .rom-q{margin:8px 0 0; font-size:12.5px; font-weight:700; border-radius:10px; padding:8px 12px;}
   .rom-q.good{background:rgba(76,195,138,.12); color:var(--good);} .rom-q.mid{background:rgba(240,180,76,.12); color:var(--warn);}
   .rom-q.low, .rom-q.bad{background:rgba(240,122,114,.12); color:var(--crit);}
@@ -1185,6 +1198,19 @@
       </div>
     </div>
 
+    <section class="card rep-pair" id="repPair" hidden>
+      <h2>ROM·측만증 전후 비교 <small>회차 선택</small></h2>
+      <div class="rp-sel">
+        <select id="rpItem" aria-label="항목"></select>
+        <div class="rp-ab"><label>전<select id="rpA"></select></label><label>후<select id="rpB"></select></label></div>
+      </div>
+      <div class="rp-imgs">
+        <figure><img id="rpImgA" alt=""><figcaption id="rpCapA"></figcaption></figure>
+        <figure><img id="rpImgB" alt=""><figcaption id="rpCapB"></figcaption></figure>
+      </div>
+      <p class="rp-delta" id="rpDelta"></p>
+      <p class="rcmp-note">사진을 누르면 그 회차를 열어 측정점을 볼 수 있어요. 선택한 전후 비교는 리포트 이미지에도 들어가요.</p>
+    </section>
     <section class="card rep-rom" id="repRom" hidden>
       <h2>ROM 관절가동범위 · 측만 검사 <small>좌우 비교</small></h2>
       <p class="sub" id="repRomSum"></p>
@@ -1322,7 +1348,7 @@
     <button type="button" class="btn line sm rom-lr-btn" id="btnRomLR">↔ 좌우 비교 분석</button>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v73</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v74</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1333,10 +1359,11 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v74</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
+    <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
     <div id="mbListWrap">
       <div class="mb-toolbar">
         <input id="mbSearch" type="search" placeholder="이름·회원번호·전화·초성 검색" autocomplete="off">
@@ -1558,6 +1585,7 @@
       <div class="rom-pts" id="romPtsChip" hidden></div>
       <div class="rom-empty" id="romEmpty"><b>아래 [촬영하기]를 눌러 촬영하세요</b><span id="romEmptyTip"></span></div>
       <div class="rom-busy" id="romBusy" hidden>관절 위치 인식 중…</div>
+      <button type="button" class="rom-gridbtn" id="btnRomGrid" hidden>원본 사진 보기</button>
     </div>
     <div class="rom-live" id="romLive" hidden>
       <div><span>측정 각도</span><b id="romVal">–</b></div>
@@ -3864,7 +3892,7 @@
       return '<div class="sum-item"><div class="k">'+g.name+'</div><div class="v '+g.st.cls+'">'+g.st.label+'</div><div class="d">'+g.detail+'</div></div>';
     }).join("");
     updateSessBar();
-    if(typeof renderRepRom === "function") renderRepRom();
+    if(typeof renderRepRom === "function") renderRepRom().then(function(){ if(typeof renderRepPair === "function") renderRepPair(); });
     return r;
   }
 
@@ -3883,6 +3911,9 @@
     var H = HEAD + BOARD + 30 + BOT + FOOT;
     var scN = (typeof scolRows === "function") ? scolRows().length : 0;
     var romN = ((typeof romLRRows === "function") ? romLRRows().length : 0) + scN + (scN ? 1 : 0), ROMH = romN ? 130 + romN * 54 + 20 + 30 : 0;
+    var PH = 0;
+    if(typeof repPair !== "undefined" && repPair.cvA && repPair.cvB){ var piw = (W - PAD * 2 - 72 - 24) / 2, psc = Math.min(piw / repPair.cvA.width, piw / repPair.cvB.width); PH = 110 + Math.max(repPair.cvA.height, repPair.cvB.height) * psc + 60 + 30; }
+    ROMH += PH;
     H += ROMH;
     var c = document.createElement("canvas"); c.width = W; c.height = H;
     var g = c.getContext("2d"), F = "'IBM Plex Sans KR', 'IBM Plex Sans', sans-serif", M = "'IBM Plex Mono', monospace";
@@ -3945,7 +3976,8 @@
       g.font = "800 40px " + F; g.fillText(gr.st.label, x, y2 + 200);
       g.fillStyle = "#97A3BC"; g.font = "500 21px " + F; g.fillText(gr.detail, x, y2 + 244);
     });
-    if(ROMH) drawRepRom(g, PAD, y2 + BOT + 30, W - PAD * 2, F, M);
+    if(PH) drawRepPair(g, PAD, y2 + BOT + 30, W - PAD * 2, F);
+    if(ROMH - PH) drawRepRom(g, PAD, y2 + BOT + 30 + PH, W - PAD * 2, F, M);
     g.fillStyle = "#5F6B86"; g.font = "500 21px " + F;
     g.fillText("촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며 진단을 대신하지 않습니다.", PAD, H - 32);
     g.textAlign = "right"; g.fillStyle = "#D2B07A"; g.font = "700 20px " + F; g.fillText(brandFoot(), W - PAD, H - 32);
@@ -3954,7 +3986,7 @@
   $("btnSaveReport").addEventListener("click", function(){
     var r = computeReport();
     var go = function(){
-      if(!r.f && !r.sd && !(typeof romLRRows === "function" && (romLRRows().length || scolRows().length))){ toast("정면·측면 또는 ROM 측정을 먼저 마쳐주세요."); return; }
+      if(!r.f && !r.sd && !(typeof romLRRows === "function" && (romLRRows().length || scolRows().length || (repPair.cvA && repPair.cvB)))){ toast("정면·측면 또는 ROM 측정을 먼저 마쳐주세요."); return; }
       deliverCanvas(buildReportCanvas(r), "AYO_report_" + fileTag() + ".jpg");
     };
     if(typeof romLoad === "function") romLoad().then(go, go); else go();
@@ -3964,8 +3996,9 @@
   state.view = "analyze";
   function showView(v){
     // 종합 리포트는 PRO 전용: 무료 사용자는 화면 전환 없이 안내 팝업만
-    if(v === "report" && !isPro()){ openProGate("report"); return; }
-    if(v === "members" && !isPro()){ openProGate("members"); return; }
+    if(v !== state.preview) state.preview = null;
+    if(v === "report" && !isPro() && state.preview !== "report"){ openProGate("report"); return; }
+    if(v === "members" && !isPro() && state.preview !== "members"){ openProGate("members"); return; }
     if(v === state.view) { if(v === "report") renderReport(); return; }
     if(v !== "analyze" && state.phase === "live"){ pauseCamera(); goIdleFromLive(); }
     if((v === "settings" || v === "report") && state.view !== v) proPrevView = state.view;
@@ -3984,8 +4017,8 @@
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
-    if(v === "report"){ renderReport(); syncRepLock(); if(!isPro()) openProGate("report"); }
-    else if(v === "members") mbShowList();
+    if(v === "report"){ renderReport(); syncRepLock(); }
+    else if(v === "members"){ mbShowList(); syncMbLock(); }
     else if(v === "dash") renderDash();
     else if(v === "exercise") renderExercise();
     else if(v === "consult") renderConsult();
@@ -4237,7 +4270,9 @@
           else mbSel = mbSel.filter(function(x){ return x !== rid; });
           $("btnMbCompare").disabled = mbSel.length !== 2;
         });
-        row.querySelector(".ed").addEventListener("click", function(){ openRecordForEdit(m, rs.find(function(x){ return x.id === rid; }), rs.length - rs.findIndex(function(x){ return x.id === rid; })); });
+        var openRec = function(){ var rr0 = rs.find(function(x){ return x.id === rid; }); if(!rr0.photos){ toast("이 기록은 사진이 저장되지 않은 이전 기록이에요."); return; } openRecordForEdit(m, rr0, rs.length - rs.findIndex(function(x){ return x.id === rid; })); };
+        row.querySelector(".ed").addEventListener("click", openRec);
+        [".th", ".info"].forEach(function(sel){ var el = row.querySelector(sel); if(el){ el.style.cursor = "pointer"; el.title = "이 회차 사진 보기·수정"; el.addEventListener("click", openRec); } });   // v74: 회차를 누르면 그때 사진 열기
         row.querySelector(".x").addEventListener("click", function(){
           if(!window.confirm("이 측정 기록을 삭제할까요?")) return;
           dbDel("records", rid).then(function(){ if(state.sessionId === rid) state.sessionId = null; mbOpenDetail(m.id); });
@@ -5102,7 +5137,7 @@
         if(r){ done++; if(mv.normal > 0){ sumPct += Math.min(100, jd.pct); cnt++; } }
         var dt = romDeltaHtml(J.k, mv).replace('class="rom-delta', 'class="rom-delta rc-delta');
         return '<div class="rom-card rc ' + jd.cls + '">' +
-          (r && r.thumb ? '<img class="rc-th" src="' + r.thumb + '" alt="">' : '<div class="rc-th rc-th0" aria-hidden="true">' + (val == null ? '–' : '✓') + '</div>') +
+          (r && r.thumb ? '<img class="rc-th rc-open" data-rid="' + r.id + '" src="' + r.thumb + '" alt="" title="이 회차 사진 보기·수정">' : '<div class="rc-th rc-th0" aria-hidden="true">' + (val == null ? '–' : '✓') + '</div>') +
           '<div class="rc-main"><div class="rc-h"><b>' + mv.n + '</b><em>정상 ' + (mv.normal ? "0–" + mv.normal : "0") + '°</em></div>' +
           '<div class="rc-v">' + (val == null ? '<span class="none">미측정</span>' : '<strong>' + val + '°</strong>') + '<span class="judge">' + (val == null ? '' : jd.txt) + '</span></div>' +
           '<div class="rom-bar"><i style="width:' + (val == null ? 0 : Math.min(100, jd.pct)) + '%"></i></div>' +
@@ -5139,6 +5174,7 @@
   }
   function openRomSheet(mk){
     if(romCam.on) romCamStop();
+    romS.editId = null; romS.recImg = null; romS.cut = null; romS.mask = null; romS.maskP = null; $("btnRomApply").textContent = "결과 저장"; $("btnRomGrid").hidden = true;
     romS.footOff = null; romS.mv = mk; romS.img = null; romS.pts = null; romS.trunk = null; romS.q = 0; romS.roll = null; romS.liveL = null; romS.refCustom = null; romS.sel = null; romS.edit = null;
     var J = romJoint(), mv = romMove();
     romS.ref = "pt3"; romS.hdir = 1;
@@ -5295,6 +5331,7 @@
   }
   function romAuto(){
     var mv = romMove(); if(!romS.img) return;
+    romS.recImg = null; romS.gridOn = romGridPref; romSyncGridBtn(); romS.maskP = romJoint().k === "scol" ? romMakeCut() : null;   // ROM은 관절 인식이 끝난 뒤 배경 분리 (속도)
     romCv.hidden = false; $("romEmpty").hidden = true;
     if(romJoint().k === "scol"){   // v68 측만증: 등 윤곽 / 콥 각도 선
       romS.sel = null; romS.trunk = null; romS.pts = romJoint().k === "scol" && mv.k === "cobb" ? null : romS.pts;
@@ -5342,6 +5379,7 @@
     q.className = "rom-q " + lv;
     q.textContent = !ok ? "자동 인식 실패 · 두 점을 직접 맞춰주세요" : lv === "good" ? "✓ 자동 인식 정확도 높음 (" + Math.round(romS.q * 100) + "%) · 점 위치만 확인하세요" : lv === "mid" ? "자동 인식 정확도 보통 (" + Math.round(romS.q * 100) + "%) · 점 위치를 확인해 주세요" : "관절이 가려져 정확도 낮음 (" + Math.round(romS.q * 100) + "%) · 점을 직접 맞춰주세요";
     if(ok && romS.roll != null && Math.abs(romS.roll) >= 0.3) q.textContent += " · 폰 기울기 " + romS.roll.toFixed(1) + "° 자동 보정";
+    if(romS.img && !romS.cut && !romS.maskP) romS.maskP = romMakeCut();
     if(msg) toast(msg);
   }
   $("btnRomAuto").addEventListener("click", romAuto);
@@ -5357,7 +5395,7 @@
   function romAngle(){
     var P = romS.pts; if(!P) return null;
     if(romKind() === "cobb") return scolCobb(P);
-    if(romKind() === "tilt") return scolTilt(P).deg;
+    if(romKind() === "tilt"){ if(P.length > 2) romS.pts = P = P.slice(0, 2); return scolTilt(P).deg; }
     var d = romRefDir(), vx = P[1].x - P[0].x, vy = P[1].y - P[0].y, L = Math.hypot(vx, vy);
     if(!L) return 0;
     var th = Math.acos(Math.max(-1, Math.min(1, (vx * d.x + vy * d.y) / L))) * 180 / Math.PI;
@@ -5382,7 +5420,7 @@
   // u = 화면 1px에 해당하는 이미지 픽셀 수
   function romPaint(g, u){
     var P = romS.pts, J = romJoint();
-    g.drawImage(romS.img, 0, 0, romS.w, romS.h);
+    romDrawBase(g, u);
     if(!P) return;
     if(romKind() === "cobb"){ scolPaintCobb(g, u); return; }
     if(romKind() === "tilt"){ scolPaintTilt(g, u); return; }
@@ -5575,8 +5613,16 @@
     var rec = { id: uid(), memberId: state.member ? state.member.id : null, at: Date.now(), joint: rom.joint, side: romJoint().single ? "C" : rom.side, move: mv.k,
       value: val, normal: mv.normal, pct: mv.normal ? Math.round(val / mv.normal * 100) : null, ref: romKind(), pts: romS.pts.map(function(q){ return { x: Math.round(q.x), y: Math.round(q.y) }; }),
       thumb: romResultCanvas(480).toDataURL("image/jpeg", 0.78) };
+    var ri = romS.recImg || romImgData();
+    rec.img = ri.url; rec.imgK = ri.k; rec.roll = romS.roll; rec.footOff = romS.footOff;
+    var editing = !!romS.editId;
+    if(editing){ rec.id = romS.editId; rec.at = romS.editAt; rec.memberId = romS.editMember || null; }
     var shotCv = romResultCanvas(1200), shotName = "AYO_ROM_" + rom.joint + "_" + mv.k + "_" + (state.member ? state.member.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" : "") + toDateInput(Date.now()).replace(/-/g, "") + ".jpg";
     var done = function(){ $("romSheet").hidden = true; if(state.view === "scol"){ scolRestore(); renderScol(); } else renderRom(); setTimeout(function(){ deliverCanvas(shotCv, shotName); }, 250); };
+    if(editing && !rec.memberId){
+      rom.sessionAll = rom.sessionAll.map(function(r){ return r.id === rec.id ? rec : r; }); done(); toast("기록을 수정했어요 · " + val + "°"); return;
+    }
+    if(editing){ dbPut("roms", rec).then(function(){ done(); toast("이전 회차 기록을 수정했어요 · " + val + "°"); }).catch(function(){ toast("저장하지 못했어요."); }); return; }
     if(!state.member){
       rom.session[romKey(rec.joint, rec.side, rec.move)] = rec; rom.sessionAll.push(rec); done();
       toast((romJoint().single ? "" : romJoint().n + " ") + mv.n + " " + val + "° · 회원을 선택하지 않아 이 화면에만 표시돼요."); return;
@@ -5584,6 +5630,181 @@
     dbPut("roms", rec).then(function(){ done(); toast(state.member.name + " 회원 " + (romJoint().single ? "" : romJoint().n + " ") + mv.n + " " + val + "° 저장했어요."); })
       .catch(function(){ toast("저장하지 못했어요."); });
   });
+
+  /* ===================== v74 ROM·측만증: 격자 배경 / 회차 사진 보기·수정 ===================== */
+  var romGridPref = true;
+  function romDrawBase(g, u){
+    var W = romS.w, H = romS.h;
+    if(!romS.gridOn){ g.drawImage(romS.img, 0, 0, W, H); return; }
+    var cell = Math.max(16, Math.round(Math.max(W, H) / 18));
+    if(romS.cut){ g.fillStyle = "#FFFFFF"; g.fillRect(0, 0, W, H); }
+    else { g.drawImage(romS.img, 0, 0, W, H); g.fillStyle = "rgba(255,255,255,.22)"; g.fillRect(0, 0, W, H); }
+    g.save();
+    var cx = W / 2, cy = H / 2, D = Math.hypot(W, H);
+    g.translate(cx, cy); if(romS.roll) g.rotate(romS.roll * Math.PI / 180);   // 격자는 실제 수평·수직에 맞춤
+    var lw = Math.max(1 * u, cell * 0.02), n = Math.ceil(D / cell);
+    g.strokeStyle = "rgba(19,27,46,.42)"; g.lineWidth = lw; g.beginPath();
+    for(var k = -n; k <= n; k++){ g.moveTo(k * cell, -D); g.lineTo(k * cell, D); g.moveTo(-D, k * cell); g.lineTo(D, k * cell); }
+    g.stroke();
+    g.strokeStyle = "rgba(19,27,46,.8)"; g.lineWidth = lw * 2.2; g.beginPath();
+    g.moveTo(0, -D); g.lineTo(0, D); g.moveTo(-D, 0); g.lineTo(D, 0); g.stroke();
+    g.restore();
+    if(romS.cut) g.drawImage(romS.cut, 0, 0, W, H);
+  }
+  // 인물 분리(격자 배경용) — 측만증 자동 인식에도 같은 결과를 사용
+  function romMakeCut(){
+    romS.cut = null; romS.mask = null;
+    var img = romS.img;
+    if(!window.__segmentPerson || !img) return Promise.resolve(null);
+    return window.__segmentPerson(img).then(function(m){
+      if(!m || romS.img !== img) return null;
+      var hit = 0; for(var i = 0; i < m.data.length; i += 7) if(m.data[i] > 0.5) hit++;
+      if(hit * 7 < m.data.length * 0.02) return null;
+      romS.mask = m;
+      var W = romS.w, H = romS.h, c = document.createElement("canvas"); c.width = W; c.height = H;
+      var g = c.getContext("2d"); g.drawImage(img, 0, 0, W, H);
+      var id = g.getImageData(0, 0, W, H), d = id.data;
+      for(var y = 0; y < H; y++){
+        var my = Math.min(m.h - 1, Math.floor(y * m.h / H)) * m.w;
+        for(var x = 0; x < W; x++){
+          var a = m.data[my + Math.min(m.w - 1, Math.floor(x * m.w / W))];
+          a = a < 0.35 ? 0 : a > 0.65 ? 1 : (a - 0.35) / 0.3;
+          d[(y * W + x) * 4 + 3] = Math.round(a * 255);
+        }
+      }
+      g.putImageData(id, 0, 0); romS.cut = c;
+      if(romS.pts) romDraw();
+      return m;
+    }).catch(function(){ return null; });
+  }
+  function romSyncGridBtn(){ var b = $("btnRomGrid"); b.hidden = !romS.img; b.textContent = romS.gridOn ? "원본 사진 보기" : "격자 보기"; }
+  $("btnRomGrid").addEventListener("click", function(){ romS.gridOn = romGridPref = !romS.gridOn; romSyncGridBtn(); romDraw(); });
+  // 기록용 원본 사진 (회차 사진 보기·수정에 사용)
+  function romImgData(){
+    var k = Math.min(1, 1280 / Math.max(romS.w, romS.h)), c = document.createElement("canvas");
+    c.width = Math.round(romS.w * k); c.height = Math.round(romS.h * k);
+    c.getContext("2d").drawImage(romS.img, 0, 0, c.width, c.height);
+    return { url: c.toDataURL("image/jpeg", 0.86), k: k };
+  }
+  function romFind(id){ return rom.all.find(function(r){ return r.id === id; }) || rom.sessionAll.find(function(r){ return r.id === id; }); }
+  // 지난 회차 열기: 그때 사진 + 측정점 그대로 → 보기·수정
+  function openRomRecord(rec){
+    if(!rec) return;
+    if(!rec.img){
+      if(rec.thumb){ $("saveOverlayImg").src = rec.thumb; $("saveOverlay").hidden = false; }
+      toast("이 기록은 원본 사진이 저장되지 않은 이전 버전 기록이라 사진 보기만 가능해요.");
+      return;
+    }
+    $("romCmp").hidden = true;
+    if(rec.joint === "scol"){ if(rom.joint !== "scol") scolPrevJoint = rom.joint; rom.joint = "scol"; }
+    else { rom.joint = rec.joint; if(rec.side === "L" || rec.side === "R") rom.side = rec.side; }
+    openRomSheet(rec.move);
+    var H = rom.all.filter(function(r){ return r.joint === rec.joint && r.side === rec.side && r.move === rec.move; }), no = H.indexOf(rec) + 1;
+    var im = new Image();
+    im.onload = function(){
+      romS.img = im; romS.w = im.naturalWidth; romS.h = im.naturalHeight;
+      var k = rec.imgK || 1;
+      romS.pts = (rec.pts || []).map(function(q){ return { x: q.x * k, y: q.y * k }; });
+      romS.roll = rec.roll == null ? null : rec.roll; romS.footOff = rec.footOff == null ? null : rec.footOff;
+      romS.editId = rec.id; romS.editAt = rec.at; romS.editMember = rec.memberId; romS.recImg = { url: rec.img, k: 1 };
+      romS.gridOn = romGridPref; romCv.hidden = false; $("romEmpty").hidden = true; romSyncGridBtn();
+      romS.q = 1; romReady(true, "");
+      $("romQ").className = "rom-q mid";
+      $("romQ").textContent = (no > 0 ? no + "차 · " : "") + fmtDate(rec.at).slice(0, 10) + " 기록 보기 · 점·선을 고친 뒤 [수정 저장]을 누르면 이 회차 기록이 바뀌어요";
+      $("btnRomApply").textContent = "수정 저장";
+      romMakeCut();
+    };
+    im.src = rec.img;
+  }
+  ["romGrid", "scolGrid", "romCmpBody"].forEach(function(id){
+    $(id).addEventListener("click", function(e){
+      var t = e.target.closest("[data-rid]"); if(!t) return;
+      e.preventDefault(); e.stopPropagation();
+      openRomRecord(romFind(t.getAttribute("data-rid")));
+    });
+  });
+
+  /* ===================== v74 리포트: ROM·측만증 전후 사진 비교 ===================== */
+  var repPair = { key: null, a: null, b: null, cvA: null, cvB: null };
+  function repPairGroups(){
+    var map = {}, order = [];
+    rom.all.forEach(function(r){
+      var k = r.joint + "|" + r.side + "|" + r.move;
+      if(!map[k]){ map[k] = []; order.push(k); }
+      map[k].push(r);
+    });
+    return order.map(function(k){
+      var p = k.split("|"), J = ROM_ALL.find(function(j){ return j.k === p[0]; }); if(!J) return null;
+      var mv = J.moves.find(function(m){ return m.k === p[2]; }); if(!mv) return null;
+      var lab = J.k === "scol" ? mv.n : J.n + " " + mv.n + (p[1] === "L" ? " (왼쪽)" : p[1] === "R" ? " (오른쪽)" : "");
+      return { key: k, J: J, mv: mv, list: map[k], label: lab };
+    }).filter(Boolean);
+  }
+  // 기록 → 측정 화면과 같은 결과 이미지 (원본이 없으면 저장된 미리보기)
+  function romRenderRecord(rec, maxW){
+    if(!rec.img){
+      return new Promise(function(res){ var im = new Image(); im.onload = function(){ var c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0); res(c); }; im.onerror = function(){ res(null); }; im.src = rec.thumb || ""; });
+    }
+    return new Promise(function(res){
+      var im = new Image();
+      im.onload = function(){
+        var save = { S: Object.assign({}, romS), joint: rom.joint, side: rom.side }, k = rec.imgK || 1, c = null;
+        try{
+          rom.joint = rec.joint; if(rec.side === "L" || rec.side === "R") rom.side = rec.side;
+          Object.assign(romS, { mv: rec.move, img: im, w: im.naturalWidth, h: im.naturalHeight, pts: (rec.pts || []).map(function(q){ return { x: q.x * k, y: q.y * k }; }),
+            roll: rec.roll == null ? null : rec.roll, footOff: rec.footOff == null ? null : rec.footOff, sel: null, drag: -1, gridOn: false, cut: null });
+          c = romResultCanvas(maxW || 900);
+        }catch(e){ console.warn("[pair]", e); }
+        Object.keys(romS).forEach(function(kk){ delete romS[kk]; }); Object.assign(romS, save.S); rom.joint = save.joint; rom.side = save.side;
+        res(c);
+      };
+      im.onerror = function(){ res(null); };
+      im.src = rec.img;
+    });
+  }
+  function renderRepPair(){
+    var box = $("repPair"); if(!box) return;
+    var G = repPairGroups();
+    box.hidden = !G.length;
+    if(!G.length) return;
+    if(!repPair.key || !G.some(function(g){ return g.key === repPair.key; })) repPair.key = G[0].key;
+    var grp = G.find(function(g){ return g.key === repPair.key; }), L = grp.list;
+    if(repPair.a == null || repPair.a >= L.length) repPair.a = 0;
+    if(repPair.b == null || repPair.b >= L.length) repPair.b = L.length - 1;
+    $("rpItem").innerHTML = G.map(function(g){ return '<option value="' + g.key + '"' + (g.key === repPair.key ? " selected" : "") + '>' + esc(g.label) + ' · ' + g.list.length + '회</option>'; }).join("");
+    var opt = function(sel){ return L.map(function(r, i){ return '<option value="' + i + '"' + (i === sel ? " selected" : "") + '>' + (i + 1) + '차 · ' + fmtDate(r.at).slice(0, 10) + ' · ' + r.value + '°</option>'; }).join(""); };
+    $("rpA").innerHTML = opt(repPair.a); $("rpB").innerHTML = opt(repPair.b);
+    var ra = L[repPair.a], rb = L[repPair.b], d = rb.value - ra.value, mv = grp.mv;
+    var better = mv.grade ? d < 0 : (mv.normal === 0 ? d < 0 : d > 0);
+    $("rpDelta").className = "rp-delta " + (d === 0 ? "" : better ? "up" : "down");
+    $("rpDelta").textContent = d === 0 ? "변화 없음" : (d > 0 ? "+" : "") + d + "° " + (better ? "(개선)" : mv.grade ? "(증가)" : "(감소)");
+    $("rpCapA").textContent = (repPair.a + 1) + "차 · " + fmtDate(ra.at).slice(0, 10) + " · " + ra.value + "°";
+    $("rpCapB").textContent = (repPair.b + 1) + "차 · " + fmtDate(rb.at).slice(0, 10) + " · " + rb.value + "°";
+    var tag = repPair.key + "|" + repPair.a + "|" + repPair.b; repPair.tag = tag;
+    Promise.all([romRenderRecord(ra, 900), romRenderRecord(rb, 900)]).then(function(cs){
+      if(repPair.tag !== tag) return;
+      repPair.cvA = cs[0]; repPair.cvB = cs[1]; repPair.labA = $("rpCapA").textContent; repPair.labB = $("rpCapB").textContent; repPair.title = grp.label; repPair.delta = $("rpDelta").textContent; repPair.better = better; repPair.d = d;
+      [["rpImgA", cs[0]], ["rpImgB", cs[1]]].forEach(function(x){ $(x[0]).src = x[1] ? x[1].toDataURL("image/jpeg", 0.85) : ""; });
+    });
+  }
+  $("rpItem").addEventListener("change", function(){ repPair.key = this.value; repPair.a = null; repPair.b = null; renderRepPair(); });
+  $("rpA").addEventListener("change", function(){ repPair.a = +this.value; renderRepPair(); });
+  $("rpB").addEventListener("change", function(){ repPair.b = +this.value; renderRepPair(); });
+  [["rpImgA", "a"], ["rpImgB", "b"]].forEach(function(x){ $(x[0]).addEventListener("click", function(){ var G = repPairGroups().find(function(g){ return g.key === repPair.key; }); if(G) openRomRecord(G.list[repPair[x[1]]]); }); });
+  // 리포트 이미지에 전후 비교 그리기
+  function drawRepPair(g, x, y, w, F){
+    if(!repPair.cvA || !repPair.cvB) return 0;
+    var gap = 24, iw = (w - 72 - gap) / 2, sc = Math.min(iw / repPair.cvA.width, iw / repPair.cvB.width), ih = Math.max(repPair.cvA.height, repPair.cvB.height) * sc, H = 110 + ih + 60;
+    g.fillStyle = "#141E35"; rr(g, x, y, w, H, 24); g.fill();
+    g.fillStyle = "#97A3BC"; g.font = "700 26px " + F; g.fillText("전후 비교 · " + repPair.title, x + 36, y + 56);
+    g.fillStyle = repPair.d === 0 ? "#E9EEF8" : repPair.better ? "#4CC38A" : "#F07A72"; g.font = "800 28px " + F; g.textAlign = "right"; g.fillText(repPair.delta, x + w - 36, y + 56); g.textAlign = "left";
+    [[repPair.cvA, repPair.labA], [repPair.cvB, repPair.labB]].forEach(function(p, i){
+      var ix = x + 36 + i * (iw + gap), dw = p[0].width * sc, dh = p[0].height * sc;
+      g.drawImage(p[0], ix + (iw - dw) / 2, y + 86, dw, dh);
+      g.fillStyle = "#E9EEF8"; g.font = "700 24px " + F; g.fillText((i ? "후 · " : "전 · ") + p[1], ix, y + 86 + ih + 40);
+    });
+    return H;
+  }
 
   /* ===================== v68 측만증 탭 ===================== */
   function scolJudge(mv, v){
@@ -5606,13 +5827,13 @@
     romLoad().then(function(){
       $("scolGrid").innerHTML = SCOL_JOINT.moves.map(function(mv){
         var H = rom.all.filter(function(r){ return r.joint === "scol" && r.move === mv.k; }), r = H[H.length - 1], val = r ? r.value : null, jd = scolJudge(mv, val);
-        var hist = H.slice(-5).reverse().map(function(h){ var j2 = scolJudge(mv, h.value); return '<li><span>' + fmtDate(h.at).slice(0, 10) + '</span><b class="' + j2.cls + '">' + h.value + '°</b></li>'; }).join("");
+        var hist = H.slice(-5).reverse().map(function(h){ var j2 = scolJudge(mv, h.value); return '<li class="rc-open" data-rid="' + h.id + '"><span>' + fmtDate(h.at).slice(0, 10) + '</span><b class="' + j2.cls + '">' + h.value + '°</b></li>'; }).join("");
         var dl = H.length >= 2 ? H[H.length - 1].value - H[H.length - 2].value : null;
         return '<div class="rom-card scol-card ' + jd.cls + '"><div class="top"><b>' + mv.n + '</b><em>' + (mv.grade === "atr" ? "기준 5° · 7°" : "기준 10° · 25° · 40°") + '</em></div>' +
           '<div class="val">' + (val == null ? '<span class="none">아직 측정하지 않았어요</span>' : '<strong>' + val + '°</strong>') + '</div>' +
           '<div class="judge">' + jd.txt + '</div>' +
           (dl != null ? (isPro() ? '<div class="rom-delta ' + (dl === 0 ? "same" : dl < 0 ? "up" : "down") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl < 0 ? "▼ " : "▲ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "°" + (dl < 0 ? " (개선)" : " (증가)")) + ' · 총 ' + H.length + '회</div>' : '<div class="rom-delta lock">🔒 이전 회차와의 비교는 PRO에서 볼 수 있어요</div>') : '') +
-          (r && r.thumb ? '<img class="thumb" src="' + r.thumb + '" alt="">' : '') +
+          (r && r.thumb ? '<img class="thumb rc-open" data-rid="' + r.id + '" src="' + r.thumb + '" alt="" title="이 회차 사진 보기·수정">' : '') +
           (hist && isPro() ? '<ul class="scol-hist">' + hist + '</ul>' : '') +
           '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-scol="' + mv.k + '">' + (r ? "다시 측정" : "측정하기") + '</button>' +
           (r ? '<button type="button" class="btn line sm" data-scolcmp="' + mv.k + '">' + (isPro() ? "📊 이전 회차 비교" : "🔒 이전 회차 비교") + ' <small>' + H.length + '회</small></button>' : '') + '</div></div>';
@@ -5634,8 +5855,8 @@
     body += '<div class="rcmp-chart">' + romChartSvg({ normal: 0 }, H) + '</div>';
     body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
       H.map(function(r, i){ var jd = scolJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
-        return '<tr><td>' + (i + 1) + '차</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table>';
-    if(prev && prev.thumb && last.thumb) body += '<div class="rcmp-photos"><figure><img src="' + prev.thumb + '" alt=""><figcaption>이전 ' + (H.length - 1) + '차 · ' + prev.value + '°</figcaption></figure><figure><img src="' + last.thumb + '" alt=""><figcaption>최근 ' + H.length + '차 · ' + last.value + '°</figcaption></figure></div>';
+        return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + (i + 1) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요.</p>';
+    if(prev && prev.thumb && last.thumb) body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + prev.id + '"><img src="' + prev.thumb + '" alt=""><figcaption>이전 ' + (H.length - 1) + '차 · ' + prev.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + last.id + '"><img src="' + last.thumb + '" alt=""><figcaption>최근 ' + H.length + '차 · ' + last.value + '°</figcaption></figure></div>';
     $("romCmpTitle").textContent = "측만증 측정 · 이전 회차 비교";
     $("romCmpBody").innerHTML = body; $("romCmp").hidden = false;
   }
@@ -5707,7 +5928,7 @@
       else finish(W * 0.2, W * 0.8, function(){ return H * 0.45; }, "none");
     };
     if(!window.__segmentPerson){ fallback(); return; }
-    window.__segmentPerson(romS.img).then(function(m){
+    (romS.maskP || window.__segmentPerson(romS.img)).then(function(m){
       if(!m){ fallback(); return; }
       var cols = [], tops = [];
       for(var x = 0; x < m.w; x++){
@@ -5967,9 +6188,9 @@
       body += '<div class="rcmp-chart">' + romChartSvg(mv, H) + '</div>';
       body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
         H.map(function(r, i){ var jd = romJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
-          return '<tr><td>' + (i + 1) + '차</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + (dd == null ? "–" : (dd > 0 ? "+" : "") + dd + "°") + '</td></tr>'; }).reverse().join("") + '</tbody></table>';
+          return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + (i + 1) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + (dd == null ? "–" : (dd > 0 ? "+" : "") + dd + "°") + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요.</p>';
       if(first.thumb && last.thumb && first !== last){
-        body += '<div class="rcmp-photos"><figure><img src="' + first.thumb + '" alt=""><figcaption>1차 · ' + first.value + '°</figcaption></figure><figure><img src="' + last.thumb + '" alt=""><figcaption>' + H.length + '차 · ' + last.value + '°</figcaption></figure></div>';
+        body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + first.id + '"><img src="' + first.thumb + '" alt=""><figcaption>1차 · ' + first.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + last.id + '"><img src="' + last.thumb + '" alt=""><figcaption>' + H.length + '차 · ' + last.value + '°</figcaption></figure></div>';
       }
     } else {
       $("romCmpTitle").textContent = J.n + " 전체 · " + sideTxt + " 회차 비교";
@@ -6650,14 +6871,25 @@
     var cp = PRO_COPY[kind] || PRO_COPY[state.view === "report" ? "report" : "settings"];
     $("proDesc").innerHTML = cp.d; $("proList").innerHTML = cp.l.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("");
     proKind = ["report", "rom", "scol", "members"].indexOf(kind) >= 0 ? kind : "settings";
-    $("btnProPreview").hidden = proKind !== "settings";
+    $("btnProPreview").hidden = ["settings", "report", "members"].indexOf(proKind) < 0;
     $("proCodeRow").classList.add("on"); $("proCode").value = ""; $("proCodeMsg").hidden = true;
     var ov = $("proGate"); setTimeout(function(){ ov.scrollTop = 0; }, 0);
     $("proGate").hidden = false;
     if(opts && opts.code){ $("proCodeRow").classList.add("on"); setTimeout(function(){ $("proCode").focus(); }, 60); }
   }
   $("btnSetPro").addEventListener("click", function(){ openProGate("settings"); });
-  $("btnProPreview").addEventListener("click", function(){ $("proGate").hidden = true; });
+  $("btnProPreview").addEventListener("click", function(){
+    $("proGate").hidden = true;
+    if(proKind === "report" || proKind === "members"){ state.preview = proKind; showView(proKind); toast("미리 보기 중 · 어떤 기능이 있는지 둘러보세요 (저장·수정은 PRO)"); }
+  });
+  function syncMbLock(){
+    var lock = !isPro();
+    $("mbLock").hidden = !lock; $("view-members").classList.toggle("pv-lock", lock);
+    if(lock && !$("mbItems").children.length){
+      $("mbItems").innerHTML = [["김하늘", "A-101 · 34세 · 측정 5회"], ["이준호", "A-102 · 41세 · 측정 3회"], ["박서연", "A-103 · 28세 · 측정 8회"]].map(function(d){ return '<div class="mb-item pv-demo"><div class="mb-avatar">' + d[0][0] + '</div><div class="mb-txt"><b>' + d[0] + ' <small>예시</small></b><em>' + d[1] + '</em></div></div>'; }).join("");
+    }
+  }
+  $("btnMbPro").addEventListener("click", function(){ openProGate("members"); });
   $("btnProClose").addEventListener("click", function(){
     $("proGate").hidden = true;
     if((state.view === "settings" || state.view === "report") && !isPro()) showView(proPrevView === "settings" || proPrevView === "report" ? "dash" : proPrevView);

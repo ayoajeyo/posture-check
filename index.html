@@ -5234,11 +5234,12 @@
   $("btnRomCmpClose").addEventListener("click", function(){ $("romCmp").hidden = true; });
   $("romCmp").addEventListener("click", function(e){ if(e.target === $("romCmp")) $("romCmp").hidden = true; });
 
-  /* ===================== v60 휴대폰 뒤로가기(취소) 버튼 =====================
-     뒤로가기: 열린 창 닫기 → 회원 상세→목록 → 측면→정면 → 이전 화면 → 첫 화면에서 한 번 더 누르면 종료
-     ※ 안드로이드 크롬/설치 앱은 '터치 없이' 추가된 뒤로가기 기록을 건너뛰고 앱을 닫아버림
-       → 보호 기록(guard)을 화면을 터치하는 순간에 걸어 두어야 확실히 동작함 */
-  var navStack = [], exitArmed = false, guarded = false;
+  /* ===================== v61 휴대폰 뒤로가기(취소) 버튼 =====================
+     안드로이드 크롬/설치 앱 규칙: '손가락 터치(클릭) 없이' 만든 뒤로가기 기록이 있으면 그 직전 화면 기록을
+     건너뛰어 앱이 바로 닫힘. (터치 시작 순간 touchstart/pointerdown 도 '터치'로 인정 안 됨)
+     → 기록은 오직 클릭(탭)·키 입력 직후에만 1개씩 추가하고, 뒤로가기 처리 중에는 절대 추가하지 않는다.
+     → 화면을 한 단계 열 때마다(탭 1번) 기록 1개 = 뒤로가기 1번으로 정확히 되돌아감 */
+  var navStack = [], guards = 0, skipPop = false, lastPush = 0;
   var _showViewNav = showView;
   showView = function(v, opt){
     var prev = state.view, prevKey = (prev === "members" && !$("mbDetail").hidden && mbCurrent) ? "members:" + mbCurrent.id : prev;
@@ -5249,22 +5250,38 @@
     }
     return r;
   };
-  function pushGuard(){
-    if(guarded) return;
-    try{ history.pushState({ ayoGuard: Date.now() }, ""); guarded = true; }catch(e){}
-  }
   try{ history.replaceState({ ayoRoot: 1 }, ""); }catch(e){}
-  function onUserTouch(){ exitArmed = false; pushGuard(); }
-  ["pointerdown", "touchstart", "mousedown", "keydown"].forEach(function(ev){
-    window.addEventListener(ev, onUserTouch, { capture: true, passive: true });
-  });
-  pushGuard();
+  function openOverlays(){
+    return Array.prototype.filter.call(document.querySelectorAll(".confirm-overlay, .save-overlay"), function(el){ return !el.hidden; });
+  }
   function topOverlay(){
-    var list = Array.prototype.filter.call(document.querySelectorAll(".confirm-overlay, .save-overlay"), function(el){ return !el.hidden; });
+    var list = openOverlays();
     if(!list.length) return null;
     list.sort(function(a, b){ return (parseInt(getComputedStyle(b).zIndex, 10) || 0) - (parseInt(getComputedStyle(a).zIndex, 10) || 0); });
     return list[0];
   }
+  function backDepth(){   // 지금 뒤로가기로 되돌아갈 수 있는 단계 수
+    var d = openOverlays().length;
+    if(state.view === "members" && !$("mbDetail").hidden){ d++; if(!$("mbCompare").hidden) d++; }
+    if(state.mode === "side") d++;   // 정면 화면으로 돌아왔을 때 측면→정면 1단계
+    var ns = navStack.filter(function(x){ return x !== state.view; }).length;
+    d += ns + navStack.filter(function(x){ return x.indexOf("members:") === 0; }).length;   // 회원 상세로 돌아가면 상세→목록 1단계 더
+    if(!ns && state.view !== "analyze") d++;
+    return Math.min(d, 40);
+  }
+  function topUp(){       // 탭 직후에만 호출됨 → 부족한 만큼 '1개'만 추가
+    try{
+      if(navigator.userActivation && !navigator.userActivation.isActive) return;
+      if(Date.now() - lastPush < 350) return;
+      if(guards < backDepth() + 1){
+        history.pushState({ ayoGuard: 1, n: guards + 1 }, "");
+        guards++; lastPush = Date.now();
+      }
+    }catch(e){}
+  }
+  var inBack = false;   // 뒤로가기 처리 중(프로그램이 누른 버튼)에는 기록 추가 금지
+  window.addEventListener("click", function(e){ if(e.isTrusted && !inBack) setTimeout(topUp, 0); }, true);
+  window.addEventListener("keydown", function(e){ if(e.isTrusted && !inBack && e.key !== "Escape") setTimeout(topUp, 0); }, true);
   function closeOverlay(el){
     var closeBtn = { proGate: "btnProClose", romSheet: "btnRomClose", saveOverlay: "btnCloseOverlay", gsOverlay: "btnGsClose", moreSheet: "btnMoreClose",
       romCmp: "btnRomCmpClose", mbForm: "btnMfCancel", progForm: "btnPfCancel", assignPick: "btnApCancel", csForm: "btnCfCancel", slForm: "btnSfCancel", retakeConfirm: "btnRetakeNo" }[el.id];
@@ -5290,12 +5307,16 @@
     return false;
   }
   window.addEventListener("popstate", function(e){
-    guarded = !!(e.state && e.state.ayoGuard);
+    guards = (e.state && e.state.ayoGuard) ? (e.state.n || 0) : 0;
+    if(skipPop){ skipPop = false; return; }
     var done = false;
+    inBack = true;
     try{ done = handleBack(); }catch(err){ console.warn("[back]", err); done = true; }
-    if(done){ exitArmed = false; pushGuard(); return; }
-    // 첫 화면: 보호 기록을 다시 걸지 않음 → 바로 한 번 더 누르면 앱 종료 (화면을 터치하면 다시 보호됨)
-    exitArmed = true;
+    setTimeout(function(){ inBack = false; }, 0);
+    lastPush = Date.now();
+    if(done) return;
+    // 첫 화면: 남은 여분 기록을 정리하고 안내 → 한 번 더 누르면 종료 (화면을 탭하면 다시 보호됨)
+    if(guards > 0){ skipPop = true; try{ history.go(-guards); }catch(err){ skipPop = false; } }
     toast("뒤로 버튼을 한 번 더 누르면 앱이 종료돼요.");
   });
 

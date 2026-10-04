@@ -657,6 +657,25 @@
   .pro-ask b{display:block; font-size:16px; margin:3px 0 10px; color:var(--ink); word-break:break-all;}
   .pro-ask-btns{display:flex; gap:8px;} .pro-ask-btns .btn{flex:1; width:auto;}
   .pro-mail-link{color:#9DB7FF; font-weight:700;}
+  /* v49 회원 검색 · 자동 번호 */
+  .gs-btn{display:inline-flex; align-items:center; gap:8px; margin-left:auto; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink-soft); background:var(--surface); border:1px solid var(--line); border-radius:100px; padding:7px 14px 7px 11px; cursor:pointer; min-width:200px;}
+  .gs-btn:hover{border-color:var(--blue); color:var(--ink);}
+  .gs-btn kbd{margin-left:auto; font-family:var(--font-num); font-size:11px; border:1px solid var(--line); border-radius:5px; padding:0 5px; color:var(--ink-soft);}
+  .gs-btn + .now-chip{margin-left:8px;}
+  @media (max-width:599px){ .gs-btn{min-width:0; padding:8px; border-radius:50%;} .gs-btn span, .gs-btn kbd{display:none;} }
+  .gs-box{max-width:520px; text-align:left; align-self:flex-start; margin-top:8vh;}
+  .gs-input{display:flex; align-items:center; gap:10px; border:1px solid var(--blue); border-radius:12px; padding:0 12px; background:var(--bg);}
+  .gs-input svg{color:var(--ink-soft); flex:0 0 auto;}
+  .gs-input input{flex:1; min-width:0; border:0; outline:0; background:transparent; color:var(--ink); font-family:inherit; font-size:16px; padding:13px 0;}
+  .gs-hint{font-size:12px; color:var(--ink-soft); margin:8px 2px 0;}
+  .gs-list{display:flex; flex-direction:column; gap:8px; max-height:52vh; overflow-y:auto; margin:12px 0 14px;}
+  .gs-list .mb-item{padding:10px 12px;}
+  .gs-list mark{background:rgba(47,107,255,.28); color:inherit; border-radius:3px; padding:0 1px;}
+  .gs-empty{font-size:13px; color:var(--ink-soft); text-align:center; padding:18px 0;}
+  .sel-search{font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:9px; padding:9px 10px; background:var(--bg); color:var(--ink); width:100%; box-sizing:border-box; margin-bottom:6px;}
+  .no-auto{font-style:normal; font-size:10.5px; font-weight:800; color:var(--blue); margin-left:6px;}
+  .no-fix{display:flex; align-items:center; gap:10px; padding:10px 14px; margin:0 0 10px; border-radius:12px; background:rgba(240,180,76,.10); border:1px solid rgba(240,180,76,.35); font-size:13px;}
+  .no-fix .btn{margin-left:auto; flex:0 0 auto; width:auto; white-space:nowrap;}
   .pro-link{display:block; margin:10px auto 0; background:none; border:0; color:var(--ink-soft); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:inherit;}
 </style>
 
@@ -697,6 +716,7 @@
         <p class="eyebrow" id="topEyebrow">AYO체형분석</p>
         <h1 id="pageTitle">체형 분석</h1>
       </div>
+      <button type="button" class="gs-btn" id="btnGs" aria-label="회원 검색"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><span>회원 검색</span><kbd>/</kbd></button>
       <span class="now-chip mono" id="nowChip"></span>
     </div>
   </header>
@@ -1044,9 +1064,10 @@
   <section class="view" id="view-members" hidden>
     <div id="mbListWrap">
       <div class="mb-toolbar">
-        <input id="mbSearch" type="search" placeholder="이름·회원번호 검색" autocomplete="off">
+        <input id="mbSearch" type="search" placeholder="이름·회원번호·전화·초성 검색" autocomplete="off">
         <button type="button" class="btn primary" id="btnMbAdd">+ 회원 등록</button>
       </div>
+      <div class="no-fix" id="noFix" hidden><span id="noFixTxt"></span><button type="button" class="btn line sm" id="btnNoFix">자동 배정</button></div>
       <div class="mb-list" id="mbItems"></div>
       <p class="mb-empty" id="mbEmpty" hidden>등록된 회원이 없어요. <b>+ 회원 등록</b>으로 시작하세요.</p>
       <section class="card mb-backup">
@@ -1123,7 +1144,7 @@
     <h3 id="mbFormTitle">회원 등록</h3>
     <label><span>이름 <i>*</i></span><input id="mfName" type="text" autocomplete="off" placeholder="예: 홍길동"></label>
     <div class="mf-row">
-      <label>회원번호<input id="mfNo" type="text" autocomplete="off" placeholder="선택"></label>
+      <label><span>회원번호<em class="no-auto" id="mfNoTag">자동 배정</em></span><input id="mfNo" type="text" autocomplete="off" placeholder="자동 배정"></label>
       <label>성별<select id="mfSex"><option value="">선택 안 함</option><option value="여">여</option><option value="남">남</option></select></label>
     </div>
     <div class="mf-row">
@@ -1163,7 +1184,7 @@
 <div class="confirm-overlay" id="csForm" hidden role="dialog" aria-modal="true">
   <div class="confirm-box mb-form">
     <h3 id="csFormTitle">상담 기록</h3>
-    <label><span>회원 <i>*</i></span><select id="cfMember"></select></label>
+    <label><span>회원 <i>*</i></span><input id="cfMemberQ" class="sel-search" type="search" placeholder="회원 검색 (이름·번호·초성)" autocomplete="off"><select id="cfMember"></select></label>
     <div class="mf-row">
       <label>상담 일시<input id="cfAt" type="datetime-local"></label>
       <label>유형<select id="cfType"><option>초기 상담</option><option>정기 상담</option><option>재등록 상담</option><option>측정 결과 설명</option><option>기타</option></select></label>
@@ -1176,7 +1197,7 @@
 <div class="confirm-overlay" id="slForm" hidden role="dialog" aria-modal="true">
   <div class="confirm-box mb-form">
     <h3 id="slFormTitle">결제 등록</h3>
-    <label>회원<select id="sfMember"></select></label>
+    <label>회원<input id="sfMemberQ" class="sel-search" type="search" placeholder="회원 검색 (이름·번호·초성)" autocomplete="off"><select id="sfMember"></select></label>
     <div class="mf-row">
       <label>결제일<input id="sfDate" type="date"></label>
       <label>결제 수단<select id="sfMethod"><option>카드</option><option>현금</option><option>계좌이체</option><option>기타</option></select></label>
@@ -1222,10 +1243,18 @@
     <div class="confirm-btns"><button type="button" class="no" id="btnMoreClose">닫기</button></div>
   </div>
 </div>
+<div class="confirm-overlay" id="gsOverlay" hidden role="dialog" aria-modal="true" aria-label="회원 검색">
+  <div class="confirm-box gs-box">
+    <div class="gs-input"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input id="gsInput" type="search" placeholder="이름·회원번호·전화번호·초성(ㄱㅇㄱ)" autocomplete="off" enterkeyhint="search"></div>
+    <p class="gs-hint" id="gsHint">최근 측정·등록 순으로 보여줘요. 결과를 누르면 회원 상세가 열려요.</p>
+    <div class="gs-list" id="gsList"></div>
+    <div class="confirm-btns"><button type="button" class="no" id="btnGsClose">닫기</button><button type="button" class="yes ok" id="btnGsNew">+ 새 회원 등록</button></div>
+  </div>
+</div>
 <div class="confirm-overlay" id="mbPicker" hidden role="dialog" aria-modal="true" aria-labelledby="mbPickTitle">
   <div class="confirm-box mb-pick">
     <h3 id="mbPickTitle">회원 선택</h3>
-    <input id="mpSearch" type="search" placeholder="이름·회원번호 검색" autocomplete="off">
+    <input id="mpSearch" type="search" placeholder="이름·회원번호·전화·초성 검색" autocomplete="off">
     <div class="mp-list" id="mpItems"></div>
     <div class="confirm-btns">
       <button type="button" class="no" id="btnMpNone">선택 안 함</button>
@@ -3738,6 +3767,8 @@
     $("mfSex").value = m ? (m.sex || "") : ""; $("mfHeight").value = m && m.height ? m.height : "";
     $("mfPhone").value = m ? (m.phone || "") : ""; $("mfMemo").value = m ? (m.memo || "") : "";
     $("mfBirth").value = m && m.birth ? m.birth : "";
+    $("mfNoTag").hidden = !!m;
+    if(!m) dbAll("members").then(function(L){ if(!formEditing && !$("mfNo").value) $("mfNo").value = nextMemberNo(L); });
     $("mbForm").hidden = false; setTimeout(function(){ $("mfName").focus(); }, 50);
   }
   $("btnMfCancel").addEventListener("click", function(){ $("mbForm").hidden = true; });
@@ -3750,13 +3781,18 @@
     m.height = (isFinite(h) && h >= 80 && h <= 230) ? Math.round(h * 10) / 10 : null;
     m.phone = $("mfPhone").value.trim(); m.memo = $("mfMemo").value.trim();
     var by = parseInt($("mfBirth").value, 10); m.birth = (by >= 1920 && by <= new Date().getFullYear()) ? by : null;
-    dbPut("members", m).then(function(){
+    dbAll("members").then(function(L){
+      if(!m.no && !formEditing) m.no = nextMemberNo(L);
+      var dup = m.no && L.find(function(x){ return x.id !== m.id && (x.no || "").toLowerCase() === m.no.toLowerCase(); });
+      if(dup){ toast("회원번호 " + m.no + "은(는) " + dup.name + " 회원이 쓰고 있어요."); $("mfNo").focus(); throw "dup"; }
+      return dbPut("members", m);
+    }).then(function(){
       $("mbForm").hidden = true;
       toast(formEditing ? "회원 정보를 수정했어요." : name + " 회원을 등록했어요.");
       if(state.member && state.member.id === m.id){ var sid = state.sessionId; setMember(m); state.sessionId = sid; }
       var after = formAfter; formAfter = null;
       if(after) after(m); else if(state.view === "members"){ if(mbCurrent) mbOpenDetail(m.id); else mbShowList(); }
-    }).catch(function(){ toast("저장하지 못했어요."); });
+    }).catch(function(e){ if(e !== "dup") toast("저장하지 못했어요."); });
   });
 
   /* ---- 회원 목록 ---- */
@@ -3764,7 +3800,7 @@
   function loadAll(){ return Promise.all([dbAll("members"), dbAll("records")]); }
   function memberRows(members, records, q){
     q = (q || "").trim().toLowerCase();
-    return members.filter(function(m){ return !q || (m.name + " " + (m.no || "")).toLowerCase().indexOf(q) >= 0; })
+    return members.filter(function(m){ return matchMember(m, q); })
       .map(function(m){
         var rs = records.filter(function(r){ return r.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
         return { m: m, rs: rs, last: rs[0] || null };
@@ -3784,6 +3820,8 @@
       var rows = memberRows(res[0], res[1], $("mbSearch").value);
       $("mbItems").innerHTML = rows.map(itemHtml).join("");
       $("mbEmpty").hidden = res[0].length > 0;
+      var noLess = res[0].filter(function(m){ return !m.no; }).length;
+      $("noFix").hidden = !noLess; $("noFixTxt").textContent = "회원번호가 없는 회원이 " + noLess + "명 있어요.";
       bkInfoRender();
       $("mbItems").querySelectorAll(".mb-item").forEach(function(b){ b.addEventListener("click", function(){ mbOpenDetail(b.getAttribute("data-id")); }); });
     });
@@ -4208,6 +4246,99 @@
   }
 
 
+  /* ===================== v49 회원 검색 · 회원번호 자동 배정 ===================== */
+  var CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+  function choseong(t){
+    var out = "";
+    for(var i = 0; i < t.length; i++){ var c = t.charCodeAt(i); out += (c >= 0xAC00 && c <= 0xD7A3) ? CHO[Math.floor((c - 0xAC00) / 588)] : t.charAt(i); }
+    return out;
+  }
+  // 이름·회원번호·전화번호(숫자 3자리 이상)·초성 검색
+  function matchMember(m, q){
+    q = String(q || "").trim().toLowerCase();
+    if(!q) return true;
+    var name = String(m.name || ""), no = String(m.no || "");
+    if((name + " " + no).toLowerCase().indexOf(q) >= 0) return true;
+    var qs = q.replace(/\s+/g, "");
+    if(/^[ㄱ-ㅎ]+$/.test(qs) && choseong(name.replace(/\s+/g, "")).indexOf(qs) >= 0) return true;
+    var qd = q.replace(/\D/g, "");
+    if(qd.length >= 3 && String(m.phone || "").replace(/\D/g, "").indexOf(qd) >= 0) return true;
+    if(qd.length && qd === q.replace(/[\s-]/g, "") && no.replace(/\D/g, "").indexOf(qd) >= 0) return true;
+    return false;
+  }
+  // 기존 번호 중 가장 큰 번호 다음 번호 (접두어·자릿수 유지), 없으면 0001
+  function nextMemberNo(list){
+    var best = null;
+    list.forEach(function(m){
+      var mt = /^(.*?)(\d+)$/.exec(String(m.no || "").trim()); if(!mt) return;
+      var n = parseInt(mt[2], 10);
+      if(!best || n > best.n || (n === best.n && (m.createdAt || 0) > best.t)) best = { p: mt[1], n: n, w: mt[2].length, t: m.createdAt || 0 };
+    });
+    if(!best) return "0001";
+    var v = String(best.n + 1); while(v.length < best.w) v = "0" + v;
+    return best.p + v;
+  }
+  $("btnNoFix").addEventListener("click", function(){
+    dbAll("members").then(function(L){
+      var targets = L.filter(function(m){ return !m.no; }).sort(function(a, b){ return (a.createdAt || 0) - (b.createdAt || 0); });
+      if(!targets.length) return;
+      if(!window.confirm("회원번호가 없는 " + targets.length + "명에게 등록 순서대로 번호를 배정할까요?\n(예: " + nextMemberNo(L) + "부터)")) return;
+      var chain = Promise.resolve();
+      targets.forEach(function(m){ m.no = nextMemberNo(L); chain = chain.then(function(){ return dbPut("members", m); }); });
+      chain.then(function(){ toast(targets.length + "명에게 회원번호를 배정했어요."); mbShowList(); });
+    });
+  });
+
+  // ---- 전체 회원 검색 (상단 버튼 · "/" 키) ----
+  function gsRender(){
+    var q = $("gsInput").value;
+    loadAll().then(function(res){
+      var rows = memberRows(res[0], res[1], q), shown = rows.slice(0, 30);
+      $("gsList").innerHTML = shown.length ? shown.map(itemHtml).join("")
+        : '<p class="gs-empty">' + (res[0].length ? "'" + esc(q.trim()) + "'에 맞는 회원이 없어요." : "등록된 회원이 없어요.") + '</p>';
+      $("gsHint").textContent = q.trim() ? "검색 결과 " + rows.length + "명" + (rows.length > 30 ? " · 상위 30명 표시" : "") + " · Enter를 누르면 첫 번째 회원이 열려요."
+        : "전체 " + res[0].length + "명 · 최근 측정·등록 순이에요. 결과를 누르면 회원 상세가 열려요.";
+      $("gsList").querySelectorAll(".mb-item").forEach(function(b){ b.addEventListener("click", function(){ gsGo(b.getAttribute("data-id")); }); });
+    });
+  }
+  function gsGo(id){ $("gsOverlay").hidden = true; showView("members"); mbOpenDetail(id); }
+  function openGs(){ $("gsInput").value = ""; $("gsOverlay").hidden = false; gsRender(); setTimeout(function(){ $("gsInput").focus(); }, 60); }
+  $("btnGs").addEventListener("click", openGs);
+  $("gsInput").addEventListener("input", gsRender);
+  $("gsInput").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){ var f = $("gsList").querySelector(".mb-item"); if(f){ e.preventDefault(); gsGo(f.getAttribute("data-id")); } }
+    else if(e.key === "Escape") $("gsOverlay").hidden = true;
+  });
+  $("btnGsClose").addEventListener("click", function(){ $("gsOverlay").hidden = true; });
+  $("gsOverlay").addEventListener("click", function(e){ if(e.target === $("gsOverlay")) $("gsOverlay").hidden = true; });
+  $("btnGsNew").addEventListener("click", function(){ $("gsOverlay").hidden = true; openForm(null, function(m){ showView("members"); mbOpenDetail(m.id); }); });
+  document.addEventListener("keydown", function(e){
+    if(e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target, tag = t && t.tagName;
+    if(tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable)) return;
+    if(document.querySelector(".confirm-overlay:not([hidden])")) return;
+    e.preventDefault(); openGs();
+  });
+
+  // ---- 상담·결제 폼의 회원 선택 검색 ----
+  function selSearch(qid, sid){
+    var qi = $(qid), sel = $(sid);
+    qi.addEventListener("input", function(){
+      var full = sel.getAttribute("data-full"); if(full == null) return;
+      var tmp = document.createElement("select"); tmp.innerHTML = full;
+      var q = qi.value, keep = [], first = null;
+      Array.prototype.forEach.call(tmp.options, function(o){
+        if(!o.value){ keep.push(o.outerHTML); return; }
+        var mt = /^(.*?)(?: \((.*)\))?$/.exec(o.textContent);
+        if(matchMember({ name: mt[1], no: mt[2] || "", phone: o.getAttribute("data-phone") || "" }, q)){ keep.push(o.outerHTML); if(!first) first = o.value; }
+      });
+      var prev = sel.value;
+      sel.innerHTML = keep.join("");
+      if(q.trim() && first) sel.value = first; else if(!q.trim()) sel.value = prev;
+    });
+  }
+  selSearch("cfMemberQ", "cfMember"); selSearch("sfMemberQ", "sfMember");
+
   /* ===================== v47 설정 · PRO 플랜 ===================== */
   var SET_KEY = "ayo_settings", PRO_KEY = "ayo_pro";
   var DEFAULT_ITEMS = [ { n:"체형분석", a:30000 }, { n:"필라테스 10회권", a:0 }, { n:"PT 10회권", a:0 }, { n:"1개월 회원권", a:0 } ];
@@ -4419,7 +4550,9 @@
   function fillMemberSelect(sel, blankLabel, selected){
     return dbAll("members").then(function(L){
       L.sort(function(a, b){ return a.name.localeCompare(b.name, "ko"); });
-      sel.innerHTML = (blankLabel != null ? '<option value="">' + esc(blankLabel) + '</option>' : '') + L.map(function(m){ return '<option value="' + esc(m.id) + '">' + esc(m.name + (m.no ? " (" + m.no + ")" : "")) + '</option>'; }).join("");
+      sel.innerHTML = (blankLabel != null ? '<option value="">' + esc(blankLabel) + '</option>' : '') + L.map(function(m){ return '<option value="' + esc(m.id) + '" data-phone="' + esc(m.phone || "") + '">' + esc(m.name + (m.no ? " (" + m.no + ")" : "")) + '</option>'; }).join("");
+      sel.setAttribute("data-full", sel.innerHTML);
+      var qEl = sel.previousElementSibling; if(qEl && qEl.classList.contains("sel-search")) qEl.value = "";
       if(selected != null) sel.value = selected;
       return L;
     });

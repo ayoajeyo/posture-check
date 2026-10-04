@@ -889,6 +889,8 @@
   .bk-opts select{font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:10px; padding:7px 10px; background:var(--surface-2); color:var(--ink);}
   .bk-tip{font-size:12.5px; line-height:1.65; color:var(--ink-soft); background:var(--surface-2); border-radius:10px; padding:9px 12px; margin:10px 0 0;}
   .bk-warn{color:var(--warn);}
+  .gs-btn[hidden]{display:none!important;}
+  #repMember{margin-bottom:12px;}
   .rom-q{margin:8px 0 0; font-size:12.5px; font-weight:700; border-radius:10px; padding:8px 12px;}
   .rom-q.good{background:rgba(76,195,138,.12); color:var(--good);} .rom-q.mid{background:rgba(240,180,76,.12); color:var(--warn);}
   .rom-q.low, .rom-q.bad{background:rgba(240,122,114,.12); color:var(--crit);}
@@ -1173,6 +1175,11 @@
 
   <section class="view" id="view-report" hidden>
     <div class="rep-lock" id="repLock" hidden><div><b>🔒 종합 리포트는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 리포트 저장·공유는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnRepPro">PRO 알아보기</button></div>
+    <div class="member-bar rom-mb" id="repMember">
+      <div class="mb-avatar" id="repMbAv">?</div>
+      <div class="mb-txt"><b id="repMbName">회원 선택 안 함</b><em id="repMbMeta">회원을 선택하면 그 회원의 체형·ROM·측만증 결과로 리포트가 만들어져요</em></div>
+      <button type="button" class="btn line sm" id="btnRepPick">회원 선택</button>
+    </div>
     <div class="rep-head" id="repHead" hidden>
       <span class="rep-meta" id="repMeta"></span>
     </div>
@@ -1366,7 +1373,7 @@
     <button type="button" class="btn line sm rom-lr-btn" id="btnRomLR">↔ 좌우 비교 분석</button>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v77</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v78</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1377,7 +1384,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v77</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v78</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -3885,10 +3892,19 @@
     var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
     return d.getFullYear() + "." + z(d.getMonth()+1) + "." + z(d.getDate()) + " " + z(d.getHours()) + ":" + z(d.getMinutes());
   }
+  function renderRepMember(){
+    var m = state.member;
+    $("repMbAv").textContent = m ? initial(m.name) : "?";
+    $("repMbName").textContent = m ? m.name : "회원 선택 안 함";
+    $("repMbMeta").textContent = m ? (memberMeta(m) || "회원") + " · 이 회원의 결과로 리포트를 만들어요" : "회원을 선택하면 그 회원의 체형·ROM·측만증 결과로 리포트가 만들어져요";
+    $("btnRepPick").textContent = m ? "변경" : "회원 선택";
+    $("repMember").classList.toggle("on", !!m);
+  }
   function renderReport(){
+    renderRepMember();
     var r = computeReport();
     var pt = $("ptField").value.trim();
-    $("repMeta").textContent = pt ? pt : ""; $("repHead").hidden = !pt;
+    $("repMeta").textContent = pt ? pt : ""; $("repHead").hidden = true;   // v78: 위 회원 선택 칸에 표시
     ["front", "side"].forEach(function(m){
       var list = m === "front" ? r.f : r.sd;
       var fig = $("rep-" + m).querySelector(".rep-fig");
@@ -4038,6 +4054,7 @@
     $("view-rom").hidden = (v !== "rom");
     $("view-scol").hidden = (v !== "scol");
     $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : v === "members" ? "회원관리" : v === "dash" ? "운영 현황" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : v === "settings" ? "설정" : v === "rom" ? "ROM 관절가동범위" : v === "scol" ? "척추 측만 검사" : "체형 분석";
+    $("btnGs").hidden = ["rom", "scol", "report"].indexOf(v) >= 0;
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
@@ -4946,6 +4963,7 @@
     $("btnSaveReport").textContent = pro ? "리포트 이미지 저장" : "🔒 리포트 이미지 저장 (PRO)";
   }
   $("btnRepPro").addEventListener("click", function(){ openProGate("report"); });
+  $("btnRepPick").addEventListener("click", function(){ $("btnMbPick").click(); });
   $("btnSaveReport").addEventListener("click", function(e){
     if(!isPro()){ e.stopImmediatePropagation(); e.preventDefault(); openProGate("report"); }
   }, true);
@@ -5036,6 +5054,7 @@
     var t = e.target, tag = t && t.tagName;
     if(tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable)) return;
     if(document.querySelector(".confirm-overlay:not([hidden])")) return;
+    if($("btnGs").hidden) return;
     e.preventDefault(); openGs();
   });
 

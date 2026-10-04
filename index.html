@@ -717,6 +717,16 @@
   .pro-chip .pc-d:empty{display:none;}
   .pro-chip.warn{background:linear-gradient(135deg,#E8962E,#F0B44C);}
   .pro-chip:not([hidden]) + .gs-btn{margin-left:8px;}
+  /* v55 PRO 요금 */
+  .price-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:0 0 14px; padding-top:9px;}
+  .price-grid div{position:relative; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px 9px; text-align:center;}
+  .price-grid span{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft);}
+  .price-grid b{display:block; font-family:var(--font-num); font-size:14.5px; margin:3px 0 2px; color:var(--ink); white-space:nowrap;}
+  .price-grid em{display:block; font-style:normal; font-size:10.5px; color:var(--ink-soft); line-height:1.45;} .price-grid em u{text-decoration:none; font-weight:800; color:var(--good);} .price-grid div:first-child em u{color:var(--ink-soft); font-weight:600;}
+  .price-grid .best{border-color:rgba(122,140,255,.7); background:linear-gradient(135deg,rgba(47,107,255,.22),rgba(122,92,255,.22));}
+  .price-grid .best em{color:#9DB7FF; font-weight:700;}
+  .price-grid .best i{position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-style:normal; font-size:10px; font-weight:800; color:#fff; background:linear-gradient(135deg,#2F6BFF,#7A5CFF); border-radius:100px; padding:1px 7px;}
+  @media (max-width:420px){ .price-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} }
   .pro-link{display:block; margin:10px auto 0; background:none; border:0; color:var(--ink-soft); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:inherit;}
 </style>
 
@@ -1275,6 +1285,12 @@
       <li>앱 상단을 센터 브랜드로 변경</li>
       <li>자주 쓰는 결제 항목·금액 기본값 저장</li>
     </ul>
+    <div class="price-grid" aria-label="PRO 요금">
+      <div><span>1개월</span><b>8,900원</b><em>월 8,900원<br><u>기본</u></em></div>
+      <div><span>3개월</span><b>23,900원</b><em>월 7,967원<br><u>10% 할인</u></em></div>
+      <div><span>6개월</span><b>42,900원</b><em>월 7,150원<br><u>20% 할인</u></em></div>
+      <div class="best"><i>추천</i><span>12개월</span><b>69,900원</b><em>월 5,825원<br><u>35% 할인</u></em></div>
+    </div>
     <div class="pro-ask">
       <span>유료 플랜 문의</span>
       <b id="proMailAddr">aesonge26@gmail.com</b>
@@ -4854,7 +4870,7 @@
   var PRO_MAIL = "aesonge26@gmail.com";
   function proMailHref(){
     var st = getSettings();
-    var body = "AYO체형분석 PRO 플랜 이용을 문의드립니다.\n\n- 기기 코드: " + deviceCode() + "\n- 센터명: " + (st.name || "") + "\n- 연락처: " + (st.contact || "") + "\n- 희망 기간: 1개월 / 3개월 / 6개월 / 12개월\n- 문의 내용: \n";
+    var body = "AYO체형분석 PRO 플랜 이용을 문의드립니다.\n\n- 기기 코드: " + deviceCode() + "\n- 센터명: " + (st.name || "") + "\n- 연락처: " + (st.contact || "") + "\n- 희망 기간: 1개월(8,900원) / 3개월(23,900원) / 6개월(42,900원) / 12개월(69,900원)\n- 문의 내용: \n";
     return "mailto:" + PRO_MAIL + "?subject=" + encodeURIComponent("[AYO체형분석] PRO 플랜 문의") + "&body=" + encodeURIComponent(body);
   }
   $("btnProMail").addEventListener("click", function(){ window.location.href = proMailHref(); });

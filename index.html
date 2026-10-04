@@ -779,6 +779,14 @@
   .rom-ref button{font-family:inherit; font-size:12.5px; font-weight:700; border:1px solid var(--line); background:var(--surface-2); color:var(--ink-soft); border-radius:100px; padding:6px 12px; cursor:pointer;}
   .rom-ref button[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#fff;}
   .rom-ref .flip{color:var(--ink);}
+  .rom-stage.live{display:block; text-align:center; background:#000;}
+  .rom-stage video{display:block; margin:0 auto; max-width:100%; max-height:62vh; width:auto; height:auto; background:#000;}
+  .rom-livecv{position:absolute; pointer-events:none;}
+  .rom-lvl, .rom-pts{position:absolute; left:50%; transform:translateX(-50%); max-width:92%; font-size:12.5px; font-weight:700; padding:6px 12px; border-radius:100px; color:#fff; background:rgba(13,21,40,.78); text-align:center; line-height:1.4; z-index:2;}
+  .rom-lvl{top:10px;} .rom-pts{bottom:10px; border-radius:12px;}
+  .rom-lvl.good{background:rgba(46,150,98,.9);} .rom-lvl.warn{background:rgba(196,132,30,.92);} .rom-lvl.bad{background:rgba(196,72,64,.92);}
+  .rom-pts.good{background:rgba(46,150,98,.9);} .rom-pts.warn{background:rgba(196,132,30,.92);} .rom-pts.bad{background:rgba(13,21,40,.85);}
+  .rom-cambtns .rom-snap{flex:1.6; font-size:16px;}
   .rom-q{margin:8px 0 0; font-size:12.5px; font-weight:700; border-radius:10px; padding:8px 12px;}
   .rom-q.good{background:rgba(76,195,138,.12); color:var(--good);} .rom-q.mid{background:rgba(240,180,76,.12); color:var(--warn);}
   .rom-q.low, .rom-q.bad{background:rgba(240,122,114,.12); color:var(--crit);}
@@ -1441,6 +1449,10 @@
     <div class="rom-ref"><span>기준선</span><button type="button" id="romRefV" aria-pressed="true">수직 (서서·앉아서)</button><button type="button" id="romRefH" aria-pressed="false">수평 (누워서·엎드려)</button><button type="button" id="romRefFlip" class="flip" hidden>↔ 방향</button></div>
     <div class="rom-stage" id="romStage">
       <canvas id="romCv"></canvas>
+      <video id="romVideo" playsinline muted autoplay hidden></video>
+      <canvas id="romLiveCv" class="rom-livecv" hidden></canvas>
+      <div class="rom-lvl" id="romLvl" hidden></div>
+      <div class="rom-pts" id="romPtsChip" hidden></div>
       <div class="rom-empty" id="romEmpty"><b>사진을 찍거나 불러오세요</b><span id="romEmptyTip"></span></div>
       <div class="rom-busy" id="romBusy" hidden>관절 위치 인식 중…</div>
     </div>
@@ -1451,12 +1463,17 @@
     </div>
     <p class="rom-q" id="romQ" hidden></p>
     <p class="rom-tip" id="romTip" hidden>주황 점 = 관절 중심, 분홍 점 = 말단(손목·발목). 점을 끌면 확대경이 나오고 각도가 바로 다시 계산돼요.</p>
-    <div class="rom-btns">
+    <div class="rom-btns rom-cambtns" id="romCamBtns" hidden>
+      <button type="button" class="btn line sm" id="btnRomCamCancel">취소</button>
+      <button type="button" class="btn primary rom-snap" id="btnRomSnap">● 촬영</button>
+      <button type="button" class="btn line sm" id="btnRomFlip">🔄 전환</button>
+    </div>
+    <div class="rom-btns" id="romBtns1">
       <button type="button" class="btn line sm" id="btnRomShot">📷 촬영</button>
       <button type="button" class="btn line sm" id="btnRomFile">🖼 앨범에서</button>
       <button type="button" class="btn line sm" id="btnRomAuto" disabled>↻ 다시 인식</button>
     </div>
-    <div class="rom-btns">
+    <div class="rom-btns" id="romBtns2">
       <button type="button" class="btn line" id="btnRomImg" disabled>결과 이미지 저장</button>
       <button type="button" class="btn primary" id="btnRomApply" disabled>이 결과 저장</button>
     </div>
@@ -1640,6 +1657,11 @@
   let liveP = null;
   window.__liveLandmarker = function(){
     return liveP || (liveP = createLandmarker(MODEL_LITE, "VIDEO", true, ["GPU", "CPU"]).catch(e => { console.error("[4PM] live model load failed:", e); return null; }));
+  };
+  let romVidP = null;
+  window.__romVideoLandmarker = function(cpuOnly){
+    if(cpuOnly) romVidP = null;
+    return romVidP || (romVidP = createLandmarker(MODEL_FULL, "VIDEO", false, cpuOnly ? ["CPU"] : ["GPU", "CPU"]).catch(e => { console.error("[4PM] rom live model failed:", e); romVidP = null; return null; }));
   };
   window.__resetLiveLandmarker = function(){   // GPU에서 실행 중 오류가 나면 CPU로 다시 만들기
     liveP = createLandmarker(MODEL_LITE, "VIDEO", true, ["CPU"]).catch(() => null);
@@ -4860,19 +4882,20 @@
     $("romRefFlip").hidden = romS.ref !== "horiz";
   }
   function openRomSheet(mk){
-    romS.mv = mk; romS.img = null; romS.pts = null; romS.trunk = null; romS.q = 0;
+    if(romCam.on) romCamStop();
+    romS.mv = mk; romS.img = null; romS.pts = null; romS.trunk = null; romS.q = 0; romS.roll = null; romS.liveL = null;
     var J = romJoint(), mv = romMove();
     romS.ref = mv.ref; romS.hdir = 1;
     $("romSheetTitle").textContent = J.n + " " + mv.n + " · " + (rom.side === "R" ? "오른쪽" : "왼쪽");
     romSub();
     $("romGuide").innerHTML = "📸 " + mv.guide;
-    $("romEmptyTip").textContent = "측정할 쪽 팔·다리가 카메라 쪽을 향하게, 관절과 손목·발목이 모두 보이도록 촬영하세요.";
+    $("romEmptyTip").textContent = "[📷 촬영]을 누르면 후면 카메라가 켜져요. 수평계를 초록으로 맞추고, 측정할 쪽 팔·다리가 카메라를 향하게 해서 관절 점이 초록일 때 촬영하세요.";
     romCv.hidden = true; $("romEmpty").hidden = false; $("romLive").hidden = true; $("romTip").hidden = true; $("romQ").hidden = true;
     ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = true; });
     $("romSheet").hidden = false;
   }
   $("btnRomClose").addEventListener("click", function(){ $("romSheet").hidden = true; });
-  $("btnRomShot").addEventListener("click", function(){ $("romShotIn").value = ""; $("romShotIn").click(); });
+  $("btnRomShot").addEventListener("click", function(){ romCamStart(); });
   $("btnRomFile").addEventListener("click", function(){ $("romFileIn").value = ""; $("romFileIn").click(); });
   $("romRefV").addEventListener("click", function(){ var mv = romMove(); romS.ref = mv.ref === "up" ? "up" : "down"; romSub(); romDraw(); });
   $("romRefH").addEventListener("click", function(){ romS.ref = "horiz"; romS.hdir = romHdir(); romSub(); romDraw(); });
@@ -4998,6 +5021,7 @@
     $("romBusy").hidden = false; $("romQ").hidden = true;
     ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = true; });
     romDetectAll().then(function(res){
+      res = romMerge(res);
       window.__romModelReady = true;
       $("romBusy").hidden = true;
       var ok = false, msg = "";
@@ -5022,13 +5046,13 @@
     var lv = !ok ? "bad" : romS.q >= 0.75 ? "good" : romS.q >= 0.5 ? "mid" : "low";
     q.className = "rom-q " + lv;
     q.textContent = !ok ? "자동 인식 실패 · 두 점을 직접 맞춰주세요" : lv === "good" ? "✓ 자동 인식 정확도 높음 (" + Math.round(romS.q * 100) + "%) · 점 위치만 확인하세요" : lv === "mid" ? "자동 인식 정확도 보통 (" + Math.round(romS.q * 100) + "%) · 점 위치를 확인해 주세요" : "관절이 가려져 정확도 낮음 (" + Math.round(romS.q * 100) + "%) · 점을 직접 맞춰주세요";
+    if(ok && romS.roll != null && Math.abs(romS.roll) >= 0.3) q.textContent += " · 폰 기울기 " + romS.roll.toFixed(1) + "° 자동 보정";
     if(msg) toast(msg);
   }
   $("btnRomAuto").addEventListener("click", romAuto);
   function romRefDir(){
-    if(romS.ref === "up") return { x:0, y:-1 };
-    if(romS.ref === "horiz") return { x: romS.hdir, y:0 };
-    return { x:0, y:1 };
+    var d = romS.ref === "up" ? { x:0, y:-1 } : romS.ref === "horiz" ? { x: romS.hdir, y:0 } : { x:0, y:1 };
+    return romRotRef(d, romS.roll);   // v62: 촬영 때 폰이 기운 만큼 기준선을 실제 수직·수평으로 보정
   }
   function romAngle(){
     var P = romS.pts; if(!P) return null;
@@ -5234,6 +5258,248 @@
   $("btnRomCmpClose").addEventListener("click", function(){ $("romCmp").hidden = true; });
   $("romCmp").addEventListener("click", function(e){ if(e.target === $("romCmp")) $("romCmp").hidden = true; });
 
+  /* ===================== v62 ROM 실시간 카메라 =====================
+     - 후면(외부) 카메라 기본 · 앱 안에서 바로 촬영
+     - 수평계: 폰 좌우 기울기·앞뒤 기울기 표시 + 촬영 시 기울기만큼 기준선 자동 보정
+     - 실시간 관절 인식: 어깨·팔꿈치·손목·고관절·무릎·발목을 화면에 바로 표시, 측정 2점이 잡힐 때 촬영
+     - 촬영 순간 직전 여러 프레임의 위치를 평균 + 사진 정밀 인식 결과와 합쳐 자동 포인트를 결정 */
+  var romCam = { stream:null, facing:"environment", on:false, raf:0, lm:null, lmP:null, buf:[], lastTs:0, roll:null, pitch:null, orient:false, cpu:false, seen:0 };
+  var romVideo = $("romVideo"), romLiveCv = $("romLiveCv"), romLiveG = romLiveCv.getContext("2d");
+  window.__romCam = romCam;
+  var ROM_PART = { shoulder:"어깨", elbow:"팔꿈치", wrist:"손목", hip:"고관절", knee:"무릎", ankle:"발목" };
+  function romOrient(e){
+    if(e.beta == null || e.gamma == null) return;
+    var d2r = Math.PI / 180, b = e.beta * d2r, g = e.gamma * d2r;
+    var ux = -Math.cos(b) * Math.sin(g), uy = Math.sin(b), uz = Math.cos(b) * Math.cos(g);
+    var roll = Math.atan2(ux, uy) / d2r - screenAngle();
+    while(roll > 180) roll -= 360; while(roll < -180) roll += 360;
+    var pitch = Math.asin(Math.max(-1, Math.min(1, uz))) / d2r, k = 0.25;
+    romCam.roll = romCam.roll == null ? roll : romCam.roll + k * (roll - romCam.roll);
+    romCam.pitch = romCam.pitch == null ? pitch : romCam.pitch + k * (pitch - romCam.pitch);
+  }
+  function romOrientStart(){
+    if(!window.DeviceOrientationEvent || romCam.orient) return;
+    var attach = function(){ if(romCam.orient) return; romCam.roll = romCam.pitch = null; window.addEventListener("deviceorientation", romOrient); romCam.orient = true; };
+    if(typeof DeviceOrientationEvent.requestPermission === "function"){
+      if(motionPerm === "granted") attach();
+      else if(motionPerm !== "denied"){
+        DeviceOrientationEvent.requestPermission().then(function(r){ motionPerm = r === "granted" ? "granted" : "denied"; if(r === "granted") attach(); }).catch(function(){});
+      }
+    } else attach();
+  }
+  function romOrientStop(){
+    if(romCam.orient){ window.removeEventListener("deviceorientation", romOrient); romCam.orient = false; }
+    romCam.roll = romCam.pitch = null;
+  }
+  function romUiLive(on){
+    romVideo.hidden = !on; romLiveCv.hidden = !on; $("romLvl").hidden = !on; $("romPtsChip").hidden = !on;
+    $("romCamBtns").hidden = !on; $("romBtns1").hidden = on; $("romBtns2").hidden = on; $("romStage").classList.toggle("live", on);
+    if(on){ romCv.hidden = true; $("romEmpty").hidden = true; $("romLive").hidden = true; $("romTip").hidden = true; $("romQ").hidden = true; }
+    else if(!romS.img){ $("romEmpty").hidden = false; }
+    else romCv.hidden = false;
+  }
+  function romStopTracks(){
+    if(romCam.stream){ try{ romCam.stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} romCam.stream = null; }
+    romVideo.srcObject = null;
+  }
+  function romCamStop(){
+    romCam.on = false; cancelAnimationFrame(romCam.raf);
+    romStopTracks(); romOrientStop(); romUiLive(false);
+  }
+  function romLm(){
+    if(romCam.lmP) return romCam.lmP;
+    romCam.lmP = (window.__romVideoLandmarker ? window.__romVideoLandmarker(romCam.cpu) : Promise.resolve(null)).then(function(l){ romCam.lm = l; return l; });
+    return romCam.lmP;
+  }
+  function romCamStart(){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ $("romShotIn").value = ""; $("romShotIn").click(); return; }
+    try{ if(state.stream && typeof stopCamera === "function"){ stopCamera(); if(state.phase === "live" && typeof goIdleFromLive === "function") goIdleFromLive(); } }catch(e){}
+    romOrientStart();
+    romStopTracks();
+    var want = romCam.facing, cons = [
+      { facingMode: { exact: want }, width: { ideal: 1920 }, height: { ideal: 1920 } },
+      { facingMode: { ideal: want }, width: { ideal: 1920 }, height: { ideal: 1920 } },
+      true ];
+    var go = function(i){
+      return navigator.mediaDevices.getUserMedia({ video: cons[i], audio: false }).catch(function(e){
+        if(i + 1 < cons.length && !(e && (e.name === "NotAllowedError" || e.name === "SecurityError"))) return go(i + 1);
+        throw e;
+      });
+    };
+    $("romBusy").textContent = "카메라 여는 중…"; $("romBusy").hidden = false;
+    go(0).then(function(st){
+      if($("romSheet").hidden){ st.getTracks().forEach(function(t){ t.stop(); }); $("romBusy").hidden = true; return; }
+      romCam.stream = st; romVideo.srcObject = st;
+      var pr = romVideo.play(); if(pr && pr.catch) pr.catch(function(){});
+      romCam.on = true; romCam.buf = []; romCam.seen = 0;
+      romUiLive(true); $("romBusy").hidden = true;
+      romLm(); cancelAnimationFrame(romCam.raf); romLoop();
+    }).catch(function(e){
+      $("romBusy").hidden = true;
+      var denied = e && (e.name === "NotAllowedError" || e.name === "SecurityError");
+      if(denied) toast("카메라 권한이 꺼져 있어요. 휴대폰 설정 → 앱 → 권한에서 카메라를 허용해 주세요.");
+      else { toast("앱 안에서 카메라를 열 수 없어 기본 카메라로 촬영해요."); $("romShotIn").value = ""; $("romShotIn").click(); }
+    });
+  }
+  function romVis(p){ var v = p.visibility === undefined ? 1 : p.visibility; if(p.presence !== undefined && p.presence > v) v = (v + p.presence) / 2; return v; }
+  function romLoop(){
+    if(!romCam.on) return;
+    romCam.raf = requestAnimationFrame(romLoop);
+    var now = performance.now();
+    if(romVideo.readyState >= 2 && romVideo.videoWidth && romCam.lm && now - romCam.lastTs > 70){
+      romCam.lastTs = now;
+      try{
+        var r = romCam.lm.detectForVideo(romVideo, now), L = r && r.landmarks && r.landmarks[0];
+        romCam.buf.push({ t: now, L: (L && L.length >= 29) ? L.map(function(p){ return { x: p.x, y: p.y, v: romVis(p) }; }) : null });
+        while(romCam.buf.length > 8) romCam.buf.shift();
+      }catch(err){
+        console.warn("[ROM live]", err);
+        if(!romCam.cpu){ romCam.cpu = true; romCam.lm = null; romCam.lmP = null; romLm(); }
+      }
+    }
+    romLiveDraw();
+  }
+  // 최근 프레임(최대 5장·1.5초 이내)을 신뢰도 가중 평균 → 떨림 제거 (정규화 좌표 0~1)
+  function romSmooth(){
+    var now = performance.now(), fr = romCam.buf.filter(function(f){ return f.L && now - f.t < 1500; }).slice(-5);
+    if(!fr.length) return null;
+    var out = [];
+    for(var i = 0; i < 33; i++){
+      var sx = 0, sy = 0, sw = 0, sv = 0;
+      fr.forEach(function(f, k){ var p = f.L[i], w = Math.max(0.02, p.v) * (k + 1); sx += p.x * w; sy += p.y * w; sw += w; sv += p.v; });
+      out.push({ x: sx / sw, y: sy / sw, v: sv / fr.length });
+    }
+    return out;
+  }
+  function romRotRef(d, roll){
+    if(roll == null) return d;
+    var r = roll * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+    return { x: d.x * c - d.y * s, y: d.x * s + d.y * c };
+  }
+  function romAngleOf(V, D, d){
+    var vx = D.x - V.x, vy = D.y - V.y, L = Math.hypot(vx, vy);
+    if(!L) return 0;
+    return Math.round(Math.acos(Math.max(-1, Math.min(1, (vx * d.x + vy * d.y) / L))) * 180 / Math.PI);
+  }
+  function romLvlState(){
+    if(romCam.roll == null) return { cls: "none", txt: romCam.orient ? "수평 확인 중…" : "수평계 사용 불가 · 폰을 똑바로 세워 촬영하세요" };
+    var ar = Math.abs(romCam.roll), ap = Math.abs(romCam.pitch);
+    var cls = (ar <= 1 && ap <= 5) ? "good" : (ar <= 3 && ap <= 12) ? "warn" : "bad";
+    if(cls === "good") return { cls: cls, txt: "수평 OK" };
+    var parts = [];
+    if(ar > 1) parts.push("좌우 " + ar.toFixed(1) + "° 기울어짐");
+    if(ap > 5) parts.push("카메라 " + (romCam.pitch > 0 ? "아래로" : "위로") + " " + Math.round(ap) + "°");
+    return { cls: cls, txt: parts.join(" · ") };
+  }
+  function romLiveDraw(){
+    var vw = romVideo.clientWidth, vh = romVideo.clientHeight;
+    if(!vw || !vh) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    if(romLiveCv.width !== Math.round(vw * dpr) || romLiveCv.height !== Math.round(vh * dpr)){
+      romLiveCv.width = Math.round(vw * dpr); romLiveCv.height = Math.round(vh * dpr);
+      romLiveCv.style.width = vw + "px"; romLiveCv.style.height = vh + "px";
+    }
+    romLiveCv.style.left = romVideo.offsetLeft + "px"; romLiveCv.style.top = romVideo.offsetTop + "px";
+    var g = romLiveG; g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, vw, vh);
+    // ---- 수평계 ----
+    var ls = romLvlState(), col = ls.cls === "good" ? "#57C88C" : ls.cls === "warn" ? "#E3A748" : ls.cls === "bad" ? "#F07A72" : "rgba(255,255,255,.6)";
+    var cx = vw / 2, cy = vh / 2, half = Math.min(vw, vh) * 0.42;
+    g.lineCap = "round";
+    g.strokeStyle = "rgba(255,255,255,.35)"; g.lineWidth = 1.5;
+    g.beginPath(); g.moveTo(cx - half, cy); g.lineTo(cx - half * 0.55, cy); g.moveTo(cx + half * 0.55, cy); g.lineTo(cx + half, cy); g.stroke();
+    var hz = romRotRef({ x: 1, y: 0 }, romCam.roll), vt = romRotRef({ x: 0, y: 1 }, romCam.roll);
+    g.strokeStyle = col; g.lineWidth = 3;
+    g.beginPath(); g.moveTo(cx - hz.x * half, cy - hz.y * half); g.lineTo(cx + hz.x * half, cy + hz.y * half); g.stroke();
+    g.setLineDash([8, 8]); g.lineWidth = 1.5; g.globalAlpha = 0.7;
+    g.beginPath(); g.moveTo(cx - vt.x * vh * 0.46, cy - vt.y * vh * 0.46); g.lineTo(cx + vt.x * vh * 0.46, cy + vt.y * vh * 0.46); g.stroke();
+    g.setLineDash([]); g.globalAlpha = 1;
+    g.fillStyle = col; g.beginPath(); g.arc(cx, cy, 4, 0, Math.PI * 2); g.fill();
+    var lvEl = $("romLvl"); lvEl.className = "rom-lvl " + ls.cls; lvEl.textContent = (ls.cls === "good" ? "✓ " : "") + ls.txt;
+    // ---- 관절 ----
+    var S = romSmooth(), chip = $("romPtsChip"), J = romJoint(), si = rom.side === "R" ? 1 : 0;
+    if(!romCam.lm){ chip.className = "rom-pts wait"; chip.textContent = window.__romModelReady ? "관절 인식 준비 중…" : "관절 인식 준비 중… (처음 한 번은 조금 걸려요)"; return; }
+    if(!S){ chip.className = "rom-pts bad"; chip.textContent = "사람을 찾는 중… 머리부터 발끝까지 화면에 들어오게 해 주세요"; return; }
+    var P = function(n){ var p = S[ROM_LM[n][si]]; return { x: p.x * vw, y: p.y * vh, v: p.v, in: p.x > -0.02 && p.x < 1.02 && p.y > -0.02 && p.y < 1.02 }; };
+    var vc = function(v){ return v >= 0.65 ? "#57C88C" : v >= 0.35 ? "#E3A748" : "#F07A72"; };
+    var segs = [["shoulder", "elbow"], ["elbow", "wrist"], ["shoulder", "hip"], ["hip", "knee"], ["knee", "ankle"]];
+    g.lineWidth = 3; g.strokeStyle = "rgba(255,255,255,.55)";
+    segs.forEach(function(s){ var a = P(s[0]), b = P(s[1]); if(a.in && b.in && a.v > 0.2 && b.v > 0.2){ g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); } });
+    var V = P(J.pts[0]), D = P(J.pts[1]);
+    if(V.in && D.in){
+      g.strokeStyle = "#2F6BFF"; g.lineWidth = 5; g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(D.x, D.y); g.stroke();
+    }
+    g.font = "700 12px 'IBM Plex Sans KR', sans-serif"; g.textBaseline = "middle";
+    ["shoulder", "elbow", "wrist", "hip", "knee", "ankle"].forEach(function(n){
+      var p = P(n); if(!p.in || p.v < 0.12) return;
+      var main = J.pts.indexOf(n), r = main >= 0 ? 9 : 6;
+      g.fillStyle = main >= 0 ? ROM_COL[main] : vc(p.v); g.strokeStyle = main >= 0 ? vc(p.v) : "#fff"; g.lineWidth = main >= 0 ? 3.5 : 2;
+      g.beginPath(); g.arc(p.x, p.y, r, 0, Math.PI * 2); g.fill(); g.stroke();
+      var t = ROM_PART[n], tw = g.measureText(t).width + 10, tx = main >= 0 ? p.x - r - 5 - tw : p.x + r + 5;   // 측정 점 이름은 왼쪽, 나머지는 오른쪽 (겹침 방지)
+      if(tx + tw > vw) tx = p.x - r - 5 - tw; if(tx < 0) tx = p.x + r + 5;
+      g.fillStyle = "rgba(13,21,40,.72)"; rr(g, tx, p.y - 10, tw, 20, 6); g.fill();
+      g.fillStyle = main >= 0 ? ROM_COL[main] : "#fff"; g.fillText(t, tx + 5, p.y + 0.5);
+    });
+    g.textBaseline = "alphabetic";
+    var okV = V.in && V.v >= 0.5, okD = D.in && D.v >= 0.5, nm0 = ROM_PART[J.pts[0]], nm1 = ROM_PART[J.pts[1]];
+    if(okV && okD){
+      var d0 = romS.ref === "up" ? { x: 0, y: -1 } : romS.ref === "horiz" ? { x: romLiveHdir(S, V, vw), y: 0 } : { x: 0, y: 1 };
+      var ang = romAngleOf(V, D, romRotRef(d0, romCam.roll));
+      romCam.seen++;
+      chip.className = "rom-pts good"; chip.textContent = "✓ " + nm0 + " · " + nm1 + " 인식됨 · 현재 약 " + ang + "° · 촬영하세요";
+    } else {
+      romCam.seen = 0;
+      var miss = [!okV ? nm0 : null, !okD ? nm1 : null].filter(Boolean).join("·");
+      chip.className = "rom-pts warn"; chip.textContent = miss + "이(가) 잘 안 보여요 · " + (rom.side === "R" ? "오른쪽" : "왼쪽") + "이 카메라를 향하게, 몸 전체가 들어오게";
+    }
+  }
+  function romLiveHdir(S, V, vw){
+    var tr = [11, 12, 23, 24].map(function(i){ return S[i]; }).filter(function(p){ return p.v > 0.3; });
+    if(!tr.length) return 1;
+    var tx = tr.reduce(function(a, p){ return a + p.x; }, 0) / tr.length * vw;
+    return V.x >= tx ? 1 : -1;
+  }
+  function romSnap(){
+    if(!romCam.on || !romVideo.videoWidth){ toast("카메라 화면이 아직 준비되지 않았어요."); return; }
+    var vw = romVideo.videoWidth, vh = romVideo.videoHeight, k = Math.min(1, 1600 / Math.max(vw, vh));
+    var c = document.createElement("canvas"); c.width = Math.round(vw * k); c.height = Math.round(vh * k);
+    c.getContext("2d").drawImage(romVideo, 0, 0, c.width, c.height);
+    var live = romSmooth(), roll = romCam.roll;
+    romCamStop();
+    var im = new Image();
+    im.onload = function(){
+      romS.img = im; romS.w = im.naturalWidth; romS.h = im.naturalHeight;
+      romS.roll = (roll != null && Math.abs(roll) <= 20) ? Math.round(roll * 10) / 10 : null;
+      romS.liveL = live ? live.map(function(p){ return { x: p.x * romS.w, y: p.y * romS.h, v: p.v }; }) : null;
+      romAuto();
+    };
+    im.src = c.toDataURL("image/jpeg", 0.92);
+  }
+  // 사진 정밀 인식 결과 + 촬영 직전 실시간 인식 결과를 점마다 비교해 더 믿을 만한 쪽으로 결정
+  function romMerge(res){
+    var LL = romS.liveL;
+    if(!LL) return res;
+    var side = rom.side, idx = romNeedIdx(side).concat([11, 12, 23, 24]);
+    if(!res || !res.L){ var q0 = romQual(LL, side); return q0 > 0 ? { L: LL, q: q0 } : res; }
+    var L = res.L.slice(), diag = Math.max(romS.w, romS.h);
+    idx.forEach(function(i){
+      var a = L[i], b = LL[i];
+      if(!b || !romIn(b)) return;
+      if(!a || !romIn(a) || b.v > a.v + 0.15){ L[i] = b; return; }
+      if(a.v >= 0.4 && b.v >= 0.4 && Math.hypot(a.x - b.x, a.y - b.y) < diag * 0.05){
+        var wa = a.v, wb = b.v * 0.8;
+        L[i] = { x: (a.x * wa + b.x * wb) / (wa + wb), y: (a.y * wa + b.y * wb) / (wa + wb), v: Math.max(a.v, b.v) };
+      }
+    });
+    return { L: L, q: Math.max(res.q, romQual(L, side)) };
+  }
+  $("btnRomSnap").addEventListener("click", romSnap);
+  $("btnRomCamCancel").addEventListener("click", romCamStop);
+  $("btnRomFlip").addEventListener("click", function(){ romCam.facing = romCam.facing === "environment" ? "user" : "environment"; romCamStart(); });
+  $("btnRomClose").addEventListener("click", romCamStop);
+  ["romShotIn", "romFileIn"].forEach(function(id){ $(id).addEventListener("change", function(){ romS.liveL = null; romS.roll = null; }); });
+  document.addEventListener("visibilitychange", function(){ if(document.hidden && romCam.on) romCamStop(); });
+  window.addEventListener("pagehide", function(){ if(romCam.on) romCamStop(); });
+
   /* ===================== v61 휴대폰 뒤로가기(취소) 버튼 =====================
      안드로이드 크롬/설치 앱 규칙: '손가락 터치(클릭) 없이' 만든 뒤로가기 기록이 있으면 그 직전 화면 기록을
      건너뛰어 앱이 바로 닫힘. (터치 시작 순간 touchstart/pointerdown 도 '터치'로 인정 안 됨)
@@ -5261,7 +5527,7 @@
     return list[0];
   }
   function backDepth(){   // 지금 뒤로가기로 되돌아갈 수 있는 단계 수
-    var d = openOverlays().length;
+    var d = openOverlays().length + ((typeof romCam !== "undefined" && romCam.on) ? 1 : 0);
     if(state.view === "members" && !$("mbDetail").hidden){ d++; if(!$("mbCompare").hidden) d++; }
     if(state.mode === "side") d++;   // 정면 화면으로 돌아왔을 때 측면→정면 1단계
     var ns = navStack.filter(function(x){ return x !== state.view; }).length;
@@ -5289,6 +5555,7 @@
     if(closeBtn && $(closeBtn)) $(closeBtn).click(); else el.hidden = true;
   }
   function handleBack(){
+    if(typeof romCam !== "undefined" && romCam.on){ romCamStop(); return true; }   // ROM 카메라 켜져 있으면 카메라만 끄기
     var ov = topOverlay();
     if(ov){ closeOverlay(ov); return true; }
     if(state.view === "members" && !$("mbDetail").hidden){

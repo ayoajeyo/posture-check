@@ -304,7 +304,8 @@
     padding:11px 20px; background:rgba(255,255,255,.1); color:#fff; cursor:pointer;
   }
 
-  .confirm-overlay{position:fixed; inset:0; z-index:90; background:rgba(6,10,20,.55); display:flex; align-items:center; justify-content:center; padding:24px;}
+  .confirm-overlay{position:fixed; inset:0; z-index:90; background:rgba(6,10,20,.55); display:flex; align-items:flex-start; justify-content:center; padding:24px 16px; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;}
+  .confirm-overlay > .confirm-box{margin:auto; flex-shrink:0;}
   .confirm-box{background:var(--surface); color:var(--ink); border-radius:18px; padding:22px 20px 16px; width:100%; max-width:340px; box-shadow:0 20px 50px rgba(0,0,0,.35); border:1px solid var(--line);}
   .confirm-msg{margin:0 0 18px; font-size:15px; line-height:1.6; font-weight:600; text-align:center; word-break:keep-all;}
   .confirm-btns{display:flex; gap:8px;}
@@ -852,6 +853,11 @@
   .rom-tip{font-size:12px; color:var(--ink-soft); margin:8px 2px 0;}
   .rom-btns{display:flex; gap:8px; margin-top:10px;} .rom-btns .btn{flex:1;}
 
+  .pro-jump{display:block; width:100%; margin:6px 0 10px; font-family:inherit; font-size:13px; font-weight:700; color:#fff; background:rgba(47,107,255,.22); border:1px solid rgba(47,107,255,.6); border-radius:10px; padding:9px 10px; cursor:pointer; text-align:center;}
+  .pro-code-h{margin:4px 0 0; font-size:15px;}
+  .pro-code{background:var(--surface-2); border:1px solid rgba(122,140,255,.35); border-radius:14px; padding:12px;}
+  .pro-code p{margin:0; font-size:12.5px; line-height:1.55; color:var(--ink-soft);}
+  @media (max-width:420px){ .pro-box .price-grid{gap:6px;} .pro-box #proList{margin:8px 0; font-size:13px;} .pro-box h3{font-size:18px;} }
   .pro-link{display:block; margin:10px auto 0; background:none; border:0; color:var(--ink-soft); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:inherit;}
 </style>
 
@@ -1271,7 +1277,7 @@
     <button type="button" class="btn line sm rom-lr-btn" id="btnRomLR">↔ 좌우 비교 분석</button>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v66</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v67</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div id="mbListWrap">
@@ -1426,6 +1432,7 @@
   <div class="confirm-box pro-box">
     <span class="pro-badge">PRO</span>
     <h3 id="proTitle">유료 플랜에서 이용할 수 있어요</h3>
+    <button type="button" class="pro-jump" id="btnProJump">🔑 이미 결제했어요 · 이용 코드 입력하기 ↓</button>
     <p id="proDesc">설정 메뉴는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.</p>
     <ul id="proList">
       <li>센터명·로고를 리포트·운동 카드·비교 이미지에 표시</li>
@@ -1439,20 +1446,21 @@
       <div><span>6개월</span><b>42,900원</b><em>월 7,150원<br><u>20% 할인</u></em></div>
       <div class="best"><i>추천</i><span>12개월</span><b>69,900원</b><em>월 5,825원<br><u>35% 할인</u></em></div>
     </div>
-    <div class="pro-ask">
-      <span>유료 플랜 문의</span>
-      <b id="proMailAddr">aesonge26@gmail.com</b>
-      <div class="pro-ask-btns"><button type="button" class="btn primary sm" id="btnProMail">메일로 문의하기</button><button type="button" class="btn line sm" id="btnProCopy">주소 복사</button></div>
-    </div>
-    <div class="pro-code" id="proCodeRow">
+    <div class="pro-code on" id="proCodeRow">
+      <h4 class="pro-code-h">🔑 이용 코드 입력</h4>
       <div class="dev-box"><div><span>이 기기 코드</span><b class="dev-id">AYO-····-····</b></div><button type="button" class="btn line sm dev-copy">복사</button></div>
       <p>결제 후 위 <b>기기 코드</b>를 보내주시면 이 기기 전용 이용 코드를 보내드려요.</p>
       <textarea id="proCode" rows="3" placeholder="받은 이용 코드를 붙여넣으세요 (AYO1-로 시작)" autocomplete="off" spellcheck="false"></textarea>
       <p class="lic-msg" id="proCodeMsg" hidden></p>
       <button type="button" class="btn primary sm" id="btnProCode">이용 코드 적용</button>
     </div>
+    <div class="pro-ask">
+      <span>유료 플랜 문의</span>
+      <b id="proMailAddr">aesonge26@gmail.com</b>
+      <div class="pro-ask-btns"><button type="button" class="btn primary sm" id="btnProMail">메일로 문의하기</button><button type="button" class="btn line sm" id="btnProCopy">주소 복사</button></div>
+    </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnProClose">닫기</button><button type="button" class="yes ok" id="btnProPreview">미리 보기</button></div>
-    <button type="button" class="pro-link" id="btnProCodeToggle">이용 코드가 있어요</button>
+    <button type="button" class="pro-link" id="btnProCodeToggle" hidden>이용 코드가 있어요</button>
   </div>
 </div>
 <div class="confirm-overlay" id="moreSheet" hidden role="dialog" aria-modal="true">
@@ -6209,7 +6217,8 @@
     $("proDesc").innerHTML = cp.d; $("proList").innerHTML = cp.l.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("");
     proKind = kind === "report" || kind === "rom" ? kind : "settings";
     $("btnProPreview").hidden = proKind !== "settings";
-    $("proCodeRow").classList.remove("on"); $("proCode").value = ""; $("proCodeMsg").hidden = true;
+    $("proCodeRow").classList.add("on"); $("proCode").value = ""; $("proCodeMsg").hidden = true;
+    var ov = $("proGate"); setTimeout(function(){ ov.scrollTop = 0; }, 0);
     $("proGate").hidden = false;
     if(opts && opts.code){ $("proCodeRow").classList.add("on"); setTimeout(function(){ $("proCode").focus(); }, 60); }
   }
@@ -6220,6 +6229,7 @@
     if((state.view === "settings" || state.view === "report") && !isPro()) showView(proPrevView === "settings" || proPrevView === "report" ? "dash" : proPrevView);
   });
   $("proGate").addEventListener("click", function(e){ if(e.target === $("proGate")) $("proGate").hidden = true; });
+  $("btnProJump").addEventListener("click", function(){ $("proCodeRow").scrollIntoView({ block: "center", behavior: "smooth" }); setTimeout(function(){ $("proCode").focus(); }, 350); });
   $("btnProCodeToggle").addEventListener("click", function(){ $("proCodeRow").classList.add("on"); $("proCode").focus(); });
   function tryCode(){
     var raw = $("proCode").value, msg = $("proCodeMsg");

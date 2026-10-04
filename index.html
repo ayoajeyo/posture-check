@@ -323,6 +323,64 @@
   .inapp-banner button.sub{background:transparent; color:#3D2E00; border:1px solid #D9B85C;}
   [hidden]{display:none!important;}
 
+  /* ===================== v43 회원관리 ===================== */
+  .btn.sm{padding:8px 12px!important; font-size:13px!important;}
+  .member-bar{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:10px 12px;}
+  .member-bar.on{border-color:var(--blue); box-shadow:inset 0 0 0 1px var(--blue);}
+  .mb-avatar{width:38px; height:38px; border-radius:50%; flex:0 0 auto; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; background:var(--surface-2); color:var(--ink-soft);}
+  .member-bar.on .mb-avatar, .mb-avatar.lg{background:var(--blue); color:#fff;}
+  .mb-avatar.lg{width:52px; height:52px; font-size:20px;}
+  .mb-txt{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;}
+  .mb-txt b{font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .mb-txt em{font-style:normal; font-size:12px; color:var(--ink-soft); line-height:1.45;}
+  .mb-toolbar{display:flex; gap:8px;} .mb-toolbar .btn{flex:0 0 auto;}
+  .mb-toolbar input, #mpSearch{flex:1; min-width:0; font-family:inherit; font-size:14px; border:1px solid var(--line); border-radius:11px; padding:11px 12px; background:var(--surface); color:var(--ink);}
+  .mb-list, .mp-list{display:flex; flex-direction:column; gap:8px;}
+  .mb-item{display:flex; align-items:center; gap:12px; width:100%; text-align:left; font-family:inherit; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px; cursor:pointer;}
+  .mb-item:hover{border-color:var(--blue);}
+  .mb-item .sc{font-family:var(--font-num); font-size:18px; font-weight:700; text-align:right;}
+  .mb-item .sc small{display:block; font-family:var(--font-body); font-size:11px; font-weight:600; color:var(--ink-soft);}
+  .mb-empty, .mb-note{margin:4px 2px 0; font-size:12.5px; color:var(--ink-soft); line-height:1.6;}
+  .mb-head{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .mb-head-actions{display:flex; gap:8px; margin-left:auto;}
+  @media (max-width:599px){ .mb-head-actions{width:100%; margin-left:0;} .mb-head-actions .btn.primary{flex:1;} }
+  .mb-del{align-self:flex-start; color:var(--crit)!important; border-color:var(--crit-soft)!important;}
+  .rec{display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--line);}
+  .rec:first-child{border-top:none;}
+  .rec input[type=checkbox]{width:20px; height:20px; accent-color:var(--blue); flex:0 0 auto;}
+  .rec .th{display:flex; gap:4px;}
+  .rec .th img{width:36px; height:48px; object-fit:cover; border-radius:6px; background:#E6E9F0;}
+  .rec .info{flex:1; min-width:0;}
+  .rec .info b{font-size:14px; display:block;}
+  .rec .info em{font-style:normal; font-size:12px; color:var(--ink-soft);}
+  .rec .score{font-family:var(--font-num); font-size:20px; font-weight:700;}
+  .rec .x{border:none; background:transparent; color:var(--ink-soft); font-size:18px; cursor:pointer; padding:4px 6px;}
+  .cmp-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+  .cmp-head .d{font-size:13px; color:var(--ink-soft);}
+  .cmp-head .d b{color:var(--ink); font-family:var(--font-num); font-size:22px; margin:0 4px;}
+  .cmp-delta{font-family:var(--font-num); font-weight:800; font-size:18px;}
+  .cmp-pics{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:6px 0 14px;}
+  .cmp-pics figure{margin:0; background:#F3F5F9; border-radius:12px; padding:8px; text-align:center;}
+  .cmp-pics img{width:100%; border-radius:8px; display:block;}
+  .cmp-pics figcaption{font-size:11.5px; color:#5B6478; font-weight:700; margin-top:6px;}
+  .cmp-view{font-size:14px; font-weight:800; margin:10px 0 4px;}
+  .cmp-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .cmp-table th{font-size:11.5px; color:var(--ink-soft); font-weight:700; text-align:right; padding:6px 4px; border-bottom:1px solid var(--line);}
+  .cmp-table th:first-child, .cmp-table td:first-child{text-align:left;}
+  .cmp-table td{padding:8px 4px; border-bottom:1px solid var(--line); text-align:right; font-family:var(--font-num);}
+  .cmp-table td:first-child{font-family:var(--font-body); font-weight:600;}
+  .up-good{color:var(--good); font-weight:700;} .up-bad{color:var(--crit); font-weight:700;} .up-same{color:var(--ink-soft);}
+  .rep-saved{margin:0; font-size:12.5px; color:var(--good); font-weight:600;}
+  .mb-form, .mb-pick{max-width:420px; text-align:left;}
+  .mb-form h3, .mb-pick h3{margin:0 0 14px; font-size:17px;}
+  .mb-form label{display:flex; flex-direction:column; gap:5px; font-size:12px; font-weight:700; color:var(--ink-soft); margin-bottom:10px; flex:1; min-width:0;}
+  .mb-form label i{color:var(--crit); font-style:normal;}
+  .mb-form input, .mb-form select, .mb-form textarea{font-family:inherit; font-size:14px; font-weight:500; border:1px solid var(--line); border-radius:9px; padding:10px; background:var(--bg); color:var(--ink); width:100%;}
+  .mf-row{display:flex; gap:10px;}
+  .mb-pick .mp-list{max-height:46vh; overflow-y:auto; margin:10px 0 14px;}
+  .mb-pick .mb-item{padding:10px 12px;}
+  .confirm-btns button.ok{background:var(--blue); border-color:var(--blue); color:#fff;}
+
   /* ===================== v37 앱 셸 · 다크 네이비 테마 ===================== */
   :root:root:not([data-theme="zz"]){
     --bg:#0D1528; --surface:#141E35; --surface-2:#1C2843; --ink:#E9EEF8; --ink-soft:#97A3BC;
@@ -447,6 +505,14 @@
     .an-grid{display:grid; grid-template-columns:minmax(340px,500px) minmax(320px,1fr); gap:20px; align-items:start;}
     #view-analyze nav.tabs{max-width:500px;}
   }
+
+  /* ===================== v44 회원관리 2차 ===================== */
+  #mbTrend svg{display:block; width:100%; height:auto;}
+  .trend-legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; font-size:12px; color:var(--ink-soft);}
+  .trend-legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px;}
+  .cmp-actions{display:flex; gap:8px; margin-top:14px;}
+  .cmp-actions .btn{flex:1;}
+  .mb-backup .sub b{color:var(--ink);}
 </style>
 
 </head>
@@ -460,8 +526,8 @@
     <nav class="side-menu">
       <button type="button" class="nav-item" data-view="analyze" aria-current="page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>체형분석</span></button>
       <button type="button" class="nav-item" data-view="report"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>종합 리포트</span></button>
+      <button type="button" class="nav-item" data-view="members"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원관리</span></button>
       <p class="nav-sep">곧 추가될 메뉴</p>
-      <button type="button" class="nav-item soon" data-soon="회원관리"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원관리</span><em>준비 중</em></button>
       <button type="button" class="nav-item soon" data-soon="운동관리"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/></svg><span>운동관리</span><em>준비 중</em></button>
       <button type="button" class="nav-item soon" data-soon="상담일지"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10.5H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>상담일지</span><em>준비 중</em></button>
       <button type="button" class="nav-item soon" data-soon="설정"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>설정</span><em>준비 중</em></button>
@@ -493,6 +559,11 @@
     <button role="tab" id="tab-front" aria-selected="true">정면 · 좌우 높낮이</button>
     <button role="tab" id="tab-side" aria-selected="false">측면 · 플럼라인</button>
   </nav>
+  <div class="member-bar" id="memberBar">
+    <div class="mb-avatar" id="mbCurAvatar">?</div>
+    <div class="mb-txt"><b id="mbCurName">회원 선택 안 함</b><em id="mbCurMeta">회원을 선택하면 측정 기록이 자동으로 저장돼요</em></div>
+    <button type="button" class="btn line sm" id="btnMbPick">회원 선택</button>
+  </div>
 
   <div class="an-grid">
   <div class="an-col">
@@ -712,6 +783,7 @@
       </div>
     </div>
 
+    <p class="rep-saved" id="repSaved" hidden></p>
     <div class="rep-actions">
       <button type="button" class="btn primary" id="btnSaveReport">리포트 이미지 저장</button>
       <button type="button" class="btn line" id="btnNewPatient">새 측정 시작</button>
@@ -728,18 +800,95 @@
       </div>
     </details>
   </section>
+
+  <section class="view" id="view-members" hidden>
+    <div id="mbListWrap">
+      <div class="mb-toolbar">
+        <input id="mbSearch" type="search" placeholder="이름·회원번호 검색" autocomplete="off">
+        <button type="button" class="btn primary" id="btnMbAdd">+ 회원 등록</button>
+      </div>
+      <div class="mb-list" id="mbItems"></div>
+      <p class="mb-empty" id="mbEmpty" hidden>등록된 회원이 없어요. <b>+ 회원 등록</b>으로 시작하세요.</p>
+      <section class="card mb-backup">
+        <h2>기록 백업</h2>
+        <p class="sub" id="bkInfo">회원 정보와 측정 기록은 <b>이 기기 안에만</b> 저장돼요. 휴대폰을 바꾸거나 앱을 지우기 전에 백업 파일을 저장해 두세요.</p>
+        <div class="stage-controls" style="margin-top:0">
+          <button type="button" class="btn primary" id="btnBkExport">백업 파일 저장</button>
+          <button type="button" class="btn line" id="btnBkImport">백업 불러오기</button>
+          <input type="file" id="bkFile" accept=".json,application/json">
+        </div>
+      </section>
+    </div>
+    <div id="mbDetail" hidden>
+      <button type="button" class="btn line sm" id="btnMbBack">← 회원 목록</button>
+      <section class="card mb-head">
+        <div class="mb-avatar lg" id="mbDAvatar"></div>
+        <div class="mb-txt"><b id="mbDName"></b><em id="mbDMeta"></em><em id="mbDMemo"></em></div>
+        <div class="mb-head-actions">
+          <button type="button" class="btn primary" id="btnMbMeasure">측정하기</button>
+          <button type="button" class="btn line sm" id="btnMbEdit">정보 수정</button>
+        </div>
+      </section>
+      <section class="card" id="mbTrendCard">
+        <h2>점수 변화</h2>
+        <p class="sub" id="mbTrendSub">측정할 때마다 종합 점수가 쌓여요.</p>
+        <div id="mbTrend"></div>
+      </section>
+      <section class="card">
+        <h2>측정 기록</h2>
+        <p class="sub">기록 두 개를 선택하면 전후 비교를 볼 수 있어요.</p>
+        <div id="mbRecords"></div>
+        <button type="button" class="btn primary wide" id="btnMbCompare" disabled style="margin-top:12px">선택한 2개 비교하기</button>
+      </section>
+      <section class="card" id="mbCompare" hidden></section>
+      <button type="button" class="btn line sm mb-del" id="btnMbDelete">회원 삭제</button>
+    </div>
+  </section>
   </main>
 
   <nav class="bottom-nav" aria-label="하단 메뉴">
     <button type="button" class="nav-item" data-view="analyze" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>체형분석</span></button>
     <button type="button" class="nav-item" data-view="report"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>리포트</span></button>
-    <button type="button" class="nav-item soon" data-soon="회원관리"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원</span></button>
+    <button type="button" class="nav-item" data-view="members"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원</span></button>
     <button type="button" class="nav-item" id="btnMore"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18.5" cy="12" r="1.6"/></svg><span>더보기</span></button>
   </nav>
 </div>
 
 
 <div class="toast" id="toast"></div>
+
+<div class="confirm-overlay" id="mbForm" hidden role="dialog" aria-modal="true" aria-labelledby="mbFormTitle">
+  <div class="confirm-box mb-form">
+    <h3 id="mbFormTitle">회원 등록</h3>
+    <label><span>이름 <i>*</i></span><input id="mfName" type="text" autocomplete="off" placeholder="예: 홍길동"></label>
+    <div class="mf-row">
+      <label>회원번호<input id="mfNo" type="text" autocomplete="off" placeholder="선택"></label>
+      <label>성별<select id="mfSex"><option value="">선택 안 함</option><option value="여">여</option><option value="남">남</option></select></label>
+    </div>
+    <div class="mf-row">
+      <label>키(cm)<input id="mfHeight" type="number" inputmode="decimal" min="80" max="230" step="0.1" placeholder="cm 환산에 사용"></label>
+      <label>연락처<input id="mfPhone" type="tel" autocomplete="off" placeholder="선택"></label>
+    </div>
+    <label>메모<textarea id="mfMemo" rows="2" placeholder="예: 목·어깨 긴장, 주 2회 수업"></textarea></label>
+    <div class="confirm-btns">
+      <button type="button" class="no" id="btnMfCancel">취소</button>
+      <button type="button" class="yes ok" id="btnMfSave">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="mbPicker" hidden role="dialog" aria-modal="true" aria-labelledby="mbPickTitle">
+  <div class="confirm-box mb-pick">
+    <h3 id="mbPickTitle">회원 선택</h3>
+    <input id="mpSearch" type="search" placeholder="이름·회원번호 검색" autocomplete="off">
+    <div class="mp-list" id="mpItems"></div>
+    <div class="confirm-btns">
+      <button type="button" class="no" id="btnMpNone">선택 안 함</button>
+      <button type="button" class="yes ok" id="btnMpNew">+ 새 회원 등록</button>
+    </div>
+  </div>
+</div>
+
 
 <div class="confirm-overlay" id="retakeConfirm" hidden role="dialog" aria-modal="true" aria-labelledby="retakeMsg">
   <div class="confirm-box">
@@ -2898,6 +3047,26 @@
     res.groups = [ grp("좌우 비대칭", f), grp("전후 정렬", sd), grp("상체 정렬", up), grp("하체 정렬", lo) ];
     return res;
   }
+
+  // 리포트용: 사람 주변만 3:4 비율로 잘라 크게 보여주기 (사진 좌표 기준)
+  function reportCrop(m){
+    return withMode(m, function(){
+      var s = cur(), b = personBox(s);
+      var x0 = b.x0, x1 = b.x1, y0 = b.y0, y1 = b.y1;
+      Object.keys(s.points).forEach(function(k){ var p = s.points[k]; x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); });
+      var bh = Math.max(1, y1 - y0);
+      var top = y0 - bh * 0.08, bot = y1 + bh * 0.06;
+      var h = bot - top, w = h * 0.75;
+      if(w < (x1 - x0) * 1.4){ w = (x1 - x0) * 1.4; h = w / 0.75; }
+      if(w > s.w){ w = s.w; h = Math.min(s.h, w / 0.75); }
+      if(h > s.h){ h = s.h; w = Math.min(s.w, h * 0.75); }
+      var cx = (cfg().type === "chain") ? s.points[cfg().chain[cfg().anchorIndex].key].x : frontCenterX(s);
+      if(!isFinite(cx)) cx = (x0 + x1) / 2;
+      var cy = (top + bot) / 2;
+      var x = Math.max(0, Math.min(s.w - w, cx - w / 2)), y = Math.max(0, Math.min(s.h - h, cy - h / 2));
+      return { x: x, y: y, w: w, h: h };
+    });
+  }
   function scoreBand(v){
     if(v >= 90) return { cls:"st-good", label:"매우 좋음" };
     if(v >= 75) return { cls:"st-good", label:"양호" };
@@ -2933,11 +3102,12 @@
       if(!list) return;
       $("repChips-" + m).innerHTML = list.map(chipHtml).join("");
       var src = withMode(m, function(){ return buildAnnotated({ footer:false, labels:false }); });
-      var cv = $("repCv-" + m), W = 720, H = Math.round(W * src.height / src.width);
+      var cr = reportCrop(m);
+      var cv = $("repCv-" + m), W = 720, H = Math.round(W * cr.h / cr.w);
       cv.width = W; cv.height = H;
       var g = cv.getContext("2d");
       g.imageSmoothingQuality = "high";
-      g.drawImage(src, 0, 0, W, H);
+      g.drawImage(src, cr.x, cr.y, cr.w, cr.h, 0, 0, W, H);
     });
     if(r.score === null){
       $("scoreVal").textContent = "–"; $("scoreStars").innerHTML = starsHtml(0);
@@ -2951,6 +3121,7 @@
     $("sumGrid").innerHTML = r.groups.map(function(g){
       return '<div class="sum-item"><div class="k">'+g.name+'</div><div class="v '+g.st.cls+'">'+g.st.label+'</div><div class="d">'+g.detail+'</div></div>';
     }).join("");
+    saveSession(r);
     return r;
   }
 
@@ -2992,9 +3163,10 @@
         return;
       }
       var src = withMode(m, function(){ return buildAnnotated({ footer:false, labels:false }); });
-      var sc = Math.min(IMGW / src.width, IMGH / src.height), dw = src.width * sc, dh = src.height * sc;
+      var cr = reportCrop(m);
+      var sc = Math.min(IMGW / cr.w, IMGH / cr.h), dw = cr.w * sc, dh = cr.h * sc;
       g.save(); rr(g, ix, iy, IMGW, IMGH, 20); g.clip(); g.fillStyle = "#E6E9F0"; g.fillRect(ix, iy, IMGW, IMGH);
-      g.drawImage(src, ix + (IMGW - dw)/2, iy + (IMGH - dh)/2, dw, dh); g.restore();
+      g.drawImage(src, cr.x, cr.y, cr.w, cr.h, ix + (IMGW - dw)/2, iy + (IMGH - dh)/2, dw, dh); g.restore();
       var ch = 128, gap = Math.min(22, (IMGH - list.length * ch) / Math.max(1, list.length - 1));
       list.forEach(function(x, k){
         var cy = iy + k * (ch + gap);
@@ -3046,11 +3218,13 @@
     state.view = v;
     $("view-analyze").hidden = (v !== "analyze");
     $("view-report").hidden = (v !== "report");
-    $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : "체형 분석";
+    $("view-members").hidden = (v !== "members");
+    $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : v === "members" ? "회원관리" : "체형 분석";
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
     if(v === "report") renderReport();
+    else if(v === "members") mbShowList();
     else if(cur().img) requestDraw();
     window.scrollTo(0, 0);
   }
@@ -3071,10 +3245,476 @@
       releaseImage(s); s.img = null; s.points = {}; s.history = []; s.view = { scale:1, cx:0, cy:0 };
     });
     $("ptField").value = ""; $("htField").value = "";
+    setMember(null);
     showView("analyze"); if(state.mode !== "front") selectMode("front"); else resetToIdle();
     toast("새 측정을 시작해요.");
   });
   (function tickNow(){ $("nowChip").textContent = nowText(); setTimeout(tickNow, 30000); })();
+
+
+  /* ===================== v43 회원관리 (기기 저장: IndexedDB) ===================== */
+  var MEM = { members: [], records: [] }, dbP = null;
+  function idb(){
+    if(dbP) return dbP;
+    dbP = new Promise(function(res){
+      try{
+        var rq = indexedDB.open("ayo-posture", 1);
+        rq.onupgradeneeded = function(){
+          var d = rq.result;
+          if(!d.objectStoreNames.contains("members")) d.createObjectStore("members", { keyPath:"id" });
+          if(!d.objectStoreNames.contains("records")) d.createObjectStore("records", { keyPath:"id" });
+        };
+        rq.onsuccess = function(){ res(rq.result); };
+        rq.onerror = function(){ res(null); };
+        rq.onblocked = function(){ res(null); };
+      }catch(e){ res(null); }
+    });
+    try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+    return dbP;
+  }
+  function dbAll(store){
+    return idb().then(function(d){
+      if(!d) return MEM[store].slice();
+      return new Promise(function(res){
+        try{ var q = d.transaction(store).objectStore(store).getAll(); q.onsuccess = function(){ res(q.result || []); }; q.onerror = function(){ res([]); }; }
+        catch(e){ res([]); }
+      });
+    });
+  }
+  function dbPut(store, o){
+    return idb().then(function(d){
+      if(!d){ var a = MEM[store], i = a.findIndex(function(x){ return x.id === o.id; }); if(i >= 0) a[i] = o; else a.push(o); return o; }
+      return new Promise(function(res, rej){
+        var t = d.transaction(store, "readwrite"); t.objectStore(store).put(o);
+        t.oncomplete = function(){ res(o); }; t.onerror = function(){ rej(t.error); };
+      });
+    });
+  }
+  function dbDel(store, id){
+    return idb().then(function(d){
+      if(!d){ MEM[store] = MEM[store].filter(function(x){ return x.id !== id; }); return; }
+      return new Promise(function(res){
+        var t = d.transaction(store, "readwrite"); t.objectStore(store).delete(id);
+        t.oncomplete = function(){ res(); }; t.onerror = function(){ res(); };
+      });
+    });
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function esc(t){ return String(t == null ? "" : t).replace(/[&<>"']/g, function(c){ return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]; }); }
+  function initial(n){ n = String(n || "").trim(); return n ? n.charAt(0).toUpperCase() : "?"; }
+  function fmtDate(ts){
+    var d = new Date(ts), z = function(n){ return (n < 10 ? "0" : "") + n; };
+    return d.getFullYear() + "." + z(d.getMonth()+1) + "." + z(d.getDate()) + " " + z(d.getHours()) + ":" + z(d.getMinutes());
+  }
+  function memberMeta(m){
+    return [m.no ? "No." + m.no : "", m.sex, m.height ? m.height + "cm" : "", m.phone].filter(Boolean).join(" · ");
+  }
+
+  /* ---- 현재 측정 회원 ---- */
+  state.member = null; state.sessionId = null;
+  function setMember(m){
+    state.member = m || null; state.sessionId = null;
+    var bar = $("memberBar");
+    bar.classList.toggle("on", !!m);
+    $("mbCurAvatar").textContent = m ? initial(m.name) : "?";
+    $("mbCurName").textContent = m ? m.name : "회원 선택 안 함";
+    $("mbCurMeta").textContent = m ? ((memberMeta(m) || "회원") + " · 측정하면 기록에 자동 저장") : "회원을 선택하면 측정 기록이 자동으로 저장돼요";
+    $("btnMbPick").textContent = m ? "변경" : "회원 선택";
+    $("ptField").value = m ? (m.name + (m.no ? " · " + m.no : "")) : "";
+    $("htField").value = (m && m.height) ? m.height : "";
+    $("htField").dispatchEvent(new Event("input"));
+    $("repSaved").hidden = true;
+  }
+  // 사진을 새로 불러오면 새 측정 회차로 (같은 회차 안에서 다시 찍으면 같은 기록을 갱신)
+  var _loadImage = loadImageIntoMode;
+  loadImageIntoMode = function(){
+    var other = state.byMode[state.mode === "front" ? "side" : "front"];
+    if(!other.img && !cur().img) state.sessionId = null;
+    return _loadImage.apply(this, arguments);
+  };
+
+  function thumbOf(m){
+    var src = withMode(m, function(){ return buildAnnotated({ footer:false, labels:false }); });
+    var cr = reportCrop(m), W = 300, H = Math.round(W * cr.h / cr.w);
+    var c = document.createElement("canvas"); c.width = W; c.height = H;
+    var g = c.getContext("2d"); g.imageSmoothingQuality = "high";
+    g.drawImage(src, cr.x, cr.y, cr.w, cr.h, 0, 0, W, H);
+    return c.toDataURL("image/jpeg", 0.8);
+  }
+  function slim(list){
+    return (list || []).map(function(x){ return { key:x.key, name:x.name, title:x.title, value:x.value, num:parseFloat(x.value) || 0, foot:x.foot, cls:x.grade.cls }; });
+  }
+  var saveTimer = null;
+  function saveSession(r){
+    if(!state.member || !r || (!r.f && !r.sd)) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){
+      var first = !state.sessionId;
+      if(first) state.sessionId = uid();
+      var rec = {
+        id: state.sessionId, memberId: state.member.id, at: Date.now(),
+        score: r.score, f: r.f ? slim(r.f) : null, sd: r.sd ? slim(r.sd) : null,
+        groups: r.groups.map(function(g){ return { name:g.name, label:g.st.label, cls:g.st.cls, detail:g.detail }; }),
+        height: patientHeight() || null,
+        thumbs: { front: r.f ? thumbOf("front") : null, side: r.sd ? thumbOf("side") : null }
+      };
+      dbAll("records").then(function(all){
+        var old = all.find(function(x){ return x.id === rec.id; });
+        if(old) rec.at = old.at;
+        return dbPut("records", rec);
+      }).then(function(){
+        var el = $("repSaved"); el.hidden = false;
+        el.textContent = "✓ " + state.member.name + " 회원 기록에 저장됨 (" + fmtDate(rec.at) + ")";
+        if(first) toast(state.member.name + " 회원 기록에 저장했어요.");
+      }).catch(function(){ toast("기록을 저장하지 못했어요."); });
+    }, 250);
+  }
+
+  /* ---- 회원 등록·수정 폼 ---- */
+  var formEditing = null, formAfter = null;
+  function openForm(m, after){
+    formEditing = m || null; formAfter = after || null;
+    $("mbFormTitle").textContent = m ? "회원 정보 수정" : "회원 등록";
+    $("mfName").value = m ? m.name : ""; $("mfNo").value = m ? (m.no || "") : "";
+    $("mfSex").value = m ? (m.sex || "") : ""; $("mfHeight").value = m && m.height ? m.height : "";
+    $("mfPhone").value = m ? (m.phone || "") : ""; $("mfMemo").value = m ? (m.memo || "") : "";
+    $("mbForm").hidden = false; setTimeout(function(){ $("mfName").focus(); }, 50);
+  }
+  $("btnMfCancel").addEventListener("click", function(){ $("mbForm").hidden = true; });
+  $("btnMfSave").addEventListener("click", function(){
+    var name = $("mfName").value.trim();
+    if(!name){ toast("이름을 입력해주세요."); $("mfName").focus(); return; }
+    var h = parseFloat($("mfHeight").value);
+    var m = formEditing ? Object.assign({}, formEditing) : { id: uid(), createdAt: Date.now() };
+    m.name = name; m.no = $("mfNo").value.trim(); m.sex = $("mfSex").value;
+    m.height = (isFinite(h) && h >= 80 && h <= 230) ? Math.round(h * 10) / 10 : null;
+    m.phone = $("mfPhone").value.trim(); m.memo = $("mfMemo").value.trim();
+    dbPut("members", m).then(function(){
+      $("mbForm").hidden = true;
+      toast(formEditing ? "회원 정보를 수정했어요." : name + " 회원을 등록했어요.");
+      if(state.member && state.member.id === m.id){ var sid = state.sessionId; setMember(m); state.sessionId = sid; }
+      var after = formAfter; formAfter = null;
+      if(after) after(m); else if(state.view === "members"){ if(mbCurrent) mbOpenDetail(m.id); else mbShowList(); }
+    }).catch(function(){ toast("저장하지 못했어요."); });
+  });
+
+  /* ---- 회원 목록 ---- */
+  var mbCurrent = null, mbSel = [];
+  function loadAll(){ return Promise.all([dbAll("members"), dbAll("records")]); }
+  function memberRows(members, records, q){
+    q = (q || "").trim().toLowerCase();
+    return members.filter(function(m){ return !q || (m.name + " " + (m.no || "")).toLowerCase().indexOf(q) >= 0; })
+      .map(function(m){
+        var rs = records.filter(function(r){ return r.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
+        return { m: m, rs: rs, last: rs[0] || null };
+      })
+      .sort(function(a, b){ return ((b.last && b.last.at) || b.m.createdAt || 0) - ((a.last && a.last.at) || a.m.createdAt || 0); });
+  }
+  function itemHtml(row){
+    var m = row.m, l = row.last;
+    return '<button type="button" class="mb-item" data-id="' + esc(m.id) + '"><div class="mb-avatar">' + esc(initial(m.name)) + '</div>' +
+      '<div class="mb-txt"><b>' + esc(m.name) + '</b><em>' + esc(memberMeta(m) || "정보 없음") + '</em><em>' +
+      (l ? "최근 측정 " + fmtDate(l.at).slice(0, 10) + " · 총 " + row.rs.length + "회" : "측정 기록 없음") + '</em></div>' +
+      (l && l.score != null ? '<div class="sc">' + l.score + '<small>최근 점수</small></div>' : '') + '</button>';
+  }
+  function mbShowList(){
+    mbCurrent = null; $("mbDetail").hidden = true; $("mbListWrap").hidden = false;
+    loadAll().then(function(res){
+      var rows = memberRows(res[0], res[1], $("mbSearch").value);
+      $("mbItems").innerHTML = rows.map(itemHtml).join("");
+      $("mbEmpty").hidden = res[0].length > 0;
+      bkInfoRender();
+      $("mbItems").querySelectorAll(".mb-item").forEach(function(b){ b.addEventListener("click", function(){ mbOpenDetail(b.getAttribute("data-id")); }); });
+    });
+  }
+  $("mbSearch").addEventListener("input", mbShowList);
+  $("btnMbAdd").addEventListener("click", function(){ openForm(null, function(m){ mbOpenDetail(m.id); }); });
+  $("btnMbBack").addEventListener("click", mbShowList);
+
+  /* ---- 회원 상세 ---- */
+  function mbOpenDetail(id){
+    loadAll().then(function(res){
+      var m = res[0].find(function(x){ return x.id === id; });
+      if(!m){ mbShowList(); return; }
+      mbCurrent = m; mbSel = [];
+      $("mbListWrap").hidden = true; $("mbDetail").hidden = false; $("mbCompare").hidden = true;
+      $("mbDAvatar").textContent = initial(m.name); $("mbDName").textContent = m.name;
+      $("mbDMeta").textContent = memberMeta(m) || "추가 정보 없음"; $("mbDMemo").textContent = m.memo || "";
+      var rs = res[1].filter(function(r){ return r.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
+      var box = $("mbRecords");
+      if(!rs.length){ box.innerHTML = '<p class="mb-empty">아직 측정 기록이 없어요. <b>측정하기</b>를 눌러 시작하세요.</p>'; }
+      else box.innerHTML = rs.map(function(r){
+        var views = [r.f ? "정면" : "", r.sd ? "측면" : ""].filter(Boolean).join("·");
+        return '<div class="rec" data-id="' + esc(r.id) + '"><input type="checkbox" aria-label="비교 선택">' +
+          '<div class="th">' + (r.thumbs && r.thumbs.front ? '<img src="' + r.thumbs.front + '" alt="">' : '') + (r.thumbs && r.thumbs.side ? '<img src="' + r.thumbs.side + '" alt="">' : '') + '</div>' +
+          '<div class="info"><b>' + fmtDate(r.at) + '</b><em>' + views + (r.height ? " · 키 " + r.height + "cm" : "") + '</em></div>' +
+          '<div class="score">' + (r.score != null ? r.score : "–") + '</div><button type="button" class="x" title="기록 삭제" aria-label="기록 삭제">✕</button></div>';
+      }).join("");
+      box.querySelectorAll(".rec").forEach(function(row){
+        var rid = row.getAttribute("data-id");
+        row.querySelector("input").addEventListener("change", function(e){
+          if(e.target.checked){ mbSel.push(rid); if(mbSel.length > 2){ var drop = mbSel.shift(); var cb = box.querySelector('.rec[data-id="' + drop + '"] input'); if(cb) cb.checked = false; } }
+          else mbSel = mbSel.filter(function(x){ return x !== rid; });
+          $("btnMbCompare").disabled = mbSel.length !== 2;
+        });
+        row.querySelector(".x").addEventListener("click", function(){
+          if(!window.confirm("이 측정 기록을 삭제할까요?")) return;
+          dbDel("records", rid).then(function(){ if(state.sessionId === rid) state.sessionId = null; mbOpenDetail(m.id); });
+        });
+      });
+      $("btnMbCompare").disabled = true;
+      mbRecs = rs;
+      renderTrend(rs);
+    });
+  }
+  var mbRecs = [];
+  $("btnMbEdit").addEventListener("click", function(){ if(mbCurrent) openForm(mbCurrent); });
+  $("btnMbDelete").addEventListener("click", function(){
+    var m = mbCurrent; if(!m) return;
+    if(!window.confirm(m.name + " 회원과 모든 측정 기록을 삭제할까요? 되돌릴 수 없어요.")) return;
+    dbAll("records").then(function(all){
+      return Promise.all(all.filter(function(r){ return r.memberId === m.id; }).map(function(r){ return dbDel("records", r.id); }));
+    }).then(function(){ return dbDel("members", m.id); }).then(function(){
+      if(state.member && state.member.id === m.id) setMember(null);
+      toast("삭제했어요."); mbShowList();
+    });
+  });
+  $("btnMbMeasure").addEventListener("click", function(){
+    var m = mbCurrent; if(!m) return;
+    ["front", "side"].forEach(function(k){ var s = state.byMode[k]; releaseImage(s); s.img = null; s.points = {}; s.history = []; s.view = { scale:1, cx:0, cy:0 }; });
+    setMember(m);
+    showView("analyze"); if(state.mode !== "front") selectMode("front"); else resetToIdle();
+    toast(m.name + " 회원 측정을 시작해요.");
+  });
+
+  /* ---- 전후 비교 ---- */
+  function deltaCell(a, b, unit){
+    if(a == null || b == null) return '<td class="up-same">–</td>';
+    var d = Math.round((b - a) * 10) / 10;
+    if(Math.abs(d) < 0.05) return '<td class="up-same">변화 없음</td>';
+    var better = Math.abs(b) < Math.abs(a);
+    return '<td class="' + (better ? "up-good" : "up-bad") + '">' + (d > 0 ? "▲" : "▼") + Math.abs(d).toFixed(1) + unit + (better ? " 개선" : "") + '</td>';
+  }
+  function cmpTable(A, B, unit){
+    var keys = []; (A || []).concat(B || []).forEach(function(x){ if(keys.indexOf(x.key) < 0) keys.push(x.key); });
+    var get = function(L, k){ var x = (L || []).find(function(y){ return y.key === k; }); return x || null; };
+    return '<table class="cmp-table"><thead><tr><th>부위</th><th>이전</th><th>이후</th><th>변화</th></tr></thead><tbody>' +
+      keys.map(function(k){
+        var a = get(A, k), b = get(B, k), nm = (a || b).title;
+        return '<tr><td>' + esc(nm) + '</td><td>' + (a ? esc(a.value) : "–") + '</td><td>' + (b ? esc(b.value) : "–") + '</td>' + deltaCell(a && a.num, b && b.num, unit) + '</tr>';
+      }).join("") + '</tbody></table>';
+  }
+  $("btnMbCompare").addEventListener("click", function(){
+    if(mbSel.length !== 2) return;
+    var pair = mbRecs.filter(function(r){ return mbSel.indexOf(r.id) >= 0; }).sort(function(a, b){ return a.at - b.at; });
+    var A = pair[0], B = pair[1];
+    var ds = (A.score != null && B.score != null) ? B.score - A.score : null;
+    var h = '<h2>전후 비교</h2><div class="cmp-head"><div class="d">이전 ' + fmtDate(A.at).slice(0, 10) + '<b>' + (A.score != null ? A.score : "–") + '</b>→ 이후 ' + fmtDate(B.at).slice(0, 10) + '<b>' + (B.score != null ? B.score : "–") + '</b></div>' +
+      (ds != null ? '<div class="cmp-delta ' + (ds > 0 ? "up-good" : ds < 0 ? "up-bad" : "up-same") + '">' + (ds > 0 ? "▲ " + ds + "점" : ds < 0 ? "▼ " + Math.abs(ds) + "점" : "점수 변화 없음") + '</div>' : '') + '</div>';
+    [["front", "정면 · 좌우 기울기", "f", "°"], ["side", "측면 · 앞뒤 정렬", "sd", "cm"]].forEach(function(v){
+      var ta = A.thumbs && A.thumbs[v[0]], tb = B.thumbs && B.thumbs[v[0]];
+      if(!A[v[2]] && !B[v[2]]) return;
+      h += '<div class="cmp-view">' + v[1] + '</div>';
+      if(ta || tb) h += '<div class="cmp-pics"><figure>' + (ta ? '<img src="' + ta + '" alt="이전">' : '<p class="mb-empty">측정 없음</p>') + '<figcaption>이전 · ' + fmtDate(A.at).slice(0, 10) + '</figcaption></figure>' +
+        '<figure>' + (tb ? '<img src="' + tb + '" alt="이후">' : '<p class="mb-empty">측정 없음</p>') + '<figcaption>이후 · ' + fmtDate(B.at).slice(0, 10) + '</figcaption></figure></div>';
+      h += cmpTable(A[v[2]], B[v[2]], v[3]);
+    });
+    h += '<p class="mb-note" style="margin-top:10px">수치가 0에 가까워질수록 <b class="up-good">개선</b>으로 표시해요. 같은 장소·거리·복장으로 찍어야 비교가 정확해요.</p>';
+    h += '<div class="cmp-actions"><button type="button" class="btn primary" id="btnCmpSave">비교 이미지 저장·공유</button></div>';
+    cmpPair = [A, B];
+    var c = $("mbCompare"); c.innerHTML = h; c.hidden = false;
+    $("btnCmpSave").addEventListener("click", saveCompareImage);
+    c.scrollIntoView({ behavior:"smooth", block:"start" });
+  });
+
+  /* ---- 측정 화면의 회원 선택 ---- */
+  function pickerRender(){
+    loadAll().then(function(res){
+      var rows = memberRows(res[0], res[1], $("mpSearch").value);
+      $("mpItems").innerHTML = rows.length ? rows.map(itemHtml).join("") : '<p class="mb-empty">' + (res[0].length ? "검색 결과가 없어요." : "등록된 회원이 없어요. 아래 <b>+ 새 회원 등록</b>을 눌러주세요.") + '</p>';
+      $("mpItems").querySelectorAll(".mb-item").forEach(function(b){
+        b.addEventListener("click", function(){
+          var m = res[0].find(function(x){ return x.id === b.getAttribute("data-id"); });
+          $("mbPicker").hidden = true; setMember(m); toast(m.name + " 회원을 선택했어요.");
+        });
+      });
+    });
+  }
+  $("btnMbPick").addEventListener("click", function(){ $("mpSearch").value = ""; $("mbPicker").hidden = false; pickerRender(); });
+  $("mpSearch").addEventListener("input", pickerRender);
+  $("btnMpNone").addEventListener("click", function(){ $("mbPicker").hidden = true; setMember(null); });
+  $("btnMpNew").addEventListener("click", function(){ $("mbPicker").hidden = true; openForm(null, function(m){ setMember(m); }); });
+  [$("mbForm"), $("mbPicker")].forEach(function(o){ o.addEventListener("click", function(e){ if(e.target === o) o.hidden = true; }); });
+
+
+  /* ===================== v44 회원관리 2차 ===================== */
+  var cmpPair = null;
+
+  /* ---- 점수 변화 그래프 (SVG) ---- */
+  function renderTrend(rs){
+    var pts = rs.filter(function(r){ return r.score != null; }).slice().sort(function(a, b){ return a.at - b.at; });
+    var box = $("mbTrend");
+    if(pts.length < 2){
+      $("mbTrendSub").textContent = pts.length ? "측정이 2회 이상 쌓이면 점수 변화가 그래프로 나와요." : "측정할 때마다 종합 점수가 쌓여요.";
+      box.innerHTML = ""; return;
+    }
+    if(pts.length > 12) pts = pts.slice(-12);
+    var first = pts[0].score, last = pts[pts.length - 1].score, d = last - first;
+    $("mbTrendSub").innerHTML = "최근 " + pts.length + "회 · 첫 측정 대비 <b class='" + (d > 0 ? "up-good" : d < 0 ? "up-bad" : "up-same") + "'>" + (d > 0 ? "▲ " + d + "점" : d < 0 ? "▼ " + Math.abs(d) + "점" : "변화 없음") + "</b>";
+    var W = Math.round(Math.max(300, Math.min(680, box.clientWidth || 640))), H = W < 480 ? 210 : 230, L = 36, R = 18, T = 26, B = 40;
+    var X = function(i){ return L + (pts.length === 1 ? 0 : i * (W - L - R) / (pts.length - 1)); };
+    var Y = function(v){ return T + (100 - v) * (H - T - B) / 100; };
+    var g = '';
+    [[90, 100, "rgba(76,195,138,.10)"], [75, 90, "rgba(76,195,138,.05)"], [60, 75, "rgba(240,180,76,.07)"], [0, 60, "rgba(240,122,114,.06)"]].forEach(function(b){
+      g += '<rect x="' + L + '" y="' + Y(b[1]) + '" width="' + (W - L - R) + '" height="' + (Y(b[0]) - Y(b[1])) + '" fill="' + b[2] + '"/>';
+    });
+    [0, 25, 50, 75, 100].forEach(function(v){
+      g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="rgba(151,163,188,.18)"/>' +
+           '<text x="' + (L - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" fill="#97A3BC">' + v + '</text>';
+    });
+    g += '<polyline fill="none" stroke="#2F6BFF" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="' + pts.map(function(p, i){ return X(i) + "," + Y(p.score); }).join(" ") + '"/>';
+    var step = Math.ceil(pts.length / 6);
+    pts.forEach(function(p, i){
+      var lastPt = i === pts.length - 1;
+      g += '<circle cx="' + X(i) + '" cy="' + Y(p.score) + '" r="' + (lastPt ? 6 : 4.5) + '" fill="' + (lastPt ? "#2F6BFF" : "#0F1A33") + '" stroke="#2F6BFF" stroke-width="2.5"><title>' + fmtDate(p.at) + " · " + p.score + '점</title></circle>' +
+           '<text x="' + X(i) + '" y="' + (Y(p.score) - 11) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#E9EEF8">' + p.score + '</text>';
+      if(i % step === 0 || lastPt) g += '<text x="' + X(i) + '" y="' + (H - 14) + '" text-anchor="middle" font-size="11" fill="#97A3BC">' + fmtDate(p.at).slice(5, 10) + '</text>';
+    });
+    box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="종합 점수 변화">' + g + '</svg>' +
+      '<div class="trend-legend"><span><i style="background:rgba(76,195,138,.35)"></i>75점 이상 양호</span><span><i style="background:rgba(240,180,76,.35)"></i>60~74 주의</span><span><i style="background:rgba(240,122,114,.35)"></i>60 미만 개선 필요</span></div>';
+  }
+
+  /* ---- 비교 이미지 저장·공유 ---- */
+  function loadImg(src){ return new Promise(function(res){ if(!src) return res(null); var im = new Image(); im.onload = function(){ res(im); }; im.onerror = function(){ res(null); }; im.src = src; }); }
+  function saveCompareImage(){
+    if(!cmpPair || !mbCurrent) return;
+    var A = cmpPair[0], B = cmpPair[1], m = mbCurrent;
+    var views = [["front", "정면 · 좌우 기울기", "f"], ["side", "측면 · 앞뒤 정렬", "sd"]].filter(function(v){ return A[v[2]] || B[v[2]]; });
+    Promise.all(views.map(function(v){ return Promise.all([loadImg(A.thumbs && A.thumbs[v[0]]), loadImg(B.thumbs && B.thumbs[v[0]])]); })).then(function(imgs){
+      var W = 1200, PAD = 48, IW = 502, IH = 669, ROW = 46;
+      var F = "'IBM Plex Sans KR', 'IBM Plex Sans', sans-serif", M = "'IBM Plex Mono', monospace";
+      var blocks = views.map(function(v){
+        var keys = []; (A[v[2]] || []).concat(B[v[2]] || []).forEach(function(x){ if(keys.indexOf(x.key) < 0) keys.push(x.key); });
+        return { v: v, keys: keys, h: 60 + IH + 60 + 40 + keys.length * ROW + 64 };
+      });
+      var H = 210 + blocks.reduce(function(a, b){ return a + b.h; }, 0) + 70;
+      var c = document.createElement("canvas"); c.width = W; c.height = H;
+      var g = c.getContext("2d");
+      g.fillStyle = "#0D1528"; g.fillRect(0, 0, W, H);
+      g.fillStyle = "#D2B07A"; g.font = "700 20px " + F; g.fillText("AYO체형분석  ·  전후 비교", PAD, 58);
+      g.fillStyle = "#E9EEF8"; g.font = "800 44px " + F; g.fillText(m.name + (m.no ? "  " : ""), PAD, 112);
+      if(m.no){ var nw = g.measureText(m.name + "  ").width; g.fillStyle = "#97A3BC"; g.font = "500 24px " + F; g.fillText("No." + m.no, PAD + nw, 112); }
+      g.fillStyle = "#97A3BC"; g.font = "500 22px " + F;
+      g.fillText("이전 " + fmtDate(A.at).slice(0, 10) + "  " + (A.score != null ? A.score + "점" : "–") + "   →   이후 " + fmtDate(B.at).slice(0, 10) + "  " + (B.score != null ? B.score + "점" : "–"), PAD, 160);
+      if(A.score != null && B.score != null){
+        var ds = B.score - A.score;
+        g.textAlign = "right"; g.font = "800 40px " + M;
+        g.fillStyle = ds > 0 ? "#4CC38A" : ds < 0 ? "#F07A72" : "#97A3BC";
+        g.fillText(ds > 0 ? "▲ " + ds + "점" : ds < 0 ? "▼ " + Math.abs(ds) + "점" : "변화 없음", W - PAD, 118); g.textAlign = "left";
+      }
+      var y = 210;
+      blocks.forEach(function(bk, bi){
+        var v = bk.v, pair = imgs[bi];
+        g.fillStyle = "#F3F5F9"; rr(g, PAD, y, W - PAD * 2, bk.h - 24, 24); g.fill();
+        g.fillStyle = "#131B2E"; g.font = "800 30px " + F; g.fillText(v[1], PAD + 30, y + 48);
+        [0, 1].forEach(function(k){
+          var x = PAD + 30 + k * (IW + 40), iy = y + 74, im = pair[k];
+          g.fillStyle = "#E6E9F0"; rr(g, x, iy, IW, IH, 16); g.fill();
+          if(im){ g.save(); rr(g, x, iy, IW, IH, 16); g.clip(); var sc = Math.min(IW / im.width, IH / im.height), dw = im.width * sc, dh = im.height * sc; g.drawImage(im, x + (IW - dw) / 2, iy + (IH - dh) / 2, dw, dh); g.restore(); }
+          else { g.fillStyle = "#5B6478"; g.font = "600 24px " + F; g.textAlign = "center"; g.fillText("측정 없음", x + IW / 2, iy + IH / 2); g.textAlign = "left"; }
+          var rec = k ? B : A;
+          g.fillStyle = "#5B6478"; g.font = "700 20px " + F; g.textAlign = "center";
+          g.fillText((k ? "이후 · " : "이전 · ") + fmtDate(rec.at).slice(0, 10), x + IW / 2, iy + IH + 36); g.textAlign = "left";
+        });
+        if(views.length && bi === 0){}
+        var ty = y + 74 + IH + 70;
+        var cols = [PAD + 30, PAD + 520, PAD + 740, W - PAD - 30];
+        g.font = "700 18px " + F; g.fillStyle = "#6A7488";
+        g.fillText("부위", cols[0], ty); g.textAlign = "right"; g.fillText("이전", cols[1] + 90, ty); g.fillText("이후", cols[2] + 90, ty); g.fillText("변화", cols[3], ty); g.textAlign = "left";
+        var get = function(L, kk){ return (L || []).find(function(x){ return x.key === kk; }) || null; };
+        bk.keys.forEach(function(kk, ri){
+          var a = get(A[v[2]], kk), b = get(B[v[2]], kk), yy = ty + 20 + (ri + 1) * ROW - 14;
+          g.fillStyle = "#DCE1EA"; g.fillRect(cols[0], yy - ROW + 14, cols[3] - cols[0], 1);
+          g.fillStyle = "#131B2E"; g.font = "700 22px " + F; g.fillText((a || b).title, cols[0], yy);
+          g.font = "600 22px " + M; g.textAlign = "right";
+          g.fillText(a ? a.value : "–", cols[1] + 90, yy); g.fillText(b ? b.value : "–", cols[2] + 90, yy);
+          var unit = v[2] === "f" ? "°" : "cm", txt = "–", col = "#97A3BC";
+          if(a && b){
+            var dd = Math.round((b.num - a.num) * 10) / 10;
+            if(Math.abs(dd) < 0.05){ txt = "변화 없음"; }
+            else { var better = Math.abs(b.num) < Math.abs(a.num); txt = (dd > 0 ? "▲" : "▼") + Math.abs(dd).toFixed(1) + unit + (better ? " 개선" : ""); col = better ? "#1F8A5B" : "#C0453B"; }
+          }
+          g.fillStyle = col; g.font = "700 22px " + M; g.fillText(txt, cols[3], yy); g.textAlign = "left";
+        });
+        y += bk.h;
+      });
+      g.fillStyle = "#5F6B86"; g.font = "500 18px " + F;
+      g.fillText("촬영 조건에 따라 달라질 수 있는 참고값입니다. 같은 장소·거리·복장으로 촬영해 비교하세요.", PAD, H - 30);
+      g.textAlign = "right"; g.fillStyle = "#D2B07A"; g.font = "700 18px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 30); g.textAlign = "left";
+      var tag = (m.name + (m.no ? "_" + m.no : "")).replace(/[^a-zA-Z0-9가-힣_-]/g, "");
+      deliverCanvas(c, "AYO_compare_" + tag + "_" + fmtDate(B.at).slice(0, 10).replace(/\./g, "") + ".jpg");
+    });
+  }
+
+  /* ---- 백업 내보내기 / 가져오기 ---- */
+  function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+  function bkInfoRender(){
+    loadAll().then(function(res){
+      var last = lsGet("ayo_last_backup");
+      $("bkInfo").innerHTML = "회원 <b>" + res[0].length + "명</b> · 측정 기록 <b>" + res[1].length + "건</b>이 이 기기 안에만 저장돼 있어요. " +
+        (last ? "마지막 백업: <b>" + fmtDate(+last) + "</b>" : "<b>아직 백업한 적이 없어요.</b> 휴대폰을 바꾸거나 앱을 지우기 전에 꼭 저장하세요.");
+    });
+  }
+  function deliverFile(blob, filename, okMsg){
+    function anchor(){
+      try{ var u = URL.createObjectURL(blob), a = document.createElement("a"); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(u); }, 4000); toast(okMsg); }
+      catch(e){ toast("파일을 저장하지 못했어요."); }
+    }
+    if(dlNS){ dlNS.save({ filename: filename, data: blob }).then(function(){ toast(okMsg); }).catch(function(err){ if(err && err.code === "declined") return; anchor(); }); return; }
+    try{
+      var file = new File([blob], filename, { type: blob.type });
+      if(navigator.canShare && navigator.canShare({ files: [file] })){
+        navigator.share({ files: [file], title: filename }).then(function(){ toast(okMsg); }).catch(function(err){ if(err && err.name === "AbortError") return; anchor(); });
+        return;
+      }
+    }catch(e){}
+    anchor();
+  }
+  $("btnBkExport").addEventListener("click", function(){
+    loadAll().then(function(res){
+      if(!res[0].length){ toast("백업할 회원이 없어요."); return; }
+      var data = { app: "AYO체형분석", kind: "backup", version: 1, exportedAt: new Date().toISOString(), members: res[0], records: res[1] };
+      var blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+      var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
+      lsSet("ayo_last_backup", String(Date.now()));
+      deliverFile(blob, "AYO_backup_" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "_" + z(d.getHours()) + z(d.getMinutes()) + ".json",
+        "백업 파일을 만들었어요. 구글드라이브나 카톡 나에게 보내기로 보관하세요.");
+      bkInfoRender();
+    });
+  });
+  $("btnBkImport").addEventListener("click", function(){ $("bkFile").value = ""; $("bkFile").click(); });
+  $("bkFile").addEventListener("change", function(){
+    var f = this.files && this.files[0]; if(!f) return;
+    var rd = new FileReader();
+    rd.onload = function(){
+      var data; try{ data = JSON.parse(rd.result); }catch(e){ toast("백업 파일을 읽지 못했어요."); return; }
+      if(!data || data.kind !== "backup" || !Array.isArray(data.members) || !Array.isArray(data.records)){ toast("AYO체형분석 백업 파일이 아니에요."); return; }
+      loadAll().then(function(res){
+        var haveM = {}, haveR = {}; res[0].forEach(function(m){ haveM[m.id] = 1; }); res[1].forEach(function(r){ haveR[r.id] = 1; });
+        var newM = data.members.filter(function(m){ return m && m.id && m.name && !haveM[m.id]; });
+        var newR = data.records.filter(function(r){ return r && r.id && r.memberId && !haveR[r.id]; });
+        if(!newM.length && !newR.length){ toast("새로 불러올 기록이 없어요. 이미 모두 들어 있어요."); return; }
+        if(!window.confirm("회원 " + newM.length + "명, 측정 기록 " + newR.length + "건을 불러올까요? 기존 기록은 그대로 유지돼요.")) return;
+        var chain = Promise.resolve();
+        newM.forEach(function(m){ chain = chain.then(function(){ return dbPut("members", m); }); });
+        newR.forEach(function(r){ chain = chain.then(function(){ return dbPut("records", r); }); });
+        chain.then(function(){ toast("회원 " + newM.length + "명, 기록 " + newR.length + "건을 불러왔어요."); mbShowList(); })
+             .catch(function(){ toast("불러오는 중 오류가 났어요."); });
+      });
+    };
+    rd.readAsText(f);
+  });
 
   /* ---------- in-app browser (카카오톡 등) ---------- */
   // 앱 안의 브라우저는 카메라 권한을 기억하지 못해 매번 권한 창이 뜬다 → 크롬/사파리로 보내기

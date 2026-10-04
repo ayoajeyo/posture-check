@@ -513,6 +513,102 @@
   .cmp-actions{display:flex; gap:8px; margin-top:14px;}
   .cmp-actions .btn{flex:1;}
   .mb-backup .sub b{color:var(--ink);}
+
+  /* ===================== v45 현황 대시보드 ===================== */
+  .ds-kpis{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;}
+  @media (max-width:759px){ .ds-kpis .kpi:first-child{grid-column:span 2;} }
+  .kpi{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px 16px;}
+  .kpi .k{font-size:12.5px; font-weight:700; color:var(--ink-soft);}
+  .kpi .v{font-family:var(--font-num); font-size:28px; font-weight:700; margin-top:6px; letter-spacing:-.02em;}
+  .kpi .v small{font-family:var(--font-body); font-size:13px; font-weight:600; color:var(--ink-soft); margin-left:3px;}
+  .kpi .d{font-size:11.5px; margin-top:4px; color:var(--ink-soft);}
+  .kpi .d b{font-weight:800;}
+  .ds-grid{display:grid; gap:16px;}
+  .ds-card h2 small{font-size:12px; font-weight:600; color:var(--ink-soft); margin-left:4px;}
+  .ds-card svg{display:block; width:100%; height:auto;}
+  .st-bar{display:flex; height:16px; border-radius:6px; overflow:hidden; gap:2px; margin:6px 0 14px; background:var(--surface-2);}
+  .st-bar i{display:block; height:100%;}
+  .st-list{display:flex; flex-direction:column; gap:8px;}
+  .st-row{display:flex; align-items:center; gap:10px; font-size:13.5px;}
+  .st-row .sw{width:10px; height:10px; border-radius:3px; flex:0 0 auto;}
+  .st-row .n{margin-left:auto; font-family:var(--font-num); font-weight:700;}
+  .st-row .p{width:46px; text-align:right; font-family:var(--font-num); color:var(--ink-soft); font-size:12.5px;}
+  .st-row em{font-style:normal; font-size:11.5px; color:var(--ink-soft);}
+  .due-row{display:flex; align-items:center; gap:10px; width:100%; text-align:left; font-family:inherit; color:var(--ink); background:transparent; border:none; border-top:1px solid var(--line); padding:9px 0; cursor:pointer;}
+  .due-row:first-child{border-top:none;}
+  .due-row .mb-avatar{width:30px; height:30px; font-size:12px;}
+  .due-row b{font-size:13.5px;} .due-row em{font-style:normal; font-size:12px; color:var(--ink-soft); margin-left:auto; white-space:nowrap;}
+  .top-row{display:grid; grid-template-columns:22px 1fr auto; align-items:center; gap:8px; padding:7px 0; font-size:13.5px; border-top:1px solid var(--line);}
+  .top-row:first-child{border-top:none;}
+  .top-row .r{width:22px; height:22px; border-radius:6px; background:var(--blue); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+  .top-row .c{font-family:var(--font-num); font-weight:700;}
+  .top-row .c small{font-family:var(--font-body); color:var(--ink-soft); font-weight:600; margin-left:2px;}
+  .ds-empty{font-size:13px; color:var(--ink-soft); line-height:1.6; margin:4px 0;}
+  .ds-soon{border-style:dashed; opacity:.85;}
+  .ds-hint{font-size:11.5px; color:var(--ink-soft); margin-top:8px;}
+  @media (min-width:760px){
+    .ds-kpis{grid-template-columns:repeat(5,minmax(0,1fr));}
+    .ds-grid{grid-template-columns:1fr 1.4fr;}
+    .ds-grid.three{grid-template-columns:repeat(3,minmax(0,1fr));}
+  }
+  @media (max-width:420px){ .bottom-nav .nav-item{font-size:10.5px;} }
+
+  /* ===================== v46 운동·상담·매출 ===================== */
+  .chips{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;}
+  .chip-btn{font-family:inherit; font-size:13px; font-weight:700; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); border-radius:100px; padding:7px 13px; cursor:pointer;}
+  .chip-btn[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .ex-grid{display:grid; grid-template-columns:1fr; gap:10px;}
+  .ex-card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px;}
+  .ex-card b{font-size:15px;} .ex-card p{margin:6px 0 0; font-size:13px; color:var(--ink-soft); line-height:1.6;}
+  .ex-card .dose{display:inline-block; margin-top:8px; font-size:12px; font-weight:700; color:var(--blue); background:var(--blue-soft); border-radius:100px; padding:3px 10px;}
+  .tags{display:flex; gap:4px; flex-wrap:wrap; margin-top:6px;}
+  .tags i{font-style:normal; font-size:11px; font-weight:700; color:var(--ink-soft); border:1px solid var(--line); border-radius:6px; padding:1px 6px;}
+  .mini-h{margin:14px 0 6px; font-size:12.5px; font-weight:800; color:var(--ink-soft);}
+  .reco{display:flex; flex-direction:column; gap:6px;}
+  .reco-row{display:flex; gap:10px; align-items:flex-start; font-size:13.5px; padding:8px 10px; background:var(--surface-2); border-radius:10px;}
+  .reco-row em{font-style:normal; font-size:12px; color:var(--ink-soft); display:block;}
+  .reco-row .why{margin-left:auto; font-size:11px; font-weight:700; color:var(--warn); white-space:nowrap;}
+  .as-row{display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; margin-bottom:8px;}
+  .as-row b{font-size:14px;} .as-row em{font-style:normal; font-size:12px; color:var(--ink-soft); display:block;}
+  .as-row .st{margin-left:auto; font-size:11.5px; font-weight:800; padding:3px 9px; border-radius:100px; cursor:pointer; border:none; font-family:inherit;}
+  .as-row .st.on{background:var(--good-soft); color:var(--good);} .as-row .st.off{background:var(--surface-2); color:var(--ink-soft);}
+  .row-x{border:none; background:transparent; color:var(--ink-soft); font-size:16px; cursor:pointer; padding:4px;}
+  .pf-list{max-height:38vh; overflow-y:auto; border:1px solid var(--line); border-radius:10px; padding:4px 10px; margin-bottom:12px;}
+  .pf-list label{flex-direction:row!important; align-items:center; gap:10px!important; margin:0!important; padding:8px 0; border-top:1px solid var(--line); font-size:13.5px!important; color:var(--ink)!important;}
+  .pf-list label:first-child{border-top:none;}
+  .pf-list input{width:18px!important; height:18px; accent-color:var(--blue); flex:0 0 auto;}
+  .pf-list em{font-style:normal; font-size:11.5px; color:var(--ink-soft); margin-left:auto;}
+  .sel{font-family:inherit; font-size:14px; border:1px solid var(--line); border-radius:11px; padding:10px 12px; background:var(--surface); color:var(--ink); flex:1; min-width:0;}
+  .cs-item, .sl-item{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px;}
+  .cs-top, .sl-top{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .cs-top b, .sl-top b{font-size:14px;} .cs-top em, .sl-top em{font-style:normal; font-size:12px; color:var(--ink-soft);}
+  .badge{font-size:11px; font-weight:800; padding:2px 8px; border-radius:100px; background:var(--blue-soft); color:var(--accent);}
+  .cs-body{margin:8px 0 0; font-size:13.5px; line-height:1.6; white-space:pre-wrap; color:var(--ink);}
+  .cs-next{margin-top:8px; font-size:12.5px; color:var(--warn); font-weight:700;}
+  .cs-acts{margin-left:auto; display:flex; gap:2px;}
+  .cs-acts button{border:none; background:transparent; color:var(--ink-soft); font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; padding:4px 6px;}
+  .up-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--line); font-size:13.5px;}
+  .up-row:first-child{border-top:none;}
+  .up-row .when{font-family:var(--font-num); font-weight:700; min-width:96px;} .up-row .when.today{color:var(--blue);}
+  .sl-month{display:flex; align-items:center; justify-content:center; gap:14px;}
+  .sl-month b{font-size:18px; min-width:120px; text-align:center;}
+  .sl-top .cs-acts{margin-left:10px;}
+  .sl-amt{margin-left:auto; font-family:var(--font-num); font-size:17px; font-weight:700;}
+  .mini-list .cs-item, .mini-list .sl-item{background:transparent; border:none; border-top:1px solid var(--line); border-radius:0; padding:10px 0;}
+  .mini-list > :first-child{border-top:none!important;}
+  .more-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px;}
+  .more-grid button{display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer;}
+  .use-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px;}
+  .use-grid div{background:var(--surface-2); border-radius:12px; padding:10px 12px;}
+  .use-grid span{display:block; font-size:12px; color:var(--ink-soft); font-weight:700;}
+  .use-grid b{font-family:var(--font-num); font-size:22px;} .use-grid small{font-size:12px; color:var(--ink-soft); margin-left:2px;}
+  .sales-head{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;}
+  .sales-head b{font-family:var(--font-num); font-size:24px;}
+  .sales-delta{font-size:12px; color:var(--ink-soft);}
+  .sales-meta{display:flex; gap:14px; font-size:12px; color:var(--ink-soft); margin:4px 0 6px; flex-wrap:wrap;}
+  .sales-meta b{color:var(--ink); font-family:var(--font-num);}
+  @media (min-width:760px){ .ex-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .ds-kpis.three{grid-template-columns:repeat(3,minmax(0,1fr));} }
+  @media (max-width:759px){ .ds-kpis.three .kpi:first-child{grid-column:auto;} .ds-kpis.three{grid-template-columns:repeat(3,minmax(0,1fr));} .ds-kpis.three .kpi{padding:12px;} .ds-kpis.three .kpi .v{font-size:20px;} }
 </style>
 
 </head>
@@ -524,12 +620,14 @@
       <div><b>AYO체형분석</b><span>Posture Check <i>PRO</i></span></div>
     </div>
     <nav class="side-menu">
+      <button type="button" class="nav-item" data-view="dash"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>현황</span></button>
       <button type="button" class="nav-item" data-view="analyze" aria-current="page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>체형분석</span></button>
       <button type="button" class="nav-item" data-view="report"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>종합 리포트</span></button>
       <button type="button" class="nav-item" data-view="members"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원관리</span></button>
+      <button type="button" class="nav-item" data-view="exercise"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/></svg><span>운동관리</span></button>
+      <button type="button" class="nav-item" data-view="consult"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10.5H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>상담일지</span></button>
+      <button type="button" class="nav-item" data-view="sales"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg><span>매출관리</span></button>
       <p class="nav-sep">곧 추가될 메뉴</p>
-      <button type="button" class="nav-item soon" data-soon="운동관리"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/></svg><span>운동관리</span><em>준비 중</em></button>
-      <button type="button" class="nav-item soon" data-soon="상담일지"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10.5H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>상담일지</span><em>준비 중</em></button>
       <button type="button" class="nav-item soon" data-soon="설정"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>설정</span><em>준비 중</em></button>
     </nav>
     <p class="side-foot">made by <b>AYOAJEYO</b></p>
@@ -801,6 +899,58 @@
     </details>
   </section>
 
+
+  <section class="view" id="view-dash" hidden>
+    <div class="ds-kpis" id="dsKpis"></div>
+    <div class="ds-grid">
+      <section class="card ds-card"><h2>회원 현황</h2><p class="sub">최근 측정일 기준으로 회원 상태를 나눠요.</p><div id="dsStatus"></div></section>
+      <section class="card ds-card"><h2>측정 추이 <small>최근 6개월</small></h2><p class="sub" id="dsTrendSub"></p><div id="dsTrend"></div></section>
+    </div>
+    <div class="ds-grid three">
+      <section class="card ds-card"><h2>재측정 필요 회원</h2><p class="sub">마지막 측정 후 30일이 지난 회원이에요.</p><div id="dsDue"></div></section>
+      <section class="card ds-card"><h2>회원 연령대</h2><p class="sub" id="dsAgeSub">회원 정보의 출생연도로 계산해요.</p><div id="dsAge"></div></section>
+      <section class="card ds-card"><h2>개선 필요 부위 TOP 5</h2><p class="sub">회원별 최근 측정에서 주의·개선 필요로 나온 부위예요.</p><div id="dsTop"></div></section>
+    </div>
+    <div class="ds-grid three">
+      <section class="card ds-card"><h2>이용 현황</h2><p class="sub">상담일지의 예약과 운동 프로그램 기준이에요.</p><div id="dsUse"></div></section>
+      <section class="card ds-card"><h2>주요 프로그램 TOP 5</h2><p class="sub">진행 중인 회원 수 기준이에요.</p><div id="dsProg"></div></section>
+      <section class="card ds-card"><h2>매출 현황</h2><p class="sub" id="dsSalesSub">매출관리의 결제 기록 기준이에요.</p><div id="dsSales"></div></section>
+    </div>
+  </section>
+
+  <section class="view" id="view-exercise" hidden>
+    <nav class="tabs" role="tablist">
+      <button role="tab" id="exTabLib" aria-selected="true">운동 목록</button>
+      <button role="tab" id="exTabProg" aria-selected="false">프로그램</button>
+    </nav>
+    <div id="exLib">
+      <div class="chips" id="exFilter"></div>
+      <div class="ex-grid" id="exGrid"></div>
+    </div>
+    <div id="exProg" hidden>
+      <div class="mb-toolbar"><p class="sub" style="margin:0;flex:1;align-self:center">회원에게 배정할 운동 묶음이에요.</p><button type="button" class="btn primary" id="btnProgAdd">+ 프로그램 만들기</button></div>
+      <div id="progList" class="mb-list"></div>
+    </div>
+    <p class="mb-note">운동은 자세 관리를 위한 일반적인 참고 동작이에요. 통증이 있거나 불편하면 중단하고 전문가와 상의하세요.</p>
+  </section>
+
+  <section class="view" id="view-consult" hidden>
+    <div class="ds-kpis three" id="csKpis"></div>
+    <section class="card"><h2>다가오는 예약</h2><div id="csUpcoming"></div></section>
+    <div class="mb-toolbar">
+      <select id="csMember" class="sel"><option value="">전체 회원</option></select>
+      <button type="button" class="btn primary" id="btnCsAdd">+ 상담 기록</button>
+    </div>
+    <div id="csList" class="mb-list"></div>
+  </section>
+
+  <section class="view" id="view-sales" hidden>
+    <div class="sl-month"><button type="button" class="btn line sm" id="slPrev" aria-label="이전 달">‹</button><b id="slMonthLabel"></b><button type="button" class="btn line sm" id="slNext" aria-label="다음 달">›</button></div>
+    <div class="ds-kpis three" id="slKpis"></div>
+    <section class="card"><h2>최근 6개월 매출</h2><div id="slChart"></div></section>
+    <div class="mb-toolbar"><p class="sub" style="margin:0;flex:1;align-self:center" id="slListSub"></p><button type="button" class="btn primary" id="btnSlAdd">+ 결제 등록</button></div>
+    <div id="slList" class="mb-list"></div>
+  </section>
   <section class="view" id="view-members" hidden>
     <div id="mbListWrap">
       <div class="mb-toolbar">
@@ -829,6 +979,16 @@
           <button type="button" class="btn line sm" id="btnMbEdit">정보 수정</button>
         </div>
       </section>
+      <section class="card" id="mbExCard">
+        <h2>운동 프로그램</h2>
+        <div id="mbAssign"></div>
+        <p class="mini-h">최근 측정 기반 추천 운동</p>
+        <div id="mbReco"></div>
+        <div class="stage-controls">
+          <button type="button" class="btn primary" id="btnAssign">프로그램 배정</button>
+          <button type="button" class="btn line" id="btnExCard">운동 카드 저장·공유</button>
+        </div>
+      </section>
       <section class="card" id="mbTrendCard">
         <h2>점수 변화</h2>
         <p class="sub" id="mbTrendSub">측정할 때마다 종합 점수가 쌓여요.</p>
@@ -841,12 +1001,23 @@
         <button type="button" class="btn primary wide" id="btnMbCompare" disabled style="margin-top:12px">선택한 2개 비교하기</button>
       </section>
       <section class="card" id="mbCompare" hidden></section>
+      <section class="card">
+        <h2>상담 기록</h2>
+        <div id="mbConsults"></div>
+        <button type="button" class="btn line wide" id="btnMbConsult" style="margin-top:10px">+ 상담 기록 추가</button>
+      </section>
+      <section class="card">
+        <h2>결제 내역</h2>
+        <div id="mbSales"></div>
+        <button type="button" class="btn line wide" id="btnMbSale" style="margin-top:10px">+ 결제 추가</button>
+      </section>
       <button type="button" class="btn line sm mb-del" id="btnMbDelete">회원 삭제</button>
     </div>
   </section>
   </main>
 
   <nav class="bottom-nav" aria-label="하단 메뉴">
+    <button type="button" class="nav-item" data-view="dash"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>현황</span></button>
     <button type="button" class="nav-item" data-view="analyze" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>체형분석</span></button>
     <button type="button" class="nav-item" data-view="report"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>리포트</span></button>
     <button type="button" class="nav-item" data-view="members"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원</span></button>
@@ -869,6 +1040,10 @@
       <label>키(cm)<input id="mfHeight" type="number" inputmode="decimal" min="80" max="230" step="0.1" placeholder="cm 환산에 사용"></label>
       <label>연락처<input id="mfPhone" type="tel" autocomplete="off" placeholder="선택"></label>
     </div>
+    <div class="mf-row">
+      <label>출생연도<input id="mfBirth" type="number" inputmode="numeric" min="1920" max="2025" placeholder="예: 1988 (연령대 통계)"></label>
+      <label style="visibility:hidden">.<input tabindex="-1"></label>
+    </div>
     <label>메모<textarea id="mfMemo" rows="2" placeholder="예: 목·어깨 긴장, 주 2회 수업"></textarea></label>
     <div class="confirm-btns">
       <button type="button" class="no" id="btnMfCancel">취소</button>
@@ -877,6 +1052,64 @@
   </div>
 </div>
 
+
+<div class="confirm-overlay" id="progForm" hidden role="dialog" aria-modal="true">
+  <div class="confirm-box mb-form">
+    <h3 id="progFormTitle">프로그램 만들기</h3>
+    <label><span>프로그램 이름 <i>*</i></span><input id="pfName" type="text" placeholder="예: 거북목 케어 4주"></label>
+    <label>설명<input id="pfDesc" type="text" placeholder="선택"></label>
+    <p class="mini-h">운동 선택</p>
+    <div class="pf-list" id="pfList"></div>
+    <div class="confirm-btns"><button type="button" class="no" id="btnPfCancel">취소</button><button type="button" class="yes ok" id="btnPfSave">저장</button></div>
+  </div>
+</div>
+<div class="confirm-overlay" id="assignPick" hidden role="dialog" aria-modal="true">
+  <div class="confirm-box mb-pick">
+    <h3>프로그램 배정</h3>
+    <div class="mp-list" id="apList"></div>
+    <div class="confirm-btns"><button type="button" class="no" id="btnApCancel">닫기</button></div>
+  </div>
+</div>
+<div class="confirm-overlay" id="csForm" hidden role="dialog" aria-modal="true">
+  <div class="confirm-box mb-form">
+    <h3 id="csFormTitle">상담 기록</h3>
+    <label><span>회원 <i>*</i></span><select id="cfMember"></select></label>
+    <div class="mf-row">
+      <label>상담 일시<input id="cfAt" type="datetime-local"></label>
+      <label>유형<select id="cfType"><option>초기 상담</option><option>정기 상담</option><option>재등록 상담</option><option>측정 결과 설명</option><option>기타</option></select></label>
+    </div>
+    <label>내용<textarea id="cfBody" rows="4" placeholder="예: 목·어깨 뻐근함, 주 2회 필라테스 희망"></textarea></label>
+    <label>다음 예약<input id="cfNext" type="datetime-local"></label>
+    <div class="confirm-btns"><button type="button" class="no" id="btnCfCancel">취소</button><button type="button" class="yes ok" id="btnCfSave">저장</button></div>
+  </div>
+</div>
+<div class="confirm-overlay" id="slForm" hidden role="dialog" aria-modal="true">
+  <div class="confirm-box mb-form">
+    <h3 id="slFormTitle">결제 등록</h3>
+    <label>회원<select id="sfMember"></select></label>
+    <div class="mf-row">
+      <label>결제일<input id="sfDate" type="date"></label>
+      <label>결제 수단<select id="sfMethod"><option>카드</option><option>현금</option><option>계좌이체</option><option>기타</option></select></label>
+    </div>
+    <label><span>항목 <i>*</i></span><input id="sfItem" type="text" list="sfItems" placeholder="예: 필라테스 10회권"></label>
+    <datalist id="sfItems"><option value="체형분석"><option value="필라테스 10회권"><option value="필라테스 20회권"><option value="PT 10회권"><option value="1개월 회원권"><option value="3개월 회원권"></datalist>
+    <label><span>금액(원) <i>*</i></span><input id="sfAmount" type="number" inputmode="numeric" min="0" step="1000" placeholder="예: 350000"></label>
+    <label>메모<input id="sfMemo" type="text" placeholder="선택"></label>
+    <div class="confirm-btns"><button type="button" class="no" id="btnSfCancel">취소</button><button type="button" class="yes ok" id="btnSfSave">저장</button></div>
+  </div>
+</div>
+<div class="confirm-overlay" id="moreSheet" hidden role="dialog" aria-modal="true">
+  <div class="confirm-box mb-pick">
+    <h3>전체 메뉴</h3>
+    <div class="more-grid">
+      <button type="button" data-go="exercise"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/></svg><span>운동관리</span></button>
+      <button type="button" data-go="consult"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10.5H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>상담일지</span></button>
+      <button type="button" data-go="sales"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg><span>매출관리</span></button>
+      <button type="button" data-go="report"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/></svg><span>종합 리포트</span></button>
+    </div>
+    <div class="confirm-btns"><button type="button" class="no" id="btnMoreClose">닫기</button></div>
+  </div>
+</div>
 <div class="confirm-overlay" id="mbPicker" hidden role="dialog" aria-modal="true" aria-labelledby="mbPickTitle">
   <div class="confirm-box mb-pick">
     <h3 id="mbPickTitle">회원 선택</h3>
@@ -3219,12 +3452,20 @@
     $("view-analyze").hidden = (v !== "analyze");
     $("view-report").hidden = (v !== "report");
     $("view-members").hidden = (v !== "members");
-    $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : v === "members" ? "회원관리" : "체형 분석";
+    $("view-dash").hidden = (v !== "dash");
+    $("view-exercise").hidden = (v !== "exercise");
+    $("view-consult").hidden = (v !== "consult");
+    $("view-sales").hidden = (v !== "sales");
+    $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : v === "members" ? "회원관리" : v === "dash" ? "운영 현황" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : "체형 분석";
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
     if(v === "report") renderReport();
     else if(v === "members") mbShowList();
+    else if(v === "dash") renderDash();
+    else if(v === "exercise") renderExercise();
+    else if(v === "consult") renderConsult();
+    else if(v === "sales") renderSales();
     else if(cur().img) requestDraw();
     window.scrollTo(0, 0);
   }
@@ -3234,7 +3475,7 @@
   document.querySelectorAll(".nav-item[data-soon]").forEach(function(b){
     b.addEventListener("click", function(){ toast(b.getAttribute("data-soon") + " 메뉴는 준비 중이에요."); });
   });
-  $("btnMore").addEventListener("click", function(){ toast("운동관리 · 상담일지 · 설정 메뉴가 곧 추가돼요."); });
+  $("btnMore").addEventListener("click", function(){ $("moreSheet").hidden = false; });
   $("btnGoReport").addEventListener("click", function(){ showView("report"); });
   document.querySelectorAll("[data-goto]").forEach(function(b){
     b.addEventListener("click", function(){ showView("analyze"); selectMode(b.getAttribute("data-goto")); });
@@ -3253,16 +3494,17 @@
 
 
   /* ===================== v43 회원관리 (기기 저장: IndexedDB) ===================== */
-  var MEM = { members: [], records: [] }, dbP = null;
+  var MEM = { members: [], records: [], programs: [], assigns: [], consults: [], sales: [] }, dbP = null;
   function idb(){
     if(dbP) return dbP;
     dbP = new Promise(function(res){
       try{
-        var rq = indexedDB.open("ayo-posture", 1);
+        var rq = indexedDB.open("ayo-posture", 2);
         rq.onupgradeneeded = function(){
           var d = rq.result;
           if(!d.objectStoreNames.contains("members")) d.createObjectStore("members", { keyPath:"id" });
           if(!d.objectStoreNames.contains("records")) d.createObjectStore("records", { keyPath:"id" });
+          ["programs", "assigns", "consults", "sales"].forEach(function(n){ if(!d.objectStoreNames.contains(n)) d.createObjectStore(n, { keyPath:"id" }); });
         };
         rq.onsuccess = function(){ res(rq.result); };
         rq.onerror = function(){ res(null); };
@@ -3307,7 +3549,7 @@
     return d.getFullYear() + "." + z(d.getMonth()+1) + "." + z(d.getDate()) + " " + z(d.getHours()) + ":" + z(d.getMinutes());
   }
   function memberMeta(m){
-    return [m.no ? "No." + m.no : "", m.sex, m.height ? m.height + "cm" : "", m.phone].filter(Boolean).join(" · ");
+    return [m.no ? "No." + m.no : "", m.sex, m.birth ? m.birth + "년생" : "", m.height ? m.height + "cm" : "", m.phone].filter(Boolean).join(" · ");
   }
 
   /* ---- 현재 측정 회원 ---- */
@@ -3378,6 +3620,7 @@
     $("mfName").value = m ? m.name : ""; $("mfNo").value = m ? (m.no || "") : "";
     $("mfSex").value = m ? (m.sex || "") : ""; $("mfHeight").value = m && m.height ? m.height : "";
     $("mfPhone").value = m ? (m.phone || "") : ""; $("mfMemo").value = m ? (m.memo || "") : "";
+    $("mfBirth").value = m && m.birth ? m.birth : "";
     $("mbForm").hidden = false; setTimeout(function(){ $("mfName").focus(); }, 50);
   }
   $("btnMfCancel").addEventListener("click", function(){ $("mbForm").hidden = true; });
@@ -3389,6 +3632,7 @@
     m.name = name; m.no = $("mfNo").value.trim(); m.sex = $("mfSex").value;
     m.height = (isFinite(h) && h >= 80 && h <= 230) ? Math.round(h * 10) / 10 : null;
     m.phone = $("mfPhone").value.trim(); m.memo = $("mfMemo").value.trim();
+    var by = parseInt($("mfBirth").value, 10); m.birth = (by >= 1920 && by <= new Date().getFullYear()) ? by : null;
     dbPut("members", m).then(function(){
       $("mbForm").hidden = true;
       toast(formEditing ? "회원 정보를 수정했어요." : name + " 회원을 등록했어요.");
@@ -3465,6 +3709,7 @@
       $("btnMbCompare").disabled = true;
       mbRecs = rs;
       renderTrend(rs);
+      renderMemberOps(m, rs);
     });
   }
   var mbRecs = [];
@@ -3474,6 +3719,10 @@
     if(!window.confirm(m.name + " 회원과 모든 측정 기록을 삭제할까요? 되돌릴 수 없어요.")) return;
     dbAll("records").then(function(all){
       return Promise.all(all.filter(function(r){ return r.memberId === m.id; }).map(function(r){ return dbDel("records", r.id); }));
+    }).then(function(){
+      return Promise.all(["assigns", "consults", "sales"].map(function(st){
+        return dbAll(st).then(function(L){ return Promise.all(L.filter(function(x){ return x.memberId === m.id; }).map(function(x){ return dbDel(st, x.id); })); });
+      }));
     }).then(function(){ return dbDel("members", m.id); }).then(function(){
       if(state.member && state.member.id === m.id) setMember(null);
       toast("삭제했어요."); mbShowList();
@@ -3684,13 +3933,18 @@
   $("btnBkExport").addEventListener("click", function(){
     loadAll().then(function(res){
       if(!res[0].length){ toast("백업할 회원이 없어요."); return; }
-      var data = { app: "AYO체형분석", kind: "backup", version: 1, exportedAt: new Date().toISOString(), members: res[0], records: res[1] };
+      var data = { app: "AYO체형분석", kind: "backup", version: 2, exportedAt: new Date().toISOString(), members: res[0], records: res[1] };
+      data.extra = OPS_STORES;  // 실제 데이터는 아래에서 채움
+      var fill = OPS_STORES.reduce(function(p, st){ return p.then(function(){ return dbAll(st).then(function(L){ data[st] = L; }); }); }, Promise.resolve());
+      delete data.extra;
+      fill.then(function(){
       var blob = new Blob([JSON.stringify(data)], { type: "application/json" });
       var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
       lsSet("ayo_last_backup", String(Date.now()));
       deliverFile(blob, "AYO_backup_" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "_" + z(d.getHours()) + z(d.getMinutes()) + ".json",
         "백업 파일을 만들었어요. 구글드라이브나 카톡 나에게 보내기로 보관하세요.");
       bkInfoRender();
+      });
     });
   });
   $("btnBkImport").addEventListener("click", function(){ $("bkFile").value = ""; $("bkFile").click(); });
@@ -3704,17 +3958,477 @@
         var haveM = {}, haveR = {}; res[0].forEach(function(m){ haveM[m.id] = 1; }); res[1].forEach(function(r){ haveR[r.id] = 1; });
         var newM = data.members.filter(function(m){ return m && m.id && m.name && !haveM[m.id]; });
         var newR = data.records.filter(function(r){ return r && r.id && r.memberId && !haveR[r.id]; });
-        if(!newM.length && !newR.length){ toast("새로 불러올 기록이 없어요. 이미 모두 들어 있어요."); return; }
-        if(!window.confirm("회원 " + newM.length + "명, 측정 기록 " + newR.length + "건을 불러올까요? 기존 기록은 그대로 유지돼요.")) return;
+        var extraP = OPS_STORES.reduce(function(p, st){ return p.then(function(acc){ return dbAll(st).then(function(L){ var have = {}; L.forEach(function(x){ have[x.id] = 1; }); acc[st] = (data[st] || []).filter(function(x){ return x && x.id && !have[x.id]; }); return acc; }); }); }, Promise.resolve({}));
+        extraP.then(function(extra){
+        var extraN = OPS_STORES.reduce(function(a, st){ return a + extra[st].length; }, 0);
+        if(!newM.length && !newR.length && !extraN){ toast("새로 불러올 기록이 없어요. 이미 모두 들어 있어요."); return; }
+        if(!window.confirm("회원 " + newM.length + "명, 측정 기록 " + newR.length + "건" + (extraN ? ", 운동·상담·결제 " + extraN + "건" : "") + "을 불러올까요? 기존 기록은 그대로 유지돼요.")) return;
         var chain = Promise.resolve();
         newM.forEach(function(m){ chain = chain.then(function(){ return dbPut("members", m); }); });
         newR.forEach(function(r){ chain = chain.then(function(){ return dbPut("records", r); }); });
-        chain.then(function(){ toast("회원 " + newM.length + "명, 기록 " + newR.length + "건을 불러왔어요."); mbShowList(); })
+        OPS_STORES.forEach(function(st){ extra[st].forEach(function(x){ chain = chain.then(function(){ return dbPut(st, x); }); }); });
+        chain.then(function(){ toast("회원 " + newM.length + "명, 측정 " + newR.length + "건" + (extraN ? ", 운동·상담·결제 " + extraN + "건" : "") + "을 불러왔어요."); mbShowList(); })
              .catch(function(){ toast("불러오는 중 오류가 났어요."); });
+        });
       });
     };
     rd.readAsText(f);
   });
+
+
+  /* ===================== v45 운영 현황 ===================== */
+  var DAY = 864e5;
+  function monthKey(t){ var d = new Date(t); return d.getFullYear() * 12 + d.getMonth(); }
+  function deltaTxt(cur, prev, unit){
+    if(prev == null || cur == null) return '<span>지난달 기록 없음</span>';
+    var d = cur - prev;
+    if(d === 0) return '지난달과 같음';
+    return '<b class="' + (d > 0 ? "up-good" : "up-bad") + '">' + (d > 0 ? "▲ " : "▼ ") + Math.abs(Math.round(d * 10) / 10) + (unit || "") + '</b> 지난달 대비';
+  }
+  function bars(rows, opt){
+    // rows: [{label, value, title, hi}] — 단일 계열 세로 막대
+    var W = Math.round(Math.max(280, Math.min(620, opt.w || 560))), H = opt.h || 200, L = 30, R = 10, T = 22, B = 30;
+    var max = Math.max(opt.min || 1, Math.max.apply(null, rows.map(function(r){ return r.value; })));
+    var nice = max <= 5 ? 5 : max <= 10 ? 10 : Math.ceil(max / 5) * 5;
+    var bw = Math.min(40, (W - L - R) / rows.length * 0.56), step = (W - L - R) / rows.length;
+    var Y = function(v){ return T + (1 - v / nice) * (H - T - B); }, g = '';
+    [0, nice / 2, nice].forEach(function(v){
+      g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="rgba(151,163,188,.16)"/>' +
+           '<text x="' + (L - 6) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" fill="#97A3BC">' + v + '</text>';
+    });
+    rows.forEach(function(r, i){
+      var x = L + step * i + (step - bw) / 2, y = Y(r.value), h = Y(0) - y;
+      if(h > 0) g += '<path d="M' + x + ' ' + Y(0) + 'V' + (y + 4) + 'q0 -4 4 -4h' + (bw - 8) + 'q4 0 4 4V' + Y(0) + 'Z" fill="' + (r.hi ? "#2F6BFF" : "rgba(47,107,255,.45)") + '"><title>' + r.title + '</title></path>';
+      g += '<rect x="' + (L + step * i) + '" y="' + T + '" width="' + step + '" height="' + (H - T - B) + '" fill="transparent"><title>' + r.title + '</title></rect>';
+      if(r.value > 0 && (opt.labelAll || r.hi)) g += '<text x="' + (x + bw / 2) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#E9EEF8">' + r.value + (opt.unit || "") + '</text>';
+      g += '<text x="' + (x + bw / 2) + '" y="' + (H - 10) + '" text-anchor="middle" font-size="11" fill="#97A3BC">' + r.label + '</text>';
+    });
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + opt.aria + '">' + g + '</svg>';
+  }
+  function renderDash(){
+    loadAll().then(function(res){
+      var members = res[0], records = res[1], now = Date.now(), cm = monthKey(now);
+      var byMember = {}; records.forEach(function(r){ (byMember[r.memberId] = byMember[r.memberId] || []).push(r); });
+      Object.keys(byMember).forEach(function(k){ byMember[k].sort(function(a, b){ return b.at - a.at; }); });
+      var inMonth = function(t, k){ return t && monthKey(t) === k; };
+      var newThis = members.filter(function(m){ return inMonth(m.createdAt, cm); }).length, newPrev = members.filter(function(m){ return inMonth(m.createdAt, cm - 1); }).length;
+      var recThis = records.filter(function(r){ return inMonth(r.at, cm); }), recPrev = records.filter(function(r){ return inMonth(r.at, cm - 1); });
+      var avg = function(L){ var v = L.filter(function(r){ return r.score != null; }); return v.length ? Math.round(v.reduce(function(a, r){ return a + r.score; }, 0) / v.length) : null; };
+      var reThis = {}, rePrev = {};
+      recThis.forEach(function(r){ var all = byMember[r.memberId] || []; if(all.some(function(x){ return x.at < r.at; })) reThis[r.memberId] = 1; });
+      recPrev.forEach(function(r){ var all = byMember[r.memberId] || []; if(all.some(function(x){ return x.at < r.at; })) rePrev[r.memberId] = 1; });
+      var K = [
+        { k:"전체 회원", v:members.length, u:"명", d:'이번 달 신규 <b>' + newThis + '명</b>' },
+        { k:"이번 달 신규 회원", v:newThis, u:"명", d:deltaTxt(newThis, newPrev, "명") },
+        { k:"이번 달 측정", v:recThis.length, u:"건", d:deltaTxt(recThis.length, recPrev.length, "건") },
+        { k:"이번 달 재측정 회원", v:Object.keys(reThis).length, u:"명", d:deltaTxt(Object.keys(reThis).length, Object.keys(rePrev).length, "명") },
+        { k:"이번 달 평균 점수", v:avg(recThis) == null ? "–" : avg(recThis), u:avg(recThis) == null ? "" : "점", d:deltaTxt(avg(recThis), avg(recPrev), "점") }
+      ];
+      $("dsKpis").innerHTML = K.map(function(x){ return '<div class="kpi"><div class="k">' + x.k + '</div><div class="v">' + x.v + '<small>' + x.u + '</small></div><div class="d">' + x.d + '</div></div>'; }).join("");
+
+      // 회원 현황
+      var S = { fresh:0, active:0, due:0, dormant:0, none:0 }, dueList = [];
+      members.forEach(function(m){
+        var rs = byMember[m.id] || [], last = rs[0], age = last ? (now - last.at) / DAY : null;
+        if(!last){ if((now - (m.createdAt || 0)) / DAY <= 30) S.fresh++; else S.none++; return; }
+        if(age <= 30){ if((now - (m.createdAt || 0)) / DAY <= 30 && rs.length === 1) S.fresh++; else S.active++; }
+        else if(age <= 60){ S.due++; dueList.push({ m:m, days:Math.floor(age), score:last.score }); }
+        else { S.dormant++; dueList.push({ m:m, days:Math.floor(age), score:last.score }); }
+      });
+      var tot = members.length || 1;
+      var cats = [
+        { k:"fresh", n:"신규 회원", e:"등록 30일 이내", c:"#2F6BFF" },
+        { k:"active", n:"관리 중", e:"최근 30일 안에 측정", c:"#4CC38A" },
+        { k:"due", n:"재측정 필요", e:"30~60일 미측정", c:"#F0B44C" },
+        { k:"dormant", n:"휴면", e:"60일 이상 미측정", c:"#7D879C" },
+        { k:"none", n:"측정 기록 없음", e:"등록 30일 경과", c:"#4A5570" }
+      ].filter(function(c){ return c.k !== "none" || S.none > 0; });
+      $("dsStatus").innerHTML = members.length ? (
+        '<div class="st-bar" role="img" aria-label="회원 상태 비율">' + cats.filter(function(c){ return S[c.k]; }).map(function(c){ return '<i style="flex:' + S[c.k] + ';background:' + c.c + '" title="' + c.n + ' ' + S[c.k] + '명"></i>'; }).join("") + '</div>' +
+        '<div class="st-list">' + cats.map(function(c){ return '<div class="st-row"><span class="sw" style="background:' + c.c + '"></span><span>' + c.n + ' <em>' + c.e + '</em></span><span class="n">' + S[c.k] + '명</span><span class="p">' + Math.round(S[c.k] / tot * 100) + '%</span></div>'; }).join("") + '</div>'
+      ) : '<p class="ds-empty">아직 등록된 회원이 없어요. <b>회원관리</b>에서 회원을 등록하면 현황이 쌓여요.</p>';
+
+      // 측정 추이 (최근 6개월)
+      var months = []; for(var i = 5; i >= 0; i--) months.push(cm - i);
+      var mRows = months.map(function(k){
+        var L = records.filter(function(r){ return monthKey(r.at) === k; });
+        return { k:k, label:((k % 12) + 1) + "월", value:L.length, avg:avg(L) };
+      });
+      var w = $("dsTrend").clientWidth || 520;
+      var total6 = mRows.reduce(function(a, r){ return a + r.value; }, 0);
+      $("dsTrendSub").textContent = "6개월 측정 " + total6 + "건 · 막대에 손가락을 대면 평균 점수가 보여요.";
+      $("dsTrend").innerHTML = bars(mRows.map(function(r, i){ return { label:r.label, value:r.value, hi:i === mRows.length - 1, title:r.label + " 측정 " + r.value + "건" + (r.avg != null ? " · 평균 " + r.avg + "점" : "") }; }), { w:w, h:210, labelAll:true, aria:"월별 측정 건수" }) +
+        '<p class="ds-hint">평균 점수: ' + mRows.map(function(r){ return r.label + " " + (r.avg != null ? r.avg + "점" : "–"); }).join(" · ") + '</p>';
+
+      // 재측정 필요 회원
+      dueList.sort(function(a, b){ return b.days - a.days; });
+      $("dsDue").innerHTML = dueList.length ? dueList.slice(0, 6).map(function(d){
+        return '<button type="button" class="due-row" data-id="' + esc(d.m.id) + '"><span class="mb-avatar">' + esc(initial(d.m.name)) + '</span><b>' + esc(d.m.name) + '</b><em>' + d.days + '일 전 측정' + (d.score != null ? " · " + d.score + "점" : "") + '</em></button>';
+      }).join("") + (dueList.length > 6 ? '<p class="ds-hint">외 ' + (dueList.length - 6) + '명</p>' : '') : '<p class="ds-empty">재측정이 필요한 회원이 없어요. 👍</p>';
+      $("dsDue").querySelectorAll(".due-row").forEach(function(b){ b.addEventListener("click", function(){ showView("members"); mbOpenDetail(b.getAttribute("data-id")); }); });
+
+      // 연령대
+      var yr = new Date().getFullYear(), bands = ["10대","20대","30대","40대","50대","60대+"], cnt = [0,0,0,0,0,0], known = 0;
+      members.forEach(function(m){ if(!m.birth) return; var a = yr - m.birth; known++; cnt[Math.max(0, Math.min(5, Math.floor(a / 10) - 1))]++; });
+      $("dsAgeSub").textContent = known ? "출생연도를 입력한 회원 " + known + "명 기준이에요." : "회원 정보의 출생연도로 계산해요.";
+      $("dsAge").innerHTML = known ? bars(bands.map(function(b, i){ return { label:b, value:cnt[i], hi:cnt[i] === Math.max.apply(null, cnt), title:b + " " + cnt[i] + "명 (" + Math.round(cnt[i] / known * 100) + "%)" }; }), { w:($("dsAge").clientWidth || 320), h:190, labelAll:true, unit:"", aria:"회원 연령대 분포" })
+        : '<p class="ds-empty">회원 정보에 <b>출생연도</b>를 입력하면 연령대 분포가 나와요.</p>';
+
+      // 개선 필요 부위 TOP 5 (회원별 최근 기록 기준)
+      var tally = {};
+      Object.keys(byMember).forEach(function(id){
+        var last = byMember[id][0]; if(!last) return;
+        (last.f || []).concat(last.sd || []).forEach(function(x){ if(x.cls === "g-warn" || x.cls === "g-crit"){ var t = tally[x.title] || (tally[x.title] = { n:0, crit:0 }); t.n++; if(x.cls === "g-crit") t.crit++; } });
+      });
+      var top = Object.keys(tally).map(function(k){ return { k:k, n:tally[k].n, crit:tally[k].crit }; }).sort(function(a, b){ return b.n - a.n || b.crit - a.crit; }).slice(0, 5);
+      renderDashOps(members);
+      $("dsTop").innerHTML = top.length ? top.map(function(t, i){ return '<div class="top-row"><span class="r">' + (i + 1) + '</span><span>' + esc(t.k) + (t.crit ? ' <em class="up-bad" style="font-style:normal;font-size:11.5px">개선 필요 ' + t.crit + '명</em>' : '') + '</span><span class="c">' + t.n + '<small>명</small></span></div>'; }).join("")
+        : '<p class="ds-empty">측정 기록이 쌓이면 회원들에게 많이 나타나는 부위가 순위로 표시돼요.</p>';
+    });
+  }
+
+
+  /* ===================== v46 운동관리 · 상담일지 · 매출관리 ===================== */
+  var OPS_STORES = ["programs", "assigns", "consults", "sales"];
+  var GROUPS = [ { k:"all", n:"전체" }, { k:"head", n:"머리·목" }, { k:"shoulder", n:"어깨" }, { k:"pelvis", n:"골반·고관절" }, { k:"knee", n:"무릎" }, { k:"ankle", n:"발목" } ];
+  var KEY_GROUP = { earlobe:"head", ear:"head", shoulder:"shoulder", acromion:"shoulder", pelvis:"pelvis", trochanter:"pelvis", knee:"knee", ankle:"ankle", malleolus:"ankle" };
+  var EX = [
+    { id:"chin", name:"턱 당기기 (친 턱)", keys:["ear","earlobe"], desc:"벽에 뒤통수와 등을 대고 서서 턱을 뒤로 밀어 5초 유지해요. 고개를 숙이지 않고 수평으로 당겨요.", dose:"10회 × 2세트" },
+    { id:"neckside", name:"목 옆 스트레칭", keys:["earlobe","shoulder"], desc:"한 손으로 반대쪽 머리를 잡고 귀를 어깨 쪽으로 천천히 기울여요. 반대쪽 어깨는 아래로 내려요.", dose:"좌우 20초 × 2회" },
+    { id:"tspine", name:"흉추 펴기 (폼롤러)", keys:["ear","acromion"], desc:"폼롤러를 등 가운데에 두고 손으로 머리를 받친 채 가슴을 천장 쪽으로 천천히 열어요.", dose:"10회 × 2세트" },
+    { id:"wallangel", name:"벽 천사 (월 엔젤)", keys:["acromion","shoulder"], desc:"벽에 등과 팔을 붙이고 팔을 W에서 Y 모양으로 천천히 올렸다 내려요.", dose:"10회 × 2세트" },
+    { id:"doorchest", name:"가슴 열기 스트레칭", keys:["acromion"], desc:"문틀에 팔꿈치를 어깨 높이로 대고 몸을 앞으로 기울여 가슴 앞쪽을 늘려요.", dose:"30초 × 2회" },
+    { id:"rowband", name:"밴드 로우", keys:["acromion","shoulder"], desc:"밴드를 몸 쪽으로 당기며 날개뼈를 뒤로 모아요. 어깨가 귀 쪽으로 올라가지 않게 해요.", dose:"12회 × 3세트" },
+    { id:"sideplank", name:"사이드 플랭크", keys:["shoulder","pelvis"], desc:"옆으로 누워 팔꿈치와 발로 몸을 일직선으로 버텨요. 무릎을 대고 시작해도 좋아요.", dose:"좌우 20초 × 3회" },
+    { id:"clam", name:"클램쉘", keys:["pelvis","knee"], desc:"옆으로 누워 무릎을 굽히고 발은 붙인 채 위쪽 무릎만 천천히 벌렸다 모아요.", dose:"좌우 15회 × 2세트" },
+    { id:"deadbug", name:"데드버그", keys:["trochanter","pelvis"], desc:"누워서 허리를 바닥에 붙인 채 반대쪽 팔과 다리를 천천히 뻗었다 돌아와요.", dose:"좌우 10회 × 2세트" },
+    { id:"bridge", name:"힙 브릿지", keys:["trochanter","pelvis"], desc:"누워 무릎을 세우고 엉덩이를 들어 어깨부터 무릎까지 일직선을 만들어요.", dose:"12회 × 3세트" },
+    { id:"hipflexor", name:"고관절 앞쪽 스트레칭", keys:["trochanter"], desc:"한쪽 무릎을 꿇은 런지 자세에서 골반을 앞으로 밀어 허벅지 앞쪽을 늘려요.", dose:"좌우 30초 × 2회" },
+    { id:"squat", name:"미니 스쿼트 (거울 보며)", keys:["knee"], desc:"발을 골반 너비로 두고 무릎이 발끝 방향을 향하게 살짝 앉았다 일어나요.", dose:"12회 × 3세트" },
+    { id:"singleleg", name:"한 발 서기 균형", keys:["ankle","knee","pelvis"], desc:"한 발로 서서 골반 높이를 수평으로 유지해요. 흔들리면 벽을 가볍게 짚어요.", dose:"좌우 30초 × 3회" },
+    { id:"calf", name:"카프 레이즈", keys:["ankle"], desc:"벽을 짚고 양쪽 발꿈치를 천천히 들었다 내려요. 발목이 바깥으로 꺾이지 않게 해요.", dose:"15회 × 2세트" },
+    { id:"calfstretch", name:"종아리 스트레칭", keys:["ankle","knee"], desc:"벽을 밀며 뒷다리 발꿈치를 바닥에 붙인 채 종아리를 늘려요.", dose:"좌우 30초 × 2회" }
+  ];
+  var EXMAP = {}; EX.forEach(function(e){ EXMAP[e.id] = e; });
+  var DEFAULT_PROGRAMS = [
+    { id:"p-neck", name:"거북목·라운드숄더 케어", desc:"머리·어깨가 앞으로 나온 자세", exIds:["chin","tspine","wallangel","doorchest","rowband"] },
+    { id:"p-shoulder", name:"어깨 높이 밸런스", desc:"좌우 어깨 높이 차이", exIds:["neckside","sideplank","rowband","wallangel"] },
+    { id:"p-pelvis", name:"골반 밸런스", desc:"골반 기울기·고관절 정렬", exIds:["clam","deadbug","bridge","sideplank","hipflexor"] },
+    { id:"p-lower", name:"하체 정렬", desc:"무릎·발목 정렬과 균형", exIds:["squat","singleleg","clam","calf","calfstretch"] },
+    { id:"p-core", name:"코어 기본", desc:"모든 회원 기본 루틴", exIds:["deadbug","bridge","sideplank"] }
+  ];
+  function ensurePrograms(){
+    return dbAll("programs").then(function(L){
+      if(L.length || lsGet("ayo_programs_seeded")) return L;
+      lsSet("ayo_programs_seeded", "1");
+      return Promise.all(DEFAULT_PROGRAMS.map(function(p){ return dbPut("programs", Object.assign({ createdAt: Date.now() }, p)); }));
+    });
+  }
+  function groupNames(keys){
+    var seen = {}, out = [];
+    keys.forEach(function(k){ var g = KEY_GROUP[k]; if(g && !seen[g]){ seen[g] = 1; out.push(GROUPS.find(function(x){ return x.k === g; }).n); } });
+    return out;
+  }
+  function won(n){ return (Math.round(n) || 0).toLocaleString("ko-KR") + "원"; }
+  function pad2(n){ return (n < 10 ? "0" : "") + n; }
+  function toLocalInput(ts){ var d = new Date(ts); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) + "T" + pad2(d.getHours()) + ":" + pad2(d.getMinutes()); }
+  function toDateInput(ts){ return toLocalInput(ts).slice(0, 10); }
+  function parseLocal(v){ if(!v) return null; var t = new Date(v.length === 10 ? v + "T12:00" : v).getTime(); return isFinite(t) ? t : null; }
+  function memberName(members, id){ var m = members.find(function(x){ return x.id === id; }); return m ? m.name : "(삭제된 회원)"; }
+  function fillMemberSelect(sel, blankLabel, selected){
+    return dbAll("members").then(function(L){
+      L.sort(function(a, b){ return a.name.localeCompare(b.name, "ko"); });
+      sel.innerHTML = (blankLabel != null ? '<option value="">' + esc(blankLabel) + '</option>' : '') + L.map(function(m){ return '<option value="' + esc(m.id) + '">' + esc(m.name + (m.no ? " (" + m.no + ")" : "")) + '</option>'; }).join("");
+      if(selected != null) sel.value = selected;
+      return L;
+    });
+  }
+  function overlayClose(id){ var o = $(id); o.addEventListener("click", function(e){ if(e.target === o) o.hidden = true; }); }
+  ["progForm", "assignPick", "csForm", "slForm", "moreSheet"].forEach(overlayClose);
+  $("btnMoreClose").addEventListener("click", function(){ $("moreSheet").hidden = true; });
+  document.querySelectorAll("#moreSheet [data-go]").forEach(function(b){ b.addEventListener("click", function(){ $("moreSheet").hidden = true; showView(b.getAttribute("data-go")); }); });
+
+  /* ---------------- 운동관리 ---------------- */
+  var exGroup = "all";
+  function exCardHtml(e){
+    return '<div class="ex-card"><b>' + esc(e.name) + '</b><div class="tags">' + groupNames(e.keys).map(function(n){ return '<i>' + n + '</i>'; }).join("") + '</div><p>' + esc(e.desc) + '</p><span class="dose">' + esc(e.dose) + '</span></div>';
+  }
+  function renderExercise(){
+    $("exFilter").innerHTML = GROUPS.map(function(g){ return '<button type="button" class="chip-btn" data-g="' + g.k + '" aria-pressed="' + (g.k === exGroup) + '">' + g.n + '</button>'; }).join("");
+    $("exFilter").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ exGroup = b.getAttribute("data-g"); renderExercise(); }); });
+    var list = EX.filter(function(e){ return exGroup === "all" || e.keys.some(function(k){ return KEY_GROUP[k] === exGroup; }); });
+    $("exGrid").innerHTML = list.map(exCardHtml).join("");
+    renderPrograms();
+  }
+  function setExTab(prog){
+    $("exTabLib").setAttribute("aria-selected", prog ? "false" : "true"); $("exTabProg").setAttribute("aria-selected", prog ? "true" : "false");
+    $("exLib").hidden = !!prog; $("exProg").hidden = !prog;
+  }
+  $("exTabLib").addEventListener("click", function(){ setExTab(false); });
+  $("exTabProg").addEventListener("click", function(){ setExTab(true); renderPrograms(); });
+  function renderPrograms(){
+    Promise.all([ensurePrograms().then(function(){ return dbAll("programs"); }), dbAll("assigns")]).then(function(res){
+      var P = res[0].sort(function(a, b){ return (a.createdAt || 0) - (b.createdAt || 0); }), A = res[1];
+      $("progList").innerHTML = P.length ? P.map(function(p){
+        var n = A.filter(function(a){ return a.programId === p.id && a.active; }).length;
+        return '<div class="ex-card"><div class="cs-top"><b>' + esc(p.name) + '</b><span class="badge">' + p.exIds.length + '개 운동</span><span class="badge">진행 ' + n + '명</span>' +
+          '<span class="cs-acts"><button type="button" data-edit="' + esc(p.id) + '">수정</button><button type="button" data-del="' + esc(p.id) + '">삭제</button></span></div>' +
+          (p.desc ? '<p>' + esc(p.desc) + '</p>' : '') + '<p>' + p.exIds.map(function(id){ return EXMAP[id] ? esc(EXMAP[id].name) : ""; }).filter(Boolean).join(" · ") + '</p></div>';
+      }).join("") : '<p class="ds-empty">프로그램이 없어요. <b>+ 프로그램 만들기</b>로 시작하세요.</p>';
+      $("progList").querySelectorAll("[data-edit]").forEach(function(b){ b.addEventListener("click", function(){ openProgForm(P.find(function(p){ return p.id === b.getAttribute("data-edit"); })); }); });
+      $("progList").querySelectorAll("[data-del]").forEach(function(b){ b.addEventListener("click", function(){
+        if(!window.confirm("이 프로그램을 삭제할까요? 이미 배정된 회원 기록은 남아요.")) return;
+        dbDel("programs", b.getAttribute("data-del")).then(renderPrograms);
+      }); });
+    });
+  }
+  var progEditing = null;
+  function openProgForm(p){
+    progEditing = p || null;
+    $("progFormTitle").textContent = p ? "프로그램 수정" : "프로그램 만들기";
+    $("pfName").value = p ? p.name : ""; $("pfDesc").value = p ? (p.desc || "") : "";
+    var sel = p ? p.exIds : [];
+    $("pfList").innerHTML = EX.map(function(e){ return '<label><input type="checkbox" value="' + e.id + '"' + (sel.indexOf(e.id) >= 0 ? " checked" : "") + '>' + esc(e.name) + '<em>' + groupNames(e.keys).join("·") + '</em></label>'; }).join("");
+    $("progForm").hidden = false;
+  }
+  $("btnProgAdd").addEventListener("click", function(){ openProgForm(null); });
+  $("btnPfCancel").addEventListener("click", function(){ $("progForm").hidden = true; });
+  $("btnPfSave").addEventListener("click", function(){
+    var name = $("pfName").value.trim();
+    var ids = Array.prototype.map.call($("pfList").querySelectorAll("input:checked"), function(i){ return i.value; });
+    if(!name){ toast("프로그램 이름을 입력해주세요."); return; }
+    if(!ids.length){ toast("운동을 1개 이상 선택해주세요."); return; }
+    var p = progEditing ? Object.assign({}, progEditing) : { id: uid(), createdAt: Date.now() };
+    p.name = name; p.desc = $("pfDesc").value.trim(); p.exIds = ids;
+    dbPut("programs", p).then(function(){ $("progForm").hidden = true; toast("프로그램을 저장했어요."); renderPrograms(); });
+  });
+
+  // 회원 상세: 운동·상담·결제
+  function recommendFor(rs){
+    var last = rs[0]; if(!last) return [];
+    var bad = (last.f || []).concat(last.sd || []).filter(function(x){ return x.cls === "g-warn" || x.cls === "g-crit"; });
+    var score = {};
+    bad.forEach(function(x){ EX.forEach(function(e){ if(e.keys.indexOf(x.key) >= 0){ var s0 = score[e.id] || (score[e.id] = { w:0, why:[] }); s0.w += x.cls === "g-crit" ? 2 : 1; if(s0.why.indexOf(x.title) < 0) s0.why.push(x.title); } }); });
+    return Object.keys(score).map(function(id){ return { e: EXMAP[id], w: score[id].w, why: score[id].why }; }).sort(function(a, b){ return b.w - a.w; }).slice(0, 5);
+  }
+  var opsMember = null, opsRecs = [];
+  function renderMemberOps(m, rs){
+    opsMember = m; opsRecs = rs;
+    Promise.all([dbAll("assigns"), dbAll("consults"), dbAll("sales")]).then(function(res){
+      var A = res[0].filter(function(a){ return a.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
+      $("mbAssign").innerHTML = A.length ? A.map(function(a){
+        return '<div class="as-row"><div><b>' + esc(a.name) + '</b><em>' + fmtDate(a.at).slice(0, 10) + ' 시작 · 운동 ' + a.exIds.length + '개</em></div>' +
+          '<button type="button" class="st ' + (a.active ? "on" : "off") + '" data-tg="' + esc(a.id) + '">' + (a.active ? "진행 중" : "완료") + '</button><button type="button" class="row-x" data-rm="' + esc(a.id) + '" aria-label="배정 삭제">✕</button></div>';
+      }).join("") : '<p class="ds-empty">배정된 프로그램이 없어요.</p>';
+      $("mbAssign").querySelectorAll("[data-tg]").forEach(function(b){ b.addEventListener("click", function(){ var a = A.find(function(x){ return x.id === b.getAttribute("data-tg"); }); a.active = !a.active; dbPut("assigns", a).then(function(){ renderMemberOps(m, rs); }); }); });
+      $("mbAssign").querySelectorAll("[data-rm]").forEach(function(b){ b.addEventListener("click", function(){ if(window.confirm("이 프로그램 배정을 삭제할까요?")) dbDel("assigns", b.getAttribute("data-rm")).then(function(){ renderMemberOps(m, rs); }); }); });
+      var R = recommendFor(rs);
+      $("mbReco").innerHTML = R.length ? '<div class="reco">' + R.map(function(r){ return '<div class="reco-row"><div><b>' + esc(r.e.name) + '</b><em>' + esc(r.e.dose) + '</em></div><span class="why">' + esc(r.why.slice(0, 2).join(", ")) + '</span></div>'; }).join("") + '</div>'
+        : '<p class="ds-empty">' + (rs.length ? "최근 측정에서 주의가 필요한 부위가 없어요." : "측정 기록이 생기면 부위에 맞는 운동을 추천해요.") + '</p>';
+      var C = res[1].filter(function(c){ return c.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
+      $("mbConsults").innerHTML = C.length ? '<div class="mini-list">' + C.slice(0, 5).map(function(c){ return consultHtml(c, null); }).join("") + '</div>' + (C.length > 5 ? '<p class="ds-hint">외 ' + (C.length - 5) + '건 · 상담일지에서 전체 보기</p>' : '') : '<p class="ds-empty">상담 기록이 없어요.</p>';
+      bindConsultActs($("mbConsults"), C, function(){ renderMemberOps(m, rs); });
+      var S = res[2].filter(function(x){ return x.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
+      var tot = S.reduce(function(a, x){ return a + (x.amount || 0); }, 0);
+      $("mbSales").innerHTML = S.length ? '<p class="sub" style="margin:0 0 4px">총 ' + S.length + '건 · <b style="color:var(--ink)">' + won(tot) + '</b></p><div class="mini-list">' + S.slice(0, 5).map(function(x){ return saleHtml(x, null); }).join("") + '</div>' : '<p class="ds-empty">결제 내역이 없어요.</p>';
+      bindSaleActs($("mbSales"), S, function(){ renderMemberOps(m, rs); });
+    });
+  }
+  $("btnAssign").addEventListener("click", function(){
+    var m = opsMember; if(!m) return;
+    ensurePrograms().then(function(){ return dbAll("programs"); }).then(function(P){
+      var R = recommendFor(opsRecs).map(function(r){ return r.e.id; });
+      P = P.map(function(p){ return { p:p, hit:p.exIds.filter(function(id){ return R.indexOf(id) >= 0; }).length }; }).sort(function(a, b){ return b.hit - a.hit; });
+      $("apList").innerHTML = P.length ? P.map(function(x){ return '<button type="button" class="mb-item" data-id="' + esc(x.p.id) + '"><div class="mb-txt"><b>' + esc(x.p.name) + (x.hit ? ' <span class="badge">추천 운동 ' + x.hit + '개 포함</span>' : '') + '</b><em>' + x.p.exIds.map(function(id){ return EXMAP[id] ? EXMAP[id].name : ""; }).filter(Boolean).join(" · ") + '</em></div></button>'; }).join("")
+        : '<p class="ds-empty">프로그램이 없어요. 운동관리 → 프로그램에서 만들어주세요.</p>';
+      $("apList").querySelectorAll(".mb-item").forEach(function(b){ b.addEventListener("click", function(){
+        var p = P.find(function(x){ return x.p.id === b.getAttribute("data-id"); }).p;
+        dbPut("assigns", { id: uid(), memberId: m.id, programId: p.id, name: p.name, exIds: p.exIds.slice(), at: Date.now(), active: true }).then(function(){
+          $("assignPick").hidden = true; toast(m.name + " 회원에게 '" + p.name + "'을 배정했어요."); renderMemberOps(m, opsRecs);
+        });
+      }); });
+      $("assignPick").hidden = false;
+    });
+  });
+  $("btnApCancel").addEventListener("click", function(){ $("assignPick").hidden = true; });
+
+  // 운동 카드 이미지
+  function wrapText(g, text, maxW){
+    var out = [], line = "";
+    String(text).split("").forEach(function(ch){ var t = line + ch; if(g.measureText(t).width > maxW && line){ out.push(line); line = ch; } else line = t; });
+    if(line) out.push(line); return out;
+  }
+  $("btnExCard").addEventListener("click", function(){
+    var m = opsMember; if(!m) return;
+    dbAll("assigns").then(function(L){
+      var act = L.filter(function(a){ return a.memberId === m.id && a.active; });
+      var ids = [], title;
+      act.forEach(function(a){ a.exIds.forEach(function(id){ if(ids.indexOf(id) < 0) ids.push(id); }); });
+      if(ids.length) title = act.map(function(a){ return a.name; }).join(" + ");
+      else { ids = recommendFor(opsRecs).map(function(r){ return r.e.id; }); title = "최근 측정 기반 추천 운동"; }
+      if(!ids.length){ toast("배정된 프로그램이나 추천 운동이 없어요."); return; }
+      var W = 1080, PAD = 56, F = "'IBM Plex Sans KR', 'IBM Plex Sans', sans-serif";
+      var c = document.createElement("canvas"), g = c.getContext("2d");
+      g.font = "500 26px " + F;
+      var blocks = ids.map(function(id){ var e = EXMAP[id]; return { e:e, lines: wrapText(g, e.desc, W - PAD * 2 - 120) }; });
+      var H = 260 + blocks.reduce(function(a, b){ return a + 110 + b.lines.length * 38; }, 0) + 90;
+      c.width = W; c.height = H; g = c.getContext("2d");
+      g.fillStyle = "#EEF3FA"; g.fillRect(0, 0, W, H);
+      g.fillStyle = "#0F1A33"; g.fillRect(0, 0, W, 210);
+      g.fillStyle = "#7FA2FF"; g.font = "700 24px " + F; g.fillText("AYO체형분석  ·  운동 카드", PAD, 64);
+      g.fillStyle = "#FFFFFF"; g.font = "800 52px " + F; g.fillText(m.name + " 님", PAD, 128);
+      g.fillStyle = "#C7D2E6"; g.font = "500 26px " + F; g.fillText(title.length > 34 ? title.slice(0, 33) + "…" : title, PAD, 176);
+      g.textAlign = "right"; g.fillText(fmtDate(Date.now()).slice(0, 10), W - PAD, 64); g.textAlign = "left";
+      var y = 250;
+      blocks.forEach(function(b, i){
+        var h = 90 + b.lines.length * 38;
+        g.fillStyle = "#FFFFFF"; rr(g, PAD, y, W - PAD * 2, h, 22); g.fill();
+        g.fillStyle = "#2F6BFF"; g.beginPath(); g.arc(PAD + 50, y + 50, 26, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#FFFFFF"; g.font = "800 28px " + F; g.textAlign = "center"; g.fillText(String(i + 1), PAD + 50, y + 60); g.textAlign = "left";
+        g.fillStyle = "#0F1A33"; g.font = "800 32px " + F; g.fillText(b.e.name, PAD + 96, y + 52);
+        g.fillStyle = "#2F6BFF"; g.font = "700 26px " + F; g.textAlign = "right"; g.fillText(b.e.dose, W - PAD - 28, y + 52); g.textAlign = "left";
+        g.fillStyle = "#4A5A7A"; g.font = "500 26px " + F;
+        b.lines.forEach(function(l, k){ g.fillText(l, PAD + 96, y + 96 + k * 38); });
+        y += h + 20;
+      });
+      g.fillStyle = "#6A7488"; g.font = "500 21px " + F;
+      g.fillText("통증이 있거나 불편하면 중단하고 담당 강사와 상의하세요.", PAD, H - 36);
+      g.textAlign = "right"; g.fillStyle = "#2F6BFF"; g.font = "700 21px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 36);
+      deliverCanvas(c, "AYO_exercise_" + m.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" + toDateInput(Date.now()).replace(/-/g, "") + ".jpg");
+    });
+  });
+
+  /* ---------------- 상담일지 ---------------- */
+  var csEditing = null, csAfter = null;
+  function consultHtml(c, members){
+    return '<div class="cs-item"><div class="cs-top"><b>' + fmtDate(c.at) + '</b>' + (members ? '<em>' + esc(memberName(members, c.memberId)) + '</em>' : '') + '<span class="badge">' + esc(c.type || "상담") + '</span>' +
+      '<span class="cs-acts"><button type="button" data-ce="' + esc(c.id) + '">수정</button><button type="button" data-cd="' + esc(c.id) + '">삭제</button></span></div>' +
+      (c.body ? '<p class="cs-body">' + esc(c.body) + '</p>' : '') + (c.next ? '<div class="cs-next">다음 예약 · ' + fmtDate(c.next) + '</div>' : '') + '</div>';
+  }
+  function bindConsultActs(root, list, after){
+    root.querySelectorAll("[data-ce]").forEach(function(b){ b.addEventListener("click", function(){ openConsult(list.find(function(c){ return c.id === b.getAttribute("data-ce"); }), null, after); }); });
+    root.querySelectorAll("[data-cd]").forEach(function(b){ b.addEventListener("click", function(){ if(window.confirm("이 상담 기록을 삭제할까요?")) dbDel("consults", b.getAttribute("data-cd")).then(after); }); });
+  }
+  function openConsult(c, memberId, after){
+    csEditing = c || null; csAfter = after || null;
+    $("csFormTitle").textContent = c ? "상담 기록 수정" : "상담 기록";
+    fillMemberSelect($("cfMember"), "회원을 선택하세요", c ? c.memberId : (memberId || "")).then(function(L){
+      if(!L.length){ toast("먼저 회원을 등록해주세요."); return; }
+      $("cfAt").value = toLocalInput(c ? c.at : Date.now());
+      $("cfType").value = c ? (c.type || "기타") : "정기 상담";
+      $("cfBody").value = c ? (c.body || "") : ""; $("cfNext").value = c && c.next ? toLocalInput(c.next) : "";
+      $("csForm").hidden = false;
+    });
+  }
+  $("btnCfCancel").addEventListener("click", function(){ $("csForm").hidden = true; });
+  $("btnCfSave").addEventListener("click", function(){
+    var mid = $("cfMember").value; if(!mid){ toast("회원을 선택해주세요."); return; }
+    var c = csEditing ? Object.assign({}, csEditing) : { id: uid(), createdAt: Date.now() };
+    c.memberId = mid; c.at = parseLocal($("cfAt").value) || Date.now(); c.type = $("cfType").value; c.body = $("cfBody").value.trim(); c.next = parseLocal($("cfNext").value);
+    dbPut("consults", c).then(function(){ $("csForm").hidden = true; toast("상담 기록을 저장했어요."); if(csAfter) csAfter(); });
+  });
+  $("btnMbConsult").addEventListener("click", function(){ if(opsMember) openConsult(null, opsMember.id, function(){ renderMemberOps(opsMember, opsRecs); }); });
+  $("btnCsAdd").addEventListener("click", function(){ openConsult(null, $("csMember").value, renderConsult); });
+  $("csMember").addEventListener("change", renderConsult);
+  function weekRange(now){ var d = new Date(now); d.setHours(0, 0, 0, 0); return [d.getTime(), d.getTime() + 7 * DAY]; }
+  function renderConsult(){
+    var keep = $("csMember").value;
+    Promise.all([fillMemberSelect($("csMember"), "전체 회원", keep), dbAll("consults")]).then(function(res){
+      var members = res[0], all = res[1], now = Date.now();
+      var t0 = new Date(); t0.setHours(0, 0, 0, 0); var today = [t0.getTime(), t0.getTime() + DAY], wk = weekRange(now), cm = monthKey(now);
+      var inR = function(t, r){ return t && t >= r[0] && t < r[1]; };
+      var K = [ { k:"오늘 예약", v: all.filter(function(c){ return inR(c.next, today); }).length, u:"건" },
+                { k:"7일 내 예약", v: all.filter(function(c){ return inR(c.next, wk); }).length, u:"건" },
+                { k:"이번 달 상담", v: all.filter(function(c){ return monthKey(c.at) === cm; }).length, u:"건" } ];
+      $("csKpis").innerHTML = K.map(function(x){ return '<div class="kpi"><div class="k">' + x.k + '</div><div class="v">' + x.v + '<small>' + x.u + '</small></div></div>'; }).join("");
+      var up = all.filter(function(c){ return c.next && c.next >= today[0]; }).sort(function(a, b){ return a.next - b.next; }).slice(0, 8);
+      $("csUpcoming").innerHTML = up.length ? up.map(function(c){ var isT = inR(c.next, today); return '<div class="up-row"><span class="when' + (isT ? " today" : "") + '">' + (isT ? "오늘 " + fmtDate(c.next).slice(11) : fmtDate(c.next).slice(5)) + '</span><b>' + esc(memberName(members, c.memberId)) + '</b><em style="font-style:normal;color:var(--ink-soft);margin-left:auto;font-size:12px">' + esc(c.type || "") + '</em></div>'; }).join("")
+        : '<p class="ds-empty">예정된 예약이 없어요. 상담 기록의 <b>다음 예약</b>에 날짜를 넣으면 여기에 표시돼요.</p>';
+      var f = $("csMember").value, L = all.filter(function(c){ return !f || c.memberId === f; }).sort(function(a, b){ return b.at - a.at; });
+      $("csList").innerHTML = L.length ? L.map(function(c){ return consultHtml(c, members); }).join("") : '<p class="ds-empty">상담 기록이 없어요. <b>+ 상담 기록</b>으로 시작하세요.</p>';
+      bindConsultActs($("csList"), L, renderConsult);
+    });
+  }
+
+  /* ---------------- 매출관리 ---------------- */
+  var slMonth = monthKey(Date.now()), slEditing = null, slAfter = null;
+  function saleHtml(x, members){
+    return '<div class="sl-item"><div class="sl-top"><b>' + esc(x.item) + '</b><em>' + fmtDate(x.at).slice(0, 10) + (members ? " · " + esc(x.memberId ? memberName(members, x.memberId) : "비회원") : "") + " · " + esc(x.method || "") + '</em>' +
+      '<span class="sl-amt">' + won(x.amount) + '</span><span class="cs-acts"><button type="button" data-se="' + esc(x.id) + '">수정</button><button type="button" data-sd="' + esc(x.id) + '">삭제</button></span></div>' +
+      (x.memo ? '<p class="cs-body" style="color:var(--ink-soft);font-size:12.5px">' + esc(x.memo) + '</p>' : '') + '</div>';
+  }
+  function bindSaleActs(root, list, after){
+    root.querySelectorAll("[data-se]").forEach(function(b){ b.addEventListener("click", function(){ openSale(list.find(function(x){ return x.id === b.getAttribute("data-se"); }), null, after); }); });
+    root.querySelectorAll("[data-sd]").forEach(function(b){ b.addEventListener("click", function(){ if(window.confirm("이 결제 내역을 삭제할까요?")) dbDel("sales", b.getAttribute("data-sd")).then(after); }); });
+  }
+  function openSale(x, memberId, after){
+    slEditing = x || null; slAfter = after || null;
+    $("slFormTitle").textContent = x ? "결제 수정" : "결제 등록";
+    fillMemberSelect($("sfMember"), "비회원 / 선택 안 함", x ? (x.memberId || "") : (memberId || "")).then(function(){
+      $("sfDate").value = toDateInput(x ? x.at : Date.now()); $("sfMethod").value = x ? (x.method || "카드") : "카드";
+      $("sfItem").value = x ? x.item : ""; $("sfAmount").value = x ? x.amount : ""; $("sfMemo").value = x ? (x.memo || "") : "";
+      $("slForm").hidden = false;
+    });
+  }
+  $("btnSfCancel").addEventListener("click", function(){ $("slForm").hidden = true; });
+  $("btnSfSave").addEventListener("click", function(){
+    var item = $("sfItem").value.trim(), amt = parseInt($("sfAmount").value, 10);
+    if(!item){ toast("항목을 입력해주세요."); return; }
+    if(!(amt > 0)){ toast("금액을 입력해주세요."); return; }
+    var x = slEditing ? Object.assign({}, slEditing) : { id: uid(), createdAt: Date.now() };
+    x.memberId = $("sfMember").value || null; x.at = parseLocal($("sfDate").value) || Date.now(); x.method = $("sfMethod").value; x.item = item; x.amount = amt; x.memo = $("sfMemo").value.trim();
+    dbPut("sales", x).then(function(){ $("slForm").hidden = true; toast("결제를 저장했어요."); if(slAfter) slAfter(); });
+  });
+  $("btnMbSale").addEventListener("click", function(){ if(opsMember) openSale(null, opsMember.id, function(){ renderMemberOps(opsMember, opsRecs); }); });
+  $("btnSlAdd").addEventListener("click", function(){ openSale(null, null, renderSales); });
+  $("slPrev").addEventListener("click", function(){ slMonth--; renderSales(); });
+  $("slNext").addEventListener("click", function(){ if(slMonth < monthKey(Date.now())){ slMonth++; renderSales(); } });
+  function monthLabel(k){ return Math.floor(k / 12) + "년 " + ((k % 12) + 1) + "월"; }
+  function salesStats(all, k){ var L = all.filter(function(x){ return monthKey(x.at) === k; }); var t = L.reduce(function(a, x){ return a + (x.amount || 0); }, 0); return { list:L, total:t, n:L.length, avg: L.length ? Math.round(t / L.length) : 0 }; }
+  function renderSales(){
+    Promise.all([dbAll("members"), dbAll("sales")]).then(function(res){
+      var members = res[0], all = res[1], cur0 = salesStats(all, slMonth), prev = salesStats(all, slMonth - 1);
+      $("slMonthLabel").textContent = monthLabel(slMonth);
+      $("slNext").disabled = slMonth >= monthKey(Date.now());
+      $("slKpis").innerHTML = [
+        { k:"월 매출", v:(cur0.total / 10000).toLocaleString("ko-KR", { maximumFractionDigits:1 }), u:"만원", d:deltaTxt(Math.round(cur0.total / 10000), prev.n ? Math.round(prev.total / 10000) : null, "만원") },
+        { k:"결제 건수", v:cur0.n, u:"건", d:deltaTxt(cur0.n, prev.n ? prev.n : null, "건") },
+        { k:"객단가", v:(cur0.avg / 10000).toLocaleString("ko-KR", { maximumFractionDigits:1 }), u:"만원", d:deltaTxt(Math.round(cur0.avg / 1000) / 10, prev.n ? Math.round(prev.avg / 1000) / 10 : null, "만원") }
+      ].map(function(x){ return '<div class="kpi"><div class="k">' + x.k + '</div><div class="v">' + x.v + '<small>' + x.u + '</small></div><div class="d">' + x.d + '</div></div>'; }).join("");
+      var rows = []; for(var i = 5; i >= 0; i--){ var k = slMonth - i, st = salesStats(all, k); rows.push({ label:((k % 12) + 1) + "월", value: Math.round(st.total / 10000), hi: i === 0, title: monthLabel(k) + " " + won(st.total) + " · " + st.n + "건" }); }
+      $("slChart").innerHTML = bars(rows, { w: $("slChart").clientWidth || 520, h: 210, labelAll:true, unit:"만", aria:"월별 매출(만원)" });
+      $("slListSub").textContent = monthLabel(slMonth) + " 결제 " + cur0.n + "건 · " + won(cur0.total);
+      var L = cur0.list.sort(function(a, b){ return b.at - a.at; });
+      $("slList").innerHTML = L.length ? L.map(function(x){ return saleHtml(x, members); }).join("") : '<p class="ds-empty">이 달의 결제 내역이 없어요.</p>';
+      bindSaleActs($("slList"), L, renderSales);
+    });
+  }
+
+  /* ---------------- 현황 연동 ---------------- */
+  function renderDashOps(members){
+    Promise.all([dbAll("consults"), dbAll("assigns"), dbAll("sales")]).then(function(res){
+      var C = res[0], A = res[1], S = res[2], now = Date.now(), cm = monthKey(now);
+      var t0 = new Date(); t0.setHours(0, 0, 0, 0); var today = [t0.getTime(), t0.getTime() + DAY], wk = weekRange(now);
+      var inR = function(t, r){ return t && t >= r[0] && t < r[1]; };
+      var activeM = {}; A.forEach(function(a){ if(a.active) activeM[a.memberId] = 1; });
+      $("dsUse").innerHTML = '<div class="use-grid">' + [
+        ["오늘 예약", C.filter(function(c){ return inR(c.next, today); }).length, "건"],
+        ["7일 내 예약", C.filter(function(c){ return inR(c.next, wk); }).length, "건"],
+        ["이번 달 상담", C.filter(function(c){ return monthKey(c.at) === cm; }).length, "건"],
+        ["프로그램 진행", Object.keys(activeM).length, "명"]
+      ].map(function(x){ return '<div><span>' + x[0] + '</span><b>' + x[1] + '</b><small>' + x[2] + '</small></div>'; }).join("") + '</div>';
+      var cnt = {}; A.forEach(function(a){ if(a.active) cnt[a.name] = (cnt[a.name] || 0) + 1; });
+      var top = Object.keys(cnt).map(function(k){ return { k:k, n:cnt[k] }; }).sort(function(a, b){ return b.n - a.n; }).slice(0, 5);
+      $("dsProg").innerHTML = top.length ? top.map(function(t, i){ return '<div class="top-row"><span class="r">' + (i + 1) + '</span><span>' + esc(t.k) + '</span><span class="c">' + t.n + '<small>명</small></span></div>'; }).join("")
+        : '<p class="ds-empty">회원 상세에서 <b>프로그램 배정</b>을 하면 순위가 표시돼요.</p>';
+      var cur0 = salesStats(S, cm), prev = salesStats(S, cm - 1);
+      if(!S.length){ $("dsSales").innerHTML = '<p class="ds-empty"><b>매출관리</b>에서 결제를 등록하면 월 매출이 표시돼요.</p>'; return; }
+      var rows = []; for(var i = 5; i >= 0; i--){ var k = cm - i, st = salesStats(S, k); rows.push({ label:((k % 12) + 1) + "월", value: Math.round(st.total / 10000), hi: i === 0, title: monthLabel(k) + " " + won(st.total) }); }
+      $("dsSales").innerHTML = '<div class="sales-head"><b>' + won(cur0.total) + '</b><span class="sales-delta">' + deltaTxt(Math.round(cur0.total / 10000), prev.n ? Math.round(prev.total / 10000) : null, "만원") + '</span></div>' +
+        '<div class="sales-meta"><span>결제 <b>' + cur0.n + '건</b></span><span>객단가 <b>' + won(cur0.avg) + '</b></span></div>' +
+        bars(rows, { w: $("dsSales").clientWidth || 300, h: 160, labelAll:false, unit:"만", aria:"최근 6개월 매출" });
+    });
+  }
 
   /* ---------- in-app browser (카카오톡 등) ---------- */
   // 앱 안의 브라우저는 카메라 권한을 기억하지 못해 매번 권한 창이 뜬다 → 크롬/사파리로 보내기

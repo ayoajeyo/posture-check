@@ -774,6 +774,14 @@
   .rom-live b{font-family:var(--font-num); font-size:20px;}
   .rom-live .wide b{font-family:inherit; font-size:14px;}
   @media (max-width:520px){ .rom-live{grid-template-columns:1fr 1fr;} .rom-live .wide{grid-column:1 / -1;} }
+  .rom-ref{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:0 0 10px;}
+  .rom-ref span{font-size:12px; font-weight:700; color:var(--ink-soft); margin-right:2px;}
+  .rom-ref button{font-family:inherit; font-size:12.5px; font-weight:700; border:1px solid var(--line); background:var(--surface-2); color:var(--ink-soft); border-radius:100px; padding:6px 12px; cursor:pointer;}
+  .rom-ref button[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .rom-ref .flip{color:var(--ink);}
+  .rom-q{margin:8px 0 0; font-size:12.5px; font-weight:700; border-radius:10px; padding:8px 12px;}
+  .rom-q.good{background:rgba(76,195,138,.12); color:var(--good);} .rom-q.mid{background:rgba(240,180,76,.12); color:var(--warn);}
+  .rom-q.low, .rom-q.bad{background:rgba(240,122,114,.12); color:var(--crit);}
   .rom-tip{font-size:12px; color:var(--ink-soft); margin:8px 2px 0;}
   .rom-btns{display:flex; gap:8px; margin-top:10px;} .rom-btns .btn{flex:1;}
 
@@ -1402,6 +1410,7 @@
       <button type="button" class="rom-x" id="btnRomClose" aria-label="닫기">✕</button>
     </div>
     <p class="rom-guide" id="romGuide"></p>
+    <div class="rom-ref"><span>기준선</span><button type="button" id="romRefV" aria-pressed="true">수직 (서서·앉아서)</button><button type="button" id="romRefH" aria-pressed="false">수평 (누워서·엎드려)</button><button type="button" id="romRefFlip" class="flip" hidden>↔ 방향</button></div>
     <div class="rom-stage" id="romStage">
       <canvas id="romCv"></canvas>
       <div class="rom-empty" id="romEmpty"><b>사진을 찍거나 불러오세요</b><span id="romEmptyTip"></span></div>
@@ -1412,7 +1421,8 @@
       <div><span>정상</span><b id="romNorm">–</b></div>
       <div class="wide"><span>판정</span><b id="romJudge">–</b></div>
     </div>
-    <p class="rom-tip" id="romTip" hidden>점을 끌어서 위치를 고치면 각도가 바로 다시 계산돼요.</p>
+    <p class="rom-q" id="romQ" hidden></p>
+    <p class="rom-tip" id="romTip" hidden>주황 점 = 관절 중심, 분홍 점 = 말단(손목·발목). 점을 끌면 확대경이 나오고 각도가 바로 다시 계산돼요.</p>
     <div class="rom-btns">
       <button type="button" class="btn line sm" id="btnRomShot">📷 촬영</button>
       <button type="button" class="btn line sm" id="btnRomFile">🖼 앨범에서</button>
@@ -1463,6 +1473,7 @@
   const MP_BASE    = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
   const MODEL_FULL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task";
   const MODEL_LITE = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task";
+  const MODEL_HEAVY = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task";
 
   const visionModP = import(MP_BASE + "/vision_bundle.mjs");
   const filesetP = visionModP.then(m => m.FilesetResolver.forVisionTasks(MP_BASE + "/wasm"));
@@ -1485,7 +1496,8 @@
   }
 
   // ---- 사진 분석용 ----
-  let imageFullP = null, imageLiteP = null;
+  let imageFullP = null, imageLiteP = null, imageHeavyP = null;
+  function imageHeavy(){ return imageHeavyP || (imageHeavyP = createLandmarker(MODEL_HEAVY, "IMAGE", false, ["CPU"]).catch(e => { console.error("[4PM] heavy model load failed:", e); return null; })); }
   function imageFull(){ return imageFullP || (imageFullP = createLandmarker(MODEL_FULL, "IMAGE", false, ["CPU"]).catch(e => { console.error("[4PM] full model load failed:", e); return null; })); }
   function imageLite(){ return imageLiteP || (imageLiteP = createLandmarker(MODEL_LITE, "IMAGE", false, ["CPU"]).catch(e => { console.error("[4PM] lite model load failed:", e); return null; })); }
   window.__poseReady = imageFull();   // 페이지 열 때 미리 내려받기 시작
@@ -1526,6 +1538,15 @@
       console.error("[4PM] pose detect failed:", e);
       return null;
     }
+  };
+
+  // ROM 측정용 고정밀 인식: heavy 모델(처음 한 번 약 30MB 내려받아 저장) → 실패 시 기존 인식
+  window.__detectPoseHQ = async function(src){
+    try{
+      const heavy = await imageHeavy();
+      if(heavy){ try{ const lm = pickLandmarks(heavy.detect(toDetectSource(src))); if(lm) return lm; }catch(e){ console.error("[4PM] heavy detect failed:", e); } }
+    }catch(e){}
+    return window.__detectPose(src);
   };
 
   // ---- 격자 배경용 인물 분리(마스크) ----
@@ -4691,38 +4712,41 @@
   }
   selSearch("cfMemberQ", "cfMember"); selSearch("sfMemberQ", "sfMember");
 
-  /* ===================== v56 ROM 관절가동범위 측정 =====================
-     open : 꼭짓점 V에서 A·B 사이 각 (어깨: 몸통선 ↔ 위팔)
-     bend : 180° − ∠AVB (팔꿈치·무릎·고관절: 일직선=0°)
-     vert : 꼭짓점 V의 수직선(위/아래) ↔ V→B (회전 측정: 아래팔·아래다리) */
+  /* ===================== v56 ROM 관절가동범위 측정 (v58: 2점 방식) =====================
+     모든 관절 = 관절 중심(V) + 말단(D) 2점
+       어깨: 어깨 관절 → 손목(전완 끝)   팔꿈치: 팔꿈치 관절 → 손목
+       고관절: 고관절 → 발목(하퇴 끝)      무릎: 무릎 관절 → 발목
+     각도 = 기준선(V에서 수직 아래/위 또는 몸통 반대쪽 수평) ↔ V→D */
   var ROM_JOINTS = [
-    { k:"shoulder", n:"어깨", moves:[
-      { k:"flex", n:"굴곡", normal:180, type:"open", pts:["hip","shoulder","elbow"], guide:"<b>옆에서</b> 촬영 · 팔꿈치를 편 채 팔을 <b>앞으로 최대한</b> 들어 올린 자세 (몸통 옆선 ↔ 위팔 각도)" },
-      { k:"ext", n:"신전", normal:60, type:"open", pts:["hip","shoulder","elbow"], guide:"<b>옆에서</b> 촬영 · 팔꿈치를 편 채 팔을 <b>뒤로 최대한</b> 뻗은 자세" },
-      { k:"abd", n:"외전", normal:180, type:"open", pts:["hip","shoulder","elbow"], guide:"<b>정면 또는 뒤에서</b> 촬영 · 팔을 <b>옆으로 최대한</b> 들어 올린 자세" },
-      { k:"add", n:"내전", normal:50, type:"open", pts:["hip","shoulder","elbow"], guide:"<b>정면에서</b> 촬영 · 팔을 몸 앞쪽에서 <b>반대편으로 최대한</b> 모은 자세" },
-      { k:"er", n:"외회전", normal:90, type:"vert", ref:"up", pts:["elbow","wrist"], guide:"어깨를 옆으로 90° 벌리고 팔꿈치를 90° 굽힌 뒤, 손을 <b>머리 쪽(뒤)으로 최대한</b> 돌린 자세 · <b>팔꿈치 쪽 옆에서</b> 촬영 (수직선 ↔ 아래팔)" },
-      { k:"ir", n:"내회전", normal:60, type:"vert", ref:"up", pts:["elbow","wrist"], guide:"어깨를 옆으로 90° 벌리고 팔꿈치를 90° 굽힌 뒤, 손을 <b>발 쪽(앞)으로 최대한</b> 돌린 자세 · <b>팔꿈치 쪽 옆에서</b> 촬영" }
+    { k:"shoulder", n:"어깨", pts:["shoulder","wrist"], moves:[
+      { k:"flex", n:"굴곡", normal:180, ref:"down", guide:"<b>옆에서</b> 촬영 · 서서 팔꿈치를 편 채 팔을 <b>앞으로 최대한</b> 들어 올린 자세" },
+      { k:"ext", n:"신전", normal:60, ref:"down", guide:"<b>옆에서</b> 촬영 · 서서 팔꿈치를 편 채 팔을 <b>뒤로 최대한</b> 뻗은 자세" },
+      { k:"abd", n:"외전", normal:180, ref:"down", guide:"<b>정면 또는 뒤에서</b> 촬영 · 팔을 <b>옆으로 최대한</b> 들어 올린 자세" },
+      { k:"add", n:"내전", normal:50, ref:"down", guide:"<b>정면에서</b> 촬영 · 팔을 몸 앞쪽에서 <b>반대편으로 최대한</b> 모은 자세" },
+      { k:"er", n:"외회전", normal:90, ref:"up", guide:"누워서 어깨 90° 벌리고 팔꿈치 90° 굽힌 자세(손끝이 천장) → 손을 <b>머리 쪽으로 최대한</b> 돌림 · <b>팔꿈치가 카메라를 향하도록 위팔 방향에서</b> 촬영" },
+      { k:"ir", n:"내회전", normal:60, ref:"up", guide:"누워서 어깨 90° 벌리고 팔꿈치 90° 굽힌 자세(손끝이 천장) → 손을 <b>발 쪽으로 최대한</b> 돌림 · <b>팔꿈치가 카메라를 향하도록 위팔 방향에서</b> 촬영" }
     ]},
-    { k:"elbow", n:"팔꿈치", moves:[
-      { k:"flex", n:"굴곡", normal:150, type:"bend", pts:["shoulder","elbow","wrist"], guide:"<b>옆에서</b> 촬영 · 팔꿈치를 <b>최대한 굽힌</b> 자세 (위팔 ↔ 아래팔)" },
-      { k:"ext", n:"신전", normal:0, type:"bend", pts:["shoulder","elbow","wrist"], guide:"<b>옆에서</b> 촬영 · 팔꿈치를 <b>최대한 편</b> 자세 · 완전히 펴지면 0°" }
+    { k:"elbow", n:"팔꿈치", pts:["elbow","wrist"], moves:[
+      { k:"flex", n:"굴곡", normal:150, ref:"down", guide:"<b>옆에서</b> 촬영 · 위팔을 몸통 옆에 <b>수직으로 붙인 채</b> 팔꿈치를 <b>최대한 굽힌</b> 자세" },
+      { k:"ext", n:"신전", normal:0, ref:"down", guide:"<b>옆에서</b> 촬영 · 위팔을 몸통 옆에 수직으로 붙인 채 팔꿈치를 <b>최대한 편</b> 자세 · 완전히 펴지면 0°" }
     ]},
-    { k:"knee", n:"무릎", moves:[
-      { k:"flex", n:"굴곡", normal:140, type:"bend", pts:["hip","knee","ankle"], guide:"<b>옆에서</b> 촬영 · 무릎을 <b>최대한 굽힌</b> 자세 (엎드리거나 누운 자세 권장)" },
-      { k:"ext", n:"신전", normal:0, type:"bend", pts:["hip","knee","ankle"], guide:"<b>옆에서</b> 촬영 · 무릎을 <b>최대한 편</b> 자세 · 완전히 펴지면 0°" }
+    { k:"knee", n:"무릎", pts:["knee","ankle"], moves:[
+      { k:"flex", n:"굴곡", normal:140, ref:"horiz", guide:"<b>엎드린 자세</b>에서 <b>옆에서</b> 촬영 · 무릎을 <b>최대한 굽힌</b> 자세 (서서 측정할 때는 허벅지를 수직으로 두고 기준선을 <b>수직</b>으로)" },
+      { k:"ext", n:"신전", normal:0, ref:"down", guide:"<b>서서 옆에서</b> 촬영 · 무릎을 <b>최대한 편</b> 자세 · 완전히 펴지면 0° (누워서 측정하면 기준선을 <b>수평</b>으로)" }
     ]},
-    { k:"hip", n:"고관절", moves:[
-      { k:"flex", n:"굴곡", normal:125, type:"bend", pts:["shoulder","hip","knee"], guide:"<b>옆에서</b> 촬영 · 누워서 무릎을 가슴 쪽으로 <b>최대한</b> 당긴 자세 (몸통선 ↔ 허벅지)" },
-      { k:"ext", n:"신전", normal:30, type:"bend", pts:["shoulder","hip","knee"], guide:"<b>옆에서</b> 촬영 · 엎드리거나 서서 다리를 <b>뒤로 최대한</b> 든 자세" },
-      { k:"abd", n:"외전", normal:40, type:"bend", pts:["shoulder","hip","knee"], guide:"<b>정면에서</b> 촬영 · 다리를 <b>옆으로 최대한</b> 벌린 자세" },
-      { k:"er", n:"외회전", normal:50, type:"vert", ref:"down", pts:["knee","ankle"], guide:"의자에 앉아 무릎 90° · 발을 <b>안쪽으로</b> 최대한 돌린 자세 (고관절 외회전) · <b>정면에서</b> 촬영 (수직선 ↔ 아래다리)" },
-      { k:"ir", n:"내회전", normal:40, type:"vert", ref:"down", pts:["knee","ankle"], guide:"의자에 앉아 무릎 90° · 발을 <b>바깥쪽으로</b> 최대한 돌린 자세 (고관절 내회전) · <b>정면에서</b> 촬영" }
+    { k:"hip", n:"고관절", pts:["hip","ankle"], moves:[
+      { k:"flex", n:"굴곡", normal:125, ref:"horiz", guide:"<b>누운 자세</b>에서 <b>옆에서</b> 촬영 · 무릎을 편 채 다리를 <b>최대한</b> 들어 올린 자세 (서서 측정하면 기준선 <b>수직</b>)" },
+      { k:"ext", n:"신전", normal:30, ref:"down", guide:"<b>서서 옆에서</b> 촬영 · 무릎을 편 채 다리를 <b>뒤로 최대한</b> 든 자세 (엎드려 측정하면 기준선 <b>수평</b>)" },
+      { k:"abd", n:"외전", normal:40, ref:"down", guide:"<b>서서 정면에서</b> 촬영 · 무릎을 편 채 다리를 <b>옆으로 최대한</b> 벌린 자세" },
+      { k:"er", n:"외회전", normal:50, ref:"down", guide:"의자에 앉아 무릎 90° · 발을 <b>안쪽으로</b> 최대한 돌린 자세 · <b>정면(무릎 앞)에서</b> 촬영" },
+      { k:"ir", n:"내회전", normal:40, ref:"down", guide:"의자에 앉아 무릎 90° · 발을 <b>바깥쪽으로</b> 최대한 돌린 자세 · <b>정면(무릎 앞)에서</b> 촬영" }
     ]}
   ];
+  // MediaPipe 인덱스 [왼쪽, 오른쪽] (사람 기준)
   var ROM_LM = { shoulder:[11,12], elbow:[13,14], wrist:[15,16], hip:[23,24], knee:[25,26], ankle:[27,28] };
-  var ROM_PTNAME = { shoulder:"어깨", elbow:"팔꿈치", wrist:"손목", hip:"고관절", knee:"무릎", ankle:"발목" };
-  var ROM_COL = ["#4CC3FF", "#FFB547", "#FF6FAE"];
+  var ROM_PTNAME = { shoulder:"어깨 관절", elbow:"팔꿈치 관절", wrist:"손목(전완 끝)", hip:"고관절", knee:"무릎 관절", ankle:"발목(하퇴 끝)" };
+  var ROM_REFNAME = { down:"수직(아래)", up:"수직(위)", horiz:"수평" };
+  var ROM_COL = ["#FFB547", "#FF6FAE"];
   var rom = { joint: "shoulder", side: "R", latest: {}, session: {} };
   function romJoint(){ return ROM_JOINTS.find(function(j){ return j.k === rom.joint; }); }
   function romKey(j, side, m){ return j + "|" + side + "|" + m; }
@@ -4771,7 +4795,8 @@
       }).join("");
       $("romGrid").querySelectorAll("[data-mv]").forEach(function(b){ b.addEventListener("click", function(){ openRomSheet(b.getAttribute("data-mv")); }); });
       $("romSum").innerHTML = '<div><span>' + J.n + ' · ' + (rom.side === "R" ? "오른쪽" : "왼쪽") + ' 측정</span><b>' + done + ' / ' + J.moves.length + '</b></div>' +
-        '<div><span>평균 가동 범위 (정상 대비)</span><b>' + (cnt ? Math.round(sumPct / cnt) + "%" : "–") + '</b></div>';
+        '<div><span>평균 가동 범위 (정상 대비)</span><b>' + (cnt ? Math.round(sumPct / cnt) + "%" : "–") + '</b></div>' +
+        '<div><span>측정 포인트</span><b style="font-size:14px;font-family:inherit">' + ROM_PTNAME[J.pts[0]] + ' → ' + ROM_PTNAME[J.pts[1]] + '</b></div>';
     });
   }
   $("romSide").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ rom.side = b.getAttribute("data-side"); renderRom(); }); });
@@ -4780,79 +4805,192 @@
   setMember = function(m){ _setMemberRom(m); if(state.view === "rom") renderRom(); };
 
   // ---- 측정 시트 ----
-  var romS = { mv:null, img:null, w:0, h:0, pts:null, scale:1, drag:-1 };
+  var romS = { mv:null, img:null, w:0, h:0, pts:null, ref:"down", hdir:1, trunk:null, scale:1, drag:-1, dragAt:null, q:0 };
   var romCv = $("romCv"), romCtx = romCv.getContext("2d");
   function romMove(){ return romJoint().moves.find(function(m){ return m.k === romS.mv; }); }
+  function romSub(){
+    var J = romJoint();
+    $("romSheetSub").textContent = "정상 " + (romMove().normal ? "0–" + romMove().normal : "0") + "° · " + ROM_PTNAME[J.pts[0]] + " → " + ROM_PTNAME[J.pts[1]] + " · 기준선 " + ROM_REFNAME[romS.ref];
+    $("romRefV").setAttribute("aria-pressed", String(romS.ref !== "horiz"));
+    $("romRefH").setAttribute("aria-pressed", String(romS.ref === "horiz"));
+    $("romRefFlip").hidden = romS.ref !== "horiz";
+  }
   function openRomSheet(mk){
-    romS.mv = mk; romS.img = null; romS.pts = null;
+    romS.mv = mk; romS.img = null; romS.pts = null; romS.trunk = null; romS.q = 0;
     var J = romJoint(), mv = romMove();
+    romS.ref = mv.ref; romS.hdir = 1;
     $("romSheetTitle").textContent = J.n + " " + mv.n + " · " + (rom.side === "R" ? "오른쪽" : "왼쪽");
-    $("romSheetSub").textContent = "정상 " + (mv.normal ? "0–" + mv.normal : "0") + "° · " + (mv.type === "vert" ? "수직 기준선 ↔ " + ROM_PTNAME[mv.pts[0]] + "→" + ROM_PTNAME[mv.pts[1]] : mv.pts.map(function(p){ return ROM_PTNAME[p]; }).join(" – ") + " (꼭짓점: " + ROM_PTNAME[mv.pts[1]] + ")");
+    romSub();
     $("romGuide").innerHTML = "📸 " + mv.guide;
-    $("romEmptyTip").textContent = "관절이 화면 안에 모두 보이도록, 카메라를 몸과 수평으로 맞춰 촬영하세요.";
-    romCv.hidden = true; $("romEmpty").hidden = false; $("romLive").hidden = true; $("romTip").hidden = true;
+    $("romEmptyTip").textContent = "측정할 쪽 팔·다리가 카메라 쪽을 향하게, 관절과 손목·발목이 모두 보이도록 촬영하세요.";
+    romCv.hidden = true; $("romEmpty").hidden = false; $("romLive").hidden = true; $("romTip").hidden = true; $("romQ").hidden = true;
     ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = true; });
     $("romSheet").hidden = false;
   }
   $("btnRomClose").addEventListener("click", function(){ $("romSheet").hidden = true; });
   $("btnRomShot").addEventListener("click", function(){ $("romShotIn").value = ""; $("romShotIn").click(); });
   $("btnRomFile").addEventListener("click", function(){ $("romFileIn").value = ""; $("romFileIn").click(); });
+  $("romRefV").addEventListener("click", function(){ var mv = romMove(); romS.ref = mv.ref === "up" ? "up" : "down"; romSub(); romDraw(); });
+  $("romRefH").addEventListener("click", function(){ romS.ref = "horiz"; romS.hdir = romHdir(); romSub(); romDraw(); });
+  $("romRefFlip").addEventListener("click", function(){ romS.hdir = -romS.hdir; romDraw(); });
   ["romShotIn", "romFileIn"].forEach(function(id){ $(id).addEventListener("change", function(){
     var f = this.files && this.files[0]; if(!f) return;
     var url = URL.createObjectURL(f), im = new Image();
     im.onload = function(){
-      // 긴 변 1600px로 정규화 (좌표 계산·저장 공통)
+      // 긴 변 1600px로 정규화 (EXIF 회전은 브라우저가 반영한 상태로 그려짐)
       var k = Math.min(1, 1600 / Math.max(im.naturalWidth, im.naturalHeight));
       var c = document.createElement("canvas"); c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
       c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
-      var im2 = new Image(); im2.onload = function(){ romS.img = im2; romS.w = im2.naturalWidth; romS.h = im2.naturalHeight; romAuto(); }; im2.src = c.toDataURL("image/jpeg", 0.9);
+      var im2 = new Image(); im2.onload = function(){ romS.img = im2; romS.w = im2.naturalWidth; romS.h = im2.naturalHeight; romAuto(); }; im2.src = c.toDataURL("image/jpeg", 0.92);
     };
     im.onerror = function(){ toast("사진을 불러오지 못했어요."); };
     im.src = url;
   }); });
+
+  // ---------- 자동 인식 (정밀) ----------
+  // 1) 고정밀(heavy) 모델로 전체 사진 인식 → 2) 누운/엎드린 자세 대비 90° 회전본도 시도 → 3) 사람 주변을 잘라 확대해 한 번 더 인식(위치 보정)
+  function romCanvasOf(src, sx, sy, sw, sh, rot, maxSide){
+    var k = Math.min(1, (maxSide || 1280) / Math.max(sw, sh)) ;
+    if(maxSide && Math.max(sw, sh) < maxSide) k = Math.min(2.2, maxSide / Math.max(sw, sh));   // 작게 잘린 영역은 확대
+    var w = Math.round(sw * k), h = Math.round(sh * k), c = document.createElement("canvas");
+    if(rot){ c.width = h; c.height = w; } else { c.width = w; c.height = h; }
+    var g = c.getContext("2d"); g.imageSmoothingQuality = "high";
+    if(rot === 90){ g.translate(h, 0); g.rotate(Math.PI / 2); }
+    else if(rot === -90){ g.translate(0, w); g.rotate(-Math.PI / 2); }
+    g.drawImage(src, sx, sy, sw, sh, 0, 0, w, h);
+    return { c: c, k: k, w: w, h: h, sx: sx, sy: sy, rot: rot };
+  }
+  // 변환된 캔버스의 정규화 좌표 → 원본 이미지 픽셀 좌표
+  function romBack(t, p){
+    var X, Y, cx = p.x * t.c.width, cy = p.y * t.c.height;
+    if(t.rot === 90){ X = cy; Y = t.h - cx; }
+    else if(t.rot === -90){ X = t.w - cy; Y = cx; }
+    else { X = cx; Y = cy; }
+    var v = p.visibility === undefined ? 1 : p.visibility; if(p.presence !== undefined && p.presence > v) v = (v + p.presence) / 2;
+    return { x: t.sx + X / t.k, y: t.sy + Y / t.k, v: v };
+  }
+  function romDetectOn(t){
+    var fn = window.__detectPoseHQ || window.__detectPose;
+    if(!fn) return Promise.resolve(null);
+    return fn(t.c).then(function(lm){ return lm ? lm.map(function(p){ return romBack(t, p); }) : null; }).catch(function(){ return null; });
+  }
+  function romNeedIdx(side){ var J = romJoint(), si = side === "R" ? 1 : 0; return J.pts.map(function(n){ return ROM_LM[n][si]; }); }
+  function romIn(p){ return p && p.x > -0.03 * romS.w && p.y > -0.03 * romS.h && p.x < 1.03 * romS.w && p.y < 1.03 * romS.h; }
+  // 필요한 두 점의 신뢰도 (가려진 점은 visibility가 낮게 나옴)
+  function romQual(L, side){
+    if(!L) return 0;
+    var idx = romNeedIdx(side), a = L[idx[0]], b = L[idx[1]];
+    if(!romIn(a) || !romIn(b)) return 0;
+    var q = (a.v + b.v) / 2;
+    if(Math.hypot(a.x - b.x, a.y - b.y) < Math.max(romS.w, romS.h) * 0.04) q *= 0.3;
+    return q;
+  }
+  // 사람 전체가 제대로 잡혔는지 (몸통 4점 + 필요한 2점)
+  function romPersonScore(L){
+    if(!L) return 0;
+    var idx = [11, 12, 23, 24].concat(romNeedIdx("L"), romNeedIdx("R"));
+    return idx.reduce(function(a, i){ return a + (romIn(L[i]) ? L[i].v : 0); }, 0) / idx.length;
+  }
+  function romTorso(L){
+    var s = [L[11], L[12]], h = [L[23], L[24]];
+    var sm = { x:(s[0].x + s[1].x) / 2, y:(s[0].y + s[1].y) / 2 }, hm = { x:(h[0].x + h[1].x) / 2, y:(h[0].y + h[1].y) / 2 };
+    return { sm: sm, hm: hm, horiz: Math.abs(sm.x - hm.x) > Math.abs(sm.y - hm.y) };
+  }
+  function romDetectAll(){
+    var img = romS.img, W = romS.w, H = romS.h, side = rom.side;
+    return romDetectOn(romCanvasOf(img, 0, 0, W, H, 0, 1280)).then(function(L0){
+      var best = L0, bestS = romPersonScore(L0);
+      var t0 = L0 ? romTorso(L0) : null;
+      // 사람을 못 찾았거나 누운·엎드린 자세(몸통이 가로)면 사진을 세워서 다시 인식
+      if(L0 && !t0.horiz && bestS >= 0.45) return best;
+      var rots = t0 && t0.horiz ? [t0.sm.x < t0.hm.x ? 90 : -90] : [90, -90];
+      var run = function(k){
+        if(k >= rots.length) return Promise.resolve(best);
+        return romDetectOn(romCanvasOf(img, 0, 0, W, H, rots[k], 1280)).then(function(L){
+          var sc = romPersonScore(L);
+          if(L && sc > bestS + 0.05){ best = L; bestS = sc; }
+          return run(k + 1);
+        });
+      };
+      return run(0);
+    }).then(function(best){
+      if(!best) return null;
+      var q0 = romQual(best, side);
+      // 사람 주변을 잘라 확대해서 한 번 더 인식 → 관절 위치 정밀 보정
+      var vis = best.filter(function(p, i){ return i >= 11 && romIn(p) && p.v > 0.2; });
+      if(vis.length < 4) return { L: best, q: q0 };
+      var x0 = Math.min.apply(null, vis.map(function(p){ return p.x; })), x1 = Math.max.apply(null, vis.map(function(p){ return p.x; }));
+      var y0 = Math.min.apply(null, vis.map(function(p){ return p.y; })), y1 = Math.max.apply(null, vis.map(function(p){ return p.y; }));
+      var pad = Math.max(x1 - x0, y1 - y0) * 0.22;
+      x0 = Math.max(0, x0 - pad); y0 = Math.max(0, y0 - pad); x1 = Math.min(W, x1 + pad); y1 = Math.min(H, y1 + pad);
+      if((x1 - x0) * (y1 - y0) > W * H * 0.72) return { L: best, q: q0 };
+      var tb = romTorso(best), rot = tb.horiz ? (tb.sm.x < tb.hm.x ? 90 : -90) : 0;
+      return romDetectOn(romCanvasOf(img, x0, y0, x1 - x0, y1 - y0, rot, 1280)).then(function(L2){
+        var q2 = romQual(L2, side);
+        if(L2 && romPersonScore(L2) >= romPersonScore(best) - 0.08){
+          var idx = romNeedIdx(side), far = idx.some(function(i){ return !romIn(L2[i]) || Math.hypot(L2[i].x - best[i].x, L2[i].y - best[i].y) > Math.max(W, H) * 0.08; });
+          if(!far) return { L: L2, q: Math.max(q2, q0) };
+          if(q2 > q0 + 0.15) return { L: L2, q: q2 };
+        }
+        return { L: best, q: q0 };
+      });
+    });
+  }
+  function romHdir(){
+    // 수평 기준선: 몸통(어깨·고관절 중심)에서 멀어지는 방향
+    var V = romS.pts && romS.pts[0];
+    if(V && romS.trunk) return V.x >= romS.trunk.x ? 1 : -1;
+    return 1;
+  }
   function romDefaultPts(mv){
     var w = romS.w, h = romS.h;
-    if(mv.type === "vert") return [{ x:w * 0.5, y:h * 0.5 }, { x:w * 0.5, y:h * (mv.ref === "up" ? 0.25 : 0.75) }];
-    return [{ x:w * 0.5, y:h * 0.75 }, { x:w * 0.5, y:h * 0.45 }, { x:w * 0.68, y:h * 0.25 }];
+    return [{ x:w * 0.5, y:h * 0.42 }, { x:w * 0.5, y:h * (mv.ref === "up" ? 0.18 : 0.72) }];
   }
   function romAuto(){
     var mv = romMove(); if(!romS.img) return;
     romCv.hidden = false; $("romEmpty").hidden = true;
-    romS.pts = romDefaultPts(mv); romDraw();
-    if(!window.__detectPose){ romReady(false); return; }
-    $("romBusy").hidden = false;
-    window.__detectPose(romS.img).then(function(lm){
+    romS.pts = romDefaultPts(mv); romS.trunk = null; romDraw();
+    $("romBusy").textContent = window.__romModelReady ? "관절 위치 정밀 인식 중…" : "정밀 인식 준비 중… (처음 한 번 약 30MB)";
+    $("romBusy").hidden = false; $("romQ").hidden = true;
+    ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = true; });
+    romDetectAll().then(function(res){
+      window.__romModelReady = true;
       $("romBusy").hidden = true;
-      var si = rom.side === "R" ? 1 : 0, ok = !!lm, low = false;
-      if(lm){
-        var P = mv.pts.map(function(n){ var p = lm[ROM_LM[n][si]]; if(!p) return null; if(p.visibility !== undefined && p.visibility < 0.3) low = true; return { x:p.x * romS.w, y:p.y * romS.h }; });
-        var minD = Math.max(romS.w, romS.h) * 0.04;
-        var sane = P.every(Boolean) && P.every(function(q, i){ return i === 0 || Math.hypot(q.x - P[i - 1].x, q.y - P[i - 1].y) > minD; });
-        if(sane) romS.pts = P; else ok = false;
+      var ok = false, msg = "";
+      if(res && res.L){
+        var L = res.L, idx = romNeedIdx(rom.side), other = romQual(L, rom.side === "R" ? "L" : "R");
+        var P = idx.map(function(i){ return { x: L[i].x, y: L[i].y }; });
+        if(P.every(romIn) && Math.hypot(P[0].x - P[1].x, P[0].y - P[1].y) > Math.max(romS.w, romS.h) * 0.03){ romS.pts = P; ok = true; }
+        var tr = [11, 12, 23, 24].map(function(i){ return L[i]; }).filter(function(p){ return p && p.v > 0.3; });
+        if(tr.length) romS.trunk = { x: tr.reduce(function(a, p){ return a + p.x; }, 0) / tr.length, y: tr.reduce(function(a, p){ return a + p.y; }, 0) / tr.length };
+        romS.q = res.q;
+        if(res.q < 0.45 && other > res.q + 0.3) msg = "선택한 쪽(" + (rom.side === "R" ? "오른쪽" : "왼쪽") + ")이 잘 보이지 않아요. 반대쪽이 카메라를 향한 사진 같아요. 방향을 확인해 주세요.";
       }
-      romReady(ok, low);
-    }).catch(function(){ $("romBusy").hidden = true; romReady(false); });
+      if(romS.ref === "horiz") romS.hdir = romHdir();
+      romReady(ok, msg);
+    }).catch(function(){ $("romBusy").hidden = true; romReady(false, ""); });
   }
-  function romReady(ok, low){
+  function romReady(ok, msg){
     romDraw();
     ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = false; });
     $("romLive").hidden = false; $("romTip").hidden = false;
-    if(!ok) toast("관절을 자동으로 찾지 못했어요. 점을 끌어서 위치를 맞춰주세요.");
-    else if(low) toast("일부 관절이 잘 보이지 않아요. 점 위치를 확인해 주세요.");
-    else toast("자동 인식 완료! 점을 끌어서 미세 조정할 수 있어요.");
+    var q = $("romQ"); q.hidden = false;
+    var lv = !ok ? "bad" : romS.q >= 0.75 ? "good" : romS.q >= 0.5 ? "mid" : "low";
+    q.className = "rom-q " + lv;
+    q.textContent = !ok ? "자동 인식 실패 · 두 점을 직접 맞춰주세요" : lv === "good" ? "✓ 자동 인식 정확도 높음 (" + Math.round(romS.q * 100) + "%) · 점 위치만 확인하세요" : lv === "mid" ? "자동 인식 정확도 보통 (" + Math.round(romS.q * 100) + "%) · 점 위치를 확인해 주세요" : "관절이 가려져 정확도 낮음 (" + Math.round(romS.q * 100) + "%) · 점을 직접 맞춰주세요";
+    if(msg) toast(msg);
   }
   $("btnRomAuto").addEventListener("click", romAuto);
-  function angAt(v, a, b){
-    var ax = a.x - v.x, ay = a.y - v.y, bx = b.x - v.x, by = b.y - v.y;
-    var d = Math.sqrt((ax * ax + ay * ay) * (bx * bx + by * by)); if(!d) return 0;
-    return Math.acos(Math.max(-1, Math.min(1, (ax * bx + ay * by) / d))) * 180 / Math.PI;
+  function romRefDir(){
+    if(romS.ref === "up") return { x:0, y:-1 };
+    if(romS.ref === "horiz") return { x: romS.hdir, y:0 };
+    return { x:0, y:1 };
   }
-  function romRefPt(mv){ var v = romS.pts[0], L = Math.max(romS.w, romS.h) * 0.22; return { x:v.x, y:v.y + (mv.ref === "up" ? -L : L) }; }
   function romAngle(){
-    var mv = romMove(), P = romS.pts; if(!P) return null;
-    if(mv.type === "vert") return Math.round(angAt(P[0], romRefPt(mv), P[1]));
-    var a = angAt(P[1], P[0], P[2]);
-    return Math.round(mv.type === "bend" ? 180 - a : a);
+    var P = romS.pts; if(!P) return null;
+    var d = romRefDir(), vx = P[1].x - P[0].x, vy = P[1].y - P[0].y, L = Math.hypot(vx, vy);
+    if(!L) return 0;
+    return Math.round(Math.acos(Math.max(-1, Math.min(1, (vx * d.x + vy * d.y) / L))) * 180 / Math.PI);
   }
   function romDraw(){
     if(!romS.img) return;
@@ -4863,71 +5001,87 @@
     romS.scale = sc;
     var g = romCtx; g.setTransform(dpr * sc, 0, 0, dpr * sc, 0, 0);
     romPaint(g, 1 / sc);
+    if(romS.drag >= 0 && romS.dragAt) romLoupe(g, 1 / sc);
     var mv = romMove(), val = romAngle(), jd = romJudge(mv, val);
     $("romVal").textContent = val == null ? "–" : val + "°";
     $("romNorm").textContent = mv.normal + "°";
     $("romJudge").textContent = jd.txt; $("romJudge").style.color = jd.cls === "good" ? "var(--good)" : jd.cls === "warn" ? "var(--warn)" : jd.cls === "crit" ? "var(--crit)" : "";
   }
-  // u = 화면 1px에 해당하는 이미지 픽셀 수 (선 굵기·글자 크기 보정)
+  // u = 화면 1px에 해당하는 이미지 픽셀 수
   function romPaint(g, u){
-    var mv = romMove(), P = romS.pts;
+    var P = romS.pts, J = romJoint();
     g.drawImage(romS.img, 0, 0, romS.w, romS.h);
     if(!P) return;
-    var V = mv.type === "vert" ? P[0] : P[1];
-    var A = mv.type === "vert" ? romRefPt(mv) : P[0], B = mv.type === "vert" ? P[1] : P[2];
+    var V = P[0], D = P[1], dir = romRefDir(), segL = Math.hypot(D.x - V.x, D.y - V.y) || 100;
+    var refL = Math.max(segL * 0.85, 90 * u), A = { x: V.x + dir.x * refL, y: V.y + dir.y * refL };
     g.lineCap = "round";
-    // 기준선(A)
-    g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 3 * u;
-    if(mv.type === "vert") g.setLineDash([10 * u, 8 * u]);
+    // 기준선 (점선)
+    g.strokeStyle = "rgba(255,255,255,.95)"; g.lineWidth = 3 * u; g.setLineDash([12 * u, 9 * u]);
     g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(A.x, A.y); g.stroke(); g.setLineDash([]);
-    // 움직임 선(B)
-    g.strokeStyle = "#2F6BFF"; g.lineWidth = 4 * u;
-    g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(B.x, B.y); g.stroke();
+    // 관절 → 말단
+    g.strokeStyle = "rgba(0,0,0,.35)"; g.lineWidth = 8 * u; g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(D.x, D.y); g.stroke();
+    g.strokeStyle = "#2F6BFF"; g.lineWidth = 5 * u; g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(D.x, D.y); g.stroke();
     // 각도 호
-    var a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x), d = a2 - a1;
+    var a1 = Math.atan2(dir.y, dir.x), a2 = Math.atan2(D.y - V.y, D.x - V.x), d = a2 - a1;
     while(d > Math.PI) d -= 2 * Math.PI; while(d < -Math.PI) d += 2 * Math.PI;
-    var R = 46 * u;
-    if(mv.type === "bend"){
-      // 일직선 연장선 기준으로 굽은 각도 표시
-      var ex = { x: V.x + (V.x - A.x), y: V.y + (V.y - A.y) };
-      g.strokeStyle = "rgba(255,255,255,.45)"; g.lineWidth = 2 * u; g.setLineDash([8 * u, 7 * u]);
-      var el = Math.hypot(ex.x - V.x, ex.y - V.y), k = Math.min(1, (R * 2.4) / (el || 1));
-      g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(V.x + (ex.x - V.x) * k, V.y + (ex.y - V.y) * k); g.stroke(); g.setLineDash([]);
-      a1 = Math.atan2(ex.y - V.y, ex.x - V.x); d = a2 - a1; while(d > Math.PI) d -= 2 * Math.PI; while(d < -Math.PI) d += 2 * Math.PI;
-    }
-    g.fillStyle = "rgba(255,181,71,.28)"; g.strokeStyle = "#FFB547"; g.lineWidth = 3 * u;
+    var R = Math.min(56 * u, segL * 0.45);
+    g.fillStyle = "rgba(255,181,71,.30)"; g.strokeStyle = "#FFB547"; g.lineWidth = 3 * u;
     g.beginPath(); g.moveTo(V.x, V.y); g.arc(V.x, V.y, R, a1, a1 + d, d < 0); g.closePath(); g.fill();
     g.beginPath(); g.arc(V.x, V.y, R, a1, a1 + d, d < 0); g.stroke();
-    // 점
+    // 점 + 이름
     P.forEach(function(p, i){
       g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 3 * u;
-      g.beginPath(); g.arc(p.x, p.y, 11 * u, 0, Math.PI * 2); g.fill(); g.stroke();
+      g.beginPath(); g.arc(p.x, p.y, (i === 0 ? 12 : 11) * u, 0, Math.PI * 2); g.fill(); g.stroke();
+      g.fillStyle = "#fff"; g.beginPath(); g.arc(p.x, p.y, 2.5 * u, 0, Math.PI * 2); g.fill();
+      var nm = ROM_PTNAME[J.pts[i]].replace(/\(.*\)/, "");
+      g.font = "700 " + (13 * u) + "px 'IBM Plex Sans KR', sans-serif";
+      var tw = g.measureText(nm).width + 12 * u, tx = p.x + 16 * u, ty = p.y - 26 * u;
+      if(tx + tw > romS.w) tx = p.x - 16 * u - tw;
+      g.fillStyle = "rgba(13,21,40,.8)"; rr(g, tx, ty, tw, 22 * u, 6 * u); g.fill();
+      g.fillStyle = ROM_COL[i]; g.fillText(nm, tx + 6 * u, ty + 15.5 * u);
     });
     // 각도 라벨
     var val = romAngle(), mid = a1 + d / 2;
-    if(Math.abs(d) < 0.6) mid += Math.PI / 2;   // 각도가 작으면 선과 겹치지 않게 옆으로
-    var lx = V.x + Math.cos(mid) * (R + 34 * u), ly = V.y + Math.sin(mid) * (R + 34 * u);
-    var txt = val + "°";
-    g.font = "800 " + (24 * u) + "px 'IBM Plex Sans KR', sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
-    var tw = g.measureText(txt).width + 18 * u;
-    g.fillStyle = "rgba(13,21,40,.88)"; rr(g, lx - tw / 2, ly - 18 * u, tw, 36 * u, 10 * u); g.fill();
+    if(Math.abs(d) < 0.6) mid += Math.PI / 2;
+    var lx = V.x + Math.cos(mid) * (R + 36 * u), ly = V.y + Math.sin(mid) * (R + 36 * u), txt = val + "°";
+    g.font = "800 " + (26 * u) + "px 'IBM Plex Sans KR', sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+    var lw = g.measureText(txt).width + 20 * u;
+    lx = Math.max(lw / 2 + 4 * u, Math.min(romS.w - lw / 2 - 4 * u, lx)); ly = Math.max(22 * u, Math.min(romS.h - 22 * u, ly));
+    g.fillStyle = "rgba(13,21,40,.9)"; rr(g, lx - lw / 2, ly - 19 * u, lw, 38 * u, 10 * u); g.fill();
     g.fillStyle = "#fff"; g.fillText(txt, lx, ly + 1 * u);
     g.textAlign = "left"; g.textBaseline = "alphabetic";
+  }
+  // 손가락에 가려지지 않게 드래그 중인 점 주변을 확대해서 보여줌
+  function romLoupe(g, u){
+    var p = romS.pts[romS.drag], Z = 2.6, Rl = 62 * u;
+    var cx = p.x < romS.w / 2 ? romS.w - Rl - 10 * u : Rl + 10 * u, cy = Rl + 10 * u;
+    if(Math.hypot(cx - p.x, cy - p.y) < Rl * 1.6) cy = romS.h - Rl - 10 * u;
+    g.save(); g.beginPath(); g.arc(cx, cy, Rl, 0, Math.PI * 2); g.closePath(); g.clip();
+    g.fillStyle = "#000"; g.fillRect(cx - Rl, cy - Rl, Rl * 2, Rl * 2);
+    g.translate(cx, cy); g.scale(Z, Z); g.translate(-p.x, -p.y);
+    g.drawImage(romS.img, 0, 0, romS.w, romS.h);
+    g.restore();
+    g.strokeStyle = "#fff"; g.lineWidth = 3 * u; g.beginPath(); g.arc(cx, cy, Rl, 0, Math.PI * 2); g.stroke();
+    g.strokeStyle = ROM_COL[romS.drag]; g.lineWidth = 2 * u;
+    g.beginPath(); g.moveTo(cx - 14 * u, cy); g.lineTo(cx + 14 * u, cy); g.moveTo(cx, cy - 14 * u); g.lineTo(cx, cy + 14 * u); g.stroke();
   }
   function romEvtPt(e){ var r = romCv.getBoundingClientRect(); return { x:(e.clientX - r.left) / romS.scale, y:(e.clientY - r.top) / romS.scale }; }
   romCv.addEventListener("pointerdown", function(e){
     if(!romS.pts) return;
     var p = romEvtPt(e), best = -1, bd = 1e9;
     romS.pts.forEach(function(q, i){ var d = Math.hypot(q.x - p.x, q.y - p.y); if(d < bd){ bd = d; best = i; } });
-    if(bd * romS.scale > 44) return;
-    romS.drag = best; romCv.setPointerCapture(e.pointerId); e.preventDefault();
+    if(bd * romS.scale > 48) return;
+    // 점을 그대로 잡은 위치 기준으로 이동(잡자마자 튀지 않게)
+    romS.drag = best; romS.dragAt = { dx: romS.pts[best].x - p.x, dy: romS.pts[best].y - p.y };
+    romCv.setPointerCapture(e.pointerId); e.preventDefault(); romDraw();
   });
   romCv.addEventListener("pointermove", function(e){
     if(romS.drag < 0) return;
-    var p = romEvtPt(e); romS.pts[romS.drag] = { x: Math.max(0, Math.min(romS.w, p.x)), y: Math.max(0, Math.min(romS.h, p.y)) };
+    var p = romEvtPt(e);
+    romS.pts[romS.drag] = { x: Math.max(0, Math.min(romS.w, p.x + romS.dragAt.dx)), y: Math.max(0, Math.min(romS.h, p.y + romS.dragAt.dy)) };
     romDraw(); e.preventDefault();
   });
-  ["pointerup", "pointercancel"].forEach(function(t){ romCv.addEventListener(t, function(){ romS.drag = -1; }); });
+  ["pointerup", "pointercancel"].forEach(function(t){ romCv.addEventListener(t, function(){ if(romS.drag >= 0){ romS.drag = -1; romS.dragAt = null; romDraw(); } }); });
   window.addEventListener("resize", function(){ if(!$("romSheet").hidden && romS.img) romDraw(); });
 
   function romResultCanvas(maxW){
@@ -4956,7 +5110,7 @@
     if(!romS.pts) return;
     var mv = romMove(), val = romAngle();
     var rec = { id: uid(), memberId: state.member ? state.member.id : null, at: Date.now(), joint: rom.joint, side: rom.side, move: mv.k,
-      value: val, normal: mv.normal, pct: mv.normal ? Math.round(val / mv.normal * 100) : null,
+      value: val, normal: mv.normal, pct: mv.normal ? Math.round(val / mv.normal * 100) : null, ref: romS.ref,
       thumb: romResultCanvas(480).toDataURL("image/jpeg", 0.78) };
     var done = function(){ $("romSheet").hidden = true; renderRom(); };
     if(!state.member){

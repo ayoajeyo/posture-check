@@ -1234,7 +1234,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요.</p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v63</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div id="mbListWrap">
@@ -5311,28 +5311,71 @@
     romCam.lmP = (window.__romVideoLandmarker ? window.__romVideoLandmarker(romCam.cpu) : Promise.resolve(null)).then(function(l){ romCam.lm = l; return l; });
     return romCam.lmP;
   }
+  /* v63: 후면 카메라 확실히 고르기
+     일부 안드로이드는 facingMode 요청을 무시하고 전면(셀카)을 먼저 줌
+     → 열린 카메라가 전면이면 기기 목록에서 후면(메인) 카메라를 찾아 deviceId로 다시 열고, 다음부터 그 카메라를 바로 사용 */
+  function romCamKind(track){
+    var s = {}, lb = ((track && track.label) || "").toLowerCase();
+    try{ s = track.getSettings ? track.getSettings() : {}; }catch(e){}
+    if(s.facingMode === "environment" || /back|rear|environment|후면|후방/.test(lb)) return "environment";
+    if(s.facingMode === "user" || /front|user|selfie|전면|facetime/.test(lb)) return "user";
+    return "";
+  }
+  function romIsBackLabel(lb){ return /back|rear|environment|후면|후방/i.test(lb || ""); }
+  function romIsFrontLabel(lb){ return /front|user|selfie|전면|facetime/i.test(lb || ""); }
+  function romPickDevice(list, want){
+    var cams = list.filter(function(d){ return d.kind === "videoinput"; });
+    var hit = cams.filter(function(d){ return want === "user" ? romIsFrontLabel(d.label) : romIsBackLabel(d.label); });
+    if(!hit.length && want === "environment") hit = cams.filter(function(d){ return d.label && !romIsFrontLabel(d.label); });
+    if(!hit.length) return null;
+    // 후면 렌즈가 여러 개면 메인 렌즈(보통 'camera2 0' / 번호가 가장 작은 것, 광각·망원 제외) 우선
+    hit.sort(function(a, b){
+      var sa = (/wide|ultra|tele|광각|망원|macro/i.test(a.label) ? 10 : 0) + (parseInt((a.label.match(/(\d+)/) || [0, 99])[1], 10) || 0);
+      var sb = (/wide|ultra|tele|광각|망원|macro/i.test(b.label) ? 10 : 0) + (parseInt((b.label.match(/(\d+)/) || [0, 99])[1], 10) || 0);
+      return sa - sb;
+    });
+    return hit[0].deviceId;
+  }
+  function romOpenCam(want){
+    var gum = function(v){ return navigator.mediaDevices.getUserMedia({ video: v, audio: false }); };
+    var size = { width: { ideal: 1920 }, height: { ideal: 1920 } };
+    var saved = lsGet("ayo_rom_cam_" + want);
+    var denied = function(e){ return e && (e.name === "NotAllowedError" || e.name === "SecurityError"); };
+    var first = saved ? gum(Object.assign({ deviceId: { exact: saved } }, size)).catch(function(e){ if(denied(e)) throw e; return null; }) : Promise.resolve(null);
+    return first.then(function(st){
+      if(st) return st;
+      return gum(Object.assign({ facingMode: { exact: want } }, size))
+        .catch(function(e){ if(denied(e)) throw e; return gum(Object.assign({ facingMode: { ideal: want } }, size)); })
+        .catch(function(e){ if(denied(e)) throw e; return gum(true); });
+    }).then(function(st){
+      var tr = st.getVideoTracks()[0], kind = romCamKind(tr);
+      if(kind === want){ try{ lsSet("ayo_rom_cam_" + want, tr.getSettings().deviceId || ""); }catch(e){} return st; }
+      // 원하는 쪽이 아니거나 확인이 안 되면 → 기기 목록(권한 받은 뒤라 이름이 보임)에서 직접 고르기
+      return navigator.mediaDevices.enumerateDevices().then(function(list){
+        var id = romPickDevice(list, want), curId = (tr.getSettings && tr.getSettings().deviceId) || "";
+        if(!id || id === curId) return st;
+        st.getTracks().forEach(function(t){ t.stop(); });
+        return gum(Object.assign({ deviceId: { exact: id } }, size)).then(function(st2){
+          try{ lsSet("ayo_rom_cam_" + want, id); }catch(e){}
+          return st2;
+        }).catch(function(){ return gum(Object.assign({ facingMode: { ideal: want } }, size)); });
+      }).catch(function(){ return st; });
+    });
+  }
   function romCamStart(){
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ $("romShotIn").value = ""; $("romShotIn").click(); return; }
     try{ if(state.stream && typeof stopCamera === "function"){ stopCamera(); if(state.phase === "live" && typeof goIdleFromLive === "function") goIdleFromLive(); } }catch(e){}
     romOrientStart();
     romStopTracks();
-    var want = romCam.facing, cons = [
-      { facingMode: { exact: want }, width: { ideal: 1920 }, height: { ideal: 1920 } },
-      { facingMode: { ideal: want }, width: { ideal: 1920 }, height: { ideal: 1920 } },
-      true ];
-    var go = function(i){
-      return navigator.mediaDevices.getUserMedia({ video: cons[i], audio: false }).catch(function(e){
-        if(i + 1 < cons.length && !(e && (e.name === "NotAllowedError" || e.name === "SecurityError"))) return go(i + 1);
-        throw e;
-      });
-    };
     $("romBusy").textContent = "카메라 여는 중…"; $("romBusy").hidden = false;
-    go(0).then(function(st){
+    romOpenCam(romCam.facing).then(function(st){
       if($("romSheet").hidden){ st.getTracks().forEach(function(t){ t.stop(); }); $("romBusy").hidden = true; return; }
       romCam.stream = st; romVideo.srcObject = st;
       var pr = romVideo.play(); if(pr && pr.catch) pr.catch(function(){});
       romCam.on = true; romCam.buf = []; romCam.seen = 0;
       romUiLive(true); $("romBusy").hidden = true;
+      var kd = romCamKind(st.getVideoTracks()[0]);
+      if(romCam.facing === "environment" && kd === "user") toast("후면 카메라를 찾지 못했어요. 🔄 전환 버튼을 눌러 주세요.");
       romLm(); cancelAnimationFrame(romCam.raf); romLoop();
     }).catch(function(e){
       $("romBusy").hidden = true;

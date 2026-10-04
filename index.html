@@ -3613,6 +3613,8 @@
   /* ---- 화면 전환 (사이드바 / 하단 탭) ---- */
   state.view = "analyze";
   function showView(v){
+    // 종합 리포트는 PRO 전용: 무료 사용자는 화면 전환 없이 안내 팝업만
+    if(v === "report" && !isPro()){ openProGate("report"); return; }
     if(v === state.view) { if(v === "report") renderReport(); return; }
     if(v !== "analyze" && state.phase === "live"){ pauseCamera(); goIdleFromLive(); }
     if((v === "settings" || v === "report") && state.view !== v) proPrevView = state.view;
@@ -4659,6 +4661,7 @@
 
   // ---- PRO 팝업 ----
   var proPrevView = "dash";
+  var proKind = "settings";
   var PRO_COPY = {
     settings: { d: '설정 메뉴는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.',
       l: ["센터명·로고를 리포트·운동 카드·비교 이미지에 표시", "연락처·안내 문구를 결과 이미지 하단에 표시", "앱 상단을 센터 브랜드로 변경", "자주 쓰는 결제 항목·금액 기본값 저장"] },
@@ -4668,6 +4671,8 @@
   function openProGate(kind){
     var cp = PRO_COPY[kind] || PRO_COPY[state.view === "report" ? "report" : "settings"];
     $("proDesc").innerHTML = cp.d; $("proList").innerHTML = cp.l.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("");
+    proKind = kind === "report" ? "report" : "settings";
+    $("btnProPreview").hidden = proKind === "report";
     $("proCodeRow").classList.remove("on"); $("proCode").value = "";
     $("proGate").hidden = false;
   }
@@ -4684,6 +4689,7 @@
     var t = $("proCode").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
     if(t && codeHash(t) === "x1rpwp"){
       lsSet(PRO_KEY, "1"); $("proGate").hidden = true; applyBrand(); renderSettings(false); syncRepLock();
+      if(proKind === "report") showView("report");
       toast("PRO 플랜이 활성화됐어요.");
     } else toast("이용 코드가 올바르지 않아요.");
   }

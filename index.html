@@ -676,6 +676,24 @@
   .no-auto{font-style:normal; font-size:10.5px; font-weight:800; color:var(--blue); margin-left:6px;}
   .no-fix{display:flex; align-items:center; gap:10px; padding:10px 14px; margin:0 0 10px; border-radius:12px; background:rgba(240,180,76,.10); border:1px solid rgba(240,180,76,.35); font-size:13px;}
   .no-fix .btn{margin-left:auto; flex:0 0 auto; width:auto; white-space:nowrap;}
+  /* v50 측정 저장 · 기록 수정 · 리포트 PRO */
+  .sess-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px; padding:10px 12px; border-radius:14px; background:var(--surface); border:1px solid var(--line);}
+  .sess-bar.dirty{border-color:rgba(240,180,76,.55); background:linear-gradient(135deg,rgba(240,180,76,.08),transparent);}
+  .sess-bar.saved{border-color:rgba(76,195,138,.45);}
+  .sess-round{font-family:var(--font-num); font-weight:800; font-size:13px; color:#fff; background:var(--blue); border-radius:8px; padding:4px 9px; flex:0 0 auto;}
+  .sess-txt{flex:1; min-width:140px;}
+  .sess-txt b{display:block; font-size:14px;} .sess-txt em{font-style:normal; font-size:12px; color:var(--ink-soft);}
+  .sess-bar.dirty .sess-txt em{color:var(--warn);} .sess-bar.saved .sess-txt em{color:var(--good);}
+  .sess-btns{display:flex; gap:8px; flex:0 0 auto;} .sess-btns .btn{width:auto; white-space:nowrap;}
+  @media (max-width:599px){ .sess-btns{width:100%;} .sess-btns .btn{flex:1;} }
+  .rec .ed{border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:700; border-radius:9px; padding:7px 10px; cursor:pointer; flex:0 0 auto;}
+  .rec .ed.off{opacity:.45;}
+  @media (max-width:599px){ .rec{gap:8px;} .rec .th img + img{display:none;} .rec .ed{padding:7px 8px;} .rec .ed .l{display:none;} }
+  .rec .info .rd{display:inline-block; font-family:var(--font-num); font-size:11px; font-weight:800; color:var(--blue); background:rgba(47,107,255,.14); border-radius:6px; padding:1px 6px; margin-right:6px;}
+  .rep-lock{display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 14px; border-radius:14px; margin-bottom:12px; background:linear-gradient(135deg,rgba(47,107,255,.18),rgba(122,92,255,.18)); border:1px solid rgba(122,140,255,.35);}
+  .rep-lock b{display:block; font-size:14px;} .rep-lock span{font-size:12.5px; color:var(--ink-soft);}
+  .rep-lock .btn{margin-left:auto; width:auto; white-space:nowrap;}
+  @media (min-width:600px){ button.btn.rep-pro-btn, .set-lock button.btn{flex:0 0 auto; width:auto; min-width:0;} }
   .pro-link{display:block; margin:10px auto 0; background:none; border:0; color:var(--ink-soft); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:inherit;}
 </style>
 
@@ -728,8 +746,13 @@
   </nav>
   <div class="member-bar" id="memberBar">
     <div class="mb-avatar" id="mbCurAvatar">?</div>
-    <div class="mb-txt"><b id="mbCurName">회원 선택 안 함</b><em id="mbCurMeta">회원을 선택하면 측정 기록이 자동으로 저장돼요</em></div>
+    <div class="mb-txt"><b id="mbCurName">회원 선택 안 함</b><em id="mbCurMeta">회원을 선택하고 측정 후 [측정 저장]을 누르면 기록에 남아요</em></div>
     <button type="button" class="btn line sm" id="btnMbPick">회원 선택</button>
+  </div>
+  <div class="sess-bar" id="sessBar" hidden>
+    <span class="sess-round" id="sessRound">1차</span>
+    <div class="sess-txt"><b id="sessTitle">1차 측정</b><em id="sessState">저장 안 됨</em></div>
+    <div class="sess-btns"><button type="button" class="btn primary sm" id="btnSessSave">측정 저장</button><button type="button" class="btn line sm" id="btnSessNext">다음 차수 측정</button></div>
   </div>
 
   <div class="an-grid">
@@ -907,6 +930,7 @@
   </section>
 
   <section class="view" id="view-report" hidden>
+    <div class="rep-lock" id="repLock" hidden><div><b>🔒 종합 리포트는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 리포트 저장·공유는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnRepPro">PRO 알아보기</button></div>
     <div class="rep-head" id="repHead" hidden>
       <span class="rep-meta" id="repMeta"></span>
     </div>
@@ -952,7 +976,7 @@
 
     <p class="rep-saved" id="repSaved" hidden></p>
     <div class="rep-actions">
-      <button type="button" class="btn primary" id="btnSaveReport">리포트 이미지 저장</button>
+      <button type="button" class="btn primary" id="btnRepSess">측정 저장</button><button type="button" class="btn primary" id="btnSaveReport">리포트 이미지 저장</button>
       <button type="button" class="btn line" id="btnNewPatient">새 측정 시작</button>
     </div>
     <details class="info">
@@ -1213,8 +1237,8 @@
   <div class="confirm-box pro-box">
     <span class="pro-badge">PRO</span>
     <h3 id="proTitle">유료 플랜에서 이용할 수 있어요</h3>
-    <p>설정 메뉴는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.</p>
-    <ul>
+    <p id="proDesc">설정 메뉴는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.</p>
+    <ul id="proList">
       <li>센터명·로고를 리포트·운동 카드·비교 이미지에 표시</li>
       <li>연락처·안내 문구를 결과 이미지 하단에 표시</li>
       <li>앱 상단을 센터 브랜드로 변경</li>
@@ -3497,7 +3521,7 @@
     $("sumGrid").innerHTML = r.groups.map(function(g){
       return '<div class="sum-item"><div class="k">'+g.name+'</div><div class="v '+g.st.cls+'">'+g.st.label+'</div><div class="d">'+g.detail+'</div></div>';
     }).join("");
-    saveSession(r);
+    updateSessBar();
     return r;
   }
 
@@ -3591,7 +3615,7 @@
   function showView(v){
     if(v === state.view) { if(v === "report") renderReport(); return; }
     if(v !== "analyze" && state.phase === "live"){ pauseCamera(); goIdleFromLive(); }
-    if(v === "settings") proPrevView = state.view;
+    if((v === "settings" || v === "report") && state.view !== v) proPrevView = state.view;
     state.view = v;
     $("view-analyze").hidden = (v !== "analyze");
     $("view-report").hidden = (v !== "report");
@@ -3605,7 +3629,7 @@
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
-    if(v === "report") renderReport();
+    if(v === "report"){ renderReport(); syncRepLock(); if(!isPro()) openProGate("report"); }
     else if(v === "members") mbShowList();
     else if(v === "dash") renderDash();
     else if(v === "exercise") renderExercise();
@@ -3706,7 +3730,7 @@
     bar.classList.toggle("on", !!m);
     $("mbCurAvatar").textContent = m ? initial(m.name) : "?";
     $("mbCurName").textContent = m ? m.name : "회원 선택 안 함";
-    $("mbCurMeta").textContent = m ? ((memberMeta(m) || "회원") + " · 측정하면 기록에 자동 저장") : "회원을 선택하면 측정 기록이 자동으로 저장돼요";
+    $("mbCurMeta").textContent = m ? ((memberMeta(m) || "회원") + " · 측정 후 [측정 저장]으로 기록") : "회원을 선택하고 측정 후 [측정 저장]을 누르면 기록에 남아요";
     $("btnMbPick").textContent = m ? "변경" : "회원 선택";
     $("ptField").value = m ? (m.name + (m.no ? " · " + m.no : "")) : "";
     $("htField").value = (m && m.height) ? m.height : "";
@@ -3842,12 +3866,12 @@
       var rs = res[1].filter(function(r){ return r.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
       var box = $("mbRecords");
       if(!rs.length){ box.innerHTML = '<p class="mb-empty">아직 측정 기록이 없어요. <b>측정하기</b>를 눌러 시작하세요.</p>'; }
-      else box.innerHTML = rs.map(function(r){
+      else box.innerHTML = rs.map(function(r, ri){
         var views = [r.f ? "정면" : "", r.sd ? "측면" : ""].filter(Boolean).join("·");
         return '<div class="rec" data-id="' + esc(r.id) + '"><input type="checkbox" aria-label="비교 선택">' +
           '<div class="th">' + (r.thumbs && r.thumbs.front ? '<img src="' + r.thumbs.front + '" alt="">' : '') + (r.thumbs && r.thumbs.side ? '<img src="' + r.thumbs.side + '" alt="">' : '') + '</div>' +
-          '<div class="info"><b>' + fmtDate(r.at) + '</b><em>' + views + (r.height ? " · 키 " + r.height + "cm" : "") + '</em></div>' +
-          '<div class="score">' + (r.score != null ? r.score : "–") + '</div><button type="button" class="x" title="기록 삭제" aria-label="기록 삭제">✕</button></div>';
+          '<div class="info"><b><span class="rd">' + (rs.length - ri) + '차</span>' + fmtDate(r.at) + '</b><em>' + views + (r.height ? " · 키 " + r.height + "cm" : "") + (r.editedAt ? " · 수정됨" : "") + '</em></div>' +
+          '<div class="score">' + (r.score != null ? r.score : "–") + '</div><button type="button" class="ed' + (r.photos ? '' : ' off') + '" title="불러와서 수정"><span class="l">불러와 </span>수정</button><button type="button" class="x" title="기록 삭제" aria-label="기록 삭제">✕</button></div>';
       }).join("");
       box.querySelectorAll(".rec").forEach(function(row){
         var rid = row.getAttribute("data-id");
@@ -3856,6 +3880,7 @@
           else mbSel = mbSel.filter(function(x){ return x !== rid; });
           $("btnMbCompare").disabled = mbSel.length !== 2;
         });
+        row.querySelector(".ed").addEventListener("click", function(){ openRecordForEdit(m, rs.find(function(x){ return x.id === rid; }), rs.length - rs.findIndex(function(x){ return x.id === rid; })); });
         row.querySelector(".x").addEventListener("click", function(){
           if(!window.confirm("이 측정 기록을 삭제할까요?")) return;
           dbDel("records", rid).then(function(){ if(state.sessionId === rid) state.sessionId = null; mbOpenDetail(m.id); });
@@ -4246,6 +4271,178 @@
   }
 
 
+  /* ===================== v50 측정 저장(차수) · 이전 기록 불러와 수정 · 리포트 PRO ===================== */
+  state.savedSig = null; state.sessRound = 1; state.pendingSave = false;
+  var PHOTO_MAX = 1600;
+
+  // 현재 측정 상태 지문 (사진·점·기울기·기준선·키) → 저장 후 바뀌었는지 판단
+  function sessSig(){
+    return JSON.stringify(["front", "side"].map(function(m){
+      var s = state.byMode[m]; if(!s.img) return null;
+      return [s.imgUrl ? s.imgUrl.length : 0, s.w, s.h, Object.keys(s.points).sort().map(function(k){ return [k, Math.round(s.points[k].x), Math.round(s.points[k].y)]; }),
+              Math.round((s.rot || 0) * 10), isFinite(s.centerX) ? Math.round(s.centerX) : null];
+    })) + "|" + ($("htField").value || "");
+  }
+  function hasPhotos(){ return !!(state.byMode.front.img || state.byMode.side.img); }
+  function isDirty(){ return hasPhotos() && sessSig() !== state.savedSig; }
+
+  function refreshRound(){
+    if(!state.member){ state.sessRound = 1; updateSessBar(); return Promise.resolve(); }
+    var mid = state.member.id;
+    return dbAll("records").then(function(all){
+      var rs = all.filter(function(r){ return r.memberId === mid; }).sort(function(a, b){ return a.at - b.at; });
+      var i = state.sessionId ? rs.findIndex(function(r){ return r.id === state.sessionId; }) : -1;
+      state.sessRound = i >= 0 ? i + 1 : rs.length + 1; state.sessCount = rs.length;
+      updateSessBar();
+    });
+  }
+  function updateSessBar(){
+    var bar = $("sessBar"); if(!bar) return;
+    var show = hasPhotos() || !!state.sessionId;
+    bar.hidden = !show;
+    var saved = !!state.sessionId, dirty = isDirty(), n = state.sessRound || 1;
+    bar.classList.toggle("dirty", dirty); bar.classList.toggle("saved", saved && !dirty);
+    $("sessRound").textContent = state.member ? n + "차" : "미지정";
+    $("sessTitle").textContent = state.member ? state.member.name + " · " + n + "차 측정" + (state.editingOld ? " (이전 기록 수정)" : "") : "회원을 선택하면 차수가 매겨져요";
+    $("sessState").textContent = !hasPhotos() ? "사진 없음" : dirty ? (saved ? "수정한 내용이 아직 저장되지 않았어요" : "저장 안 됨 · [측정 저장]을 눌러 기록하세요") : "✓ 저장됨";
+    var lbl = saved ? (dirty ? "수정 내용 저장" : "저장됨") : (state.member ? n + "차 측정 저장" : "측정 저장");
+    $("btnSessSave").textContent = lbl; $("btnSessSave").disabled = saved && !dirty;
+    $("btnSessNext").textContent = !saved ? "처음부터 다시" : state.member ? ((state.sessCount || 0) + 1) + "차 측정 시작" : "새 측정 시작";
+    var rb = $("btnRepSess"); if(rb){ rb.textContent = lbl; rb.disabled = saved && !dirty; rb.hidden = !hasPhotos(); }
+  }
+  setInterval(function(){ if(state.view === "analyze" || state.view === "report") updateSessBar(); }, 800);
+
+  // 사진 + 기준점 묶음 (긴 변 1600px로 줄이고 좌표도 같은 비율로)
+  function packMode(m){
+    var s = state.byMode[m]; if(!s.img) return null;
+    var k = Math.min(1, PHOTO_MAX / Math.max(s.w, s.h));
+    var cw = Math.round(s.w * k), ch = Math.round(s.h * k);
+    var c = document.createElement("canvas"); c.width = cw; c.height = ch;
+    var g = c.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(s.img, 0, 0, cw, ch);
+    var sc = function(p){ return p ? Object.assign({}, p, { x: p.x * k, y: p.y * k }) : null; };
+    var pts = {}; Object.keys(s.points).forEach(function(key){ pts[key] = sc(s.points[key]); });
+    return { img: c.toDataURL("image/jpeg", 0.88), w: cw, h: ch, points: pts,
+      centerX: isFinite(s.centerX) ? s.centerX * k : null, faceSign: s.faceSign, rot: s.rot || 0,
+      rotPivot: sc(s.rotPivot), grid: s.grid ? { floorY: s.grid.floorY * k, cell: s.grid.cell * k } : null, captureRoll: s.captureRoll == null ? null : s.captureRoll };
+  }
+  function saveMeasurement(){
+    if(!hasPhotos()){ toast("먼저 정면 또는 측면을 촬영해주세요."); return; }
+    if(!state.member){ state.pendingSave = true; toast("저장할 회원을 선택해주세요."); $("btnMbPick").click(); return; }
+    var r = computeReport();
+    if(!r.f && !r.sd){ toast("정면 또는 측면의 기준점을 모두 찍어야 저장할 수 있어요."); return; }
+    var first = !state.sessionId; if(first) state.sessionId = uid();
+    var sig = sessSig();
+    var rec = { id: state.sessionId, memberId: state.member.id, at: Date.now(),
+      score: r.score, f: r.f ? slim(r.f) : null, sd: r.sd ? slim(r.sd) : null,
+      groups: r.groups.map(function(g){ return { name:g.name, label:g.st.label, cls:g.st.cls, detail:g.detail }; }),
+      height: patientHeight() || null,
+      thumbs: { front: r.f ? thumbOf("front") : null, side: r.sd ? thumbOf("side") : null },
+      photos: { front: packMode("front"), side: packMode("side") } };
+    dbAll("records").then(function(all){
+      var old = all.find(function(x){ return x.id === rec.id; });
+      if(old){ rec.at = old.at; rec.editedAt = Date.now(); }
+      return dbPut("records", rec);
+    }).then(function(){
+      state.savedSig = sig;
+      return refreshRound();
+    }).then(function(){
+      var el = $("repSaved"); el.hidden = false;
+      el.textContent = "✓ " + state.member.name + " 회원 " + state.sessRound + "차 측정 기록에 저장됨 (" + fmtDate(rec.at) + ")";
+      toast(state.member.name + " 회원 " + state.sessRound + "차 측정을 " + (first ? "저장했어요." : "수정 저장했어요."));
+      updateSessBar();
+    }).catch(function(e){ console.warn(e); toast("저장하지 못했어요. 저장 공간을 확인해주세요."); });
+  }
+  $("btnSessSave").addEventListener("click", saveMeasurement);
+  $("btnRepSess").addEventListener("click", saveMeasurement);
+
+  function clearAllModes(){
+    ["front", "side"].forEach(function(k){ var s = state.byMode[k]; releaseImage(s); s.img = null; s.points = {}; s.history = []; s.view = { scale:1, cx:0, cy:0 }; s.grid = null; s.rot = 0; s.rotPivot = null; s.centerX = undefined; });
+  }
+  function confirmDiscard(){ return !isDirty() || window.confirm("저장하지 않은 측정이 있어요. 저장하지 않고 넘어갈까요?\n(저장하려면 취소 후 [측정 저장]을 눌러주세요)"); }
+  $("btnSessNext").addEventListener("click", function(){
+    if(!confirmDiscard()) return;
+    clearAllModes(); state.sessionId = null; state.savedSig = null; state.editingOld = false; $("repSaved").hidden = true;
+    showView("analyze"); if(state.mode !== "front") selectMode("front"); else resetToIdle();
+    refreshRound().then(function(){ toast(state.member ? state.member.name + " 회원 " + state.sessRound + "차 측정을 시작해요." : "새 측정을 시작해요."); });
+  });
+  // 다른 회원 측정 / 새 측정 시작 전 저장 여부 확인
+  ["btnNewPatient", "btnMbMeasure"].forEach(function(id){
+    $(id).addEventListener("click", function(e){ if(!confirmDiscard()){ e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+  });
+  window.addEventListener("beforeunload", function(e){ if(isDirty()){ e.preventDefault(); e.returnValue = ""; } });
+
+  // 회원 변경 시 차수 다시 계산, 저장 대기 중이었다면 바로 저장
+  var _setMember = setMember;
+  setMember = function(m){
+    _setMember(m); state.editingOld = false; state.savedSig = null;
+    refreshRound().then(function(){
+      if(state.pendingSave && m){ state.pendingSave = false; saveMeasurement(); }
+    });
+  };
+  $("mbPicker").addEventListener("click", function(e){ if(e.target.id === "btnMpNone" || e.target === $("mbPicker")) state.pendingSave = false; });
+
+  // ---- 이전 기록 불러와 수정 ----
+  function restoreMode(m, p){
+    var s = state.byMode[m];
+    releaseImage(s); s.img = null; s.points = {}; s.history = []; s.grid = null; s.cutout = null; s.personBox = null;
+    if(!p) return Promise.resolve();
+    return new Promise(function(res){
+      var img = new Image();
+      img.onload = function(){
+        s.img = img; s.imgUrl = p.img; s.w = img.naturalWidth; s.h = img.naturalHeight;
+        var pts = {}; Object.keys(p.points || {}).forEach(function(k){ pts[k] = Object.assign({}, p.points[k]); });
+        s.points = pts;
+        s.centerX = p.centerX == null ? undefined : p.centerX; s.faceSign = p.faceSign == null ? -1 : p.faceSign;
+        s.rot = p.rot || 0; s.rotPivot = p.rotPivot ? Object.assign({}, p.rotPivot) : null;
+        s.grid = p.grid ? Object.assign({}, p.grid) : null; s.captureRoll = p.captureRoll;
+        s.view = { scale: 1, cx: s.w / 2, cy: s.h / 2 };
+        if(window.createImageBitmap) createImageBitmap(img).then(function(bmp){ if(s.img === img){ s.bmp = bmp; requestDraw(); } else { try{ bmp.close(); }catch(e){} } }).catch(function(){});
+        try{ withMode(m, function(){ applyGrid(s, img, null); }); }catch(e){}
+        res();
+      };
+      img.onerror = function(){ res(); };
+      img.src = p.img;
+    });
+  }
+  function openRecordForEdit(m, rec, round){
+    if(!rec) return;
+    if(!rec.photos || (!rec.photos.front && !rec.photos.side)){
+      toast("이 기록은 사진 원본 없이 저장된 예전 기록이라 불러올 수 없어요. 새로 저장한 기록부터 수정할 수 있어요.");
+      return;
+    }
+    if(state.sessionId !== rec.id && !confirmDiscard()) return;
+    _setMember(m);
+    state.sessionId = rec.id; state.editingOld = true; state.sessRound = round;
+    if(rec.height){ $("htField").value = rec.height; }
+    Promise.all([restoreMode("front", rec.photos.front), restoreMode("side", rec.photos.side)]).then(function(){
+      $("htField").dispatchEvent(new Event("input"));
+      showView("analyze");
+      var want = rec.photos.front ? "front" : "side";
+      if(state.mode !== want) selectMode(want);
+      else {
+        var s = cur();
+        if(s.img){ showFrozen(); state.phase = pairsComplete() ? "done" : "marking"; drawCanvas(); updateMarkingHint(); renderResults(); }
+        else resetToIdle();
+      }
+      state.savedSig = sessSig();
+      refreshRound();
+      $("repSaved").hidden = true;
+      toast(m.name + " 회원 " + round + "차 측정(" + fmtDate(rec.at).slice(0, 10) + ")을 불러왔어요. 점을 고친 뒤 [수정 내용 저장]을 눌러주세요.");
+    });
+  }
+
+  // ---- 리포트 PRO ----
+  function syncRepLock(){
+    var pro = isPro();
+    $("repLock").hidden = pro;
+    $("btnSaveReport").textContent = pro ? "리포트 이미지 저장" : "🔒 리포트 이미지 저장 (PRO)";
+  }
+  $("btnRepPro").addEventListener("click", function(){ openProGate("report"); });
+  $("btnSaveReport").addEventListener("click", function(e){
+    if(!isPro()){ e.stopImmediatePropagation(); e.preventDefault(); openProGate("report"); }
+  }, true);
+  syncRepLock();
+
   /* ===================== v49 회원 검색 · 회원번호 자동 배정 ===================== */
   var CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
   function choseong(t){
@@ -4462,23 +4659,31 @@
 
   // ---- PRO 팝업 ----
   var proPrevView = "dash";
-  function openProGate(){
+  var PRO_COPY = {
+    settings: { d: '설정 메뉴는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.',
+      l: ["센터명·로고를 리포트·운동 카드·비교 이미지에 표시", "연락처·안내 문구를 결과 이미지 하단에 표시", "앱 상단을 센터 브랜드로 변경", "자주 쓰는 결제 항목·금액 기본값 저장"] },
+    report: { d: '종합 리포트는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 정면·측면 결과를 한 장으로 정리해 회원에게 전달해 보세요.',
+      l: ["정면 + 측면 종합 점수(100점)와 항목별 상태", "리포트 이미지 저장·카톡 공유", "센터 로고·연락처가 들어간 리포트", "PRO 이용 중에는 설정 메뉴도 함께 사용"] }
+  };
+  function openProGate(kind){
+    var cp = PRO_COPY[kind] || PRO_COPY[state.view === "report" ? "report" : "settings"];
+    $("proDesc").innerHTML = cp.d; $("proList").innerHTML = cp.l.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("");
     $("proCodeRow").classList.remove("on"); $("proCode").value = "";
     $("proGate").hidden = false;
   }
   function codeHash(t){ var x = 5381; for(var i = 0; i < t.length; i++){ x = ((x << 5) + x + t.charCodeAt(i)) | 0; } return (x >>> 0).toString(36); }
-  $("btnSetPro").addEventListener("click", openProGate);
+  $("btnSetPro").addEventListener("click", function(){ openProGate("settings"); });
   $("btnProPreview").addEventListener("click", function(){ $("proGate").hidden = true; });
   $("btnProClose").addEventListener("click", function(){
     $("proGate").hidden = true;
-    if(state.view === "settings" && !isPro()) showView(proPrevView === "settings" ? "dash" : proPrevView);
+    if((state.view === "settings" || state.view === "report") && !isPro()) showView(proPrevView === "settings" || proPrevView === "report" ? "dash" : proPrevView);
   });
   $("proGate").addEventListener("click", function(e){ if(e.target === $("proGate")) $("proGate").hidden = true; });
   $("btnProCodeToggle").addEventListener("click", function(){ $("proCodeRow").classList.add("on"); $("proCode").focus(); });
   function tryCode(){
     var t = $("proCode").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
     if(t && codeHash(t) === "x1rpwp"){
-      lsSet(PRO_KEY, "1"); $("proGate").hidden = true; applyBrand(); renderSettings(false);
+      lsSet(PRO_KEY, "1"); $("proGate").hidden = true; applyBrand(); renderSettings(false); syncRepLock();
       toast("PRO 플랜이 활성화됐어요.");
     } else toast("이용 코드가 올바르지 않아요.");
   }

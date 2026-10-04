@@ -4967,6 +4967,59 @@
       .catch(function(){ toast("저장하지 못했어요."); });
   });
 
+  /* ===================== v57 휴대폰 뒤로가기(취소) 버튼 =====================
+     뒤로가기를 누르면: 열린 창 닫기 → 회원 상세→목록 → 이전 화면 → 첫 화면에서 한 번 더 누르면 종료 */
+  var navStack = [], backBusy = false, exitArmed = false, exitTimer = null;
+  var _showViewNav = showView;
+  showView = function(v, opt){
+    var prev = state.view, prevKey = (prev === "members" && !$("mbDetail").hidden && mbCurrent) ? "members:" + mbCurrent.id : prev;
+    var r = _showViewNav(v);
+    if(!(opt && opt.fromBack) && state.view !== prev){
+      if(navStack[navStack.length - 1] !== prevKey) navStack.push(prevKey);
+      if(navStack.length > 30) navStack.shift();
+    }
+    return r;
+  };
+  function pushGuard(){ try{ history.pushState({ ayoGuard: Date.now() }, ""); }catch(e){} }
+  try{ history.replaceState({ ayoRoot: 1 }, ""); }catch(e){}
+  pushGuard();
+  function topOverlay(){
+    var list = Array.prototype.filter.call(document.querySelectorAll(".confirm-overlay, .save-overlay"), function(el){ return !el.hidden; });
+    if(!list.length) return null;
+    list.sort(function(a, b){ return (parseInt(getComputedStyle(b).zIndex, 10) || 0) - (parseInt(getComputedStyle(a).zIndex, 10) || 0); });
+    return list[0];
+  }
+  function closeOverlay(el){
+    var closeBtn = { proGate: "btnProClose", romSheet: "btnRomClose", saveOverlay: "btnCloseOverlay", gsOverlay: "btnGsClose", moreSheet: "btnMoreClose",
+      mbForm: "btnMfCancel", progForm: "btnPfCancel", assignPick: "btnApCancel", csForm: "btnCfCancel", slForm: "btnSfCancel", retakeConfirm: "btnRetakeNo" }[el.id];
+    if(el.id === "mbPicker") state.pendingSave = false;
+    if(closeBtn && $(closeBtn)) $(closeBtn).click(); else el.hidden = true;
+  }
+  window.addEventListener("popstate", function(){
+    if(backBusy) return;
+    var ov = topOverlay();
+    if(ov){ closeOverlay(ov); pushGuard(); return; }
+    if(state.view === "members" && !$("mbDetail").hidden){
+      if(!$("mbCompare").hidden){ $("mbCompare").hidden = true; pushGuard(); return; }
+      mbShowList(); pushGuard(); return;
+    }
+    while(navStack.length && navStack[navStack.length - 1] === state.view) navStack.pop();
+    if(navStack.length){
+      var to = navStack.pop();
+      if(to.indexOf("members:") === 0){ showView("members", { fromBack: true }); mbOpenDetail(to.slice(8)); }
+      else showView(to, { fromBack: true });
+      pushGuard(); return;
+    }
+    if(state.view !== "analyze"){ showView("analyze", { fromBack: true }); pushGuard(); return; }
+    // 첫 화면: 한 번 더 누르면 종료
+    if(exitArmed){ clearTimeout(exitTimer); backBusy = true; history.back(); return; }
+    exitArmed = true;
+    toast("뒤로 버튼을 한 번 더 누르면 앱이 종료돼요.");
+    exitTimer = setTimeout(disarmExit, 2000);
+  });
+  function disarmExit(){ if(!exitArmed) return; exitArmed = false; clearTimeout(exitTimer); pushGuard(); }
+  document.addEventListener("pointerdown", disarmExit, true);
+
   /* ===================== v52 기기 고정 이용 코드 (ECDSA P-256 서명 확인) =====================
      이용 코드 = "AYO1-" + 기기ID(8) + 만료일(YYYYMMDD) + "-" + 서명(base64url)
      서명은 발급 도구(대표 PC)의 비밀 키로만 만들 수 있고, 앱은 공개 키(license-pub.json)로 확인만 한다. */

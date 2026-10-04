@@ -194,19 +194,19 @@
     font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; backdrop-filter: blur(2px); opacity:.9;}
   .bg-toggle:active{transform:scale(.96);}
   .bg-toggle[hidden]{display:none!important;}
-  .rot-bar{margin-top:10px; background:var(--surface-2); border-radius:11px; padding:10px 12px; display:flex; flex-direction:column; gap:8px;}
+  .rot-bar{margin-top:8px; background:var(--surface-2); border-radius:10px; padding:6px 9px; display:flex; flex-direction:column; gap:4px;}
   .rot-bar[hidden]{display:none!important;}
-  .rot-bar .row{display:flex; align-items:center; gap:8px;}
-  .rot-bar .ttl{font-size:13px; font-weight:700; flex:1;}
-  .rot-bar .val{font-family:var(--font-num); font-size:14px; font-weight:600; min-width:52px; text-align:right;}
+  .rot-bar .row{display:flex; align-items:center; gap:6px; min-width:0;}
+  .rot-bar .ttl{font-size:12px; font-weight:700; flex:1;}
+  .rot-bar .val{font-family:var(--font-num); font-size:12.5px; font-weight:600; min-width:44px; text-align:right;}
   .rot-bar button{font-family:inherit; font-size:12.5px; font-weight:600; border:1px solid var(--line); background:var(--surface); color:var(--ink);
-    border-radius:9px; padding:6px 10px; cursor:pointer;}
-  .rot-bar button.icon{width:36px; height:32px; padding:0; font-size:16px; display:inline-flex; align-items:center; justify-content:center;}
+    border-radius:8px; padding:3px 8px; font-size:11.5px; line-height:1.5; cursor:pointer;}
+  .rot-bar button.icon{width:30px; height:24px; padding:0; font-size:14px; display:inline-flex; align-items:center; justify-content:center;}
   .rot-bar button.auto{background:var(--navy); color:var(--navy-ink); border-color:var(--navy);}
   .rot-bar button[hidden]{display:none!important;}
   .rot-bar button.mode{border-color:var(--gold); color:var(--gold);}
   .rot-bar button.mode.on{background:var(--gold); color:#fff;}
-  .rot-bar input[type=range]{flex:1; accent-color:var(--gold); height:28px;}
+  .rot-bar input[type=range]{flex:1; min-width:0; accent-color:var(--gold); height:22px; margin:0;}
   .empty-cam{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;
     gap:10px; color:#C9D6D3; text-align:center; padding:24px;
@@ -267,7 +267,15 @@
   .grade.g-crit{background:var(--crit-soft); color:var(--crit);}
 
   .field-row{display:flex; gap:10px;}
-  .field{flex:1; display:flex; flex-direction:column; gap:5px;}
+  .field{flex:1; display:flex; flex-direction:column; gap:5px; min-width:0;}
+  .field input{min-width:0; width:100%; max-width:100%; box-sizing:border-box;}
+  .field input[type=date]{-webkit-appearance:none; appearance:none; min-height:40px; text-align:left;}
+  .field input[type=date]::-webkit-date-and-time-value{text-align:left;}
+  #resultCard .field-row{flex-direction:column; gap:10px;}
+  #view-analyze{max-width:100%; overflow-x:clip;}
+  html, body{overflow-x:clip;}
+  .sess-save-bot{margin-top:10px;}
+  .sess-save-bot[hidden]{display:none!important;}
   .field label{font-size:12px; font-weight:600; color:var(--ink-soft);}
   .field input{
     font-family:inherit; font-size:14px; border:1px solid var(--line); border-radius:9px; padding:9px 10px;
@@ -447,10 +455,13 @@
   .rep-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
   .rep-head h2{margin:0; font-size:20px; font-weight:700;}
   .rep-meta{font-size:13px; font-weight:600; color:var(--ink-soft); background:var(--surface); border:1px solid var(--line); border-radius:100px; padding:5px 12px;}
-  .rep-board{background:#F3F5F9; color:#131B2E; border-radius:18px; padding:16px; display:grid; gap:18px;}
+  .rep-board{background:var(--surface); color:var(--ink); border:1px solid var(--line); box-shadow:var(--shadow); border-radius:18px; padding:16px; display:grid; gap:18px;}
   .rep-col{display:flex; flex-direction:column; gap:10px; min-width:0;}
   .rep-col h3{margin:0; font-size:18px; font-weight:800; letter-spacing:-.01em;}
-  .rep-col h3 small{font-size:12px; font-weight:600; color:#6A7488; margin-left:4px;}
+  .rep-col h3 small{font-size:12px; font-weight:600; color:var(--ink-soft); margin-left:4px;}
+  .rep-col + .rep-col{border-top:1px solid var(--line); padding-top:16px;}
+  .rep-col .sub{margin:0; font-size:12px;}
+  .rep-col[hidden]{display:none!important;}
   .rep-fig{display:grid; grid-template-columns:104px minmax(0,1fr); gap:10px; align-items:start;}
   .rep-fig[hidden]{display:none!important;}
   .rep-chips{display:flex; flex-direction:column; gap:8px;}
@@ -459,9 +470,9 @@
   .chip .h i{width:7px; height:7px; border-radius:50%; flex:0 0 auto;}
   .chip .v{font-family:var(--font-num); font-size:17px; font-weight:600; padding:6px 8px 0; letter-spacing:-.02em;}
   .chip .f{font-size:10.5px; padding:1px 8px 6px; color:#D7DCE6; white-space:nowrap;}
-  .rep-img canvas{display:block; width:100%; height:auto; border-radius:12px; background:#E6E9F0;}
-  .rep-empty{border:1.5px dashed #C7CDD9; border-radius:12px; padding:28px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center;}
-  .rep-empty p{margin:0; font-size:13.5px; color:#5B6478; font-weight:600;}
+  .rep-img canvas{display:block; width:100%; height:auto; border-radius:12px; background:var(--surface-2);}
+  .rep-empty{border:1.5px dashed var(--line); border-radius:12px; padding:28px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center;}
+  .rep-empty p{margin:0; font-size:13.5px; color:var(--ink-soft); font-weight:600;}
   .rep-empty[hidden]{display:none!important;}
   .rep-bottom{display:grid; gap:14px;}
   .score-card, .sum-card{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px 20px; box-shadow:var(--shadow);}
@@ -490,7 +501,9 @@
   @media (max-width:899px){ #view-analyze{max-width:560px; width:100%; margin:0 auto;} }
   @media (min-width:760px){
     .rep-board{grid-template-columns:1fr 1fr; padding:20px;}
-    .rep-col + .rep-col{border-left:1px solid #DCE1EA; padding-left:18px;}
+    .rep-col + .rep-col{border-top:0; padding-top:0;}
+    .rep-col:nth-child(even){border-left:1px solid var(--line); padding-left:18px;}
+    .rep-col:nth-child(n+3){border-top:1px solid var(--line); padding-top:16px;}
     .rep-bottom{grid-template-columns:minmax(240px,1fr) 2fr;}
     .main{max-width:840px;}
   }
@@ -827,6 +840,9 @@
   .rep-rom{margin-top:14px;} .rep-rom h2 small{font-size:13px; color:var(--ink-soft); font-weight:600;}
   .rep-rom-wrap{overflow-x:auto;}
   .rep-rom-tbl{width:100%; border-collapse:collapse; font-size:13.5px; min-width:420px;}
+  .rep-rom-tbl.sc{min-width:0;}
+  .rep-rom-tbl th{white-space:nowrap;}
+  @media (max-width:599px){ #rep-rom .rep-rom-tbl, #rep-scol .rep-rom-tbl{min-width:0; font-size:12.5px;} #rep-rom .rep-rom-tbl th, #rep-rom .rep-rom-tbl td, #rep-scol .rep-rom-tbl th, #rep-scol .rep-rom-tbl td{padding:7px 4px;} }
   .rep-rom-tbl th{font-size:12px; color:var(--ink-soft); text-align:left; padding:6px 8px; border-bottom:1px solid var(--line);}
   .rep-rom-tbl td{padding:8px; border-bottom:1px solid var(--line);}
   .rep-rom-tbl td.num{font-family:var(--font-num); font-weight:700;} .rep-rom-tbl td small{display:block; font-size:10.5px; color:var(--ink-soft); font-weight:500;}
@@ -1102,6 +1118,7 @@
       <button class="btn ghost" id="btnUndo">한 점 취소</button>
       <button class="btn line" id="btnClearPts">점 초기화</button>
     </div>
+    <button type="button" class="btn primary wide sess-save-bot" id="btnSessSaveBot" hidden>측정 저장</button>
   </section>
 
   </div>
@@ -1207,6 +1224,24 @@
           <button type="button" class="btn primary" data-goto="side">측면 촬영하기</button>
         </div>
       </div>
+      <div class="rep-col" id="rep-rom">
+        <h3>ROM <small>관절가동범위</small></h3>
+        <p class="sub" id="repRomSum" hidden></p>
+        <div class="rep-rom-wrap" id="repRomBody"></div>
+        <div class="rep-empty" id="repEmpty-rom">
+          <p>ROM 측정이 아직 없어요</p>
+          <button type="button" class="btn primary" data-goview="rom">ROM 측정하기</button>
+        </div>
+      </div>
+      <div class="rep-col" id="rep-scol">
+        <h3>측만증 <small>척추 측만 검사</small></h3>
+        <p class="sub" id="repScolSum" hidden></p>
+        <div class="rep-rom-wrap" id="repScolBody"></div>
+        <div class="rep-empty" id="repEmpty-scol">
+          <p>측만증 측정이 아직 없어요</p>
+          <button type="button" class="btn primary" data-goview="scol">측만증 측정하기</button>
+        </div>
+      </div>
     </div>
 
     <div class="rep-bottom">
@@ -1235,11 +1270,6 @@
       </div>
       <p class="rp-delta" id="rpDelta"></p>
       <p class="rcmp-note">사진을 누르면 그 회차를 열어 측정점을 볼 수 있어요. 선택한 전후 비교는 리포트 이미지에도 들어가요.</p>
-    </section>
-    <section class="card rep-rom" id="repRom" hidden>
-      <h2>ROM 관절가동범위 · 측만 검사 <small>좌우 비교</small></h2>
-      <p class="sub" id="repRomSum"></p>
-      <div class="rep-rom-wrap" id="repRomBody"></div>
     </section>
     <p class="rep-saved" id="repSaved" hidden></p>
     <div class="rep-actions">
@@ -1373,7 +1403,7 @@
     <button type="button" class="btn line sm rom-lr-btn" id="btnRomLR">↔ 좌우 비교 분석</button>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v78</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v80</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1384,7 +1414,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v78</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v80</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -4078,6 +4108,9 @@
   });
   $("btnMore").addEventListener("click", function(){ $("moreSheet").hidden = false; });
   $("btnGoReport").addEventListener("click", function(){ showView("report"); });
+  document.querySelectorAll("[data-goview]").forEach(function(b){
+    b.addEventListener("click", function(){ showView(b.getAttribute("data-goview")); });
+  });
   document.querySelectorAll("[data-goto]").forEach(function(b){
     b.addEventListener("click", function(){ showView("analyze"); selectMode(b.getAttribute("data-goto")); });
   });
@@ -4832,9 +4865,11 @@
     var lbl = saved ? (dirty ? "수정 내용 저장" : "저장됨") : (state.member ? n + "차 측정 저장" : "측정 저장");
     $("btnSessSave").textContent = lbl; $("btnSessSave").disabled = saved && !dirty;
     $("btnSessNext").textContent = !saved ? "처음부터 다시" : state.member ? ((state.sessCount || 0) + 1) + "차 측정 시작" : "새 측정 시작";
+    var bb = $("btnSessSaveBot"); if(bb){ bb.textContent = (saved && !dirty) ? "✓ 저장됨" : lbl; bb.disabled = saved && !dirty; bb.hidden = !hasPhotos() || !!$("markControls").hidden; }
     var rb = $("btnRepSess"); if(rb){ rb.textContent = lbl; rb.disabled = saved && !dirty; rb.hidden = !hasPhotos(); }
   }
   setInterval(function(){ if(state.view === "analyze" || state.view === "report") updateSessBar(); }, 800);
+  (function(){ var bb = $("btnSessSaveBot"); if(bb) bb.addEventListener("click", function(){ $("btnSessSave").click(); setTimeout(updateSessBar, 300); }); })();
 
   // 사진 + 기준점 묶음 (긴 변 1600px로 줄이고 좌표도 같은 비율로)
   function packMode(m){
@@ -6281,21 +6316,42 @@
 
   /* ---- v66 리포트에 ROM 결과 ---- */
   function renderRepRom(){
-    var box = $("repRom"); if(!box) return Promise.resolve();
+    if(!$("rep-rom")) return Promise.resolve();
     return romLoad().then(function(){
       var rows = romLRRows(), sc = scolRows();
-      box.hidden = !rows.length && !sc.length;
-      if(!rows.length && !sc.length){ $("repRomBody").innerHTML = ""; return; }
-      var scHtml = sc.length ? '<h4 class="lr-h">척추 측만 검사</h4><table class="rep-rom-tbl"><thead><tr><th>항목</th><th>각도</th><th>판정</th><th>측정일</th></tr></thead><tbody>' + sc.map(function(r){ return '<tr><td>' + r.mv.n + '</td><td class="num ' + r.jd.cls + '">' + r.v + '°</td><td class="lrj ' + r.jd.cls + '">' + r.jd.txt + '</td><td>' + fmtDate(r.at).slice(0, 10) + '</td></tr>'; }).join("") + '</tbody></table>' : '';
-      if(!rows.length){ $("repRomSum").textContent = "척추 측만 검사 " + sc.length + "항목"; $("repRomBody").innerHTML = scHtml; return; }
-      var pairs = rows.filter(function(r){ return r.diff != null; }), nBig = pairs.filter(function(r){ return r.diff > 10; }).length;
-      var low = rows.filter(function(r){ return r.mv.normal > 0 && [r.L, r.R, r.C].some(function(v){ return v != null && v / r.mv.normal < 0.7; }); }).length;
-      $("repRomSum").textContent = "측정 " + rows.length + "항목 · 정상 대비 70% 미만 " + low + "항목 · 좌우 차이 큼 " + nBig + "항목";
-      $("repRomBody").innerHTML = '<table class="rep-rom-tbl"><thead><tr><th>부위 · 동작</th><th>왼쪽</th><th>오른쪽</th><th>정상</th><th>좌우</th></tr></thead><tbody>' + rows.map(function(r){
-        var c = function(v){ if(v == null) return '<td class="num">–</td>'; var jd = romJudge(r.mv, v); return '<td class="num ' + jd.cls + '">' + v + '°<small>' + (r.mv.normal ? Math.min(999, Math.round(v / r.mv.normal * 100)) + '%' : '') + '</small></td>'; };
-        if(r.single){ var jd1 = romJudge(r.mv, r.C); return '<tr><td>' + r.J.n + ' ' + r.mv.n + '</td><td class="num ' + jd1.cls + '" colspan="2">' + r.C + '°<small>' + (r.mv.normal ? Math.round(r.C / r.mv.normal * 100) + '% · ' : '') + '좌우 공통</small></td><td class="num">' + (r.mv.normal ? "0–" + r.mv.normal : "0") + '°</td><td class="lrj">–</td></tr>'; }
-        return '<tr><td>' + r.J.n + ' ' + r.mv.n + '</td>' + c(r.L) + c(r.R) + '<td class="num">' + (r.mv.normal ? "0–" + r.mv.normal : "0") + '°</td><td class="lrj ' + r.cls + '">' + r.lab + (r.diff != null ? " " + r.diff + "°" : "") + '</td></tr>';
-      }).join("") + '</tbody></table>' + scHtml;
+      // 측만증 칸
+      $("repEmpty-scol").hidden = !!sc.length; $("repScolSum").hidden = !sc.length;
+      $("repScolBody").innerHTML = sc.length ? '<table class="rep-rom-tbl sc"><thead><tr><th>항목</th><th>각도</th><th>판정</th><th>측정일</th></tr></thead><tbody>' + sc.map(function(r){ return '<tr><td>' + r.mv.n + '</td><td class="num ' + r.jd.cls + '">' + r.v + '°</td><td class="lrj ' + r.jd.cls + '">' + r.jd.txt + '</td><td>' + fmtDate(r.at).slice(0, 10) + '</td></tr>'; }).join("") + '</tbody></table>' : '';
+      if(sc.length) $("repScolSum").textContent = "기준: 5° 미만 정상 · 5–7° 관찰 · 7° 이상 전문가 상담 권장";
+      // ROM 칸
+      $("repEmpty-rom").hidden = !!rows.length; $("repRomSum").hidden = !rows.length;
+      var low = 0, nBig = 0;
+      if(rows.length){
+        nBig = rows.filter(function(r){ return r.diff != null && r.diff > 10; }).length;
+        low = rows.filter(function(r){ return r.mv.normal > 0 && [r.L, r.R, r.C].some(function(v){ return v != null && v / r.mv.normal < 0.7; }); }).length;
+        $("repRomSum").textContent = "측정 " + rows.length + "항목 · 정상 대비 70% 미만 " + low + "항목 · 좌우 차이 큼 " + nBig + "항목";
+        $("repRomBody").innerHTML = '<table class="rep-rom-tbl"><thead><tr><th>부위 · 동작</th><th>왼쪽</th><th>오른쪽</th><th>정상</th><th>좌우</th></tr></thead><tbody>' + rows.map(function(r){
+          var c = function(v){ if(v == null) return '<td class="num">–</td>'; var jd = romJudge(r.mv, v); return '<td class="num ' + jd.cls + '">' + v + '°<small>' + (r.mv.normal ? Math.min(999, Math.round(v / r.mv.normal * 100)) + '%' : '') + '</small></td>'; };
+          if(r.single){ var jd1 = romJudge(r.mv, r.C); return '<tr><td>' + r.J.n + ' ' + r.mv.n + '</td><td class="num ' + jd1.cls + '" colspan="2">' + r.C + '°<small>' + (r.mv.normal ? Math.round(r.C / r.mv.normal * 100) + '% · ' : '') + '좌우 공통</small></td><td class="num">' + (r.mv.normal ? "0–" + r.mv.normal : "0") + '°</td><td class="lrj">–</td></tr>'; }
+          return '<tr><td>' + r.J.n + ' ' + r.mv.n + '</td>' + c(r.L) + c(r.R) + '<td class="num">' + (r.mv.normal ? "0–" + r.mv.normal : "0") + '°</td><td class="lrj ' + r.cls + '">' + r.lab + (r.diff != null ? " " + r.diff + "°" : "") + '</td></tr>';
+        }).join("") + '</tbody></table>';
+      } else $("repRomBody").innerHTML = "";
+      // 주요 분석 항목에 ROM · 측만증 추가
+      var sg = $("sumGrid");
+      if(sg){
+        sg.querySelectorAll(".sum-x").forEach(function(e){ e.remove(); });
+        var romSt = !rows.length ? { cls: "st-none", label: "미측정", d: "ROM 메뉴에서 측정" } :
+          (low || nBig) ? { cls: low ? "st-warn" : "st-warn", label: low ? "가동범위 감소" : "좌우 차이", d: rows.length + "항목 측정 · 70% 미만 " + low + " · 좌우 차이 큼 " + nBig } :
+          { cls: "st-good", label: "양호", d: rows.length + "항목 측정 · 정상 범위" };
+        var worst = null; sc.forEach(function(r){ if(!worst || r.v > worst.v) worst = r; });
+        var scSt = !worst ? { cls: "st-none", label: "미측정", d: "측만증 메뉴에서 측정" } :
+          { cls: worst.jd.cls === "good" ? "st-good" : worst.jd.cls === "warn" ? "st-warn" : "st-crit", label: worst.jd.txt.split(" (")[0].split(" ·")[0], d: worst.v + "° · " + fmtDate(worst.at).slice(0, 10) };
+        [["ROM 가동범위", romSt], ["척추 측만", scSt]].forEach(function(it){
+          var d = document.createElement("div"); d.className = "sum-item sum-x";
+          d.innerHTML = '<div class="k">' + it[0] + '</div><div class="v ' + it[1].cls + '">' + it[1].label + '</div><div class="d">' + it[1].d + '</div>';
+          sg.appendChild(d);
+        });
+      }
     });
   }
   // 리포트 이미지에 넣을 ROM 표 (캔버스)

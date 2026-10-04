@@ -727,6 +727,56 @@
   .price-grid .best em{color:#9DB7FF; font-weight:700;}
   .price-grid .best i{position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-style:normal; font-size:10px; font-weight:800; color:#fff; background:linear-gradient(135deg,#2F6BFF,#7A5CFF); border-radius:100px; padding:1px 7px;}
   @media (max-width:420px){ .price-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} }
+  /* v56 ROM 관절가동범위 */
+  .rom-mb{margin-bottom:12px;}
+  .rom-joints{margin-bottom:10px;}
+  .rom-side{display:inline-flex; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:4px; gap:4px; margin-bottom:12px;}
+  .rom-side button{font-family:inherit; font-size:13.5px; font-weight:700; border:0; border-radius:9px; padding:8px 18px; background:transparent; color:var(--ink-soft); cursor:pointer;}
+  .rom-side button[aria-pressed="true"]{background:var(--blue); color:#fff;}
+  .rom-sum{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;}
+  .rom-sum div{flex:1; min-width:120px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:10px 14px;}
+  .rom-sum span{display:block; font-size:12px; color:var(--ink-soft); font-weight:700;}
+  .rom-sum b{font-family:var(--font-num); font-size:22px;}
+  .rom-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px;}
+  .rom-card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px 14px 12px; display:flex; flex-direction:column; gap:8px;}
+  .rom-card .top{display:flex; align-items:baseline; gap:8px;}
+  .rom-card .top b{font-size:17px;}
+  .rom-card .top em{font-style:normal; font-size:12px; color:var(--ink-soft); margin-left:auto;}
+  .rom-card .val{display:flex; align-items:baseline; gap:6px;}
+  .rom-card .val strong{font-family:var(--font-num); font-size:30px; line-height:1;}
+  .rom-card .val small{font-size:13px; color:var(--ink-soft);}
+  .rom-card .val .none{font-size:15px; color:var(--ink-soft); font-weight:600;}
+  .rom-bar{height:8px; border-radius:100px; background:var(--surface-2); overflow:hidden; position:relative;}
+  .rom-bar i{position:absolute; left:0; top:0; bottom:0; border-radius:100px; background:var(--blue);}
+  .rom-card .judge{font-size:13px; font-weight:700;}
+  .rom-card.good .rom-bar i{background:var(--good);} .rom-card.good .judge{color:var(--good);}
+  .rom-card.warn .rom-bar i{background:var(--warn);} .rom-card.warn .judge{color:var(--warn);}
+  .rom-card.crit .rom-bar i{background:var(--crit);} .rom-card.crit .judge{color:var(--crit);}
+  .rom-card .meta{font-size:11.5px; color:var(--ink-soft);}
+  .rom-card .acts{display:flex; gap:6px; margin-top:2px;}
+  .rom-card .acts .btn{flex:1;}
+  .rom-card .thumb{width:100%; max-height:150px; object-fit:contain; border-radius:10px; background:#0B1222;}
+  .rom-note{font-size:12px; color:var(--ink-soft); margin:14px 2px 0; line-height:1.6;}
+  .rom-overlay{align-items:flex-start; overflow-y:auto; padding:12px;}
+  .rom-box{max-width:720px; text-align:left; padding:16px; margin:auto;}
+  .rom-head{display:flex; align-items:flex-start; gap:10px;}
+  .rom-head h3{margin:0; font-size:19px;} .rom-head p{margin:2px 0 0; font-size:12.5px; color:var(--ink-soft);}
+  .rom-x{margin-left:auto; border:0; background:var(--surface-2); color:var(--ink); width:36px; height:36px; border-radius:50%; font-size:16px; cursor:pointer;}
+  .rom-guide{font-size:13px; line-height:1.6; background:var(--surface-2); border-radius:12px; padding:10px 12px; margin:10px 0;}
+  .rom-stage{position:relative; background:#0B1222; border-radius:14px; overflow:hidden; min-height:220px; display:flex; align-items:center; justify-content:center; touch-action:none;}
+  .rom-stage canvas{display:block; max-width:100%; touch-action:none;}
+  .rom-empty{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--ink-soft); font-size:13px; text-align:center; padding:20px;}
+  .rom-empty b{color:var(--ink); font-size:15px;}
+  .rom-busy{position:absolute; left:50%; top:12px; transform:translateX(-50%); background:rgba(47,107,255,.9); color:#fff; font-size:12.5px; font-weight:700; padding:6px 12px; border-radius:100px;}
+  .rom-live{display:grid; grid-template-columns:1fr 1fr 2fr; gap:8px; margin-top:10px;}
+  .rom-live div{background:var(--surface-2); border-radius:12px; padding:8px 12px;}
+  .rom-live span{display:block; font-size:11.5px; color:var(--ink-soft); font-weight:700;}
+  .rom-live b{font-family:var(--font-num); font-size:20px;}
+  .rom-live .wide b{font-family:inherit; font-size:14px;}
+  @media (max-width:520px){ .rom-live{grid-template-columns:1fr 1fr;} .rom-live .wide{grid-column:1 / -1;} }
+  .rom-tip{font-size:12px; color:var(--ink-soft); margin:8px 2px 0;}
+  .rom-btns{display:flex; gap:8px; margin-top:10px;} .rom-btns .btn{flex:1;}
+
   .pro-link{display:block; margin:10px auto 0; background:none; border:0; color:var(--ink-soft); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:inherit;}
 </style>
 
@@ -741,6 +791,7 @@
     <nav class="side-menu">
       <button type="button" class="nav-item" data-view="dash"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>현황</span></button>
       <button type="button" class="nav-item" data-view="analyze" aria-current="page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>체형분석</span></button>
+      <button type="button" class="nav-item" data-view="rom"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M4 20L16 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/><circle cx="16" cy="6" r="1.6"/></svg><span>ROM 측정</span></button>
       <button type="button" class="nav-item" data-view="report"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>종합 리포트</span></button>
       <button type="button" class="nav-item" data-view="members"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원관리</span></button>
       <button type="button" class="nav-item" data-view="exercise"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/></svg><span>운동관리</span></button>
@@ -1126,6 +1177,21 @@
     <div class="stage-controls" style="margin-top:4px"><button type="button" class="btn primary wide" id="btnStSave">설정 저장</button></div>
     </fieldset>
   </section>
+  <section class="view" id="view-rom" hidden>
+    <div class="member-bar rom-mb" id="romMember">
+      <div class="mb-avatar" id="romMbAv">?</div>
+      <div class="mb-txt"><b id="romMbName">회원 선택 안 함</b><em id="romMbMeta">회원을 선택하면 ROM 결과가 회원 기록에 저장돼요</em></div>
+      <button type="button" class="btn line sm" id="btnRomPick">회원 선택</button>
+    </div>
+    <nav class="tabs rom-joints" id="romJoints" role="tablist"></nav>
+    <div class="rom-side" id="romSide" role="group" aria-label="측정 방향">
+      <button type="button" data-side="R" aria-pressed="true">오른쪽</button>
+      <button type="button" data-side="L" aria-pressed="false">왼쪽</button>
+    </div>
+    <div class="rom-sum" id="romSum"></div>
+    <div class="rom-grid" id="romGrid"></div>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요.</p>
+  </section>
   <section class="view" id="view-members" hidden>
     <div id="mbListWrap">
       <div class="mb-toolbar">
@@ -1195,6 +1261,7 @@
   <nav class="bottom-nav" aria-label="하단 메뉴">
     <button type="button" class="nav-item" data-view="dash"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>현황</span></button>
     <button type="button" class="nav-item" data-view="analyze" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>체형분석</span></button>
+    <button type="button" class="nav-item" data-view="rom"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M4 20L16 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/><circle cx="16" cy="6" r="1.6"/></svg><span>ROM</span></button>
     <button type="button" class="nav-item" data-view="report"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>리포트</span></button>
     <button type="button" class="nav-item" data-view="members"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원</span></button>
     <button type="button" class="nav-item" id="btnMore"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18.5" cy="12" r="1.6"/></svg><span>더보기</span></button>
@@ -1326,6 +1393,37 @@
     <p class="gs-hint" id="gsHint">최근 측정·등록 순으로 보여줘요. 결과를 누르면 회원 상세가 열려요.</p>
     <div class="gs-list" id="gsList"></div>
     <div class="confirm-btns"><button type="button" class="no" id="btnGsClose">닫기</button><button type="button" class="yes ok" id="btnGsNew">+ 새 회원 등록</button></div>
+  </div>
+</div>
+<div class="confirm-overlay rom-overlay" id="romSheet" hidden role="dialog" aria-modal="true" aria-labelledby="romSheetTitle">
+  <div class="confirm-box rom-box">
+    <div class="rom-head">
+      <div><h3 id="romSheetTitle">어깨 굴곡</h3><p id="romSheetSub">정상 0–180°</p></div>
+      <button type="button" class="rom-x" id="btnRomClose" aria-label="닫기">✕</button>
+    </div>
+    <p class="rom-guide" id="romGuide"></p>
+    <div class="rom-stage" id="romStage">
+      <canvas id="romCv"></canvas>
+      <div class="rom-empty" id="romEmpty"><b>사진을 찍거나 불러오세요</b><span id="romEmptyTip"></span></div>
+      <div class="rom-busy" id="romBusy" hidden>관절 위치 인식 중…</div>
+    </div>
+    <div class="rom-live" id="romLive" hidden>
+      <div><span>측정 각도</span><b id="romVal">–</b></div>
+      <div><span>정상</span><b id="romNorm">–</b></div>
+      <div class="wide"><span>판정</span><b id="romJudge">–</b></div>
+    </div>
+    <p class="rom-tip" id="romTip" hidden>점을 끌어서 위치를 고치면 각도가 바로 다시 계산돼요.</p>
+    <div class="rom-btns">
+      <button type="button" class="btn line sm" id="btnRomShot">📷 촬영</button>
+      <button type="button" class="btn line sm" id="btnRomFile">🖼 앨범에서</button>
+      <button type="button" class="btn line sm" id="btnRomAuto" disabled>↻ 다시 인식</button>
+    </div>
+    <div class="rom-btns">
+      <button type="button" class="btn line" id="btnRomImg" disabled>결과 이미지 저장</button>
+      <button type="button" class="btn primary" id="btnRomApply" disabled>이 결과 저장</button>
+    </div>
+    <input type="file" id="romShotIn" accept="image/*" capture="environment" hidden>
+    <input type="file" id="romFileIn" accept="image/*" hidden>
   </div>
 </div>
 <div class="confirm-overlay" id="mbPicker" hidden role="dialog" aria-modal="true" aria-labelledby="mbPickTitle">
@@ -3680,7 +3778,8 @@
     $("view-consult").hidden = (v !== "consult");
     $("view-sales").hidden = (v !== "sales");
     $("view-settings").hidden = (v !== "settings");
-    $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : v === "members" ? "회원관리" : v === "dash" ? "운영 현황" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : v === "settings" ? "설정" : "체형 분석";
+    $("view-rom").hidden = (v !== "rom");
+    $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : v === "members" ? "회원관리" : v === "dash" ? "운영 현황" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : v === "settings" ? "설정" : v === "rom" ? "ROM 관절가동범위" : "체형 분석";
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
@@ -3691,6 +3790,7 @@
     else if(v === "consult") renderConsult();
     else if(v === "sales") renderSales();
     else if(v === "settings") renderSettings(true);
+    else if(v === "rom") renderRom();
     else if(cur().img) requestDraw();
     window.scrollTo(0, 0);
   }
@@ -3719,17 +3819,17 @@
 
 
   /* ===================== v43 회원관리 (기기 저장: IndexedDB) ===================== */
-  var MEM = { members: [], records: [], programs: [], assigns: [], consults: [], sales: [] }, dbP = null;
+  var MEM = { members: [], records: [], programs: [], assigns: [], consults: [], sales: [], roms: [] }, dbP = null;
   function idb(){
     if(dbP) return dbP;
     dbP = new Promise(function(res){
       try{
-        var rq = indexedDB.open("ayo-posture", 2);
+        var rq = indexedDB.open("ayo-posture", 3);
         rq.onupgradeneeded = function(){
           var d = rq.result;
           if(!d.objectStoreNames.contains("members")) d.createObjectStore("members", { keyPath:"id" });
           if(!d.objectStoreNames.contains("records")) d.createObjectStore("records", { keyPath:"id" });
-          ["programs", "assigns", "consults", "sales"].forEach(function(n){ if(!d.objectStoreNames.contains(n)) d.createObjectStore(n, { keyPath:"id" }); });
+          ["programs", "assigns", "consults", "sales", "roms"].forEach(function(n){ if(!d.objectStoreNames.contains(n)) d.createObjectStore(n, { keyPath:"id" }); });
         };
         rq.onsuccess = function(){ res(rq.result); };
         rq.onerror = function(){ res(null); };
@@ -3955,7 +4055,7 @@
     dbAll("records").then(function(all){
       return Promise.all(all.filter(function(r){ return r.memberId === m.id; }).map(function(r){ return dbDel("records", r.id); }));
     }).then(function(){
-      return Promise.all(["assigns", "consults", "sales"].map(function(st){
+      return Promise.all(["assigns", "consults", "sales", "roms"].map(function(st){
         return dbAll(st).then(function(L){ return Promise.all(L.filter(function(x){ return x.memberId === m.id; }).map(function(x){ return dbDel(st, x.id); })); });
       }));
     }).then(function(){ return dbDel("members", m.id); }).then(function(){
@@ -4591,6 +4691,282 @@
   }
   selSearch("cfMemberQ", "cfMember"); selSearch("sfMemberQ", "sfMember");
 
+  /* ===================== v56 ROM 관절가동범위 측정 =====================
+     open : 꼭짓점 V에서 A·B 사이 각 (어깨: 몸통선 ↔ 위팔)
+     bend : 180° − ∠AVB (팔꿈치·무릎·고관절: 일직선=0°)
+     vert : 꼭짓점 V의 수직선(위/아래) ↔ V→B (회전 측정: 아래팔·아래다리) */
+  var ROM_JOINTS = [
+    { k:"shoulder", n:"어깨", moves:[
+      { k:"flex", n:"굴곡", normal:180, type:"open", pts:["hip","shoulder","elbow"], guide:"<b>옆에서</b> 촬영 · 팔꿈치를 편 채 팔을 <b>앞으로 최대한</b> 들어 올린 자세 (몸통 옆선 ↔ 위팔 각도)" },
+      { k:"ext", n:"신전", normal:60, type:"open", pts:["hip","shoulder","elbow"], guide:"<b>옆에서</b> 촬영 · 팔꿈치를 편 채 팔을 <b>뒤로 최대한</b> 뻗은 자세" },
+      { k:"abd", n:"외전", normal:180, type:"open", pts:["hip","shoulder","elbow"], guide:"<b>정면 또는 뒤에서</b> 촬영 · 팔을 <b>옆으로 최대한</b> 들어 올린 자세" },
+      { k:"add", n:"내전", normal:50, type:"open", pts:["hip","shoulder","elbow"], guide:"<b>정면에서</b> 촬영 · 팔을 몸 앞쪽에서 <b>반대편으로 최대한</b> 모은 자세" },
+      { k:"er", n:"외회전", normal:90, type:"vert", ref:"up", pts:["elbow","wrist"], guide:"어깨를 옆으로 90° 벌리고 팔꿈치를 90° 굽힌 뒤, 손을 <b>머리 쪽(뒤)으로 최대한</b> 돌린 자세 · <b>팔꿈치 쪽 옆에서</b> 촬영 (수직선 ↔ 아래팔)" },
+      { k:"ir", n:"내회전", normal:60, type:"vert", ref:"up", pts:["elbow","wrist"], guide:"어깨를 옆으로 90° 벌리고 팔꿈치를 90° 굽힌 뒤, 손을 <b>발 쪽(앞)으로 최대한</b> 돌린 자세 · <b>팔꿈치 쪽 옆에서</b> 촬영" }
+    ]},
+    { k:"elbow", n:"팔꿈치", moves:[
+      { k:"flex", n:"굴곡", normal:150, type:"bend", pts:["shoulder","elbow","wrist"], guide:"<b>옆에서</b> 촬영 · 팔꿈치를 <b>최대한 굽힌</b> 자세 (위팔 ↔ 아래팔)" },
+      { k:"ext", n:"신전", normal:0, type:"bend", pts:["shoulder","elbow","wrist"], guide:"<b>옆에서</b> 촬영 · 팔꿈치를 <b>최대한 편</b> 자세 · 완전히 펴지면 0°" }
+    ]},
+    { k:"knee", n:"무릎", moves:[
+      { k:"flex", n:"굴곡", normal:140, type:"bend", pts:["hip","knee","ankle"], guide:"<b>옆에서</b> 촬영 · 무릎을 <b>최대한 굽힌</b> 자세 (엎드리거나 누운 자세 권장)" },
+      { k:"ext", n:"신전", normal:0, type:"bend", pts:["hip","knee","ankle"], guide:"<b>옆에서</b> 촬영 · 무릎을 <b>최대한 편</b> 자세 · 완전히 펴지면 0°" }
+    ]},
+    { k:"hip", n:"고관절", moves:[
+      { k:"flex", n:"굴곡", normal:125, type:"bend", pts:["shoulder","hip","knee"], guide:"<b>옆에서</b> 촬영 · 누워서 무릎을 가슴 쪽으로 <b>최대한</b> 당긴 자세 (몸통선 ↔ 허벅지)" },
+      { k:"ext", n:"신전", normal:30, type:"bend", pts:["shoulder","hip","knee"], guide:"<b>옆에서</b> 촬영 · 엎드리거나 서서 다리를 <b>뒤로 최대한</b> 든 자세" },
+      { k:"abd", n:"외전", normal:40, type:"bend", pts:["shoulder","hip","knee"], guide:"<b>정면에서</b> 촬영 · 다리를 <b>옆으로 최대한</b> 벌린 자세" },
+      { k:"er", n:"외회전", normal:50, type:"vert", ref:"down", pts:["knee","ankle"], guide:"의자에 앉아 무릎 90° · 발을 <b>안쪽으로</b> 최대한 돌린 자세 (고관절 외회전) · <b>정면에서</b> 촬영 (수직선 ↔ 아래다리)" },
+      { k:"ir", n:"내회전", normal:40, type:"vert", ref:"down", pts:["knee","ankle"], guide:"의자에 앉아 무릎 90° · 발을 <b>바깥쪽으로</b> 최대한 돌린 자세 (고관절 내회전) · <b>정면에서</b> 촬영" }
+    ]}
+  ];
+  var ROM_LM = { shoulder:[11,12], elbow:[13,14], wrist:[15,16], hip:[23,24], knee:[25,26], ankle:[27,28] };
+  var ROM_PTNAME = { shoulder:"어깨", elbow:"팔꿈치", wrist:"손목", hip:"고관절", knee:"무릎", ankle:"발목" };
+  var ROM_COL = ["#4CC3FF", "#FFB547", "#FF6FAE"];
+  var rom = { joint: "shoulder", side: "R", latest: {}, session: {} };
+  function romJoint(){ return ROM_JOINTS.find(function(j){ return j.k === rom.joint; }); }
+  function romKey(j, side, m){ return j + "|" + side + "|" + m; }
+  function romJudge(mv, val){
+    if(val == null) return { cls:"", txt:"미측정", pct:0 };
+    if(mv.normal === 0){
+      return val <= 5 ? { cls:"good", txt:"정상 (완전히 펴짐)", pct:100 }
+        : { cls: val <= 15 ? "warn" : "crit", txt:"완전 신전까지 " + val + "° 부족", pct: Math.max(0, 100 - val / 30 * 100) };
+    }
+    var pct = Math.round(val / mv.normal * 100);
+    if(pct >= 100) return { cls:"good", txt:"정상 범위 (정상의 " + pct + "%)", pct:100 };
+    var lack = 100 - pct;
+    return { cls: pct >= 90 ? "good" : pct >= 70 ? "warn" : "crit", txt:"정상 대비 " + pct + "% · " + lack + "% 부족", pct:pct };
+  }
+  function romLoad(){
+    rom.latest = {};
+    Object.keys(rom.session).forEach(function(k){ rom.latest[k] = rom.session[k]; });
+    if(!state.member) return Promise.resolve();
+    var mid = state.member.id;
+    return dbAll("roms").then(function(L){
+      L.filter(function(r){ return r.memberId === mid; }).sort(function(a, b){ return a.at - b.at; }).forEach(function(r){ rom.latest[romKey(r.joint, r.side, r.move)] = r; });
+    });
+  }
+  function renderRom(){
+    var m = state.member;
+    $("romMbAv").textContent = m ? initial(m.name) : "?";
+    $("romMbName").textContent = m ? m.name : "회원 선택 안 함";
+    $("romMbMeta").textContent = m ? (memberMeta(m) || "회원") + " · ROM 결과가 회원 기록에 저장돼요" : "회원을 선택하면 ROM 결과가 회원 기록에 저장돼요";
+    $("btnRomPick").textContent = m ? "변경" : "회원 선택";
+    $("romMember").classList.toggle("on", !!m);
+    $("romJoints").innerHTML = ROM_JOINTS.map(function(j){ return '<button type="button" role="tab" data-j="' + j.k + '" aria-selected="' + (j.k === rom.joint) + '">' + j.n + '</button>'; }).join("");
+    $("romJoints").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ rom.joint = b.getAttribute("data-j"); renderRom(); }); });
+    $("romSide").querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-side") === rom.side)); });
+    romLoad().then(function(){
+      var J = romJoint(), done = 0, sumPct = 0, cnt = 0;
+      $("romGrid").innerHTML = J.moves.map(function(mv){
+        var r = rom.latest[romKey(J.k, rom.side, mv.k)], val = r ? r.value : null, jd = romJudge(mv, val);
+        if(r){ done++; if(mv.normal > 0){ sumPct += Math.min(100, jd.pct); cnt++; } }
+        return '<div class="rom-card ' + jd.cls + '"><div class="top"><b>' + mv.n + '</b><em>정상 ' + (mv.normal ? "0–" + mv.normal : "0") + '°</em></div>' +
+          '<div class="val">' + (val == null ? '<span class="none">아직 측정하지 않았어요</span>' : '<strong>' + val + '°</strong><small>/ ' + mv.normal + '°</small>') + '</div>' +
+          '<div class="rom-bar"><i style="width:' + (val == null ? 0 : Math.min(100, jd.pct)) + '%"></i></div>' +
+          '<div class="judge">' + jd.txt + '</div>' +
+          (r && r.thumb ? '<img class="thumb" src="' + r.thumb + '" alt="">' : '') +
+          (r ? '<div class="meta">' + fmtDate(r.at) + (r.memberId ? "" : " · 회원 미지정(저장 안 됨)") + '</div>' : '') +
+          '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-mv="' + mv.k + '">' + (r ? "다시 측정" : "측정하기") + '</button></div></div>';
+      }).join("");
+      $("romGrid").querySelectorAll("[data-mv]").forEach(function(b){ b.addEventListener("click", function(){ openRomSheet(b.getAttribute("data-mv")); }); });
+      $("romSum").innerHTML = '<div><span>' + J.n + ' · ' + (rom.side === "R" ? "오른쪽" : "왼쪽") + ' 측정</span><b>' + done + ' / ' + J.moves.length + '</b></div>' +
+        '<div><span>평균 가동 범위 (정상 대비)</span><b>' + (cnt ? Math.round(sumPct / cnt) + "%" : "–") + '</b></div>';
+    });
+  }
+  $("romSide").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ rom.side = b.getAttribute("data-side"); renderRom(); }); });
+  $("btnRomPick").addEventListener("click", function(){ $("btnMbPick").click(); });
+  var _setMemberRom = setMember;
+  setMember = function(m){ _setMemberRom(m); if(state.view === "rom") renderRom(); };
+
+  // ---- 측정 시트 ----
+  var romS = { mv:null, img:null, w:0, h:0, pts:null, scale:1, drag:-1 };
+  var romCv = $("romCv"), romCtx = romCv.getContext("2d");
+  function romMove(){ return romJoint().moves.find(function(m){ return m.k === romS.mv; }); }
+  function openRomSheet(mk){
+    romS.mv = mk; romS.img = null; romS.pts = null;
+    var J = romJoint(), mv = romMove();
+    $("romSheetTitle").textContent = J.n + " " + mv.n + " · " + (rom.side === "R" ? "오른쪽" : "왼쪽");
+    $("romSheetSub").textContent = "정상 " + (mv.normal ? "0–" + mv.normal : "0") + "° · " + (mv.type === "vert" ? "수직 기준선 ↔ " + ROM_PTNAME[mv.pts[0]] + "→" + ROM_PTNAME[mv.pts[1]] : mv.pts.map(function(p){ return ROM_PTNAME[p]; }).join(" – ") + " (꼭짓점: " + ROM_PTNAME[mv.pts[1]] + ")");
+    $("romGuide").innerHTML = "📸 " + mv.guide;
+    $("romEmptyTip").textContent = "관절이 화면 안에 모두 보이도록, 카메라를 몸과 수평으로 맞춰 촬영하세요.";
+    romCv.hidden = true; $("romEmpty").hidden = false; $("romLive").hidden = true; $("romTip").hidden = true;
+    ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = true; });
+    $("romSheet").hidden = false;
+  }
+  $("btnRomClose").addEventListener("click", function(){ $("romSheet").hidden = true; });
+  $("btnRomShot").addEventListener("click", function(){ $("romShotIn").value = ""; $("romShotIn").click(); });
+  $("btnRomFile").addEventListener("click", function(){ $("romFileIn").value = ""; $("romFileIn").click(); });
+  ["romShotIn", "romFileIn"].forEach(function(id){ $(id).addEventListener("change", function(){
+    var f = this.files && this.files[0]; if(!f) return;
+    var url = URL.createObjectURL(f), im = new Image();
+    im.onload = function(){
+      // 긴 변 1600px로 정규화 (좌표 계산·저장 공통)
+      var k = Math.min(1, 1600 / Math.max(im.naturalWidth, im.naturalHeight));
+      var c = document.createElement("canvas"); c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      var im2 = new Image(); im2.onload = function(){ romS.img = im2; romS.w = im2.naturalWidth; romS.h = im2.naturalHeight; romAuto(); }; im2.src = c.toDataURL("image/jpeg", 0.9);
+    };
+    im.onerror = function(){ toast("사진을 불러오지 못했어요."); };
+    im.src = url;
+  }); });
+  function romDefaultPts(mv){
+    var w = romS.w, h = romS.h;
+    if(mv.type === "vert") return [{ x:w * 0.5, y:h * 0.5 }, { x:w * 0.5, y:h * (mv.ref === "up" ? 0.25 : 0.75) }];
+    return [{ x:w * 0.5, y:h * 0.75 }, { x:w * 0.5, y:h * 0.45 }, { x:w * 0.68, y:h * 0.25 }];
+  }
+  function romAuto(){
+    var mv = romMove(); if(!romS.img) return;
+    romCv.hidden = false; $("romEmpty").hidden = true;
+    romS.pts = romDefaultPts(mv); romDraw();
+    if(!window.__detectPose){ romReady(false); return; }
+    $("romBusy").hidden = false;
+    window.__detectPose(romS.img).then(function(lm){
+      $("romBusy").hidden = true;
+      var si = rom.side === "R" ? 1 : 0, ok = !!lm, low = false;
+      if(lm){
+        var P = mv.pts.map(function(n){ var p = lm[ROM_LM[n][si]]; if(!p) return null; if(p.visibility !== undefined && p.visibility < 0.3) low = true; return { x:p.x * romS.w, y:p.y * romS.h }; });
+        var minD = Math.max(romS.w, romS.h) * 0.04;
+        var sane = P.every(Boolean) && P.every(function(q, i){ return i === 0 || Math.hypot(q.x - P[i - 1].x, q.y - P[i - 1].y) > minD; });
+        if(sane) romS.pts = P; else ok = false;
+      }
+      romReady(ok, low);
+    }).catch(function(){ $("romBusy").hidden = true; romReady(false); });
+  }
+  function romReady(ok, low){
+    romDraw();
+    ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = false; });
+    $("romLive").hidden = false; $("romTip").hidden = false;
+    if(!ok) toast("관절을 자동으로 찾지 못했어요. 점을 끌어서 위치를 맞춰주세요.");
+    else if(low) toast("일부 관절이 잘 보이지 않아요. 점 위치를 확인해 주세요.");
+    else toast("자동 인식 완료! 점을 끌어서 미세 조정할 수 있어요.");
+  }
+  $("btnRomAuto").addEventListener("click", romAuto);
+  function angAt(v, a, b){
+    var ax = a.x - v.x, ay = a.y - v.y, bx = b.x - v.x, by = b.y - v.y;
+    var d = Math.sqrt((ax * ax + ay * ay) * (bx * bx + by * by)); if(!d) return 0;
+    return Math.acos(Math.max(-1, Math.min(1, (ax * bx + ay * by) / d))) * 180 / Math.PI;
+  }
+  function romRefPt(mv){ var v = romS.pts[0], L = Math.max(romS.w, romS.h) * 0.22; return { x:v.x, y:v.y + (mv.ref === "up" ? -L : L) }; }
+  function romAngle(){
+    var mv = romMove(), P = romS.pts; if(!P) return null;
+    if(mv.type === "vert") return Math.round(angAt(P[0], romRefPt(mv), P[1]));
+    var a = angAt(P[1], P[0], P[2]);
+    return Math.round(mv.type === "bend" ? 180 - a : a);
+  }
+  function romDraw(){
+    if(!romS.img) return;
+    var stageW = $("romStage").clientWidth || 600, maxH = Math.max(260, window.innerHeight * 0.55);
+    var sc = Math.min(stageW / romS.w, maxH / romS.h);
+    var cw = Math.round(romS.w * sc), ch = Math.round(romS.h * sc), dpr = Math.min(2, window.devicePixelRatio || 1);
+    romCv.width = cw * dpr; romCv.height = ch * dpr; romCv.style.width = cw + "px"; romCv.style.height = ch + "px";
+    romS.scale = sc;
+    var g = romCtx; g.setTransform(dpr * sc, 0, 0, dpr * sc, 0, 0);
+    romPaint(g, 1 / sc);
+    var mv = romMove(), val = romAngle(), jd = romJudge(mv, val);
+    $("romVal").textContent = val == null ? "–" : val + "°";
+    $("romNorm").textContent = mv.normal + "°";
+    $("romJudge").textContent = jd.txt; $("romJudge").style.color = jd.cls === "good" ? "var(--good)" : jd.cls === "warn" ? "var(--warn)" : jd.cls === "crit" ? "var(--crit)" : "";
+  }
+  // u = 화면 1px에 해당하는 이미지 픽셀 수 (선 굵기·글자 크기 보정)
+  function romPaint(g, u){
+    var mv = romMove(), P = romS.pts;
+    g.drawImage(romS.img, 0, 0, romS.w, romS.h);
+    if(!P) return;
+    var V = mv.type === "vert" ? P[0] : P[1];
+    var A = mv.type === "vert" ? romRefPt(mv) : P[0], B = mv.type === "vert" ? P[1] : P[2];
+    g.lineCap = "round";
+    // 기준선(A)
+    g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 3 * u;
+    if(mv.type === "vert") g.setLineDash([10 * u, 8 * u]);
+    g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(A.x, A.y); g.stroke(); g.setLineDash([]);
+    // 움직임 선(B)
+    g.strokeStyle = "#2F6BFF"; g.lineWidth = 4 * u;
+    g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(B.x, B.y); g.stroke();
+    // 각도 호
+    var a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x), d = a2 - a1;
+    while(d > Math.PI) d -= 2 * Math.PI; while(d < -Math.PI) d += 2 * Math.PI;
+    var R = 46 * u;
+    if(mv.type === "bend"){
+      // 일직선 연장선 기준으로 굽은 각도 표시
+      var ex = { x: V.x + (V.x - A.x), y: V.y + (V.y - A.y) };
+      g.strokeStyle = "rgba(255,255,255,.45)"; g.lineWidth = 2 * u; g.setLineDash([8 * u, 7 * u]);
+      var el = Math.hypot(ex.x - V.x, ex.y - V.y), k = Math.min(1, (R * 2.4) / (el || 1));
+      g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(V.x + (ex.x - V.x) * k, V.y + (ex.y - V.y) * k); g.stroke(); g.setLineDash([]);
+      a1 = Math.atan2(ex.y - V.y, ex.x - V.x); d = a2 - a1; while(d > Math.PI) d -= 2 * Math.PI; while(d < -Math.PI) d += 2 * Math.PI;
+    }
+    g.fillStyle = "rgba(255,181,71,.28)"; g.strokeStyle = "#FFB547"; g.lineWidth = 3 * u;
+    g.beginPath(); g.moveTo(V.x, V.y); g.arc(V.x, V.y, R, a1, a1 + d, d < 0); g.closePath(); g.fill();
+    g.beginPath(); g.arc(V.x, V.y, R, a1, a1 + d, d < 0); g.stroke();
+    // 점
+    P.forEach(function(p, i){
+      g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 3 * u;
+      g.beginPath(); g.arc(p.x, p.y, 11 * u, 0, Math.PI * 2); g.fill(); g.stroke();
+    });
+    // 각도 라벨
+    var val = romAngle(), mid = a1 + d / 2;
+    if(Math.abs(d) < 0.6) mid += Math.PI / 2;   // 각도가 작으면 선과 겹치지 않게 옆으로
+    var lx = V.x + Math.cos(mid) * (R + 34 * u), ly = V.y + Math.sin(mid) * (R + 34 * u);
+    var txt = val + "°";
+    g.font = "800 " + (24 * u) + "px 'IBM Plex Sans KR', sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+    var tw = g.measureText(txt).width + 18 * u;
+    g.fillStyle = "rgba(13,21,40,.88)"; rr(g, lx - tw / 2, ly - 18 * u, tw, 36 * u, 10 * u); g.fill();
+    g.fillStyle = "#fff"; g.fillText(txt, lx, ly + 1 * u);
+    g.textAlign = "left"; g.textBaseline = "alphabetic";
+  }
+  function romEvtPt(e){ var r = romCv.getBoundingClientRect(); return { x:(e.clientX - r.left) / romS.scale, y:(e.clientY - r.top) / romS.scale }; }
+  romCv.addEventListener("pointerdown", function(e){
+    if(!romS.pts) return;
+    var p = romEvtPt(e), best = -1, bd = 1e9;
+    romS.pts.forEach(function(q, i){ var d = Math.hypot(q.x - p.x, q.y - p.y); if(d < bd){ bd = d; best = i; } });
+    if(bd * romS.scale > 44) return;
+    romS.drag = best; romCv.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  romCv.addEventListener("pointermove", function(e){
+    if(romS.drag < 0) return;
+    var p = romEvtPt(e); romS.pts[romS.drag] = { x: Math.max(0, Math.min(romS.w, p.x)), y: Math.max(0, Math.min(romS.h, p.y)) };
+    romDraw(); e.preventDefault();
+  });
+  ["pointerup", "pointercancel"].forEach(function(t){ romCv.addEventListener(t, function(){ romS.drag = -1; }); });
+  window.addEventListener("resize", function(){ if(!$("romSheet").hidden && romS.img) romDraw(); });
+
+  function romResultCanvas(maxW){
+    var mv = romMove(), J = romJoint(), val = romAngle(), jd = romJudge(mv, val);
+    var k = Math.min(1, (maxW || 1200) / romS.w), W = Math.round(romS.w * k), H = Math.round(romS.h * k), HEAD = Math.round(150 * Math.max(0.6, W / 1200));
+    var c = document.createElement("canvas"); c.width = W; c.height = H + HEAD;
+    var g = c.getContext("2d"), F = "'IBM Plex Sans KR', sans-serif", s2 = HEAD / 150;
+    g.fillStyle = "#0D1528"; g.fillRect(0, 0, W, H + HEAD);
+    g.save(); g.translate(0, HEAD); g.scale(k, k); romPaint(g, 1.6 / k * (W / 1200)); g.restore();
+    g.fillStyle = "#D2B07A"; g.font = "700 " + Math.round(18 * s2) + "px " + F;
+    g.fillText(brandLabel("ROM 관절가동범위", "ROM 관절가동범위") + (state.member ? "  ·  " + state.member.name : ""), 24 * s2, 38 * s2);
+    g.fillStyle = "#E9EEF8"; g.font = "800 " + Math.round(36 * s2) + "px " + F;
+    g.fillText(J.n + " " + mv.n + " (" + (rom.side === "R" ? "오른쪽" : "왼쪽") + ")  " + val + "°", 24 * s2, 88 * s2);
+    g.fillStyle = jd.cls === "good" ? "#4CC38A" : jd.cls === "warn" ? "#F0B44C" : "#F07A72"; g.font = "700 " + Math.round(20 * s2) + "px " + F;
+    g.fillText("정상 " + mv.normal + "° · " + jd.txt, 24 * s2, 126 * s2);
+    g.textAlign = "right"; g.fillStyle = "#97A3BC"; g.font = "500 " + Math.round(15 * s2) + "px " + F;
+    g.fillText(fmtDate(Date.now()), W - 24 * s2, 38 * s2); g.textAlign = "left";
+    return c;
+  }
+  $("btnRomImg").addEventListener("click", function(){
+    if(!romS.pts) return;
+    var mv = romMove();
+    deliverCanvas(romResultCanvas(1200), "AYO_ROM_" + rom.joint + "_" + mv.k + "_" + (state.member ? state.member.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" : "") + toDateInput(Date.now()).replace(/-/g, "") + ".jpg");
+  });
+  $("btnRomApply").addEventListener("click", function(){
+    if(!romS.pts) return;
+    var mv = romMove(), val = romAngle();
+    var rec = { id: uid(), memberId: state.member ? state.member.id : null, at: Date.now(), joint: rom.joint, side: rom.side, move: mv.k,
+      value: val, normal: mv.normal, pct: mv.normal ? Math.round(val / mv.normal * 100) : null,
+      thumb: romResultCanvas(480).toDataURL("image/jpeg", 0.78) };
+    var done = function(){ $("romSheet").hidden = true; renderRom(); };
+    if(!state.member){
+      rom.session[romKey(rec.joint, rec.side, rec.move)] = rec; done();
+      toast(romJoint().n + " " + mv.n + " " + val + "° · 회원을 선택하지 않아 이 화면에만 표시돼요."); return;
+    }
+    dbPut("roms", rec).then(function(){ done(); toast(state.member.name + " 회원 " + romJoint().n + " " + mv.n + " " + val + "° 저장했어요."); })
+      .catch(function(){ toast("저장하지 못했어요."); });
+  });
+
   /* ===================== v52 기기 고정 이용 코드 (ECDSA P-256 서명 확인) =====================
      이용 코드 = "AYO1-" + 기기ID(8) + 만료일(YYYYMMDD) + "-" + 서명(base64url)
      서명은 발급 도구(대표 PC)의 비밀 키로만 만들 수 있고, 앱은 공개 키(license-pub.json)로 확인만 한다. */
@@ -4885,7 +5261,7 @@
   applyBrand(); fillSaleItems();
 
   /* ===================== v46 운동관리 · 상담일지 · 매출관리 ===================== */
-  var OPS_STORES = ["programs", "assigns", "consults", "sales"];
+  var OPS_STORES = ["programs", "assigns", "consults", "sales", "roms"];
   var GROUPS = [ { k:"all", n:"전체" }, { k:"head", n:"머리·목" }, { k:"shoulder", n:"어깨" }, { k:"pelvis", n:"골반·고관절" }, { k:"knee", n:"무릎" }, { k:"ankle", n:"발목" } ];
   var KEY_GROUP = { earlobe:"head", ear:"head", shoulder:"shoulder", acromion:"shoulder", pelvis:"pelvis", trochanter:"pelvis", knee:"knee", ankle:"ankle", malleolus:"ankle" };
   var EX = [

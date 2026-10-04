@@ -880,6 +880,15 @@
   .rom-manual label{font-size:13px; font-weight:800; color:var(--ink-soft); margin-right:auto;}
   .rom-manual input{width:90px; font-family:var(--font-num); font-size:20px; font-weight:700; text-align:right; border:1px solid var(--line); border-radius:10px; padding:6px 10px; background:var(--surface); color:var(--ink);}
   .rom-manual span{font-size:18px; font-weight:700;}
+  .bk-banner{display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 12px; border-radius:14px; background:linear-gradient(135deg,rgba(240,180,76,.20),rgba(232,154,46,.12)); border:1px solid rgba(240,180,76,.55);}
+  .bk-banner .bk-ic{font-size:22px;}
+  .bk-banner .bk-txt{flex:1 1 180px; min-width:0;} .bk-banner b{display:block; font-size:14px;} .bk-banner em{font-style:normal; font-size:12px; color:var(--ink-soft); line-height:1.5;}
+  .bk-banner .bk-acts{display:flex; gap:6px;} .bk-banner .btn{width:auto; white-space:nowrap;}
+  .bk-opts{display:flex; align-items:center; gap:8px; margin-top:12px;}
+  .bk-opts label{font-size:13px; font-weight:700; color:var(--ink-soft);}
+  .bk-opts select{font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:10px; padding:7px 10px; background:var(--surface-2); color:var(--ink);}
+  .bk-tip{font-size:12.5px; line-height:1.65; color:var(--ink-soft); background:var(--surface-2); border-radius:10px; padding:9px 12px; margin:10px 0 0;}
+  .bk-warn{color:var(--warn);}
   .rom-q{margin:8px 0 0; font-size:12.5px; font-weight:700; border-radius:10px; padding:8px 12px;}
   .rom-q.good{background:rgba(76,195,138,.12); color:var(--good);} .rom-q.mid{background:rgba(240,180,76,.12); color:var(--warn);}
   .rom-q.low, .rom-q.bad{background:rgba(240,122,114,.12); color:var(--crit);}
@@ -967,6 +976,11 @@
     </div>
   </header>
 
+  <div class="bk-banner" id="bkBanner" hidden role="status">
+    <span class="bk-ic" aria-hidden="true">💾</span>
+    <div class="bk-txt"><b id="bkBanTitle">백업할 시간이에요</b><em id="bkBanSub"></em></div>
+    <div class="bk-acts"><button type="button" class="btn primary sm" id="btnBkNow">지금 백업</button><button type="button" class="btn line sm" id="btnBkLater">내일 다시</button></div>
+  </div>
   <section class="view" id="view-analyze">
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-front" aria-selected="true">정면 · 좌우 높낮이</button>
@@ -1352,7 +1366,7 @@
     <button type="button" class="btn line sm rom-lr-btn" id="btnRomLR">↔ 좌우 비교 분석</button>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v76</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v77</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1363,7 +1377,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v76</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v77</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1380,10 +1394,15 @@
         <h2>기록 백업</h2>
         <p class="sub" id="bkInfo">회원 정보와 측정 기록은 <b>이 기기 안에만</b> 저장돼요. 휴대폰을 바꾸거나 앱을 지우기 전에 백업 파일을 저장해 두세요.</p>
         <div class="stage-controls" style="margin-top:0">
-          <button type="button" class="btn primary" id="btnBkExport">백업 파일 저장</button>
+          <button type="button" class="btn primary" id="btnBkExport">💾 지금 백업하기</button>
           <button type="button" class="btn line" id="btnBkImport">백업 불러오기</button>
           <input type="file" id="bkFile" accept=".json,application/json">
         </div>
+        <div class="bk-opts">
+          <label for="bkCycle">백업 알림</label>
+          <select id="bkCycle"><option value="1">매일</option><option value="3">3일마다</option><option value="7">7일마다 (권장)</option><option value="14">14일마다</option><option value="0">알림 끄기</option></select>
+        </div>
+        <p class="bk-tip">💡 <b>지금 백업하기</b>를 누르면 공유 창이 열려요 → <b>Google Drive</b> 또는 <b>카카오톡 '나와의 채팅'</b>을 고르면 폰을 바꾸거나 앱을 지워도 안전하게 보관돼요. 새 폰에서는 <b>백업 불러오기</b>로 그대로 복원돼요.</p>
       </section>
     </div>
     <div id="mbDetail" hidden>
@@ -4118,7 +4137,10 @@
     });
   }
   function dbAll(store){ return rawAll(store); }
+  var BK_STORES = { members:1, records:1, roms:1, programs:1, assigns:1, consults:1, sales:1 };
+  function bkTouch(store){ if(!BK_STORES[store]) return; lsSet("ayo_bk_dirty", String(+(lsGet("ayo_bk_dirty") || 0) + 1)); clearTimeout(bkTouch._t); bkTouch._t = setTimeout(function(){ if(typeof bkCheck === "function") bkCheck(); }, 800); }
   function dbPut(store, o){
+    bkTouch(store);
     if(store === "roms" && typeof romCache !== "undefined") romCache.all = null;
     if(store === "members" || store === "records") laCache = null;
     var f = HEAVY[store];
@@ -4127,6 +4149,7 @@
     return rawPut("blobs", { id: store + ":" + o.id, v: o[f] }).then(function(){ return rawPut(store, light); }).then(function(){ return o; });
   }
   function dbDel(store, id){
+    bkTouch(store);
     if(store === "roms" && typeof romCache !== "undefined") romCache.all = null;
     if(store === "members" || store === "records") laCache = null;
     if(HEAVY[store]) rawDel("blobs", store + ":" + id);
@@ -4553,10 +4576,32 @@
   function bkInfoRender(){
     loadAll().then(function(res){
       var last = lsGet("ayo_last_backup");
+      var dirty = +(lsGet("ayo_bk_dirty") || 0), days = last ? Math.floor((Date.now() - +last) / 864e5) : null;
       $("bkInfo").innerHTML = "회원 <b>" + res[0].length + "명</b> · 측정 기록 <b>" + res[1].length + "건</b>이 이 기기 안에만 저장돼 있어요. " +
-        (last ? "마지막 백업: <b>" + fmtDate(+last) + "</b>" : "<b>아직 백업한 적이 없어요.</b> 휴대폰을 바꾸거나 앱을 지우기 전에 꼭 저장하세요.");
+        (last ? "마지막 백업: <b>" + fmtDate(+last) + "</b> (" + (days === 0 ? "오늘" : days + "일 전") + ")" + (dirty ? " · 그 뒤 <b class=\"bk-warn\">" + dirty + "건 변경</b>" : " · 그 뒤 변경 없음 ✓") : "<b class=\"bk-warn\">아직 백업한 적이 없어요.</b> 휴대폰을 바꾸거나 앱을 지우기 전에 꼭 저장하세요.");
+      $("bkCycle").value = lsGet("ayo_bk_cycle") || "7";
     });
   }
+  /* v77 백업 알림: 정한 주기가 지났고 그 사이 바뀐 기록이 있으면 화면 위에 안내 */
+  function bkCheck(){
+    var ban = $("bkBanner"); if(!ban) return;
+    var cyc = +(lsGet("ayo_bk_cycle") || 7), last = +(lsGet("ayo_last_backup") || 0), dirty = +(lsGet("ayo_bk_dirty") || 0), snooze = +(lsGet("ayo_bk_snooze") || 0);
+    var due = cyc > 0 && dirty > 0 && Date.now() > snooze && (!last || Date.now() - last >= cyc * 864e5);
+    if(!due){ ban.hidden = true; return; }
+    loadAll().then(function(res){
+      if(!res[0].length && !res[1].length){ ban.hidden = true; return; }
+      var days = last ? Math.floor((Date.now() - last) / 864e5) : null;
+      $("bkBanTitle").textContent = last ? "마지막 백업 " + days + "일 전이에요" : "아직 백업한 적이 없어요";
+      $("bkBanSub").textContent = (last ? "그 뒤 " + dirty + "건 변경 · " : "") + "회원 " + res[0].length + "명 · 기록 " + res[1].length + "건 — 폰 분실·앱 삭제에 대비해 저장해 두세요";
+      ban.hidden = false;
+    });
+  }
+  $("btnBkNow").addEventListener("click", function(){ $("btnBkExport").click(); });
+  $("btnBkLater").addEventListener("click", function(){ lsSet("ayo_bk_snooze", String(Date.now() + 864e5)); $("bkBanner").hidden = true; toast("내일 다시 알려드릴게요."); });
+  $("bkCycle").addEventListener("change", function(){ lsSet("ayo_bk_cycle", this.value); lsSet("ayo_bk_snooze", "0"); bkCheck(); toast(this.value === "0" ? "백업 알림을 껐어요." : "백업 알림 주기를 바꿨어요."); });
+  if(lsGet("ayo_bk_dirty") == null && !lsGet("ayo_last_backup")) lsSet("ayo_bk_dirty", "1");
+  setTimeout(bkCheck, 2500);
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden) bkCheck(); });
   function deliverFile(blob, filename, okMsg){
     function anchor(){
       try{ var u = URL.createObjectURL(blob), a = document.createElement("a"); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(u); }, 4000); toast(okMsg); }
@@ -4584,7 +4629,7 @@
       fill.then(function(){
       var blob = new Blob([JSON.stringify(data)], { type: "application/json" });
       var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
-      lsSet("ayo_last_backup", String(Date.now()));
+      lsSet("ayo_last_backup", String(Date.now())); lsSet("ayo_bk_dirty", "0"); lsSet("ayo_bk_snooze", "0"); if(typeof bkCheck === "function") bkCheck();
       deliverFile(blob, "AYO_backup_" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "_" + z(d.getHours()) + z(d.getMinutes()) + ".json",
         "백업 파일을 만들었어요. 구글드라이브나 카톡 나에게 보내기로 보관하세요.");
       bkInfoRender();

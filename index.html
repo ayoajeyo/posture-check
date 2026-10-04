@@ -23,7 +23,7 @@
   /* 레이아웃: 좁은 한 줄 컬럼(최대 560px) — 상단 마스트헤드(브랜드) → 탭 → 촬영 카드 → 결과 카드.
      톤: 딥 네이비 + 샴페인 골드(포인트는 가는 선·라벨·활성 상태에만) — 임상 아카데미의 절제된 고급감 */
   :root{
-    --bg:#F3F4F7;          /* 살짝 푸른 기운의 포슬린 바탕 */
+    --bg:#E6EAF1;          /* 살짝 푸른 기운의 포슬린 바탕 */
     --surface:#FFFFFF;
     --surface-2:#ECEEF3;
     --ink:#131B2E;         /* 딥 네이비 잉크 */
@@ -35,7 +35,7 @@
     --accent:#17223D;
     --accent-ink:#17223D;
     --accent-soft:#E4E8F1;
-    --line:#DDE1E9;
+    --line:#CCD3E0;
     --good:#1F8A5B;
     --good-soft:#E2F2EA;
     --warn:#B07415;
@@ -50,9 +50,9 @@
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#0D1220;
-      --surface:#141B2D;
-      --surface-2:#1B2338;
+      --bg:#070B15;
+      --surface:#18223A;
+      --surface-2:#222E4B;
       --ink:#E8ECF4;
       --ink-soft:#98A2B8;
       --navy:#2A3B66;
@@ -62,7 +62,7 @@
       --accent:#9FB3E0;
       --accent-ink:#C9D5F0;
       --accent-soft:#1E2945;
-      --line:#262F47;
+      --line:#33406A;
       --good:#58C58F;
       --good-soft:#15302A;
       --warn:#E3A748;
@@ -74,9 +74,9 @@
     }
   }
   :root[data-theme="dark"]{
-    --bg:#0D1220;
-    --surface:#141B2D;
-    --surface-2:#1B2338;
+    --bg:#070B15;
+    --surface:#18223A;
+    --surface-2:#222E4B;
     --ink:#E8ECF4;
     --ink-soft:#98A2B8;
     --navy:#2A3B66;
@@ -86,7 +86,7 @@
     --accent:#9FB3E0;
     --accent-ink:#C9D5F0;
     --accent-soft:#1E2945;
-    --line:#262F47;
+    --line:#33406A;
     --good:#58C58F;
     --good-soft:#15302A;
     --warn:#E3A748;
@@ -384,11 +384,11 @@
 
   /* ===================== v37 앱 셸 · 다크 네이비 테마 ===================== */
   :root:root:not([data-theme="zz"]){
-    --bg:#0D1528; --surface:#141E35; --surface-2:#1C2843; --ink:#E9EEF8; --ink-soft:#97A3BC;
+    --bg:#060A14; --surface:#1A2540; --surface-2:#243152; --ink:#E9EEF8; --ink-soft:#97A3BC;
     --navy:#2F6BFF; --navy-ink:#FFFFFF; --gold:#D2B07A; --gold-soft:#2B2519;
-    --accent:#7FA2FF; --accent-ink:#C9D5F0; --accent-soft:#1E2A4A; --line:#26324F;
+    --accent:#7FA2FF; --accent-ink:#C9D5F0; --accent-soft:#1E2A4A; --line:#34436C;
     --good:#4CC38A; --good-soft:#123326; --warn:#F0B44C; --warn-soft:#3A2C14; --crit:#F07A72; --crit-soft:#3D1F1E;
-    --blue:#2F6BFF; --blue-soft:rgba(47,107,255,.16); --side:#0A1121;
+    --blue:#2F6BFF; --blue-soft:rgba(47,107,255,.16); --side:#111A31;
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 30px -16px rgba(0,0,0,.65);
     color-scheme:dark;
   }
@@ -435,7 +435,7 @@
   .side-foot b{color:var(--gold); font-weight:700; letter-spacing:.12em;}
 
   /* 하단 탭 (폰) */
-  .bottom-nav{position:fixed; left:0; right:0; bottom:0; z-index:40; display:flex; background:rgba(10,17,33,.96);
+  .bottom-nav{position:fixed; left:0; right:0; bottom:0; z-index:40; display:flex; background:rgba(24,34,58,.97);
     border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);}
   .bottom-nav .nav-item{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 0 8px; font-size:11px; font-weight:600;}
   .bottom-nav .nav-item[aria-current="page"]{color:#fff;}
@@ -844,6 +844,25 @@
   .rom-shot-btn:active{transform:translateY(1px);}
   .rom-auto-btn{flex:1 1 0; min-height:58px; font-size:14.5px; font-weight:700; border-radius:16px;}
   .rom-save-btn{flex:1 1 100%; min-height:54px; font-size:17px; font-weight:800; border-radius:16px;}
+  /* v71 동작 카드 압축 */
+  .rom-grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:8px;}
+  .rom-card.rc{display:grid; grid-template-columns:52px 1fr auto; align-items:center; gap:10px; padding:10px 10px 10px 10px; border-radius:14px;}
+  .rc-th{width:52px; height:52px; border-radius:10px; object-fit:cover; background:#0B1222;}
+  .rc-th0{display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:var(--ink-soft); background:var(--surface-2);}
+  .rc-main{min-width:0; display:flex; flex-direction:column; gap:4px;}
+  .rc-h{display:flex; align-items:baseline; gap:6px;} .rc-h b{font-size:15px;} .rc-h em{font-style:normal; font-size:11.5px; color:var(--ink-soft);}
+  .rc-v{display:flex; align-items:baseline; gap:8px; min-width:0;}
+  .rc-v strong{font-family:var(--font-num); font-size:22px; line-height:1;} .rc-v .none{font-size:13px; color:var(--ink-soft); font-weight:600;}
+  .rc-v .judge{font-size:11.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .rom-card.rc .rom-bar{height:6px;}
+  .rc-meta{font-size:10.5px; color:var(--ink-soft);}
+  .rom-delta.rc-delta{font-size:11px; padding:2px 8px; border-radius:7px; align-self:flex-start;}
+  .rc-acts{display:flex; flex-direction:column; gap:6px;} .rc-acts .btn{min-width:64px; padding:7px 10px; font-size:12.5px;}
+  .rom-sum{gap:6px; margin-bottom:10px;}
+  .rom-sum div{min-width:96px; padding:7px 10px; border-radius:12px;}
+  .rom-sum span{font-size:11px;} .rom-sum b{font-size:17px;}
+  .rom-sum .rom-all-cmp{padding:9px; font-size:13px; border-radius:12px;}
+  .rom-lr-btn{margin:0 0 10px;}
   .rom-q{margin:8px 0 0; font-size:12.5px; font-weight:700; border-radius:10px; padding:8px 12px;}
   .rom-q.good{background:rgba(76,195,138,.12); color:var(--good);} .rom-q.mid{background:rgba(240,180,76,.12); color:var(--warn);}
   .rom-q.low, .rom-q.bad{background:rgba(240,122,114,.12); color:var(--crit);}
@@ -1303,7 +1322,7 @@
     <button type="button" class="btn line sm rom-lr-btn" id="btnRomLR">↔ 좌우 비교 분석</button>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v70</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v72</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1313,8 +1332,7 @@
     </div>
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
-      <b>① 체간 회전각 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      <b>② 콥 각도</b> · 척추 X-ray 사진에서 휘어진 부분의 가장 위·아래 끝척추에 선을 맞추면, 두 선에 수직인 선이 만나는 각도를 계산해요. <b>10° 미만</b> 정상 범위 · 10–25° 경도 · 25–40° 중등도 · 40° 이상.<br>
+      <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div>
   </section>
@@ -3947,6 +3965,7 @@
   function showView(v){
     // 종합 리포트는 PRO 전용: 무료 사용자는 화면 전환 없이 안내 팝업만
     if(v === "report" && !isPro()){ openProGate("report"); return; }
+    if(v === "members" && !isPro()){ openProGate("members"); return; }
     if(v === state.view) { if(v === "report") renderReport(); return; }
     if(v !== "analyze" && state.phase === "live"){ pauseCamera(); goIdleFromLive(); }
     if((v === "settings" || v === "report") && state.view !== v) proPrevView = state.view;
@@ -4307,7 +4326,7 @@
       });
     });
   }
-  $("btnMbPick").addEventListener("click", function(){ $("mpSearch").value = ""; $("mbPicker").hidden = false; pickerRender(); });
+  $("btnMbPick").addEventListener("click", function(){ if(!isPro()){ openProGate("members"); return; } $("mpSearch").value = ""; $("mbPicker").hidden = false; pickerRender(); });
   $("mpSearch").addEventListener("input", pickerRender);
   $("btnMpNone").addEventListener("click", function(){ $("mbPicker").hidden = true; setMember(null); });
   $("btnMpNew").addEventListener("click", function(){ $("mbPicker").hidden = true; openForm(null, function(m){ setMember(m); }); });
@@ -4586,7 +4605,7 @@
       $("dsDue").innerHTML = dueList.length ? dueList.slice(0, 6).map(function(d){
         return '<button type="button" class="due-row" data-id="' + esc(d.m.id) + '"><span class="mb-avatar">' + esc(initial(d.m.name)) + '</span><b>' + esc(d.m.name) + '</b><em>' + d.days + '일 전 측정' + (d.score != null ? " · " + d.score + "점" : "") + '</em></button>';
       }).join("") + (dueList.length > 6 ? '<p class="ds-hint">외 ' + (dueList.length - 6) + '명</p>' : '') : '<p class="ds-empty">재측정이 필요한 회원이 없어요. 👍</p>';
-      $("dsDue").querySelectorAll(".due-row").forEach(function(b){ b.addEventListener("click", function(){ showView("members"); mbOpenDetail(b.getAttribute("data-id")); }); });
+      $("dsDue").querySelectorAll(".due-row").forEach(function(b){ b.addEventListener("click", function(){ if(!isPro()){ openProGate("members"); return; } showView("members"); mbOpenDetail(b.getAttribute("data-id")); }); });
 
       // 연령대
       var yr = new Date().getFullYear(), bands = ["10대","20대","30대","40대","50대","60대+"], cnt = [0,0,0,0,0,0], known = 0;
@@ -4837,7 +4856,7 @@
     });
   }
   function gsGo(id){ $("gsOverlay").hidden = true; showView("members"); mbOpenDetail(id); }
-  function openGs(){ $("gsInput").value = ""; $("gsOverlay").hidden = false; gsRender(); setTimeout(function(){ $("gsInput").focus(); }, 60); }
+  function openGs(){ if(!isPro()){ openProGate("members"); return; } $("gsInput").value = ""; $("gsOverlay").hidden = false; gsRender(); setTimeout(function(){ $("gsInput").focus(); }, 60); }
   $("btnGs").addEventListener("click", openGs);
   $("gsInput").addEventListener("input", gsRender);
   $("gsInput").addEventListener("keydown", function(e){
@@ -4939,8 +4958,7 @@
   // v70 메뉴 순서: 목 · 허리 · 어깨 · 무릎 · 고관절 · 발목 · 팔꿈치
   (function(){ var ord = ["neck", "trunk", "shoulder", "knee", "hip", "ankle", "elbow"]; ROM_JOINTS.sort(function(a, b){ return ord.indexOf(a.k) - ord.indexOf(b.k); }); })();
   var SCOL_JOINT = { k:"scol", n:"측만증", single:true, kind:"dir", pts:["scL","scR","hz"], moves:[
-    { k:"atr", n:"체간 회전각 (전방 굴곡 검사)", normal:0, grade:"atr", guide:"<b>정면(또는 뒤)에서 등 높이로</b> 촬영 · 무릎을 펴고 양팔을 모아 <b>허리를 앞으로 숙인</b> 자세 · 척추 양옆(좌·우) 등 높이 차이를 수평선과의 각도로 측정 (스콜리오미터 방식) · 수평계를 초록으로 맞춰 촬영" },
-    { k:"cobb", n:"콥 각도 (Cobb)", normal:0, grade:"cobb", kind:"cobb", pts:["c1a","c1b","c2a","c2b"], guide:"<b>척추 X-ray 사진</b>을 촬영하거나 불러오기 · 휘어진 부분의 <b>가장 위 끝척추 윗면</b>에 하늘색 선, <b>가장 아래 끝척추 아랫면</b>에 분홍 선을 맞추면 두 선의 수직선이 만나는 <b>콥 각도</b>가 계산돼요" }
+    { k:"atr", n:"측만증 측정", normal:0, grade:"atr", guide:"<b>정면(또는 뒤)에서 등 높이로</b> 촬영 · 무릎을 펴고 양팔을 모아 <b>허리를 앞으로 숙인</b> 자세 · 척추 양옆(좌·우) 등 높이 차이를 수평선과의 각도로 측정 (스콜리오미터 방식) · 수평계를 초록으로 맞춰 촬영" }
   ]};
   var ROM_ALL = ROM_JOINTS.concat([SCOL_JOINT]);
   Object.assign(ROM_LM, { ear:[7,8], ear_o:[8,7], eye:[2,5], nose:[0,0], heel:[29,30], toe:[31,32] });
@@ -5076,20 +5094,21 @@
     $("romJoints").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ rom.joint = b.getAttribute("data-j"); renderRom(); }); });
     $("romSide").querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-side") === rom.side)); });
     $("romSide").hidden = !!romJoint().single;
+    $("btnRomLR").hidden = !!romJoint().single;
     romLoad().then(function(){
       var J = romJoint(), done = 0, sumPct = 0, cnt = 0;
       $("romGrid").innerHTML = J.moves.map(function(mv){
         var r = rom.latest[romKey(J.k, romSd(J), mv.k)], val = r ? r.value : null, jd = romJudge(mv, val);
         if(r){ done++; if(mv.normal > 0){ sumPct += Math.min(100, jd.pct); cnt++; } }
-        return '<div class="rom-card ' + jd.cls + '"><div class="top"><b>' + mv.n + '</b><em>정상 ' + (mv.normal ? "0–" + mv.normal : "0") + '°</em></div>' +
-          '<div class="val">' + (val == null ? '<span class="none">아직 측정하지 않았어요</span>' : '<strong>' + val + '°</strong><small>/ ' + mv.normal + '°</small>') + '</div>' +
+        var dt = romDeltaHtml(J.k, mv).replace('class="rom-delta', 'class="rom-delta rc-delta');
+        return '<div class="rom-card rc ' + jd.cls + '">' +
+          (r && r.thumb ? '<img class="rc-th" src="' + r.thumb + '" alt="">' : '<div class="rc-th rc-th0" aria-hidden="true">' + (val == null ? '–' : '✓') + '</div>') +
+          '<div class="rc-main"><div class="rc-h"><b>' + mv.n + '</b><em>정상 ' + (mv.normal ? "0–" + mv.normal : "0") + '°</em></div>' +
+          '<div class="rc-v">' + (val == null ? '<span class="none">미측정</span>' : '<strong>' + val + '°</strong>') + '<span class="judge">' + (val == null ? '' : jd.txt) + '</span></div>' +
           '<div class="rom-bar"><i style="width:' + (val == null ? 0 : Math.min(100, jd.pct)) + '%"></i></div>' +
-          '<div class="judge">' + jd.txt + '</div>' +
-          (r && r.thumb ? '<img class="thumb" src="' + r.thumb + '" alt="">' : '') +
-          (r ? '<div class="meta">' + fmtDate(r.at) + (r.memberId ? "" : " · 회원 미지정(저장 안 됨)") + '</div>' : '') +
-          romDeltaHtml(J.k, mv) +
-          '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-mv="' + mv.k + '">' + (r ? "다시 측정" : "측정하기") + '</button>' +
-          (r ? '<button type="button" class="btn line sm rom-cmp-btn" data-cmp="' + mv.k + '">' + (isPro() ? "📊 비교" : "🔒 비교") + ' <small>' + romHist(J.k, romSd(J), mv.k).length + '회</small></button>' : '') + '</div></div>';
+          (r ? '<div class="rc-meta">' + fmtDate(r.at).slice(0, 10) + (r.memberId ? "" : " · 회원 미지정") + '</div>' : '') + dt + '</div>' +
+          '<div class="rc-acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-mv="' + mv.k + '">' + (r ? "재측정" : "측정") + '</button>' +
+          (r ? '<button type="button" class="btn line sm rom-cmp-btn" data-cmp="' + mv.k + '">' + (isPro() ? "비교" : "🔒비교") + '</button>' : '') + '</div></div>';
       }).join("");
       $("romGrid").querySelectorAll("[data-mv]").forEach(function(b){ b.addEventListener("click", function(){ openRomSheet(b.getAttribute("data-mv")); }); });
       $("romGrid").querySelectorAll("[data-cmp]").forEach(function(b){ b.addEventListener("click", function(){ openRomCompare(b.getAttribute("data-cmp")); }); });
@@ -5588,13 +5607,33 @@
         return '<div class="rom-card scol-card ' + jd.cls + '"><div class="top"><b>' + mv.n + '</b><em>' + (mv.grade === "atr" ? "기준 5° · 7°" : "기준 10° · 25° · 40°") + '</em></div>' +
           '<div class="val">' + (val == null ? '<span class="none">아직 측정하지 않았어요</span>' : '<strong>' + val + '°</strong>') + '</div>' +
           '<div class="judge">' + jd.txt + '</div>' +
-          (dl != null ? '<div class="rom-delta ' + (dl === 0 ? "same" : dl < 0 ? "up" : "down") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl < 0 ? "▼ " : "▲ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "°") + '</div>' : '') +
+          (dl != null ? (isPro() ? '<div class="rom-delta ' + (dl === 0 ? "same" : dl < 0 ? "up" : "down") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl < 0 ? "▼ " : "▲ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "°" + (dl < 0 ? " (개선)" : " (증가)")) + ' · 총 ' + H.length + '회</div>' : '<div class="rom-delta lock">🔒 이전 회차와의 비교는 PRO에서 볼 수 있어요</div>') : '') +
           (r && r.thumb ? '<img class="thumb" src="' + r.thumb + '" alt="">' : '') +
-          (hist ? '<ul class="scol-hist">' + hist + '</ul>' : '') +
-          '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-scol="' + mv.k + '">' + (r ? "다시 측정" : "측정하기") + '</button></div></div>';
+          (hist && isPro() ? '<ul class="scol-hist">' + hist + '</ul>' : '') +
+          '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-scol="' + mv.k + '">' + (r ? "다시 측정" : "측정하기") + '</button>' +
+          (r ? '<button type="button" class="btn line sm" data-scolcmp="' + mv.k + '">' + (isPro() ? "📊 이전 회차 비교" : "🔒 이전 회차 비교") + ' <small>' + H.length + '회</small></button>' : '') + '</div></div>';
       }).join("");
       $("scolGrid").querySelectorAll("[data-scol]").forEach(function(b){ b.addEventListener("click", function(){ openScolSheet(b.getAttribute("data-scol")); }); });
+      $("scolGrid").querySelectorAll("[data-scolcmp]").forEach(function(b){ b.addEventListener("click", function(){ openScolCompare(b.getAttribute("data-scolcmp")); }); });
     });
+  }
+  function openScolCompare(mk){
+    if(!isPro()){ openProGate("scol"); return; }
+    var mv = SCOL_JOINT.moves.find(function(m){ return m.k === mk; }), H = rom.all.filter(function(r){ return r.joint === "scol" && r.move === mk; });
+    if(!H.length) return;
+    var first = H[0], last = H[H.length - 1], prev = H.length >= 2 ? H[H.length - 2] : null, d1 = last.value - first.value, dp = prev ? last.value - prev.value : null;
+    var cls = function(d){ return d == null || d === 0 ? "" : d < 0 ? "up" : "down"; }, sg = function(d){ return d == null ? "–" : (d > 0 ? "+" : "") + d + "°"; };
+    var body = '<div class="rcmp-kpi"><div><span>이전 회차' + (prev ? ' (' + (H.length - 1) + '차)' : '') + '</span><b>' + (prev ? prev.value + '°' : '–') + '</b><em>' + (prev ? fmtDate(prev.at).slice(0, 10) : '이전 기록 없음') + '</em></div>' +
+      '<div><span>최근 (' + H.length + '차)</span><b>' + last.value + '°</b><em>' + fmtDate(last.at).slice(0, 10) + '</em></div>' +
+      '<div class="' + cls(dp) + '"><span>이전 회차 대비</span><b>' + sg(dp) + '</b><em>' + (dp == null ? '' : dp < 0 ? '각도 감소 (개선)' : dp > 0 ? '각도 증가' : '변화 없음') + '</em></div></div>';
+    if(H.length >= 2) body += '<p class="rcmp-note">1차(' + fmtDate(first.at).slice(0, 10) + ', ' + first.value + '°) 대비 <b>' + sg(d1) + '</b> · ' + scolJudge(mv, last.value).txt + '</p>';
+    body += '<div class="rcmp-chart">' + romChartSvg({ normal: 0 }, H) + '</div>';
+    body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
+      H.map(function(r, i){ var jd = scolJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
+        return '<tr><td>' + (i + 1) + '차</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table>';
+    if(prev && prev.thumb && last.thumb) body += '<div class="rcmp-photos"><figure><img src="' + prev.thumb + '" alt=""><figcaption>이전 ' + (H.length - 1) + '차 · ' + prev.value + '°</figcaption></figure><figure><img src="' + last.thumb + '" alt=""><figcaption>최근 ' + H.length + '차 · ' + last.value + '°</figcaption></figure></div>';
+    $("romCmpTitle").textContent = "측만증 측정 · 이전 회차 비교";
+    $("romCmpBody").innerHTML = body; $("romCmp").hidden = false;
   }
   $("btnScolPick").addEventListener("click", function(){ $("btnMbPick").click(); });
   var _setMemberScol = setMember;
@@ -6534,13 +6573,17 @@
       l: ["센터명·로고를 리포트·운동 카드·비교 이미지에 표시", "연락처·안내 문구를 결과 이미지 하단에 표시", "앱 상단을 센터 브랜드로 변경", "자주 쓰는 결제 항목·금액 기본값 저장"] },
     rom: { d: 'ROM <b>회차별 비교</b>는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. ROM 측정과 결과 저장은 무료로 계속 쓸 수 있어요.',
       l: ["관절·항목별 1차~최근 회차 각도 변화 그래프", "지난 회차 대비 개선·감소 표시", "관절 전체 회차 비교표 (최근 5회)", "1차와 최근 측정 사진 나란히 비교"] },
+    scol: { d: '측만증 <b>이전 회차 비교</b>는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 측만증 측정과 결과 저장은 무료로 계속 쓸 수 있어요.',
+      l: ["이전 회차 대비 각도 변화(개선·증가) 표시", "1차~최근 회차 변화 그래프", "회차별 측정값·판정 표", "이전·최근 측정 사진 나란히 비교"] },
+    members: { d: '회원 관리는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 회원별로 측정 기록을 모아 관리해 보세요.',
+      l: ["회원 등록·검색과 회원번호 자동 배정", "회원별 체형·ROM·측만증 측정 기록 저장", "회원 상세에서 회차별 변화 확인", "측정 결과를 회원 이름으로 저장·공유"] },
     report: { d: '종합 리포트는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 정면·측면 결과를 한 장으로 정리해 회원에게 전달해 보세요.',
       l: ["정면 + 측면 종합 점수(100점)와 항목별 상태", "리포트 이미지 저장·카톡 공유", "센터 로고·연락처가 들어간 리포트", "PRO 이용 중에는 설정 메뉴도 함께 사용"] }
   };
   function openProGate(kind, opts){
     var cp = PRO_COPY[kind] || PRO_COPY[state.view === "report" ? "report" : "settings"];
     $("proDesc").innerHTML = cp.d; $("proList").innerHTML = cp.l.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("");
-    proKind = kind === "report" || kind === "rom" ? kind : "settings";
+    proKind = ["report", "rom", "scol", "members"].indexOf(kind) >= 0 ? kind : "settings";
     $("btnProPreview").hidden = proKind !== "settings";
     $("proCodeRow").classList.add("on"); $("proCode").value = ""; $("proCodeMsg").hidden = true;
     var ov = $("proGate"); setTimeout(function(){ ov.scrollTop = 0; }, 0);
@@ -6569,6 +6612,8 @@
       }
       $("proGate").hidden = true; applyBrand(); renderSettings(false); syncRepLock();
       if(proKind === "report") showView("report");
+      if(proKind === "members") showView("members");
+      if(state.view === "scol") renderScol();
       if(state.view === "rom") renderRom();
       toast("PRO가 활성화됐어요. " + fmtYmd(r.exp) + "까지 이용할 수 있어요.");
     });

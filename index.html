@@ -5234,9 +5234,11 @@
   $("btnRomCmpClose").addEventListener("click", function(){ $("romCmp").hidden = true; });
   $("romCmp").addEventListener("click", function(e){ if(e.target === $("romCmp")) $("romCmp").hidden = true; });
 
-  /* ===================== v57 휴대폰 뒤로가기(취소) 버튼 =====================
-     뒤로가기를 누르면: 열린 창 닫기 → 회원 상세→목록 → 이전 화면 → 첫 화면에서 한 번 더 누르면 종료 */
-  var navStack = [], backBusy = false, exitArmed = false, exitTimer = null;
+  /* ===================== v60 휴대폰 뒤로가기(취소) 버튼 =====================
+     뒤로가기: 열린 창 닫기 → 회원 상세→목록 → 측면→정면 → 이전 화면 → 첫 화면에서 한 번 더 누르면 종료
+     ※ 안드로이드 크롬/설치 앱은 '터치 없이' 추가된 뒤로가기 기록을 건너뛰고 앱을 닫아버림
+       → 보호 기록(guard)을 화면을 터치하는 순간에 걸어 두어야 확실히 동작함 */
+  var navStack = [], exitArmed = false, guarded = false;
   var _showViewNav = showView;
   showView = function(v, opt){
     var prev = state.view, prevKey = (prev === "members" && !$("mbDetail").hidden && mbCurrent) ? "members:" + mbCurrent.id : prev;
@@ -5247,8 +5249,15 @@
     }
     return r;
   };
-  function pushGuard(){ try{ history.pushState({ ayoGuard: Date.now() }, ""); }catch(e){} }
+  function pushGuard(){
+    if(guarded) return;
+    try{ history.pushState({ ayoGuard: Date.now() }, ""); guarded = true; }catch(e){}
+  }
   try{ history.replaceState({ ayoRoot: 1 }, ""); }catch(e){}
+  function onUserTouch(){ exitArmed = false; pushGuard(); }
+  ["pointerdown", "touchstart", "mousedown", "keydown"].forEach(function(ev){
+    window.addEventListener(ev, onUserTouch, { capture: true, passive: true });
+  });
   pushGuard();
   function topOverlay(){
     var list = Array.prototype.filter.call(document.querySelectorAll(".confirm-overlay, .save-overlay"), function(el){ return !el.hidden; });
@@ -5262,30 +5271,33 @@
     if(el.id === "mbPicker") state.pendingSave = false;
     if(closeBtn && $(closeBtn)) $(closeBtn).click(); else el.hidden = true;
   }
-  window.addEventListener("popstate", function(){
-    if(backBusy) return;
+  function handleBack(){
     var ov = topOverlay();
-    if(ov){ closeOverlay(ov); pushGuard(); return; }
+    if(ov){ closeOverlay(ov); return true; }
     if(state.view === "members" && !$("mbDetail").hidden){
-      if(!$("mbCompare").hidden){ $("mbCompare").hidden = true; pushGuard(); return; }
-      mbShowList(); pushGuard(); return;
+      if(!$("mbCompare").hidden){ $("mbCompare").hidden = true; return true; }
+      mbShowList(); return true;
     }
+    if(state.view === "analyze" && state.mode === "side" && $("tab-front")){ $("tab-front").click(); return true; }
     while(navStack.length && navStack[navStack.length - 1] === state.view) navStack.pop();
     if(navStack.length){
       var to = navStack.pop();
       if(to.indexOf("members:") === 0){ showView("members", { fromBack: true }); mbOpenDetail(to.slice(8)); }
       else showView(to, { fromBack: true });
-      pushGuard(); return;
+      return true;
     }
-    if(state.view !== "analyze"){ showView("analyze", { fromBack: true }); pushGuard(); return; }
-    // 첫 화면: 한 번 더 누르면 종료
-    if(exitArmed){ clearTimeout(exitTimer); backBusy = true; history.back(); return; }
+    if(state.view !== "analyze"){ showView("analyze", { fromBack: true }); return true; }
+    return false;
+  }
+  window.addEventListener("popstate", function(e){
+    guarded = !!(e.state && e.state.ayoGuard);
+    var done = false;
+    try{ done = handleBack(); }catch(err){ console.warn("[back]", err); done = true; }
+    if(done){ exitArmed = false; pushGuard(); return; }
+    // 첫 화면: 보호 기록을 다시 걸지 않음 → 바로 한 번 더 누르면 앱 종료 (화면을 터치하면 다시 보호됨)
     exitArmed = true;
     toast("뒤로 버튼을 한 번 더 누르면 앱이 종료돼요.");
-    exitTimer = setTimeout(disarmExit, 2000);
   });
-  function disarmExit(){ if(!exitArmed) return; exitArmed = false; clearTimeout(exitTimer); pushGuard(); }
-  document.addEventListener("pointerdown", disarmExit, true);
 
   /* ===================== v52 기기 고정 이용 코드 (ECDSA P-256 서명 확인) =====================
      이용 코드 = "AYO1-" + 기기ID(8) + 만료일(YYYYMMDD) + "-" + 서명(base64url)

@@ -286,7 +286,7 @@
 
   .toast{
     position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink); color:var(--bg);
-    padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600; box-shadow:var(--shadow); z-index:50;
+    padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600; box-shadow:var(--shadow); z-index:300;
     opacity:0; pointer-events:none; transition:opacity .25s ease;
   }
   .toast.show{opacity:1;}
@@ -701,6 +701,8 @@
   .dev-box .btn{margin-left:auto; flex:0 0 auto; width:auto;}
   .pro-code{flex-direction:column;} .pro-code textarea{font-family:var(--font-num); font-size:12.5px; border:1px solid var(--line); border-radius:9px; padding:10px; background:var(--bg); color:var(--ink); resize:vertical; min-height:64px; width:100%; box-sizing:border-box; word-break:break-all;}
   .pro-code .btn{width:100%;}
+  .pro-code .lic-msg{font-size:13px; font-weight:700; line-height:1.5; padding:10px 12px; border-radius:10px; background:rgba(240,122,114,.12); border:1px solid rgba(240,122,114,.45); color:#F7A39C;}
+  .pro-code .lic-msg.ok{background:rgba(76,195,138,.12); border-color:rgba(76,195,138,.45); color:#7FD9AC;}
   .pro-code .dev-box .btn{width:auto; flex:0 0 auto;} .dev-box b{white-space:nowrap;} .dev-box > div{min-width:0;}
   .pro-code p{margin:0; font-size:12px; color:var(--ink-soft); line-height:1.5;}
   .lic-card{margin-bottom:14px;}
@@ -1274,6 +1276,7 @@
       <div class="dev-box"><div><span>이 기기 코드</span><b class="dev-id">AYO-····-····</b></div><button type="button" class="btn line sm dev-copy">복사</button></div>
       <p>결제 후 위 <b>기기 코드</b>를 보내주시면 이 기기 전용 이용 코드를 보내드려요.</p>
       <textarea id="proCode" rows="3" placeholder="받은 이용 코드를 붙여넣으세요 (AYO1-로 시작)" autocomplete="off" spellcheck="false"></textarea>
+      <p class="lic-msg" id="proCodeMsg" hidden></p>
       <button type="button" class="btn primary sm" id="btnProCode">이용 코드 적용</button>
     </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnProClose">닫기</button><button type="button" class="yes ok" id="btnProPreview">미리 보기</button></div>
@@ -4795,7 +4798,7 @@
     $("proDesc").innerHTML = cp.d; $("proList").innerHTML = cp.l.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("");
     proKind = kind === "report" ? "report" : "settings";
     $("btnProPreview").hidden = proKind === "report";
-    $("proCodeRow").classList.remove("on"); $("proCode").value = "";
+    $("proCodeRow").classList.remove("on"); $("proCode").value = ""; $("proCodeMsg").hidden = true;
     $("proGate").hidden = false;
     if(opts && opts.code){ $("proCodeRow").classList.add("on"); setTimeout(function(){ $("proCode").focus(); }, 60); }
   }
@@ -4808,11 +4811,16 @@
   $("proGate").addEventListener("click", function(e){ if(e.target === $("proGate")) $("proGate").hidden = true; });
   $("btnProCodeToggle").addEventListener("click", function(){ $("proCodeRow").classList.add("on"); $("proCode").focus(); });
   function tryCode(){
-    var raw = $("proCode").value;
-    $("btnProCode").disabled = true;
+    var raw = $("proCode").value, msg = $("proCodeMsg");
+    $("btnProCode").disabled = true; $("btnProCode").textContent = "확인 중…";
+    msg.hidden = true; msg.className = "lic-msg";
     licApply(raw).then(function(r){
-      $("btnProCode").disabled = false;
-      if(!r.ok){ toast(r.msg); return; }
+      $("btnProCode").disabled = false; $("btnProCode").textContent = "이용 코드 적용";
+      if(!r.ok){
+        var p = parseLic(raw);
+        msg.textContent = r.msg + (p && p.dev !== deviceId() ? " (받은 코드: AYO-" + p.dev.slice(0, 4) + "-" + p.dev.slice(4) + "용)" : "");
+        msg.hidden = false; msg.scrollIntoView({ block: "nearest" }); return;
+      }
       $("proGate").hidden = true; applyBrand(); renderSettings(false); syncRepLock();
       if(proKind === "report") showView("report");
       toast("PRO가 활성화됐어요. " + fmtYmd(r.exp) + "까지 이용할 수 있어요.");

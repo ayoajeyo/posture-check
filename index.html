@@ -609,6 +609,50 @@
   .sales-meta b{color:var(--ink); font-family:var(--font-num);}
   @media (min-width:760px){ .ex-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .ds-kpis.three{grid-template-columns:repeat(3,minmax(0,1fr));} }
   @media (max-width:759px){ .ds-kpis.three .kpi:first-child{grid-column:auto;} .ds-kpis.three{grid-template-columns:repeat(3,minmax(0,1fr));} .ds-kpis.three .kpi{padding:12px;} .ds-kpis.three .kpi .v{font-size:20px;} }
+
+  /* v47 설정 · PRO */
+  .side .nav-item em.pro-tag{color:#fff; background:linear-gradient(135deg,#2F6BFF,#7A5CFF); border:0; letter-spacing:.06em;}
+  .set-lock{display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:14px; margin-bottom:14px; background:linear-gradient(135deg,rgba(47,107,255,.18),rgba(122,92,255,.18)); border:1px solid rgba(122,140,255,.35);}
+  .set-lock b{display:block; font-size:14.5px;} .set-lock span{font-size:12.5px; color:var(--ink-soft);}
+  .set-lock .btn{margin-left:auto; flex:0 0 auto; width:auto; white-space:nowrap;}
+  @media (max-width:759px){ .set-lock{flex-wrap:wrap;} .set-lock .btn{margin-left:0; width:100%;} .it-row input.amt{flex-basis:96px;} }
+  .brand-prev .bp-foot{flex-wrap:wrap;} .brand-prev .bp-foot span:last-child{white-space:nowrap;}
+  #sideLogo{width:40px; height:40px; object-fit:contain;}
+  .side-brand > div{min-width:0;}
+  .side-brand b{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .side-brand span{white-space:nowrap;}
+  .set-on{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--good); background:rgba(76,195,138,.12); border-radius:100px; padding:4px 10px;}
+  fieldset.set-fs{border:0; margin:0; padding:0; min-width:0;}
+  fieldset.set-fs[disabled]{opacity:.55;}
+  .set-form label{display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:var(--ink-soft); margin-bottom:12px;}
+  .set-form input[type=text], .set-form input[type=tel], .set-form input[type=number], .set-form select{font-family:inherit; font-size:14px; font-weight:500; border:1px solid var(--line); border-radius:9px; padding:10px; background:var(--bg); color:var(--ink); width:100%; box-sizing:border-box;}
+  .logo-row{display:flex; align-items:center; gap:14px; margin-bottom:12px;}
+  .logo-box{width:84px; height:84px; border-radius:16px; background:#fff; display:grid; place-items:center; overflow:hidden; flex:0 0 auto; border:1px solid var(--line);}
+  .logo-box img{max-width:76px; max-height:76px;}
+  .logo-box em{font-style:normal; font-size:11px; color:#8A93A6; text-align:center; line-height:1.4;}
+  .logo-row .btns{display:flex; flex-direction:column; gap:6px;}
+  .chk{display:flex !important; flex-direction:row !important; align-items:center; gap:10px !important; font-size:13.5px !important; color:var(--ink) !important; font-weight:600 !important;}
+  .chk input{width:18px; height:18px; accent-color:var(--blue);}
+  .it-row{display:flex; gap:8px; align-items:center; margin-bottom:8px;}
+  .it-row input{flex:1; min-width:0;} .it-row input.amt{flex:0 0 120px;}
+  .it-row button{flex:0 0 auto; background:transparent; border:0; color:var(--ink-soft); font-size:16px; cursor:pointer; padding:6px;}
+  .brand-prev{border-radius:14px; overflow:hidden; border:1px solid var(--line);}
+  .brand-prev .bp-head{background:#0D1528; padding:16px 18px; display:flex; align-items:center; gap:12px;}
+  .brand-prev .bp-head .pl{width:52px; height:52px; border-radius:10px; background:#fff; display:grid; place-items:center; overflow:hidden; flex:0 0 auto;}
+  .brand-prev .bp-head .pl img{max-width:46px; max-height:46px;}
+  .brand-prev .bp-head small{display:block; font-size:11px; font-weight:700; color:#D2B07A; letter-spacing:.04em;}
+  .brand-prev .bp-head b{font-size:18px; color:#E9EEF8;}
+  .brand-prev .bp-foot{background:#141E35; padding:10px 18px; font-size:11.5px; color:#97A3BC; display:flex; gap:8px;}
+  .brand-prev .bp-foot span:last-child{margin-left:auto; color:#D2B07A; font-weight:700;}
+  .pro-box{max-width:380px; text-align:left;}
+  .pro-badge{display:inline-block; font-size:11px; font-weight:800; letter-spacing:.1em; color:#fff; background:linear-gradient(135deg,#2F6BFF,#7A5CFF); border-radius:6px; padding:3px 8px; margin-bottom:10px;}
+  .pro-box h3{margin:0 0 6px; font-size:19px;}
+  .pro-box p{margin:0 0 14px; font-size:13.5px; color:var(--ink-soft); line-height:1.6;}
+  .pro-box ul{list-style:none; margin:0 0 16px; padding:12px 14px; background:var(--surface-2); border-radius:12px; display:flex; flex-direction:column; gap:8px;}
+  .pro-box li{font-size:13.5px; display:flex; gap:8px;} .pro-box li::before{content:"✓"; color:var(--blue); font-weight:800;}
+  .pro-code{display:none; gap:8px; margin:0 0 12px;} .pro-code.on{display:flex;}
+  .pro-code input{flex:1; min-width:0; font-family:inherit; font-size:14px; border:1px solid var(--line); border-radius:9px; padding:10px; background:var(--bg); color:var(--ink);}
+  .pro-link{display:block; margin:10px auto 0; background:none; border:0; color:var(--ink-soft); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:inherit;}
 </style>
 
 </head>
@@ -616,8 +660,8 @@
 <div class="wrap app">
   <aside class="side" aria-label="주 메뉴">
     <div class="side-brand">
-      <img src="data:image/png;base64,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" alt="" width="40" height="40">
-      <div><b>AYO체형분석</b><span>Posture Check <i>PRO</i></span></div>
+      <img id="sideLogo" src="data:image/png;base64,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" alt="" width="40" height="40">
+      <div><b id="sideName">AYO체형분석</b><span id="sideSub">Posture Check <i>PRO</i></span></div>
     </div>
     <nav class="side-menu">
       <button type="button" class="nav-item" data-view="dash"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>현황</span></button>
@@ -627,8 +671,8 @@
       <button type="button" class="nav-item" data-view="exercise"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/></svg><span>운동관리</span></button>
       <button type="button" class="nav-item" data-view="consult"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10.5H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>상담일지</span></button>
       <button type="button" class="nav-item" data-view="sales"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg><span>매출관리</span></button>
-      <p class="nav-sep">곧 추가될 메뉴</p>
-      <button type="button" class="nav-item soon" data-soon="설정"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>설정</span><em>준비 중</em></button>
+      <p class="nav-sep">환경</p>
+      <button type="button" class="nav-item" data-view="settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>설정</span><em class="pro-tag">PRO</em></button>
     </nav>
     <p class="side-foot">made by <b>AYOAJEYO</b></p>
   </aside>
@@ -645,7 +689,7 @@
     <div class="brand">
       <img class="mark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAQAElEQVR4nOydB3yURd7HZ3vJlpTdbHbTG0lIbySEUAJHFw4RVBCQJoiICIIgvJ6c7QT1EDgpCgKKIFLkRBCkg3QIpBHSy242W1K2b7L1nc2GEEISNln9nOwzXyfPzjPPPMPm8Zd5ZuY/8x9ig9oAeota2wSPTDeqI5mPX7gHj2MG93UkMyr5aSmZCBAIJ0ACQjgFEhDCKZCAEE6BBIRwCiQghFMgASGcAgkI4RRIQAinQAJCOAUSEMIpkIAQToEEhHAKJKDu0Daj5/ME0APqkp+u4reei4YRK9X8/CALQHQGHiC64KfLBIsVwPDLDQJAdAGqgbrEaO4YQTwOEhDCKZCAEE5BtM+K7R1afQ/mU5tMtnaog//cX6FkqwX+deFaIlZHCnftp9FVyagGQjgF0cEZ+d3gYAlEIt7xzH+FknF4XFvE8cJd9Wl0VTKqgRBOgQSEcAokoEe4dTtn81ffwUhEeKi0OECPCyIzAwHwAIguQAJ6hI1f7rx0+TqMnDt/uS1RTHKbdDc0KNAvJDggPCw4MMAvOCiAREKPzgZ6Co9QUVn9eKLZqL2dnQtDWwqZTJr98pQVyxYAzINsYY8w/pkRjmQzGIzffn/IarUCzINqoEdYvvTVUSOzcnMLKqtrDpys1DZWGXViHOhEKGazZeO2HxfOnUQkYtrUigTUirhWcuz4WRgJDPJNiI8ZP25kPnCXNAKr2cQmVL06tKyyUlhWXlVZJSoqKjWZrcFhUTfvFH78791LXnuRyaADrIIE1Mq6z7f89+hv7VMIFDae5kt0Exg9fRWJPjHREaNHZPn68mHzuVGp/mLr/rJyUXFZ9XuffL1y8XRvrifAJEhArdy8ldshxdyshMGouKevAavyWhNh83nurKnwTffuW7N27T12/nK2TN743r+2v714GoeDRQ2hRnQrXMeqENh83r5zH2w+w6bP3BnjZ08blzUweeZLY3moBsI4X21ee/jIrwWFxVVVouKS8ubmLs3UZpMZNp9fnTWRQiENHZgMYGjBmXkNTy+4bQdugN4CeyLwSCA4VI3VK7Tw6OXu5kjm/3nJisaGvRdYqnqRUVNl1VWSDCWNDfX2S36BoYHBYe7u7ukDMihkck9L/vO+8/+kZFQD2bTy7fZttbU1LLY7m+3B9nD38PBgsthmQwLZPYLGH+jhzp6RkW8ymuQyqdFsElYJ6+rqFArFxfPn09LTWSwWwDA45GTz039v3bxtdze3WAGOx/US+PKGDRkwb8402PrZd/j0r6euwEs0GmXZ6y9FhAUA5GQTs+j1+u4zwIFEmbwOhrt3CxIT4wakJ780aURIAD+/sDymb6ivDxdgGCQg8MyY4RcuXS+vqHIk89YdB0OCg/g8r/79YmEAmAcJCCQlxpw58YNSoZLI5BKJrFYql0hlklr5iatynVpu1kstRrU9Jw6PN1oJ//h425xp49NTYwACCchkMp08dYHP82ayGR4e7OCgADhUaL9UtZYETRkQLrP5kynCuobGunrNwaPn9U2G/2w/WFRW/dKkkRg3hAEkIDgquPazze1TKBQyi8lks5gSDcuEY+JJTB2T+TObNeGZkf1SEmJjwj//cl9dveLUuRtCkfTtxdPJ2J4YhHUBXb5ys0MKHEKUN9fL6+rbUnQAbCgEm77ceefGSX9f3oer5u8/cjrIn5/RLxbj6gHIlOG4Actisaz+5yaFSsNg0OZMGzdscArswwPMg3UBvb5g5oTxI2OjIwL8fdnuLBwO11VO2IKWK7Sr39+aW1AKEA/Aeg0cGhK0/tM17VNUao1KpVapNMu26esaVBaD2o2omtBPVa9oqqypV6o16zbuGTtiwOQJQ4kE5LUD8wKqrBQeO3HGaDQ9fkklwRtahhjNNNAnLGTUyCE5+aVff/tftUZ37LfLRaVVq5fORFPrMf37qzXa4WOnwp5899mU8E13ByxbumDh/BmfrHntwE9nQ4IEacnRSD0A4wK6m5P/RPW0sWffz2lpqSkJUXNnjAeIB2DaO0doWCgej4fdK0duJBDJX2zZHx8TPmXSSDaL0X3JTwR553AFmAzGTwd3nj5zUavVm8wmo8FoMsMP2CKCB9ON+6DJYLRaTGS8KSmCbsJTrVaQk19SXCZ8blxWRlpcN1027IB17xxx0X1g6HDVarWqlOqZn+ol9RpLs4pFUY0YqpBI5Tl5pZpm2xKfPT/+ajAaxo8a2E3Jf953/kuVjOka6PjJs3dzCpQKtVqtUapUSpVaqVSr1LY+fPtsMgBWnWuNEwiE1xctfG78UDgkDRBYFtDCxauPnzjbw5uA2Ww+fe53Lsdz5NA0jpc7wDwYFRDsfJ0+ewn0CkOz4dfTV0+euZaSFDX6bxnhIX4Aw2BUQLD9SyaRDAYj6CF4PIHt7gUjFqv1xu17MISF+I3+W/9+SQ5NIXU9MCog2JQZPSrrwKFjXWWgUilmPBMQWHgyk0ZnZiUx2CyWgM/LyhqYe6/s2q18cW2dPWdpuWjTVwd43p5jR2amJmJORthtA33w3tuDM/uXV1ZBZbBYTDi0Y4u4M1lMhjubTSaTpjyYUObjAVbNlQqFtUJRzW+nzvJ9eB+8M6+uUXn1Rv71W/m1UtvED46ne3iwP8Ae2BUQhUIeO2ZYh8SmpmZhjbigoKhaJK68LlHWi006UbWuJvWbRybeHzhy/LvtX0wanwVDeaVYKm9IT4nW6JoB9sC6NQf22/f9eKSouEwkklQLa2TyOkfuunL5xmtvrRsyMDlrYBK0i8EAsAqmBaRUqDKHPqvR6kDPUWm00CYPQ2R44OABSf2SUSMae+QWFPZOPWwPT8KDyUD3S6pg+Hb/8dSkvhmpcTFRwQBLYFpALCbTwZxMJoPv4y0Q+MBjfFzf8c+MqKgS375bdCevSCa3tbT1+uaLl+9cv1mw5LUXY6JCAGbAtICgFPz9BEKR2H4Ke158Pk/gwxMIeLCr9UuuQGfhEek+vr6CH1cToIHM5rijrLygoPjNpe9ZrJaZM56f/sIokViWnVt0J7fYYDDNmT4+JJAPsATWvXNo1OqC3LsCP3/3FocK7XPu+j2iQVppUBZbtUUsc45ELG5ufmQmA4FIXLryH1wut9OS/7zv/JcqGeu9MAaTmTag1aheXyeX1IrFNcJakQh+NNQ/7JE1dnav2WQ6cuhAcGgfvoDv48Nnsdl47E3wQN45bFy4dO39j75wcHl8eyJjErw4rWZ5JoMeGx2WnhwdFx32xBWryDuHS7F+49e9UA/b3Z3BePjWU2t0V67nwkChkAZlJL784hiAAZCAbMjk9Y5kgybYkKDAyKjQyD6hCfHRGekpzc3GknJhSZmwqLS6tEJkt84KfDjjRmYCbIAEZCM5KfaXY9LH0/EkJokV7uETuXhqYFSfsMiIMGgAsVgsRcXlpWUVn/57W1FJGY1KmT932nPjs5RqXZVIIpXWDeqfCCshgA2QgGy8+fqc2lpZ9p284KCA8NCguLioiPDQ/5yLUhh94FWOmyYooCD7bv7eH44UFpWUlFZAk1n72y9cur5l82d9+4QGBwjisDQIBJCA7ISGBB3ct80eh+M9ZRVVUCWy+4caZSWwG1+pl03Z093tWq123fqdXK53TN/QjLSYxJgIVANhlCM/n1z72ZcSqRz0EGjZMBiN2Tn3YaCQSfGx4dA6lhwX6fKLD5GAHuHjtZvaO3ZxEIGAHxISIJMr7KfNBqN9siKshyaMHezaDWokoIfAl5eD6mGzmWGhwbC1FBYWHBMdkZaaCBOldYryyhqhSFJcWg0jBqMpLTl6RFYacGmQgB4Ce+nJSXHtN5azQ6CwEqODw8ODw0KD+oSHhIcF87w5bVeNRlN5eVVdQ2NISEhMVGj/lGiYaDKbJbJ6P743cHWQgB5h1duLVv7fxzQaNSY68kplmI4QQmYG+wk4+1bYBnhk8jphtfjqtdtCUU21sEYorK0WiWtrW/v/dBpt144Nqck2161EAgEL6gFIQB1ISoz57dheGNE3NT37Vo5SWqqXXNQUCEdchO8mcYfeewd0ev2SFR/NnjVtYFp8eBhW5kcjAXXC9Zt3Fr35bvv2kMKxG3U63dmLt2Dw5npmpsVlpsd7c118x2dMe+foiuMnzvWiLwah0Vu9dsjkDYd/OQ9DSJBvWnJMSmIknU4Df+Z3/l+VjGqgTqhvaOxRfjc63T/ANyUlWeDrLxTLhCJp2368sDsGw9mLN1YsmQmNHsDlwLp3jk4ZnJl+7Pjpx9PhaKGvwCfAX+DvJwgIEPj7+vr7CwL8BO4eNpt829QIjUZfUFReUFief79cJm8MD/Vf+tqUDvuqIu8crswzY4fl5N07eq7aRPAguvl5cgUfvuLj78eH6mmbS9/QqJDJ6mG/DBpW5XV1MC6WyFQqddag/rNefgGOAMEAWt5lnh5sF3ZojwTUCTQq9cM1y8toJLG8uanuFg4nh4NDv548J4eKqa+TSW266co33vUb2TQ6fcZLE+2nLr8ZLxJQlyhrb4nOrrI0N8D4+t97cOPGLd+WiRqGZCalJ8fQqGTg0iABdUl92Qm7enoKkUgqKxfB8P3+E+kpMVBJYa7rAgYJqEuaNBLQcxgMBtendWVPU7Ph/OVsGAR8zvAh/fqnxDIYNOBaIAF1CYuXoBJf6+oqiUT05nK43l48ju3ow+MyWCwelzNsSIZW35SbX3rzTmFBYZmhxYW5uLZu977j0D6//I1pLrY/CxJQl3hHTFA0iE1aMZ3hPn6gJ4/nxeVweDwOl+PlzfXy8Ojo387ejYfCcicxBmUkwNBsMObdK83OKcorKBsxLG3s8Aw83tU2J0EC6hIyncNJ+ofFbGCYCoZmaU1GE7SxqzVapUJ9v6gM9sKMZpPFZIapMB3+wIoHnkABpfVL7JeSAG37FDIpJSEKBuC6IAF1h052U351idXSNON4j+4Dby9buOCVaQADIAF1h058BqoH9JxtO34gkBkTnxni8p5ckYC6w9wkA70CtnUuXrl75Xre4MzEcSMzXVhGWN9wrnuonFTQc6Adlcuz9eRh2+jMhVvL3t20c+8vjUo1cEWw7p2jG767Fq9QG9Xl+4311/lsDd4GAQaI7bP1HP5nO4EHHA6Pw+MpZErf2Didrqm6qkqtfigamCc4JDgsPJxKpQLknQMjEEhu7hGzmdRp09Nznpi5w/+MsPCwhvqGamF1jVAEu2wWi6WsrNxqtcbExrrSLi3IO0eXTFlLqii63pC/waAoptEoFAqZSrFBJpNoVFjRUFqOZCqMwR8yGYcnUKkULsdjUGZ6dN+HG7jYV/kU3C8f/bf+gf4+f+p3Bsg7x18Kxf2vjMpiWF80NTXDoAQOtWPWfb7lyIEd8XGtDxqOBg3sHw8DcEVQI7o7mhX3Qa/4fONumbw3htinDiSg7qCwezmIXF0jfXvNl/sPn9brXdz7OHqFdYdn3HJ11U9AWypgq7RanVan12q1nW7x3AGONw+aOI6ePmTGRgAADQlJREFU/B2OBk2eMGzwgARX3d4QCagjsLt09Xp2Q0OjrjGSSOdzElb6eAD7wkI70PClVmk0OogefuibmtTwQ6uvb1DqmvRUEikgKOha9v2ychHMrFRrtn/33/O/35r2/GiXnBWEBNSRHTt/+HjdpofnBEotjTP5LsfbGxrhOW02eVucy+kTzmrL2L5HM3p45u2c+4ePnq8S2iYVlVbUrFm7fUBa3NTJI9hMBnAhkIA6cujIo4ZTc3OzpuZWdk2nmWGXvm1WkLunhzfXy0/gw+d7p/dLTI6PTIqLyM4tsssIvsJsg43A1V5kSEAdqaisdjyzwWAU1dTC0CEdqmrzho+Sk+NaZZRTxON6+vm64Gp51At7hMZGRS+2MXwcmbzu6IOVZTanHwmRLqkegGqgDtDpdPAHcf3Wk60fLgCqgR4BGir6pyWDP4JGhfaHw6eBq4NqoI58v3vT0WOnbt/JO3qxTquSm/S1vVvcQ6bSfjn5O51OGT9qIHBdkHeOVopLynd/t18ubwgLDYzoE/7M2JGF+Bi52uZslcswrnm+XCatk0hlUplcIpFLJfaIrKGxS8cvHK5tC4QffzoDv97wxxzdIe8cLgUcG1z4xkppi3PWa9dv2RNxeBKJGUp272P1CZfLAiMiQpOT4jrcCEelJRKpRCqH9wprYFTWUF9vsVjdWB5qncWe5/DRc9Bun9k/AbgiyDuHjWs3sqWPufa1WowG5X0YNFVg5nVbSkCAX3RkeN++4X0j+0RFhfN9bB0rT3dG38hQ8OhAotVq3Xf41PHfrtiL2nvwpAebkZ4a8wd+565A3jn+B+QXFDmSrbpaBMOvv52zn3p6uPeN6vNAT2E8nk/bsi/YdZ/6HBx0dtt36BRo0dPmbw7DSHsNuQZIQDYc3Ky5A7AB9PuVGzDYT708Pea9Mm3e7KltGcaOGECnUXfsOQrjAX48nrcXcDmQgGz4CnyA09Q3NP5r7abZM54nEh8+1ayByRQyuam5ecjAZJfcjg4JyMbzk8aJaiTbv9kLnEZUIw0K9G2fkpEWC1wXNJBog0alrl6xKOfWqR/2bH531ZuTJo7pGxUO8D3+67IC8PPJywBLYLoGWr/x629277daLLExUYkJMXFxUanJ8fZ9CyAvfIwTVpUZlMWk5qJAt6J790vUak33Bbq5MW7cvvfziUuuPXjYHuwK6Pbt3I1ffmOPw248DPa4j493UnxMXGyUWhZPYkZTPCJ8PMbZJ5RVC2ugjAoLSwoKi+8VlrT5qG/Dq2Xw8MCRs/4CXmJcH4ABsCugk2cudJoOx5ePS84eP3kWxq04ApkVqvWJ+fFgVEJC3/DQ4AB/31HDh9hzKhqV+YVFhYWlBYVFEmldQ6PGg2tr/cBO+5adh99bMcfXhwtcHewKKPtO/hPz4Kxmo7JYrixesdp2ymC4xcdGxcdFJ8T3TUmK8/Bwz8zoB4M9s7xBtX7z3uqWKYg6XdOGzfs/WD3f5Xeew24jWqvV9vAOoNFoL1+9tXnb7nmvrUhKH52Z9eyXW3e1uWulUshvzHuhrdYRS+u27/kZuDrYFVBIcCBwjhqx5LP12/750fq2FDc32sqlM9p8cVy9kXfucjZwabAroPWfrnlt/svtd/7qHYX3S9qferCZq5a87M5mCvicRa9MHpyRCFwa5J0DqNWqivIyUVVFdWWlSFhtMPRsKSCXx1+87B0ymdS+5KbmJjKZ0s3QM/LO4Towmay4+EQYQMuiMEmtuLqqUlhZkXtf0qSswAFr97fT6Yzs27fT+6e3T6RSnJ3j8LRAnDyq9/NUnkbvHLu+P3TmzCUaheLD5wr43j48nkDA8+HBOO+BDSvJnnPKWpJY3tTckE9uyotk593NLeh0DyhPjrdUImEQ9ZkDE4Hr+ioByDsH5Matu/98/7OurnI5Xny+N5/nzefbJFVXLjBYeESGryA88at3bFU9bDXfzSnIy7+ffScvJ+8ehULx8valu9kWCu47dIrD8YgMDwIYA1sCOnnqQjdXYQUDQ25eYYd0kRWkHeMIfHk+XC4cp05NjV+5fKH90rZdP126alt9Ad99O787umr5bOcn6D1dYEtAtWIp6DmwKSyT17XNGdr13Y8jhg3etvkTGJ8zfXyjQp1fWA7jKo32m2//u+qtl4kEl93c6XGw1Y1XKFXgj+DU2Ut2Hx1QK2/MfyH0gdeE4rLqfQdPASyBLQH1CQ8BfwQWi/nS1bv2OJ1GWbLgRZ63bV8wEokIqyv4OgOYAVuvsJnTJ0vl9SdaDKXOQKFQd+49RqdR7XOc3VmM5Yte+vXM9eFD+vnxnR2ZfLrAloCCgvzX/evdD9asUCsVtVK5WCyVSKXiWplEKq+tldRKZErHvDnTGSz7PHkqlZwQa5u24ePtNWn8UIA9sDiQSKGQOcEBwcEBj19qbjaIYGddWge1tfFAnaJRatJJcQYpySJVqVpnkxEJRF9/273wVfXF1v1LF7wYFxMOsAoaiX4EqK3QkCAYYPxwKYnYCMwmPddN+/ksVb2isapa7M5kJCbFfbPnlzu5xcC2WNO8fuv+FYunR4Y7a5p9SsGcgO7dK5LJ6y1mk9aGXqvTaeCPtuWo1+u0eo0GRpvgNXmDzmzUwUaxEICsH1pvx+FwS96Y++arM7fsPHztpm1GEeyOfbbp+2WLXvIV8AD2wJCAxLWSVxa8fa+wxPFbHjeGwqbPjl37X18wa+Gc56DJ/cTpq6Bla8tv4CjistkOWiVdCQz9widPXeyRerpCqVR9veswVNK0ySOnPDccj8ePHTHgg9XzMagegCnvHPkFxeAP4uSZq7VyxZzpfx80IDkhPpLFcDPYdix0HV8ljpeMoT8aKpUC/iBwBEJJmfDjz3cWl1ZD9QAMgyHvHL6CP8ZLIYVGp1Jtu3er1NoNW/ZNHDfk72MGtfkRdwFfJT0qGUON6GdGD/v031ufmI1IJLox6Aw6vUFHN+PoOKIbnUbLSqK5udHdaHQ4egT58edzMnkjzGyxWg/+fK64XPTarInARX3Rdw+GBBQQ4Hf+twNHfz1rMpk83Vl0Ot2NQWMyGLA+gYqh02kMNzqLxSQ8sKVPWUuS2EQCvFmmd+bXw7azSqWFPzKZJDacf0EmNgKqveLJzS/5ZMO3yxfPcEn3Cd2DrXGgwEC/l6c/b4tZzSqVGg4uQ1XUNTaUVVSr1Oq2FJVao1SoC8o1hiaVxaiuNDel7u6ktPfXrLx6uxi+yLy5notemYxB9QBsjkTL6+rHjJsKrRbAOcrLyv/13oKjJy6PH5XJYro50599esHi0AWX4zVt6nPAaU6fvcRmMuBoEFQPwCoYXRe2cP4MOs3Z7qeoprauHhO7ynUDRgXk4eE+t50vul6TfTcPYBvsrkx9dd50+C4DzpGb28s9MV0G7AqIRqW2La7oNRUVPdjaxyXBtIu7iRNGt9+fuxfU1EoAtsG6j8TP1/6DROr9WEZNDRIQtonoE7p65RugtzQqlADbIO8cNr7evKGkqJfN4XUbtnRTcle4jHcO5ObXxtQZcxhMFugVRoOzI9pPNbgGde9//6fRO0dXJd+8nfPCSwusVivoIeX3r9hNqq70NBwvGdVAraQmxy9d/AroIWx3Fg6TNtQ2kIAesvDVmYMH9e/RLZ4e7gDbIAE9BNYl//niwx453/T3EwBsgwT0CAw3+o6tnzKZDAfzR0dhwh19NyABdSQoyH/zxo8czNw3EruLmu0gAXVCZka/xa/PcSxnKsA2SECdAwXEEqR3nyclKd7dgw2wDRJQ58AGdZ+hnxDc/LrJM2Y0Fv25dAAJqEuIZAav/xc4Aq3Tq2Qy6dlxIwHmQQLqDjIziJu2zgo6GSqc+PfR6P0FkICeCJ3XPzB18ePpc2ZPAQgkIEcQxE4bM/KR5s6UFyaEtTihQmDIO0ePS7YSg1pcRjU1g3dWvPH7tZuqFg+KbnT6/Fdefvyfw6Z3DuTirhOIBDyZRPx2uYnUssrZaIYVNfc/X3w8Y9YieDpv7nRPT6ybwNrAkHcOR0u2Anujuc3dfIuM8AMzUvbs3rT63bUL5k3rZhYs8s6BeVrUc+oO/vBlvKjeduLPsT6bYRmeaBmQnvL9ro3OzKF2PdCz6IRPDxGO33zYvSgU4gr3E3IrcG9NNPv68gGiHagX1pHzebj26mnjlxv4y/cwPXesU5CAOnIhr8tncj4XPa6OoCfSkUppl9VMuaT1Uo8nTrsuSEAd4XS9OsPzwSX0JmsDCagjccFdbtaUFGq7hKqf9iABdWTyQAu3MyOpjyd4boBNQDikoHYgAXWESgIfzjAFch9JhKfvTzOR7YMe6AXWDjQO1Al9fK07lhgv5uGvFeEIeJAabh0Ua8HkRgZPBgmoM6wAyiUr3pIVDxDdg/6sOuPBS6qp2ajTY3rp+xNB3jlQyU6VjF5hCKdA3jlQyU6VjGoghFMgASGcAgkI4RRIQAin+H8AAAD//4Y6ONYAAAAGSURBVAMAk3UxnHRJV0IAAAAASUVORK5CYII=" alt="AYO체형분석 아이콘" width="40" height="40">
       <div class="ttl">
-        <p class="eyebrow">AYO체형분석</p>
+        <p class="eyebrow" id="topEyebrow">AYO체형분석</p>
         <h1 id="pageTitle">체형 분석</h1>
       </div>
       <span class="now-chip mono" id="nowChip"></span>
@@ -951,6 +995,47 @@
     <div class="mb-toolbar"><p class="sub" style="margin:0;flex:1;align-self:center" id="slListSub"></p><button type="button" class="btn primary" id="btnSlAdd">+ 결제 등록</button></div>
     <div id="slList" class="mb-list"></div>
   </section>
+  <section class="view" id="view-settings" hidden>
+    <div class="set-lock" id="setLock">
+      <div><b>🔒 PRO 플랜 전용 메뉴</b><span>미리 보기 중이에요. 저장하려면 PRO 플랜이 필요해요.</span></div>
+      <button type="button" class="btn primary sm" id="btnSetPro">PRO 알아보기</button>
+    </div>
+    <p id="setOn" hidden style="margin:0 0 12px"><span class="set-on">✓ PRO 이용 중</span></p>
+    <fieldset class="set-fs" id="setFs">
+    <section class="card set-form">
+      <h2>센터 정보</h2>
+      <p class="sub">입력한 센터명과 로고가 리포트, 운동 카드, 전후 비교 이미지와 앱 상단에 표시돼요.</p>
+      <div class="logo-row">
+        <div class="logo-box" id="stLogoBox"><em>로고<br>없음</em></div>
+        <div class="btns">
+          <button type="button" class="btn line sm" id="btnStLogo">로고 이미지 선택</button>
+          <button type="button" class="btn line sm" id="btnStLogoDel">로고 삭제</button>
+          <input type="file" id="stLogoFile" accept="image/*" hidden>
+        </div>
+      </div>
+      <label>센터명<input id="stName" type="text" maxlength="24" placeholder="예: 바른자세 필라테스 서면점"></label>
+      <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 051-000-0000 · @barun_pilates"></label>
+      <label class="chk"><input id="stApply" type="checkbox" checked>결과 이미지에 센터명·로고 표시</label>
+    </section>
+    <section class="card set-form">
+      <h2>미리 보기</h2>
+      <p class="sub">회원에게 보내는 이미지 상단과 하단에 이렇게 들어가요.</p>
+      <div class="brand-prev">
+        <div class="bp-head"><div class="pl" id="bpLogo" hidden></div><div><small id="bpLabel">AYO체형분석 · 체형 분석 리포트</small><b>체형 분석 결과</b></div></div>
+        <div class="bp-foot"><span id="bpContact"></span><span>made by AYOAJEYO</span></div>
+      </div>
+    </section>
+    <section class="card set-form">
+      <h2>결제 기본값</h2>
+      <p class="sub">매출관리에서 결제를 등록할 때 자동으로 채워져요. 항목을 고르면 금액도 함께 입력돼요.</p>
+      <label>기본 결제 수단<select id="stMethod"><option>카드</option><option>현금</option><option>계좌이체</option><option>기타</option></select></label>
+      <label style="margin-bottom:6px">자주 쓰는 결제 항목</label>
+      <div id="stItems"></div>
+      <button type="button" class="btn line sm" id="btnStItemAdd">+ 항목 추가</button>
+    </section>
+    <div class="stage-controls" style="margin-top:4px"><button type="button" class="btn primary wide" id="btnStSave">설정 저장</button></div>
+    </fieldset>
+  </section>
   <section class="view" id="view-members" hidden>
     <div id="mbListWrap">
       <div class="mb-toolbar">
@@ -1098,6 +1183,22 @@
     <div class="confirm-btns"><button type="button" class="no" id="btnSfCancel">취소</button><button type="button" class="yes ok" id="btnSfSave">저장</button></div>
   </div>
 </div>
+<div class="confirm-overlay" id="proGate" hidden role="dialog" aria-modal="true" aria-labelledby="proTitle">
+  <div class="confirm-box pro-box">
+    <span class="pro-badge">PRO</span>
+    <h3 id="proTitle">유료 플랜에서 이용할 수 있어요</h3>
+    <p>설정 메뉴는 <b>AYO체형분석 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.</p>
+    <ul>
+      <li>센터명·로고를 리포트·운동 카드·비교 이미지에 표시</li>
+      <li>연락처·안내 문구를 결과 이미지 하단에 표시</li>
+      <li>앱 상단을 센터 브랜드로 변경</li>
+      <li>자주 쓰는 결제 항목·금액 기본값 저장</li>
+    </ul>
+    <div class="pro-code" id="proCodeRow"><input id="proCode" type="text" placeholder="PRO 이용 코드 입력" autocomplete="off"><button type="button" class="btn primary sm" id="btnProCode">확인</button></div>
+    <div class="confirm-btns"><button type="button" class="no" id="btnProClose">닫기</button><button type="button" class="yes ok" id="btnProPreview">미리 보기</button></div>
+    <button type="button" class="pro-link" id="btnProCodeToggle">이용 코드가 있어요</button>
+  </div>
+</div>
 <div class="confirm-overlay" id="moreSheet" hidden role="dialog" aria-modal="true">
   <div class="confirm-box mb-pick">
     <h3>전체 메뉴</h3>
@@ -1106,6 +1207,7 @@
       <button type="button" data-go="consult"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10.5H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>상담일지</span></button>
       <button type="button" data-go="sales"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg><span>매출관리</span></button>
       <button type="button" data-go="report"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/></svg><span>종합 리포트</span></button>
+      <button type="button" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span></button>
     </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnMoreClose">닫기</button></div>
   </div>
@@ -3155,7 +3257,9 @@
     var title = (state.mode === "front" ? "정면 · 좌우 높낮이" : "측면 · 체형 정렬(플럼라인) · 키 " + (patientHeight() ? patientHeight() + "cm" : "170cm 기준")) + (pt ? "  ·  " + pt : "");
     oc.fillText(title, 20*K, s.h + 34*K);
     oc.fillStyle = "#C9B38A"; oc.font = (18*K) + "px 'IBM Plex Mono', monospace";
-    oc.fillText(dt + "  ·  AYO체형분석 (스크리닝 참고용)", 20*K, s.h + 66*K);
+    var bd = brand();
+    oc.fillText(dt + "  ·  " + (bd && bd.name ? bd.name + (bd.contact ? "  ·  " + bd.contact : "") : "AYO체형분석") + " (스크리닝 참고용)", 20*K, s.h + 66*K);
+    if(bd) drawBrandLogo(oc, out.width - 20*K, s.h + 14*K, 240*K, FOOT - 28*K);
     return out;
   }
 
@@ -3375,7 +3479,7 @@
     var g = c.getContext("2d"), F = "'IBM Plex Sans KR', 'IBM Plex Sans', sans-serif", M = "'IBM Plex Mono', monospace";
     g.fillStyle = "#0D1528"; g.fillRect(0, 0, W, H);
     g.textBaseline = "alphabetic"; g.textAlign = "left";
-    g.fillStyle = "#D2B07A"; g.font = "700 22px " + F; g.fillText("AYO체형분석  ·  POSTURE CHECK PRO", PAD, 62);
+    g.fillStyle = "#D2B07A"; g.font = "700 22px " + F; g.fillText(brandLabel("POSTURE CHECK PRO", "체형 분석 리포트"), PAD, 62); drawBrandLogo(g, W - PAD, 18, 260, 64);
     g.fillStyle = "#E9EEF8"; g.font = "800 50px " + F; g.fillText("체형 분석 결과", PAD, 120);
     var pt = $("ptField").value.trim();
     g.fillStyle = "#97A3BC"; g.font = "500 26px " + M; g.textAlign = "right";
@@ -3434,7 +3538,7 @@
     });
     g.fillStyle = "#5F6B86"; g.font = "500 21px " + F;
     g.fillText("촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며 진단을 대신하지 않습니다.", PAD, H - 32);
-    g.textAlign = "right"; g.fillStyle = "#D2B07A"; g.font = "700 20px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 32);
+    g.textAlign = "right"; g.fillStyle = "#D2B07A"; g.font = "700 20px " + F; g.fillText(brandFoot(), W - PAD, H - 32);
     return c;
   }
   $("btnSaveReport").addEventListener("click", function(){
@@ -3448,6 +3552,7 @@
   function showView(v){
     if(v === state.view) { if(v === "report") renderReport(); return; }
     if(v !== "analyze" && state.phase === "live"){ pauseCamera(); goIdleFromLive(); }
+    if(v === "settings") proPrevView = state.view;
     state.view = v;
     $("view-analyze").hidden = (v !== "analyze");
     $("view-report").hidden = (v !== "report");
@@ -3456,7 +3561,8 @@
     $("view-exercise").hidden = (v !== "exercise");
     $("view-consult").hidden = (v !== "consult");
     $("view-sales").hidden = (v !== "sales");
-    $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : v === "members" ? "회원관리" : v === "dash" ? "운영 현황" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : "체형 분석";
+    $("view-settings").hidden = (v !== "settings");
+    $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : v === "members" ? "회원관리" : v === "dash" ? "운영 현황" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : v === "settings" ? "설정" : "체형 분석";
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
@@ -3466,6 +3572,7 @@
     else if(v === "exercise") renderExercise();
     else if(v === "consult") renderConsult();
     else if(v === "sales") renderSales();
+    else if(v === "settings") renderSettings(true);
     else if(cur().img) requestDraw();
     window.scrollTo(0, 0);
   }
@@ -3846,11 +3953,11 @@
         var keys = []; (A[v[2]] || []).concat(B[v[2]] || []).forEach(function(x){ if(keys.indexOf(x.key) < 0) keys.push(x.key); });
         return { v: v, keys: keys, h: 60 + IH + 60 + 40 + keys.length * ROW + 64 };
       });
-      var H = 210 + blocks.reduce(function(a, b){ return a + b.h; }, 0) + 70;
+      var H = 210 + blocks.reduce(function(a, b){ return a + b.h; }, 0) + 70 + (brandContact() ? 34 : 0);
       var c = document.createElement("canvas"); c.width = W; c.height = H;
       var g = c.getContext("2d");
       g.fillStyle = "#0D1528"; g.fillRect(0, 0, W, H);
-      g.fillStyle = "#D2B07A"; g.font = "700 20px " + F; g.fillText("AYO체형분석  ·  전후 비교", PAD, 58);
+      g.fillStyle = "#D2B07A"; g.font = "700 20px " + F; g.fillText(brandLabel("전후 비교", "전후 비교"), PAD, 58); drawBrandLogo(g, W - PAD, 14, 200, 52);
       g.fillStyle = "#E9EEF8"; g.font = "800 44px " + F; g.fillText(m.name + (m.no ? "  " : ""), PAD, 112);
       if(m.no){ var nw = g.measureText(m.name + "  ").width; g.fillStyle = "#97A3BC"; g.font = "500 24px " + F; g.fillText("No." + m.no, PAD + nw, 112); }
       g.fillStyle = "#97A3BC"; g.font = "500 22px " + F;
@@ -3898,7 +4005,8 @@
         y += bk.h;
       });
       g.fillStyle = "#5F6B86"; g.font = "500 18px " + F;
-      g.fillText("촬영 조건에 따라 달라질 수 있는 참고값입니다. 같은 장소·거리·복장으로 촬영해 비교하세요.", PAD, H - 30);
+      g.fillText("촬영 조건에 따라 달라질 수 있는 참고값입니다. 같은 장소·거리·복장으로 촬영해 비교하세요.", PAD, H - 30 - (brandContact() ? 34 : 0));
+      if(brandContact()){ g.fillStyle = "#C9D3E6"; g.font = "600 18px " + F; g.fillText(brandContact(), PAD, H - 30); }
       g.textAlign = "right"; g.fillStyle = "#D2B07A"; g.font = "700 18px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 30); g.textAlign = "left";
       var tag = (m.name + (m.no ? "_" + m.no : "")).replace(/[^a-zA-Z0-9가-힣_-]/g, "");
       deliverCanvas(c, "AYO_compare_" + tag + "_" + fmtDate(B.at).slice(0, 10).replace(/\./g, "") + ".jpg");
@@ -3937,6 +4045,7 @@
       data.extra = OPS_STORES;  // 실제 데이터는 아래에서 채움
       var fill = OPS_STORES.reduce(function(p, st){ return p.then(function(){ return dbAll(st).then(function(L){ data[st] = L; }); }); }, Promise.resolve());
       delete data.extra;
+      data.settings = getSettings();
       fill.then(function(){
       var blob = new Blob([JSON.stringify(data)], { type: "application/json" });
       var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
@@ -3967,6 +4076,7 @@
         newM.forEach(function(m){ chain = chain.then(function(){ return dbPut("members", m); }); });
         newR.forEach(function(r){ chain = chain.then(function(){ return dbPut("records", r); }); });
         OPS_STORES.forEach(function(st){ extra[st].forEach(function(x){ chain = chain.then(function(){ return dbPut(st, x); }); }); });
+        if(data.settings && !getSettings().name && !getSettings().logo) chain = chain.then(function(){ saveSettings(data.settings); applyBrand(); });
         chain.then(function(){ toast("회원 " + newM.length + "명, 측정 " + newR.length + "건" + (extraN ? ", 운동·상담·결제 " + extraN + "건" : "") + "을 불러왔어요."); mbShowList(); })
              .catch(function(){ toast("불러오는 중 오류가 났어요."); });
         });
@@ -4087,6 +4197,153 @@
     });
   }
 
+
+  /* ===================== v47 설정 · PRO 플랜 ===================== */
+  var SET_KEY = "ayo_settings", PRO_KEY = "ayo_pro";
+  var DEFAULT_ITEMS = [ { n:"체형분석", a:30000 }, { n:"필라테스 10회권", a:0 }, { n:"PT 10회권", a:0 }, { n:"1개월 회원권", a:0 } ];
+  function isPro(){ return lsGet(PRO_KEY) === "1"; }
+  function getSettings(){
+    var o = null; try{ o = JSON.parse(lsGet(SET_KEY) || "null"); }catch(e){}
+    o = o || {};
+    return { name: o.name || "", contact: o.contact || "", logo: o.logo || "", apply: o.apply !== false, method: o.method || "카드", items: Array.isArray(o.items) ? o.items : DEFAULT_ITEMS.slice() };
+  }
+  function saveSettings(o){ try{ localStorage.setItem(SET_KEY, JSON.stringify(o)); return true; }catch(e){ return false; } }
+  var brandImg = null;
+  function loadBrandImg(){
+    var st = getSettings(); brandImg = null;
+    if(st.logo){ var im = new Image(); im.onload = function(){ brandImg = im; }; im.src = st.logo; }
+  }
+  // PRO + 표시 켜짐 + 센터명/로고 중 하나라도 있을 때만 브랜딩
+  function brand(){ var st = getSettings(); if(!isPro() || !st.apply || (!st.name && !st.logo)) return null; return st; }
+  function brandLabel(def, kind){ var b = brand(); return b && b.name ? b.name + "  ·  " + kind : "AYO체형분석  ·  " + def; }
+  function brandContact(){ var b = brand(); return b && b.contact ? b.contact : ""; }
+  function brandFoot(){ var b = brand(); return (b && b.contact ? b.contact + "   |   " : "") + "made by AYOAJEYO"; }
+  // 오른쪽 정렬로 흰 바탕 플레이트 위에 로고를 그림 (xr = 오른쪽 끝)
+  function drawBrandLogo(g, xr, y, maxW, h){
+    var b = brand(); if(!b || !b.logo || !brandImg || !brandImg.naturalWidth) return;
+    var pad = Math.round(h * 0.12), ih = h - pad * 2, iw = Math.min(maxW - pad * 2, ih * brandImg.naturalWidth / brandImg.naturalHeight);
+    ih = Math.min(ih, iw * brandImg.naturalHeight / brandImg.naturalWidth);
+    var pw = iw + pad * 2;
+    g.save(); g.fillStyle = "#FFFFFF"; rr(g, xr - pw, y, pw, h, Math.round(h * 0.18)); g.fill();
+    g.drawImage(brandImg, xr - pw + pad, y + (h - ih) / 2, iw, ih); g.restore();
+  }
+  var DEF_LOGO_SRC = null;
+  function applyBrand(){
+    loadBrandImg();
+    var b = brand(), logo = $("sideLogo"), mk = document.querySelector("header.top .mark");
+    if(DEF_LOGO_SRC == null && logo) DEF_LOGO_SRC = logo.src;
+    if(mk){ mk.src = b && b.logo ? b.logo : DEF_LOGO_SRC; mk.style.background = b && b.logo ? "#fff" : ""; mk.style.objectFit = "contain"; }
+    if(b){
+      $("sideName").textContent = b.name || "AYO체형분석";
+      $("sideSub").innerHTML = "with AYO체형분석 <i>PRO</i>";
+      if(logo){ logo.src = b.logo || DEF_LOGO_SRC; logo.style.background = b.logo ? "#fff" : ""; logo.style.objectFit = "contain"; }
+      $("topEyebrow").textContent = b.name || "AYO체형분석";
+    } else {
+      $("sideName").textContent = "AYO체형분석";
+      $("sideSub").innerHTML = "Posture Check <i>PRO</i>";
+      if(logo){ logo.src = DEF_LOGO_SRC; logo.style.background = ""; }
+      $("topEyebrow").textContent = "AYO체형분석";
+    }
+  }
+  function fillSaleItems(){
+    var st = getSettings();
+    $("sfItems").innerHTML = st.items.map(function(x){ return '<option value="' + esc(x.n) + '">'; }).join("");
+  }
+  $("sfItem").addEventListener("change", function(){
+    var v = this.value.trim(), it = getSettings().items.find(function(x){ return x.n === v; });
+    if(it && it.a > 0 && !$("sfAmount").value) $("sfAmount").value = it.a;
+  });
+
+  // ---- 설정 화면 ----
+  var stDraft = null;
+  function stRenderLogo(){
+    $("stLogoBox").innerHTML = stDraft.logo ? '<img src="' + stDraft.logo + '" alt="센터 로고">' : '<em>로고<br>없음</em>';
+    $("btnStLogoDel").disabled = !stDraft.logo;
+  }
+  function stRenderItems(){
+    $("stItems").innerHTML = stDraft.items.map(function(x, i){
+      return '<div class="it-row"><input type="text" data-i="' + i + '" data-f="n" value="' + esc(x.n) + '" placeholder="항목명" maxlength="20"><input class="amt" type="number" inputmode="numeric" step="1000" min="0" data-i="' + i + '" data-f="a" value="' + (x.a || "") + '" placeholder="금액(원)"><button type="button" data-rm="' + i + '" aria-label="항목 삭제">✕</button></div>';
+    }).join("");
+    $("stItems").querySelectorAll("input").forEach(function(inp){ inp.addEventListener("input", function(){
+      var i = +inp.getAttribute("data-i"), f = inp.getAttribute("data-f");
+      stDraft.items[i][f] = f === "a" ? (parseInt(inp.value, 10) || 0) : inp.value;
+    }); });
+    $("stItems").querySelectorAll("[data-rm]").forEach(function(b){ b.addEventListener("click", function(){ stDraft.items.splice(+b.getAttribute("data-rm"), 1); stRenderItems(); }); });
+  }
+  function stRenderPreview(){
+    var name = $("stName").value.trim(), contact = $("stContact").value.trim();
+    $("bpLabel").textContent = (name || "AYO체형분석") + "  ·  체형 분석 리포트";
+    $("bpLogo").hidden = !stDraft.logo;
+    $("bpLogo").innerHTML = stDraft.logo ? '<img src="' + stDraft.logo + '" alt="">' : "";
+    $("bpContact").textContent = contact;
+  }
+  function renderSettings(entering){
+    stDraft = getSettings(); stDraft.items = stDraft.items.map(function(x){ return { n:x.n, a:x.a || 0 }; });
+    var pro = isPro();
+    $("setLock").hidden = pro; $("setOn").hidden = !pro; $("setFs").disabled = !pro;
+    $("stName").value = stDraft.name; $("stContact").value = stDraft.contact; $("stApply").checked = stDraft.apply; $("stMethod").value = stDraft.method;
+    stRenderLogo(); stRenderItems(); stRenderPreview();
+    if(entering && !pro) openProGate();
+  }
+  ["stName", "stContact"].forEach(function(id){ $(id).addEventListener("input", stRenderPreview); });
+  $("btnStLogo").addEventListener("click", function(){ $("stLogoFile").value = ""; $("stLogoFile").click(); });
+  $("btnStLogoDel").addEventListener("click", function(){ stDraft.logo = ""; stRenderLogo(); stRenderPreview(); });
+  $("stLogoFile").addEventListener("change", function(){
+    var f = this.files && this.files[0]; if(!f) return;
+    if(!/^image\//.test(f.type)){ toast("이미지 파일을 선택해주세요."); return; }
+    var url = URL.createObjectURL(f), im = new Image();
+    im.onload = function(){
+      // 긴 변 320px로 줄여 PNG(투명 배경 유지)로 저장
+      var k = Math.min(1, 320 / Math.max(im.naturalWidth, im.naturalHeight));
+      var c = document.createElement("canvas"); c.width = Math.max(1, Math.round(im.naturalWidth * k)); c.height = Math.max(1, Math.round(im.naturalHeight * k));
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      var d = c.toDataURL("image/png");
+      if(d.length > 400000) d = c.toDataURL("image/jpeg", 0.9);
+      stDraft.logo = d; stRenderLogo(); stRenderPreview();
+    };
+    im.onerror = function(){ URL.revokeObjectURL(url); toast("이미지를 읽지 못했어요. PNG나 JPG로 다시 시도해주세요."); };
+    im.src = url;
+  });
+  $("btnStItemAdd").addEventListener("click", function(){
+    if(stDraft.items.length >= 12){ toast("항목은 최대 12개까지 저장할 수 있어요."); return; }
+    stDraft.items.push({ n:"", a:0 }); stRenderItems();
+    var ins = $("stItems").querySelectorAll('input[data-f="n"]'); if(ins.length) ins[ins.length - 1].focus();
+  });
+  $("btnStSave").addEventListener("click", function(){
+    if(!isPro()){ openProGate(); return; }
+    var o = { name: $("stName").value.trim(), contact: $("stContact").value.trim(), logo: stDraft.logo || "", apply: $("stApply").checked, method: $("stMethod").value,
+              items: stDraft.items.filter(function(x){ return x.n && x.n.trim(); }).map(function(x){ return { n:x.n.trim(), a: Math.max(0, x.a || 0) }; }) };
+    if(!saveSettings(o)){ toast("저장 공간이 부족해요. 더 작은 로고 이미지를 사용해주세요."); return; }
+    applyBrand(); fillSaleItems(); renderSettings(false);
+    toast("설정을 저장했어요.");
+  });
+
+  // ---- PRO 팝업 ----
+  var proPrevView = "dash";
+  function openProGate(){
+    $("proCodeRow").classList.remove("on"); $("proCode").value = "";
+    $("proGate").hidden = false;
+  }
+  function codeHash(t){ var x = 5381; for(var i = 0; i < t.length; i++){ x = ((x << 5) + x + t.charCodeAt(i)) | 0; } return (x >>> 0).toString(36); }
+  $("btnSetPro").addEventListener("click", openProGate);
+  $("btnProPreview").addEventListener("click", function(){ $("proGate").hidden = true; });
+  $("btnProClose").addEventListener("click", function(){
+    $("proGate").hidden = true;
+    if(state.view === "settings" && !isPro()) showView(proPrevView === "settings" ? "dash" : proPrevView);
+  });
+  $("proGate").addEventListener("click", function(e){ if(e.target === $("proGate")) $("proGate").hidden = true; });
+  $("btnProCodeToggle").addEventListener("click", function(){ $("proCodeRow").classList.add("on"); $("proCode").focus(); });
+  function tryCode(){
+    var t = $("proCode").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if(t && codeHash(t) === "x1rpwp"){
+      lsSet(PRO_KEY, "1"); $("proGate").hidden = true; applyBrand(); renderSettings(false);
+      toast("PRO 플랜이 활성화됐어요.");
+    } else toast("이용 코드가 올바르지 않아요.");
+  }
+  $("btnProCode").addEventListener("click", tryCode);
+  $("proCode").addEventListener("keydown", function(e){ if(e.key === "Enter") tryCode(); });
+  applyBrand(); fillSaleItems();
 
   /* ===================== v46 운동관리 · 상담일지 · 매출관리 ===================== */
   var OPS_STORES = ["programs", "assigns", "consults", "sales"];
@@ -4271,11 +4528,11 @@
       var c = document.createElement("canvas"), g = c.getContext("2d");
       g.font = "500 26px " + F;
       var blocks = ids.map(function(id){ var e = EXMAP[id]; return { e:e, lines: wrapText(g, e.desc, W - PAD * 2 - 120) }; });
-      var H = 260 + blocks.reduce(function(a, b){ return a + 110 + b.lines.length * 38; }, 0) + 90;
+      var H = 260 + blocks.reduce(function(a, b){ return a + 110 + b.lines.length * 38; }, 0) + 90 + (brandContact() ? 34 : 0);
       c.width = W; c.height = H; g = c.getContext("2d");
       g.fillStyle = "#EEF3FA"; g.fillRect(0, 0, W, H);
       g.fillStyle = "#0F1A33"; g.fillRect(0, 0, W, 210);
-      g.fillStyle = "#7FA2FF"; g.font = "700 24px " + F; g.fillText("AYO체형분석  ·  운동 카드", PAD, 64);
+      g.fillStyle = "#7FA2FF"; g.font = "700 24px " + F; g.fillText(brandLabel("운동 카드", "운동 카드"), PAD, 64); drawBrandLogo(g, W - PAD, 92, 220, 80);
       g.fillStyle = "#FFFFFF"; g.font = "800 52px " + F; g.fillText(m.name + " 님", PAD, 128);
       g.fillStyle = "#C7D2E6"; g.font = "500 26px " + F; g.fillText(title.length > 34 ? title.slice(0, 33) + "…" : title, PAD, 176);
       g.textAlign = "right"; g.fillText(fmtDate(Date.now()).slice(0, 10), W - PAD, 64); g.textAlign = "left";
@@ -4292,7 +4549,8 @@
         y += h + 20;
       });
       g.fillStyle = "#6A7488"; g.font = "500 21px " + F;
-      g.fillText("통증이 있거나 불편하면 중단하고 담당 강사와 상의하세요.", PAD, H - 36);
+      g.fillText("통증이 있거나 불편하면 중단하고 담당 강사와 상의하세요.", PAD, H - 36 - (brandContact() ? 34 : 0));
+      if(brandContact()){ g.fillStyle = "#0F1A33"; g.font = "700 22px " + F; g.fillText(brandContact(), PAD, H - 36); }
       g.textAlign = "right"; g.fillStyle = "#2F6BFF"; g.font = "700 21px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 36);
       deliverCanvas(c, "AYO_exercise_" + m.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" + toDateInput(Date.now()).replace(/-/g, "") + ".jpg");
     });
@@ -4365,7 +4623,7 @@
     slEditing = x || null; slAfter = after || null;
     $("slFormTitle").textContent = x ? "결제 수정" : "결제 등록";
     fillMemberSelect($("sfMember"), "비회원 / 선택 안 함", x ? (x.memberId || "") : (memberId || "")).then(function(){
-      $("sfDate").value = toDateInput(x ? x.at : Date.now()); $("sfMethod").value = x ? (x.method || "카드") : "카드";
+      $("sfDate").value = toDateInput(x ? x.at : Date.now()); $("sfMethod").value = x ? (x.method || "카드") : (getSettings().method || "카드"); fillSaleItems();
       $("sfItem").value = x ? x.item : ""; $("sfAmount").value = x ? x.amount : ""; $("sfMemo").value = x ? (x.memo || "") : "";
       $("slForm").hidden = false;
     });

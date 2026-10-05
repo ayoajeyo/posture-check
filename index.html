@@ -194,6 +194,12 @@
     font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; backdrop-filter: blur(2px); opacity:.9;}
   .bg-toggle:active{transform:scale(.96);}
   .bg-toggle[hidden]{display:none!important;}
+  html{-webkit-text-size-adjust:100%; text-size-adjust:100%;}
+  .bg-toggle{min-width:132px; justify-content:center;}
+  #btnMbPick, #btnRepPick, #btnRomPick, #btnScolPick{min-width:84px; white-space:nowrap; text-align:center;}
+  #btnSessSave, #btnSessNext{min-width:108px; text-align:center;}
+  .rc-lr button{min-width:52px; text-align:center;}
+  .rom-side button{min-width:76px;}
   .rot-bar{margin-top:8px; background:var(--surface-2); border-radius:10px; padding:6px 9px; display:flex; flex-direction:column; gap:4px;}
   .rot-bar[hidden]{display:none!important;}
   .rot-bar .row{display:flex; align-items:center; gap:6px; min-width:0;}
@@ -204,7 +210,7 @@
   .rot-bar button.icon{width:30px; height:24px; padding:0; font-size:14px; display:inline-flex; align-items:center; justify-content:center;}
   .rot-bar button.auto{background:var(--navy); color:var(--navy-ink); border-color:var(--navy);}
   .rot-bar button[hidden]{display:none!important;}
-  .rot-bar button.mode{border-color:var(--gold); color:var(--gold);}
+  .rot-bar button.mode{border-color:var(--gold); color:var(--gold); min-width:74px; text-align:center;}
   .rot-bar button.mode.on{background:var(--gold); color:#fff;}
   .rot-bar input[type=range]{flex:1; min-width:0; accent-color:var(--gold); height:22px; margin:0;}
   .empty-cam{
@@ -465,11 +471,13 @@
   .rep-fig{display:grid; grid-template-columns:104px minmax(0,1fr); gap:10px; align-items:start;}
   .rep-fig[hidden]{display:none!important;}
   .rep-chips{display:flex; flex-direction:column; gap:8px;}
-  .chip{border-radius:10px; overflow:hidden; background:#5D6577; color:#fff; box-shadow:0 4px 10px -6px rgba(19,27,46,.5);}
-  .chip .h{background:#3B4357; font-size:11px; font-weight:700; padding:5px 8px; display:flex; align-items:center; gap:5px; white-space:nowrap;}
-  .chip .h i{width:7px; height:7px; border-radius:50%; flex:0 0 auto;}
-  .chip .v{font-family:var(--font-num); font-size:17px; font-weight:600; padding:6px 8px 0; letter-spacing:-.02em;}
-  .chip .f{font-size:10.5px; padding:1px 8px 6px; color:#D7DCE6; white-space:nowrap;}
+  .chip{position:relative; border-radius:12px; overflow:hidden; background:#1B2540; color:#fff; border:1px solid rgba(255,255,255,.06); box-shadow:0 6px 14px -10px rgba(0,0,0,.6); padding:8px 10px 9px 13px;}
+  .chip::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--gc,#4CC38A);}
+  .chip .h{display:flex; align-items:center; justify-content:space-between; gap:6px; font-size:11.5px; font-weight:700; color:#C9D3E6; white-space:nowrap;}
+  .chip .h em{font-style:normal; font-size:10px; font-weight:800; color:var(--gc); background:color-mix(in srgb, var(--gc) 16%, transparent); border-radius:6px; padding:1px 5px;}
+  .chip .v{font-family:var(--font-num); font-size:20px; font-weight:700; letter-spacing:-.02em; margin-top:3px; line-height:1.15;}
+  .chip .f{display:inline-flex; align-items:center; gap:4px; margin-top:5px; font-size:11px; font-weight:700; color:#E6ECF7; background:rgba(255,255,255,.08); border-radius:100px; padding:2px 8px 2px 6px; white-space:nowrap;}
+  .chip .f b{font-size:9px; color:var(--gc);}
   .rep-img canvas{display:block; width:100%; height:auto; border-radius:12px; background:var(--surface-2);}
   .rep-empty{border:1.5px dashed var(--line); border-radius:12px; padding:28px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center;}
   .rep-empty p{margin:0; font-size:13.5px; color:var(--ink-soft); font-weight:600;}
@@ -496,7 +504,7 @@
   @media (max-width:759px){
     .rep-fig{grid-template-columns:1fr;}
     .rep-chips{order:2; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px;}
-    .chip .h{font-size:10.5px; padding:5px 6px;} .chip .v{font-size:16px; padding:5px 7px 0;} .chip .f{padding:1px 7px 6px;}
+    .chip{padding:7px 7px 8px 10px;} .chip .h{font-size:10.5px;} .chip .h em{display:none;} .chip .v{font-size:17px;} .chip .f{font-size:10.5px; padding:2px 6px 2px 5px;}
     .rep-img{order:1;}
   }
   @media (max-width:599px){ .now-chip{display:none;} }
@@ -1086,7 +1094,7 @@
     <div class="marking-hint" id="markingHint" hidden>
       <div class="dot" id="markingDot" style="background:#E0763F"></div>
       <div style="flex:1;">
-        <span id="markingLabel">왼쪽 어깨를 탭하세요</span>
+        <span id="markingLabel">좌측 어깨를 탭하세요</span>
         <em id="markingSub">몸 기준 좌/우로 짚어주세요 (화면과 반대)</em>
       </div>
     </div>
@@ -1094,7 +1102,7 @@
     <div class="rot-bar" id="rotBar" hidden>
       <div class="row">
         <span class="ttl" style="white-space:nowrap;">수평 보정</span>
-        <button type="button" class="mode" id="btnRotMode">사람 돌리기</button>
+        <button type="button" class="mode" id="btnRotMode">사람 회전</button>
         <span class="val" id="rotVal">0.0°</span>
         <button type="button" class="auto" id="btnRotAuto" hidden>자동</button>
         <button type="button" id="btnRotReset">0°</button>
@@ -1172,7 +1180,7 @@
         <li><b>촬영하면 정면·측면 모두 기준점이 자동으로 찍힙니다.</b> 위치가 조금 다르면 점을 끌어서 고치면 됩니다. 인식이 부정확하거나 실패하면 자동 점을 넣지 않고 안내가 뜨니 직접 짚어주세요.</li>
         <li>사람 인식 기능은 처음 열 때 인식 모델(약 25MB)을 한 번 내려받습니다. 와이파이에서 한 번 열어두면 이후엔 빠르게 동작합니다. 인터넷이 안 되거나 모델을 못 불러오면 고정 실루엣과 수동 찍기로 그대로 사용할 수 있습니다.</li>
         <li><b>가늠자</b>: 화면 가운데 빨간 원과 좌우 빨간 선이 표적이고, 폰 기울기에 따라 <b>흰 십자</b>가 기울고 위아래로 움직입니다. 흰 십자를 빨간 표적에 겹치면 초록색으로 바뀌고 "수평 OK"가 뜨니 그때 촬영하세요. 좌우 1° 이내, 앞뒤 3° 이내일 때 초록입니다. 아이폰은 카메라를 켤 때 뜨는 <b>동작 및 방향 권한</b>을 허용해야 동작하며, 센서가 없는 기기에서는 가늠자 없이 촬영만 됩니다.</li>
-        <li>정면: 신발을 벗고 차렷 자세로 정면을 응시(귓볼·어깨·골반·무릎·발목이 잘 보이도록). 측면: <b>몸의 정면이 화면 왼쪽을 향하도록</b> 서고 귀·어깨·고관절·무릎·발목이 잘 보이도록 전신 옆모습을 촬영.</li>
+        <li>정면: 신발을 벗고 차렷 자세로 정면을 응시(귓볼·어깨·골반·무릎·발목이 잘 보이도록). 측면: <b>몸의 정면이 화면 좌측을 향하도록</b> 서고 귀·어깨·고관절·무릎·발목이 잘 보이도록 전신 옆모습을 촬영.</li>
         <li>경과 비교 시 <b>매번 동일한 거리·높이·복장 상태</b>로 촬영해야 각도 변화의 신뢰도가 높아집니다.</li>
         <li>정면 좌우 쌍(귓볼/어깨/골반/무릎/발목)은 <b>탭 순서와 상관없이</b> 화면상 좌표로 자동 판별되며, 결과의 좌/우는 <b>몸 기준</b>(카메라를 보고 선 상태이므로 화면과 반대)으로 표시됩니다.</li>
         <li><b>점 찍기</b>: 한 번 탭하면 다음 기준점이 찍히고(기존 점 바로 옆을 탭해도 새 점으로 찍힘), 찍은 점을 <b>누른 채 끌면</b> 위치가 조정되며 손가락에 가려진 부분은 좌측/우측 상단 돋보기에 확대되어 보입니다. 우측 하단 +/− 버튼이나 두 손가락으로 확대하고, 확대 상태에서 빈 곳을 끌면 화면이 이동합니다. 잘못 찍었으면 <b>한 점 취소</b>(마지막 점), 처음부터 다시 하려면 <b>점 초기화</b>를 누르세요.</li>
@@ -1180,14 +1188,14 @@
       <b>카메라 권한 창이 매번 뜰 때</b>
       <ul>
         <li><b>카카오톡·밴드 등 앱 안에서 열지 마세요.</b> 앱 안의 브라우저는 권한을 기억하지 못합니다. 카카오톡에서 열면 자동으로 외부 브라우저로 넘어갑니다.</li>
-        <li><b>갤럭시(크롬)</b>: 권한 창에서 <b>"방문할 때마다 허용"</b>을 누르세요("이번에만 허용"을 누르면 다음에 또 묻습니다). 이미 눌렀다면 주소창 왼쪽 아이콘 → 권한 → 카메라 → 허용.</li>
+        <li><b>갤럭시(크롬)</b>: 권한 창에서 <b>"방문할 때마다 허용"</b>을 누르세요("이번에만 허용"을 누르면 다음에 또 묻습니다). 이미 눌렀다면 주소창 좌측 아이콘 → 권한 → 카메라 → 허용.</li>
         <li><b>아이폰(사파리)</b>: 주소창의 <b>"가가"(aA) 버튼 → 웹사이트 설정 → 카메라 → 허용</b>. 가늠자용 "동작 및 방향" 권한은 아이폰 정책상 페이지를 새로 열 때 한 번 묻습니다.</li>
         <li>주소를 즐겨 쓰려면 크롬/사파리 메뉴에서 <b>"홈 화면에 추가"</b>해 두면 앱처럼 바로 열 수 있습니다.</li>
         <li>한 번 켠 카메라는 다시 찍기·정면/측면 전환 때 끄지 않고 이어서 쓰므로 권한을 다시 묻지 않습니다(5분간 사용하지 않거나 다른 앱으로 나가면 자동으로 꺼짐).</li>
       </ul>
       <b>중요 안내</b>
       <ul>
-        <li>정면은 짚은 두 점 사이의 <b>각도</b>를, 측면은 외측복사뼈(발목)를 지나는 수직 기준선(플럼라인) 대비 각 지점이 벗어난 <b>편위 비율(%)</b>과 방향(화면 왼쪽=전방 이동, 오른쪽=후방 이동)을 계산한 스크리닝 참고 지표이며, 방사선 계측이나 정식 자세 평가 장비를 대체하지 않습니다.</li>
+        <li>정면은 짚은 두 점 사이의 <b>각도</b>를, 측면은 외측복사뼈(발목)를 지나는 수직 기준선(플럼라인) 대비 각 지점이 벗어난 <b>편위 비율(%)</b>과 방향(화면 좌측=전방 이동, 우측=후방 이동)을 계산한 스크리닝 참고 지표이며, 방사선 계측이나 정식 자세 평가 장비를 대체하지 않습니다.</li>
         <li>카메라 기울어짐, 미세한 체중 이동, 옷차림 등에 따라 결과가 흔들릴 수 있어 <b>단일 수치보다는 동일 조건에서의 변화 추이</b>로 활용하는 것을 권장합니다.</li>
         <li>촬영된 사진과 좌표는 이 브라우저 화면 안에서만 계산되며 저장을 누르기 전까지 외부로 전송·보관되지 않습니다.</li>
       </ul>
@@ -1404,13 +1412,13 @@
     </div>
     <nav class="tabs rom-joints" id="romJoints" role="tablist"></nav>
     <div class="rom-side" id="romSide" role="group" aria-label="측정 방향">
-      <button type="button" data-side="R" aria-pressed="true">오른쪽</button>
-      <button type="button" data-side="L" aria-pressed="false">왼쪽</button>
+      <button type="button" data-side="R" aria-pressed="true">우측</button>
+      <button type="button" data-side="L" aria-pressed="false">좌측</button>
     </div>
     <button type="button" class="btn line sm rom-lr-btn" id="btnRomLR">↔ 좌우 비교 분석</button>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v81</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v82</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1421,7 +1429,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v81</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v82</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1663,7 +1671,7 @@
     <div class="rom-manual" id="romManual" hidden><label for="romManVal">각도 직접 수정</label><input type="number" id="romManVal" inputmode="numeric" min="0" max="200" step="1"><span>°</span></div>
     <div class="rom-nudge" id="romNudge" hidden>
       <span class="nsel">선택: <b id="romSelName">–</b></span>
-      <button type="button" data-nd="-1,0" aria-label="왼쪽">◀</button><button type="button" data-nd="0,-1" aria-label="위">▲</button><button type="button" data-nd="0,1" aria-label="아래">▼</button><button type="button" data-nd="1,0" aria-label="오른쪽">▶</button>
+      <button type="button" data-nd="-1,0" aria-label="좌측">◀</button><button type="button" data-nd="0,-1" aria-label="위">▲</button><button type="button" data-nd="0,1" aria-label="아래">▼</button><button type="button" data-nd="1,0" aria-label="우측">▶</button>
       <button type="button" class="rst" id="btnRomRefReset" hidden>기준선 원래대로</button>
     </div>
     <p class="rom-tip" id="romTip" hidden>✋ <b>점</b>을 끌면 위치 수정(확대경 표시) · <b>파란 선</b>을 끌면 선 전체 이동 · 점을 누른 뒤 ◀▲▼▶로 미세조정. 측정점 3개: 주황 = 관절(꼭짓점), 분홍 = 움직이는 끝, 하늘색 = 기준점(몸통선·바닥선·어깨·고관절).</p>
@@ -1693,7 +1701,7 @@
 </div>
 <div class="confirm-overlay rom-overlay" id="romLR" hidden role="dialog" aria-modal="true" aria-labelledby="romLRTitle">
   <div class="confirm-box rom-box">
-    <div class="rom-head"><div><h3 id="romLRTitle">좌우 비교 분석</h3><p>왼쪽·오른쪽 최근 측정값 비교</p></div><button type="button" class="rom-x" id="btnRomLRClose" aria-label="닫기">✕</button></div>
+    <div class="rom-head"><div><h3 id="romLRTitle">좌우 비교 분석</h3><p>좌측·우측 최근 측정값 비교</p></div><button type="button" class="rom-x" id="btnRomLRClose" aria-label="닫기">✕</button></div>
     <div id="romLRBody"></div>
   </div>
 </div>
@@ -1901,7 +1909,7 @@
     },
     side: {
       title: "측면 사진 촬영",
-      sub: "몸의 정면이 화면 왼쪽을 향하도록 옆모습 전신을 한 장 촬영하세요(왼쪽=전방, 오른쪽=후방 기준). 귀·어깨·고관절·무릎·발목이 화면 안에 들어와야 합니다.",
+      sub: "몸의 정면이 화면 좌측을 향하도록 옆모습 전신을 한 장 촬영하세요(좌측=전방, 우측=후방 기준). 귀·어깨·고관절·무릎·발목이 화면 안에 들어와야 합니다.",
       hint: "복사뼈(발목)를 빨간 선에 맞추고 몸 전체가 화면 안에",
       facing: "environment",
       type: "chain",
@@ -2009,7 +2017,7 @@
   /* ---------- gyroscope level guide (가늠자) ---------- */
   // beta/gamma로부터 '위쪽(중력 반대)' 방향을 기기 좌표로 구해 계산한다.
   // 폰을 세워서 촬영할 때 gamma 값 하나만 쓰면 부정확해지는 문제(짐벌락)가 없다.
-  //  roll  : 화면 평면에서 좌우로 기운 각도 (+ = 폰 윗부분이 왼쪽으로 기움 → 수평선이 시계방향으로 보임)
+  //  roll  : 화면 평면에서 좌우로 기운 각도 (+ = 폰 윗부분이 좌측으로 기움 → 수평선이 시계방향으로 보임)
   //  pitch : 앞뒤로 기운 각도 (+ = 화면이 하늘 쪽 = 카메라가 아래를 봄)
   var levelHandlerAttached = false;
   var levelCls = null;   // 실시간 윤곽선 색에 사용 (good/warn/bad)
@@ -2626,7 +2634,7 @@
   function setRotMode(on){
     state.rotMode = !!on;
     var b = $("btnRotMode");
-    if(b){ b.classList.toggle("on", state.rotMode); b.textContent = state.rotMode ? "회전 완료" : "사람 돌리기"; }
+    if(b){ b.classList.toggle("on", state.rotMode); b.textContent = state.rotMode ? "회전 완료" : "사람 회전"; }
     if(state.rotMode) toast("사람을 손가락으로 끌어서 돌리세요. 다 되면 '회전 완료'를 누르세요.");
     requestDraw();
   }
@@ -2733,7 +2741,7 @@
     var fs = Math.max(10 * px, cell * 0.3);
     g.font = "700 " + fs + "px 'IBM Plex Sans KR', sans-serif";
     g.textAlign = "left"; g.textBaseline = "middle";
-    var x0 = cxl - Math.floor(cxl / cell) * cell;          // 가장 왼쪽 세로선
+    var x0 = cxl - Math.floor(cxl / cell) * cell;          // 가장 좌측 세로선
     var colL = x0 > fs * 1.8 ? 0 : x0, colR = x0 > fs * 1.8 ? x0 : x0 + cell;   // 번호를 넣을 칸
     g.textAlign = "center";
     for(j = 1; floor - j * cell >= -cell * 0.5; j++){
@@ -2790,7 +2798,7 @@
 
     if(c.type === "chain"){
       var earP = bestLm(7, 8);
-      // 얼굴 방향: 코가 귀보다 화면 왼쪽이면 왼쪽을 보고 선 것(전방 = 화면 왼쪽)
+      // 얼굴 방향: 코가 귀보다 화면 좌측이면 좌측을 보고 선 것(전방 = 화면 좌측)
       var noseP = pt(0);
       if(noseP && earP) s.faceSign = (noseP.x < earP.x) ? -1 : 1;
       var shL = pt(11), shR = pt(12);
@@ -3280,16 +3288,16 @@
 
   // 탭 순서와 무관하게 화면상 x좌표로 좌/우를 판별한다.
   // 정면 촬영에서는 대상자가 카메라를 보고 서 있으므로(거울 관계),
-  // 화면 왼쪽 점 = 대상자의 해부학적 오른쪽, 화면 오른쪽 점 = 대상자의 해부학적 왼쪽이다.
-  // 각도와 높은 쪽(몸 기준)을 함께 계산: {deg, side:"오른쪽이 높음"|"왼쪽이 높음"|"수평", text:"3.0° 오른쪽이 높음"}
-  // 화면 왼쪽 점 = 대상자 오른쪽, 화면 오른쪽 점 = 대상자 왼쪽 (대상자가 카메라를 보고 선 상태)
+  // 화면 좌측 점 = 대상자의 해부학적 우측, 화면 우측 점 = 대상자의 해부학적 좌측이다.
+  // 각도와 높은 쪽(몸 기준)을 함께 계산: {deg, side:"우측이 높음"|"좌측이 높음"|"수평", text:"3.0° 우측이 높음"}
+  // 화면 좌측 점 = 대상자 우측, 화면 우측 점 = 대상자 좌측 (대상자가 카메라를 보고 선 상태)
   function pairSummary(pair, s){
     var sp = sortedPairPoints(pair, s);
     if(!sp) return null;
     var deg = pairAngle(sp.left, sp.right);
     var side;
     if(deg < 0.05) side = "수평";
-    else side = (sp.left.y < sp.right.y) ? "오른쪽이 높음" : "왼쪽이 높음";
+    else side = (sp.left.y < sp.right.y) ? "우측이 높음" : "좌측이 높음";
     return { deg: deg, side: side, text: deg.toFixed(1) + "° " + side };
   }
 
@@ -3329,7 +3337,7 @@
       var dx = p.x - anchor.x;
       var pct = Math.abs(dx) / bodyHeight * 100;
       var g = grade("plumb", pct);
-      var fs = s.faceSign || -1;                       // -1: 화면 왼쪽이 전방
+      var fs = s.faceSign || -1;                       // -1: 화면 좌측이 전방
       var aligned = Math.abs(dx) < 2;
       var side = aligned ? "" : ((dx * fs > 0) ? "전방" : "후방");
       var dir = aligned ? "복사뼈 기준 정렬" : "복사뼈 기준 " + side + " 이동";
@@ -3526,7 +3534,7 @@
       var R = Math.min(96, rect.width * 0.3) * dpr, margin = 8 * dpr;   // 돋보기 크게(지름 약 190px)
       var fingerLeft = (loupe.clientX - rect.left) < rect.width / 2;
       var lcx = fingerLeft ? canvas.width - R - margin : R + margin;
-      var lcy = R + margin + 40 * dpr;   // 왼쪽 위 '원본 사진 보기' 버튼 아래로
+      var lcy = R + margin + 40 * dpr;   // 좌측 위 '원본 사진 보기' 버튼 아래로
       var L = scale * 3;
       ctx.save();
       ctx.beginPath(); ctx.arc(lcx, lcy, R, 0, Math.PI*2); ctx.closePath();
@@ -3878,7 +3886,7 @@
     function grp(name, list){
       var w = worst(list);
       if(!w) return { name:name, st:{cls:"st-none", label:"미측정"}, detail:"" };
-      return { name:name, st:ST[GRANK[w.grade.cls]], detail:"최대 " + w.name + " " + w.value + (w.foot && w.foot !== "수평" && w.foot !== "정렬" ? " (" + w.foot + ")" : "") };
+      return { name:name, st:ST[GRANK[w.grade.cls]], detail:"최대 " + w.name + " " + w.value + (w.foot && w.foot !== "수평" && w.foot !== "정렬" ? " (" + String(w.foot).replace(" ↑", " 높음") + ")" : "") };
     }
     var up = [].concat((f || []).filter(function(x){ return x.upper; }), (sd || []).filter(function(x){ return x.upper; }));
     var lo = [].concat((f || []).filter(function(x){ return !x.upper; }), (sd || []).filter(function(x){ return !x.upper; }));
@@ -3921,9 +3929,19 @@
     return h;
   }
   function gradeColor(cls){ return cls === "g-good" ? "#2FA36B" : cls === "g-warn" ? "#E39B1E" : "#E0574D"; }
+  // 방향 표시: ▲ 좌측 높음 / ◀ 전방 이동 / ▶ 후방 이동 / ● 수평·정렬
+  function dirInfo(foot){
+    var t = String(foot || "").replace(/왼쪽/g, "좌측").replace(/오른쪽/g, "우측");
+    if(/↑/.test(t)) return { ic: "▲", tx: t.replace(/\s*↑/, " 높음") };
+    if(/전방/.test(t)) return { ic: "◀", tx: t };
+    if(/후방/.test(t)) return { ic: "▶", tx: t };
+    return { ic: "●", tx: t || "정렬" };
+  }
+  function gradeShort(cls){ return cls === "g-good" ? "정상" : cls === "g-warn" ? "주의" : "개선"; }
   function chipHtml(x){
-    return '<div class="chip"><div class="h"><i style="background:'+gradeColor(x.grade.cls)+'"></i>'+x.title+'</div>'+
-      '<div class="v">'+x.value+'</div><div class="f">'+x.foot+'</div></div>';
+    var d = dirInfo(x.foot);
+    return '<div class="chip" style="--gc:'+gradeColor(x.grade.cls)+'"><div class="h"><span>'+x.title+'</span><em>'+gradeShort(x.grade.cls)+'</em></div>'+
+      '<div class="v">'+x.value+'</div><div class="f"><b>'+d.ic+'</b>'+d.tx+'</div></div>';
   }
   function nowText(){
     var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
@@ -4003,17 +4021,18 @@
     g.fillText(nowText() + (pt ? "  ·  " + pt : ""), W - PAD, 120); g.textAlign = "left";
     // 보드
     var by = HEAD;
-    g.fillStyle = "#F3F5F9"; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.fill();
+    g.fillStyle = "#141E35"; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.fill();
+    g.strokeStyle = "rgba(255,255,255,.07)"; g.lineWidth = 2; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.stroke();
     ["front", "side"].forEach(function(m, i){
       var list = m === "front" ? r.f : r.sd;
       var x0 = PAD + 24 + i * (COLW + 40);
-      if(i){ g.fillStyle = "#DCE1EA"; g.fillRect(x0 - 32, by + 30, 2, BOARD - 60); }
-      g.fillStyle = "#131B2E"; g.font = "800 40px " + F; g.fillText(m === "front" ? "정면" : "측면", x0, by + 70);
-      g.fillStyle = "#6A7488"; g.font = "600 22px " + F; g.fillText(m === "front" ? "좌우 높낮이" : "플럼라인", x0 + (m === "front" ? 90 : 90), by + 70);
+      if(i){ g.fillStyle = "rgba(255,255,255,.08)"; g.fillRect(x0 - 32, by + 30, 2, BOARD - 60); }
+      g.fillStyle = "#FFFFFF"; g.font = "800 42px " + F; g.fillText(m === "front" ? "정면" : "측면", x0, by + 70);
+      g.fillStyle = "#97A3BC"; g.font = "600 24px " + F; g.fillText(m === "front" ? "좌우 높낮이" : "플럼라인", x0 + 96, by + 70);
       var iy = by + 100, ix = x0 + CHIPW + 24;
       if(!list){
-        g.strokeStyle = "#C7CDD9"; g.lineWidth = 3; g.setLineDash([12, 10]); rr(g, x0, iy, COLW - 48, IMGH, 20); g.stroke(); g.setLineDash([]);
-        g.fillStyle = "#5B6478"; g.font = "600 30px " + F; g.textAlign = "center"; g.fillText("측정하지 않음", x0 + (COLW - 48)/2, iy + IMGH/2); g.textAlign = "left";
+        g.strokeStyle = "#3A4766"; g.lineWidth = 3; g.setLineDash([12, 10]); rr(g, x0, iy, COLW - 48, IMGH, 20); g.stroke(); g.setLineDash([]);
+        g.fillStyle = "#97A3BC"; g.font = "600 30px " + F; g.textAlign = "center"; g.fillText("측정하지 않음", x0 + (COLW - 48)/2, iy + IMGH/2); g.textAlign = "left";
         return;
       }
       var src = withMode(m, function(){ return buildAnnotated({ footer:false, labels:false }); });
@@ -4021,16 +4040,23 @@
       var sc = Math.min(IMGW / cr.w, IMGH / cr.h), dw = cr.w * sc, dh = cr.h * sc;
       g.save(); rr(g, ix, iy, IMGW, IMGH, 20); g.clip(); g.fillStyle = "#E6E9F0"; g.fillRect(ix, iy, IMGW, IMGH);
       g.drawImage(src, cr.x, cr.y, cr.w, cr.h, ix + (IMGW - dw)/2, iy + (IMGH - dh)/2, dw, dh); g.restore();
-      var ch = 128, gap = Math.min(22, (IMGH - list.length * ch) / Math.max(1, list.length - 1));
+      var ch = 140, gap = Math.min(22, (IMGH - list.length * ch) / Math.max(1, list.length - 1));
       list.forEach(function(x, k){
-        var cy = iy + k * (ch + gap);
+        var cy = iy + k * (ch + gap), gc = gradeColor(x.grade.cls), d = dirInfo(x.foot);
         g.save(); rr(g, x0, cy, CHIPW, ch, 18); g.clip();
-        g.fillStyle = "#5D6577"; g.fillRect(x0, cy, CHIPW, ch);
-        g.fillStyle = "#3B4357"; g.fillRect(x0, cy, CHIPW, 42); g.restore();
-        g.fillStyle = gradeColor(x.grade.cls); g.beginPath(); g.arc(x0 + 22, cy + 21, 7, 0, Math.PI*2); g.fill();
-        g.fillStyle = "#fff"; g.font = "700 22px " + F; g.fillText(x.title, x0 + 38, cy + 29);
-        g.font = "600 40px " + M; g.fillText(x.value, x0 + 18, cy + 88);
-        g.fillStyle = "#D7DCE6"; g.font = "500 20px " + F; g.fillText(x.foot, x0 + 18, cy + 116);
+        g.fillStyle = "#1E2A47"; g.fillRect(x0, cy, CHIPW, ch);
+        g.fillStyle = gc; g.fillRect(x0, cy, 8, ch); g.restore();
+        g.fillStyle = "#C9D3E6"; g.font = "700 23px " + F; g.fillText(x.title, x0 + 26, cy + 38);
+        // 판정 배지
+        var gl = gradeShort(x.grade.cls); g.font = "800 19px " + F; var gw = g.measureText(gl).width + 18;
+        g.save(); g.globalAlpha = .18; g.fillStyle = gc; rr(g, x0 + CHIPW - 14 - gw, cy + 15, gw, 30, 8); g.fill(); g.restore();
+        g.fillStyle = gc; g.textAlign = "center"; g.fillText(gl, x0 + CHIPW - 14 - gw / 2, cy + 37); g.textAlign = "left";
+        g.fillStyle = "#FFFFFF"; g.font = "700 46px " + M; g.fillText(x.value, x0 + 24, cy + 92);
+        // 방향 알약
+        g.font = "700 21px " + F; var tw = g.measureText(d.tx).width, pw = tw + 58;
+        g.fillStyle = "rgba(255,255,255,.09)"; rr(g, x0 + 22, cy + 104, pw, 30, 15); g.fill();
+        g.fillStyle = gc; g.font = "700 15px " + F; g.fillText(d.ic, x0 + 34, cy + 125);
+        g.fillStyle = "#EEF2FA"; g.font = "700 21px " + F; g.fillText(d.tx, x0 + 58, cy + 126);
       });
     });
     // 하단: 점수 + 요약
@@ -4051,7 +4077,7 @@
       g.fillStyle = "#E9EEF8"; g.font = "700 30px " + F; g.fillText(gr.name, x, y2 + 140);
       g.fillStyle = gr.st.cls === "st-good" ? "#4CC38A" : gr.st.cls === "st-warn" ? "#F0B44C" : gr.st.cls === "st-crit" ? "#F07A72" : "#5F6B86";
       g.font = "800 40px " + F; g.fillText(gr.st.label, x, y2 + 200);
-      g.fillStyle = "#97A3BC"; g.font = "500 21px " + F; g.fillText(gr.detail, x, y2 + 244);
+      g.fillStyle = "#C3CCDD"; var dfs = 23; g.font = "600 23px " + F; while(dfs > 16 && g.measureText(gr.detail).width > cw - 20){ dfs--; g.font = "600 " + dfs + "px " + F; } g.fillText(gr.detail.replace(/ ↑\)/, " 높음)"), x, y2 + 246);
     });
     if(PH) drawRepPair(g, PAD, y2 + BOT + 30, W - PAD * 2, F);
     if(ROMH - PH) drawRepRom(g, PAD, y2 + BOT + 30 + PH, W - PAD * 2, F, M);
@@ -5155,7 +5181,7 @@
       { k:"ir", n:"내회전", normal:40, pts:["knee","ankle","floor"], guide:"의자에 앉아 무릎 90° · 발을 <b>바깥쪽으로</b> 최대한 돌린 자세 · <b>정면(무릎 앞)에서</b> 촬영 · 바닥 수직선 ↔ 아래다리 각도" }
     ]}
   ];
-  // MediaPipe 인덱스 [왼쪽, 오른쪽] (사람 기준)
+  // MediaPipe 인덱스 [좌측, 우측] (사람 기준)
   var ROM_LM = { shoulder:[11,12], elbow:[13,14], wrist:[15,16], hip:[23,24], knee:[25,26], ankle:[27,28] };
   var ROM_PTNAME = { trunk:"몸통 중심선", floor:"바닥 기준선", vup:"수직 기준선", shoulder:"어깨 관절", elbow:"팔꿈치 관절", wrist:"손목(전완 끝)", hip:"고관절", knee:"무릎 관절", ankle:"발목(거퇴관절)" };
   /* v68: 목·허리·발목 추가 + 측만증(별도 탭) */
@@ -5184,13 +5210,13 @@
   // v70 메뉴 순서: 목 · 허리 · 어깨 · 무릎 · 고관절 · 발목 · 팔꿈치
   (function(){ var ord = ["neck", "trunk", "shoulder", "knee", "hip", "ankle", "elbow"]; ROM_JOINTS.sort(function(a, b){ return ord.indexOf(a.k) - ord.indexOf(b.k); }); })();
   var SCOL_JOINT = { k:"scol", n:"측만증", single:true, kind:"tilt", pts:["scL","scR"], moves:[
-    { k:"atr", n:"측만증 측정", normal:0, grade:"atr", guide:"<b>정면(또는 뒤)에서 등 높이로</b> 촬영 · 무릎을 펴고 양팔을 모아 <b>허리를 앞으로 숙인</b> 자세 · <b>왼쪽 허리(등)의 가장 높은 곳</b>과 <b>오른쪽 허리(등)의 가장 높은 곳</b> 두 점을 이은 선 ↔ <b>바닥 수평선</b> 각도 · 수평계를 초록으로 맞춰 촬영" }
+    { k:"atr", n:"측만증 측정", normal:0, grade:"atr", guide:"<b>정면(또는 뒤)에서 등 높이로</b> 촬영 · 무릎을 펴고 양팔을 모아 <b>허리를 앞으로 숙인</b> 자세 · <b>좌측 허리(등)의 가장 높은 곳</b>과 <b>우측 허리(등)의 가장 높은 곳</b> 두 점을 이은 선 ↔ <b>바닥 수평선</b> 각도 · 수평계를 초록으로 맞춰 촬영" }
   ]};
   var ROM_ALL = ROM_JOINTS.concat([SCOL_JOINT]);
   Object.assign(ROM_LM, { ear:[7,8], ear_o:[8,7], eye:[2,5], nose:[0,0], heel:[29,30], toe:[31,32] });
   var ROM_MID = { shmid:[11,12], hipmid:[23,24], earmid:[7,8], kneemid:[25,26] };
   Object.assign(ROM_PTNAME, { kneemid:"무릎 관절(양쪽 중앙)", c7:"C7(C7-T1)", headtop:"정수리", tcenter:"몸통 중심", mtp:"제1 MTP 관절", eye:"눈", foot:"발바닥 선(발끝 방향)", ear:"귀", ear_o:"반대쪽 귀", nose:"코끝", heel:"발뒤꿈치", toe:"발끝", shmid:"어깨 중앙", hipmid:"골반 중앙", earmid:"머리 중심",
-    hz:"수평 기준선", shperp:"정면 기준선", pelvis:"골반선", scL:"왼쪽 높은 점", scR:"오른쪽 높은 점", c1a:"상단 끝척추 ①", c1b:"상단 끝척추 ②", c2a:"하단 끝척추 ①", c2b:"하단 끝척추 ②" });
+    hz:"수평 기준선", shperp:"정면 기준선", pelvis:"골반선", scL:"좌측 높은 점", scR:"우측 높은 점", c1a:"상단 끝척추 ①", c1b:"상단 끝척추 ②", c2a:"하단 끝척추 ①", c2b:"하단 끝척추 ②" });
   // 발 고유 각도: 발목→제1 MTP 선이 발바닥 선(뒤꿈치→발끝)보다 아래로 기운 정도 (발 모양이라 움직여도 일정)
   function romFootOff(L, side){
     var a = romGet("ankle", L, side), m = romGet("mtp", L, side), si = side === "R" ? 1 : 0, h = L && L[ROM_LM.heel[si]], t = L && L[ROM_LM.toe[si]];
@@ -5247,10 +5273,10 @@
   function romKind(){ var mv = romS && romS.mv ? romMove() : null; return (mv && mv.kind) || romJoint().kind || "dir"; }
   function romIsLm(n){ return !!(ROM_LM[n] || ["foot", "mtp", "c7", "tcenter", "headtop"].indexOf(n) >= 0 || (typeof ROM_MID !== "undefined" && ROM_MID[n])); }
   function romPtsLabel(pts){ if(pts.length === 2) return ROM_PTNAME[pts[0]] + " – " + ROM_PTNAME[pts[1]] + " + 바닥 수평선"; if(pts.length === 4) return "상단 끝척추 선 · 하단 끝척추 선 (4점)"; return ROM_PTNAME[pts[2]] + " – " + ROM_PTNAME[pts[0]] + " – " + ROM_PTNAME[pts[1]]; }
-  // 목·허리 굴곡/신전은 좌우 구분 없음(C) · 측방굴곡/회전(lr)은 왼쪽/오른쪽 따로
+  // 목·허리 굴곡/신전은 좌우 구분 없음(C) · 측방굴곡/회전(lr)은 좌측/우측 따로
   function romSd(J, mv){ J = J || romJoint(); if(!J.single) return rom.side; if(mv === undefined && typeof romS !== "undefined" && romS && romS.mv) mv = J.moves.find(function(m){ return m.k === romS.mv; }); return (mv && mv.lr) ? rom.side : "C"; }
   function romLrAny(J){ return !!(J || romJoint()).moves.some(function(m){ return m.lr; }); }
-  function romSideTxt(mv){ return romSd(undefined, mv) === "C" ? "" : (rom.side === "R" ? "오른쪽" : "왼쪽"); }
+  function romSideTxt(mv){ return romSd(undefined, mv) === "C" ? "" : (rom.side === "R" ? "우측" : "좌측"); }
   // 기준점(A)이 실제 관절이 아닐 때(몸통 중심선·바닥·수직) 자동 배치
   function romSynthA(name, V, D, L, W, H, roll){
     var len = Math.max(Math.hypot(D.x - V.x, D.y - V.y) * 0.62, Math.max(W, H) * 0.1), dir = { x:0, y:1 }, done = false;   // 끝점과 겹치지 않게 짧게
@@ -5330,14 +5356,14 @@
         var lrSel = "";
         if(J.single && mv.lr){
           var oth = rom.latest[romKey(J.k, rom.side === "R" ? "L" : "R", mv.k)];
-          lrSel = '<div class="rc-lr" role="group" aria-label="측정 방향"><button type="button" data-lrs="R" aria-pressed="' + (rom.side === "R") + '">오른쪽</button><button type="button" data-lrs="L" aria-pressed="' + (rom.side === "L") + '">왼쪽</button>' +
-            '<span>' + (rom.side === "R" ? "왼쪽 " : "오른쪽 ") + (oth ? oth.value + "°" : "미측정") + '</span></div>';
+          lrSel = '<div class="rc-lr" role="group" aria-label="측정 방향"><button type="button" data-lrs="R" aria-pressed="' + (rom.side === "R") + '">우측</button><button type="button" data-lrs="L" aria-pressed="' + (rom.side === "L") + '">좌측</button>' +
+            '<span>' + (rom.side === "R" ? "좌측 " : "우측 ") + (oth ? oth.value + "°" : "미측정") + '</span></div>';
         }
         if(r){ done++; if(mv.normal > 0){ sumPct += Math.min(100, jd.pct); cnt++; } }
         var dt = romDeltaHtml(J.k, mv).replace('class="rom-delta', 'class="rom-delta rc-delta');
         return '<div class="rom-card rc ' + jd.cls + '">' +
           (r && r.thumb ? '<img class="rc-th rc-open" data-rid="' + r.id + '" src="' + r.thumb + '" alt="" title="이 회차 사진 보기·수정">' : '<div class="rc-th rc-th0" aria-hidden="true">' + (val == null ? '–' : '✓') + '</div>') +
-          '<div class="rc-main"><div class="rc-h"><b>' + mv.n + (J.single && mv.lr ? ' <small class="rc-sd">' + (rom.side === "R" ? "오른쪽" : "왼쪽") + '</small>' : '') + '</b><em>정상 ' + (mv.normal ? "0–" + mv.normal : "0") + '°</em></div>' + lrSel +
+          '<div class="rc-main"><div class="rc-h"><b>' + mv.n + (J.single && mv.lr ? ' <small class="rc-sd">' + (rom.side === "R" ? "우측" : "좌측") + '</small>' : '') + '</b><em>정상 ' + (mv.normal ? "0–" + mv.normal : "0") + '°</em></div>' + lrSel +
           '<div class="rc-v">' + (val == null ? '<span class="none">미측정</span>' : '<strong>' + val + '°</strong>') + '<span class="judge">' + (val == null ? '' : jd.txt) + '</span></div>' +
           '<div class="rom-bar"><i style="width:' + (val == null ? 0 : Math.min(100, jd.pct)) + '%"></i></div>' +
           (r ? '<div class="rc-meta">' + fmtDate(r.at).slice(0, 10) + (r.memberId ? "" : " · 회원 미지정") + '</div>' : '') + dt + '</div>' +
@@ -5347,7 +5373,7 @@
       $("romGrid").querySelectorAll("[data-mv]").forEach(function(b){ b.addEventListener("click", function(){ openRomSheet(b.getAttribute("data-mv")); }); });
       $("romGrid").querySelectorAll("[data-lrs]").forEach(function(b){ b.addEventListener("click", function(){ rom.side = b.getAttribute("data-lrs"); renderRom(); }); });
       $("romGrid").querySelectorAll("[data-cmp]").forEach(function(b){ b.addEventListener("click", function(){ openRomCompare(b.getAttribute("data-cmp")); }); });
-      $("romSum").innerHTML = '<div><span>' + J.n + (J.single ? '' : ' · ' + (rom.side === "R" ? "오른쪽" : "왼쪽")) + ' 측정</span><b>' + done + ' / ' + J.moves.length + '</b></div>' +
+      $("romSum").innerHTML = '<div><span>' + J.n + (J.single ? '' : ' · ' + (rom.side === "R" ? "우측" : "좌측")) + ' 측정</span><b>' + done + ' / ' + J.moves.length + '</b></div>' +
         '<div><span>평균 가동 범위 (정상 대비)</span><b>' + (cnt ? Math.round(sumPct / cnt) + "%" : "–") + '</b></div>' +
         '<div><span>측정 포인트</span><b style="font-size:14px;font-family:inherit">' + ROM_PTNAME[J.pts[2]] + ' – ' + ROM_PTNAME[J.pts[0]] + ' – ' + ROM_PTNAME[J.pts[1]] + '</b></div>' +
         '<button type="button" class="rom-all-cmp" id="btnRomAllCmp"' + (done ? '' : ' disabled') + '>' + (isPro() ? "📊" : "🔒") + ' ' + J.n + ' 전체 회차 비교' + (isPro() ? '' : ' <i>PRO</i>') + '</button>';
@@ -5366,7 +5392,7 @@
   function romMove(){ return romJoint().moves.find(function(m){ return m.k === romS.mv; }); }
   function romSub(){
     var J = romJoint();
-    $("romSheetSub").textContent = romMove().grade ? (romMove().grade === "atr" ? "기준 5° 미만 정상 · 7° 이상 상담 권장 · 측정점 왼쪽·오른쪽 허리 가장 높은 곳 2개 + 바닥 수평선" : "기준 10° 미만 정상 · 상단·하단 끝척추 선 4점") : "정상 " + (romMove().normal ? "0–" + romMove().normal : "0") + "° · 측정점 " + romPtsLabel(romPts());
+    $("romSheetSub").textContent = romMove().grade ? (romMove().grade === "atr" ? "기준 5° 미만 정상 · 7° 이상 상담 권장 · 측정점 좌측·우측 허리 가장 높은 곳 2개 + 바닥 수평선" : "기준 10° 미만 정상 · 상단·하단 끝척추 선 4점") : "정상 " + (romMove().normal ? "0–" + romMove().normal : "0") + "° · 측정점 " + romPtsLabel(romPts());
     $("romRefV").parentNode.hidden = true;   // v66: 기준점·기준선을 직접 끌어서 조정하므로 수직/수평 선택 불필요
     $("romRefV").setAttribute("aria-pressed", String(romS.ref !== "horiz"));
     $("romRefH").setAttribute("aria-pressed", String(romS.ref === "horiz"));
@@ -5564,7 +5590,7 @@
         if(tr.length) romS.trunk = { x: tr.reduce(function(a, p){ return a + p.x; }, 0) / tr.length, y: tr.reduce(function(a, p){ return a + p.y; }, 0) / tr.length };
         romS.q = res.q;
         romS.footOff = romJoint().k === "ankle" ? romFootOff(L, rom.side) : null;
-        if(res.q < 0.45 && other > res.q + 0.3) msg = "선택한 쪽(" + (rom.side === "R" ? "오른쪽" : "왼쪽") + ")이 잘 보이지 않아요. 반대쪽이 카메라를 향한 사진 같아요. 방향을 확인해 주세요.";
+        if(res.q < 0.45 && other > res.q + 0.3) msg = "선택한 쪽(" + (rom.side === "R" ? "우측" : "좌측") + ")이 잘 보이지 않아요. 반대쪽이 카메라를 향한 사진 같아요. 방향을 확인해 주세요.";
       }
       if(romS.ref === "horiz") romS.hdir = romHdir();
       romReady(ok, msg);
@@ -5964,7 +5990,7 @@
     return order.map(function(k){
       var p = k.split("|"), J = ROM_ALL.find(function(j){ return j.k === p[0]; }); if(!J) return null;
       var mv = J.moves.find(function(m){ return m.k === p[2]; }); if(!mv) return null;
-      var lab = J.k === "scol" ? mv.n : J.n + " " + mv.n + (p[1] === "L" ? " (왼쪽)" : p[1] === "R" ? " (오른쪽)" : "");
+      var lab = J.k === "scol" ? mv.n : J.n + " " + mv.n + (p[1] === "L" ? " (좌측)" : p[1] === "R" ? " (우측)" : "");
       return { key: k, J: J, mv: mv, list: map[k], label: lab };
     }).filter(Boolean);
   }
@@ -6151,7 +6177,7 @@
       return;
     }
     var finish = function(xa, xb, yf, src){
-      // 몸 윤곽 위쪽 선에서 척추(가운데)를 기준으로 왼쪽·오른쪽 각각 '가장 높은 곳'을 찾음
+      // 몸 윤곽 위쪽 선에서 척추(가운데)를 기준으로 좌측·우측 각각 '가장 높은 곳'을 찾음
       var xc = (xa + xb) / 2, bw = Math.max(1, xb - xa), gap = bw * 0.2, st = Math.max(1, bw / 120);
       var hi = function(x0, x1){ var bx = (x0 + x1) / 2, by = 1e9; for(var x = x0; x <= x1; x += st){ var y = yf(x); if(y < by){ by = y; bx = x; } } return { x: bx, y: by }; };
       var L = hi(Math.max(xa + bw * 0.04, xc - bw * 0.46), xc - gap), R = hi(xc + gap, Math.min(xb - bw * 0.04, xc + bw * 0.46));
@@ -6160,7 +6186,7 @@
       romS.q = src === "mask" ? 0.8 : 0.55;
       romReady(true, "");
       $("romQ").className = "rom-q " + (src === "mask" ? "good" : "mid");
-      $("romQ").textContent = (src === "mask" ? "✓ 등 윤곽 인식 · " : "등 윤곽 추정 · ") + "주황 점 = 왼쪽, 분홍 점 = 오른쪽 허리(등)의 가장 높은 곳에 맞춰 주세요 · " + scolTilt(romS.pts).hi + (romS.roll != null && Math.abs(romS.roll) >= 0.3 ? " · 폰 기울기 " + romS.roll.toFixed(1) + "° 자동 보정" : "");
+      $("romQ").textContent = (src === "mask" ? "✓ 등 윤곽 인식 · " : "등 윤곽 추정 · ") + "주황 점 = 좌측, 분홍 점 = 우측 허리(등)의 가장 높은 곳에 맞춰 주세요 · " + scolTilt(romS.pts).hi + (romS.roll != null && Math.abs(romS.roll) >= 0.3 ? " · 폰 기울기 " + romS.roll.toFixed(1) + "° 자동 보정" : "");
     };
     var fallback = function(){
       var ct = null; try{ ct = scolContour(romS.img, W, H); }catch(e){}
@@ -6185,7 +6211,7 @@
     var r = (romS.roll || 0) * Math.PI / 180, hx = Math.cos(r), hy = Math.sin(r);   // 화면 속 실제 수평 방향
     var dx = P[1].x - P[0].x, dy = P[1].y - P[0].y, L = Math.hypot(dx, dy) || 1;
     var cr = (hx * dy - hy * dx) / L, deg = Math.round(Math.abs(Math.asin(Math.max(-1, Math.min(1, cr)))) * 180 / Math.PI);
-    var hiTxt = deg === 0 ? "좌우 높이 같음" : (cr > 0 ? "화면 왼쪽(주황)이 더 높음" : "화면 오른쪽(분홍)이 더 높음");
+    var hiTxt = deg === 0 ? "좌우 높이 같음" : (cr > 0 ? "화면 좌측(주황)이 더 높음" : "화면 우측(분홍)이 더 높음");
     return { deg: deg, hi: hiTxt, hx: hx, hy: hy, up: cr };
   }
   function scolPaintTilt(g, u){
@@ -6207,7 +6233,7 @@
     g.fillStyle = "rgba(255,181,71,.30)"; g.strokeStyle = "#FFB547"; g.lineWidth = 3 * u;
     g.beginPath(); g.moveTo(loP.x, loP.y); g.arc(loP.x, loP.y, R, a1, a1 + d, d < 0); g.closePath(); g.fill();
     // 점
-    var names = ["왼쪽 높은 점", "오른쪽 높은 점"];
+    var names = ["좌측 높은 점", "우측 높은 점"];
     P.forEach(function(p, i){
       if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 22 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
       g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 3 * u; g.beginPath(); g.arc(p.x, p.y, 12 * u, 0, Math.PI * 2); g.fill(); g.stroke();
@@ -6288,7 +6314,7 @@
         var cls = diff == null ? "" : (diff <= 5 ? "good" : diff <= 10 ? "warn" : "crit");
         var lab = diff == null ? "한쪽만 측정" : diff <= 5 ? "균형" : diff <= 10 ? "약간 차이" : "차이 큼";
         var weak = null;
-        if(diff != null && diff > 5){ weak = (mv.normal === 0 ? (lv > rv) : (lv < rv)) ? "왼쪽" : "오른쪽"; }
+        if(diff != null && diff > 5){ weak = (mv.normal === 0 ? (lv > rv) : (lv < rv)) ? "좌측" : "우측"; }
         rows.push({ J: J, mv: mv, L: lv, R: rv, diff: diff, sym: sym, cls: cls, lab: lab, weak: weak, at: Math.max(L ? L.at : 0, R ? R.at : 0) });
       });
     });
@@ -6303,7 +6329,7 @@
     romLoad().then(function(){
       var rows = romLRRows().filter(function(r){ return !r.single; }), pairs = rows.filter(function(r){ return r.diff != null; });
       var body = "";
-      if(!rows.length){ body = '<p class="ds-empty">아직 ROM 측정 기록이 없어요. 같은 항목을 왼쪽·오른쪽 모두 측정하면 좌우 비교가 나와요.</p>'; }
+      if(!rows.length){ body = '<p class="ds-empty">아직 ROM 측정 기록이 없어요. 같은 항목을 좌측·우측 모두 측정하면 좌우 비교가 나와요.</p>'; }
       else {
         var worst = pairs.slice().sort(function(a, b){ return b.diff - a.diff; })[0];
         var nBig = pairs.filter(function(r){ return r.diff > 10; }).length, nMid = pairs.filter(function(r){ return r.diff > 5 && r.diff <= 10; }).length;
@@ -6347,7 +6373,7 @@
         nBig = rows.filter(function(r){ return r.diff != null && r.diff > 10; }).length;
         low = rows.filter(function(r){ return r.mv.normal > 0 && [r.L, r.R, r.C].some(function(v){ return v != null && v / r.mv.normal < 0.7; }); }).length;
         $("repRomSum").textContent = "측정 " + rows.length + "항목 · 정상 대비 70% 미만 " + low + "항목 · 좌우 차이 큼 " + nBig + "항목";
-        $("repRomBody").innerHTML = '<table class="rep-rom-tbl"><thead><tr><th>부위 · 동작</th><th>왼쪽</th><th>오른쪽</th><th>정상</th><th>좌우</th></tr></thead><tbody>' + rows.map(function(r){
+        $("repRomBody").innerHTML = '<table class="rep-rom-tbl"><thead><tr><th>부위 · 동작</th><th>좌측</th><th>우측</th><th>정상</th><th>좌우</th></tr></thead><tbody>' + rows.map(function(r){
           var c = function(v){ if(v == null) return '<td class="num">–</td>'; var jd = romJudge(r.mv, v); return '<td class="num ' + jd.cls + '">' + v + '°<small>' + (r.mv.normal ? Math.min(999, Math.round(v / r.mv.normal * 100)) + '%' : '') + '</small></td>'; };
           if(r.single){ var jd1 = romJudge(r.mv, r.C); return '<tr><td>' + r.J.n + ' ' + r.mv.n + '</td><td class="num ' + jd1.cls + '" colspan="2">' + r.C + '°<small>' + (r.mv.normal ? Math.round(r.C / r.mv.normal * 100) + '% · ' : '') + '좌우 공통</small></td><td class="num">' + (r.mv.normal ? "0–" + r.mv.normal : "0") + '°</td><td class="lrj">–</td></tr>'; }
           return '<tr><td>' + r.J.n + ' ' + r.mv.n + '</td>' + c(r.L) + c(r.R) + '<td class="num">' + (r.mv.normal ? "0–" + r.mv.normal : "0") + '°</td><td class="lrj ' + r.cls + '">' + r.lab + (r.diff != null ? " " + r.diff + "°" : "") + '</td></tr>';
@@ -6379,7 +6405,7 @@
     g.fillStyle = "#97A3BC"; g.font = "700 26px " + F; g.fillText("ROM 관절가동범위 · 좌우 비교", x + 36, y + 56);
     var cols = [x + 36, x + w * 0.36, x + w * 0.52, x + w * 0.68, x + w * 0.80];
     g.font = "600 21px " + F; g.fillStyle = "#6E7A94";
-    ["부위 · 동작", "왼쪽", "오른쪽", "정상", "좌우"].forEach(function(t, i){ g.fillText(t, cols[i], y + 104); });
+    ["부위 · 동작", "좌측", "우측", "정상", "좌우"].forEach(function(t, i){ g.fillText(t, cols[i], y + 104); });
     var col = function(cls){ return cls === "good" ? "#4CC38A" : cls === "warn" ? "#F0B44C" : cls === "crit" ? "#F07A72" : "#E9EEF8"; };
     rows.forEach(function(r, k){
       var yy = y + 130 + k * RH + 34;
@@ -6439,10 +6465,10 @@
   }
   function openRomCompare(mk){
     if(!isPro()){ openProGate("rom"); return; }
-    var J = romJoint(), sideTxt = (J.single && !romLrAny(J)) ? "좌우 공통" : (rom.side === "R" ? "오른쪽" : "왼쪽"), body = "";
+    var J = romJoint(), sideTxt = (J.single && !romLrAny(J)) ? "좌우 공통" : (rom.side === "R" ? "우측" : "좌측"), body = "";
     if(mk){
       var mv = J.moves.find(function(m){ return m.k === mk; }), H = romHist(J.k, romSd(J, mv), mk);
-      sideTxt = romSd(J, mv) === "C" ? "좌우 공통" : (rom.side === "R" ? "오른쪽" : "왼쪽");
+      sideTxt = romSd(J, mv) === "C" ? "좌우 공통" : (rom.side === "R" ? "우측" : "좌측");
       $("romCmpTitle").textContent = J.n + " " + mv.n + " · " + sideTxt + " 회차 비교";
       var first = H[0], last = H[H.length - 1], d = last.value - first.value, better = mv.normal === 0 ? d < 0 : d > 0;
       body += '<div class="rcmp-kpi"><div><span>1차</span><b>' + first.value + '°</b><em>' + fmtDate(first.at).slice(0, 10) + '</em></div>' +
@@ -6484,7 +6510,7 @@
   var romCam = { stream:null, facing:"environment", on:false, raf:0, lm:null, lmP:null, buf:[], lastTs:0, roll:null, pitch:null, orient:false, cpu:false, seen:0 };
   var romVideo = $("romVideo"), romLiveCv = $("romLiveCv"), romLiveG = romLiveCv.getContext("2d");
   window.__romCam = romCam;
-  var ROM_PART = { kneemid:"무릎 중앙", c7:"C7", headtop:"정수리", tcenter:"몸통 중심", mtp:"제1 MTP", c1a:"상단 선 ①", c1b:"상단 선 ②", c2a:"하단 선 ①", c2b:"하단 선 ②", scL:"왼쪽 높은 점", scR:"오른쪽 높은 점", hz:"수평선", ear:"귀", ear_o:"반대쪽 귀", nose:"코", heel:"뒤꿈치", toe:"발끝", shmid:"어깨 중앙", hipmid:"골반 중앙", earmid:"머리 중심", shperp:"정면선", pelvis:"골반선", eye:"눈", foot:"발바닥선", trunk:"몸통선", floor:"바닥선", vup:"수직선", shoulder:"어깨", elbow:"팔꿈치", wrist:"손목", hip:"고관절", knee:"무릎", ankle:"발목" };
+  var ROM_PART = { kneemid:"무릎 중앙", c7:"C7", headtop:"정수리", tcenter:"몸통 중심", mtp:"제1 MTP", c1a:"상단 선 ①", c1b:"상단 선 ②", c2a:"하단 선 ①", c2b:"하단 선 ②", scL:"좌측 높은 점", scR:"우측 높은 점", hz:"수평선", ear:"귀", ear_o:"반대쪽 귀", nose:"코", heel:"뒤꿈치", toe:"발끝", shmid:"어깨 중앙", hipmid:"골반 중앙", earmid:"머리 중심", shperp:"정면선", pelvis:"골반선", eye:"눈", foot:"발바닥선", trunk:"몸통선", floor:"바닥선", vup:"수직선", shoulder:"어깨", elbow:"팔꿈치", wrist:"손목", hip:"고관절", knee:"무릎", ankle:"발목" };
   function romOrient(e){
     if(e.beta == null || e.gamma == null) return;
     var d2r = Math.PI / 180, b = e.beta * d2r, g = e.gamma * d2r;
@@ -6725,7 +6751,7 @@
       var main = mp.indexOf(n), r = main >= 0 ? 9 : 6;
       g.fillStyle = main >= 0 ? ROM_COL[main] : vc(p.v); g.strokeStyle = main >= 0 ? vc(p.v) : "#fff"; g.lineWidth = main >= 0 ? 3.5 : 2;
       g.beginPath(); g.arc(p.x, p.y, r, 0, Math.PI * 2); g.fill(); g.stroke();
-      var t = ROM_PART[n], tw = g.measureText(t).width + 10, tx = main >= 0 ? p.x - r - 5 - tw : p.x + r + 5;   // 측정 점 이름은 왼쪽, 나머지는 오른쪽 (겹침 방지)
+      var t = ROM_PART[n], tw = g.measureText(t).width + 10, tx = main >= 0 ? p.x - r - 5 - tw : p.x + r + 5;   // 측정 점 이름은 좌측, 나머지는 우측 (겹침 방지)
       if(tx + tw > vw) tx = p.x - r - 5 - tw; if(tx < 0) tx = p.x + r + 5;
       g.fillStyle = "rgba(13,21,40,.72)"; rr(g, tx, p.y - 10, tw, 20, 6); g.fill();
       g.fillStyle = main >= 0 ? ROM_COL[main] : "#fff"; g.fillText(t, tx + 5, p.y + 0.5);
@@ -6743,7 +6769,7 @@
     } else {
       romCam.seen = 0;
       var miss = [!okA ? ROM_PART[mp[2]] : null, !okV ? nm0 : null, !okD ? nm1 : null].filter(Boolean).join("·");
-      chip.className = "rom-pts warn"; chip.textContent = miss + "이(가) 잘 안 보여요 · " + (rom.side === "R" ? "오른쪽" : "왼쪽") + "이 카메라를 향하게, 몸 전체가 들어오게";
+      chip.className = "rom-pts warn"; chip.textContent = miss + "이(가) 잘 안 보여요 · " + (rom.side === "R" ? "우측" : "좌측") + "이 카메라를 향하게, 몸 전체가 들어오게";
     }
   }
   function romLiveHdir(S, V, vw){
@@ -7014,7 +7040,7 @@
   function brandLabel(def, kind){ var b = brand(); return b && b.name ? b.name + "  ·  " + kind : "AYO체형분석  ·  " + def; }
   function brandContact(){ var b = brand(); return b && b.contact ? b.contact : ""; }
   function brandFoot(){ var b = brand(); return (b && b.contact ? b.contact + "   |   " : "") + "made by AYOAJEYO"; }
-  // 오른쪽 정렬로 흰 바탕 플레이트 위에 로고를 그림 (xr = 오른쪽 끝)
+  // 우측 정렬로 흰 바탕 플레이트 위에 로고를 그림 (xr = 우측 끝)
   function drawBrandLogo(g, xr, y, maxW, h){
     var b = brand(); if(!b || !b.logo || !brandImg || !brandImg.naturalWidth) return;
     var pad = Math.round(h * 0.12), ih = h - pad * 2, iw = Math.min(maxW - pad * 2, ih * brandImg.naturalWidth / brandImg.naturalHeight);
@@ -7565,7 +7591,7 @@
       try{ tried = sessionStorage.getItem("4pm_ext_tried") === "1"; sessionStorage.setItem("4pm_ext_tried", "1"); }catch(e){}
       if(!tried) setTimeout(function(){ location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(url); }, 300);
     } else {
-      $("inappMsg").innerHTML += "<br>오른쪽 위(또는 아래) <b>⋮ / 공유 메뉴 → '다른 브라우저로 열기'</b>를 누르거나, 주소를 복사해 크롬·사파리에 붙여넣으세요.";
+      $("inappMsg").innerHTML += "<br>우측 위(또는 아래) <b>⋮ / 공유 메뉴 → '다른 브라우저로 열기'</b>를 누르거나, 주소를 복사해 크롬·사파리에 붙여넣으세요.";
       btnExt.hidden = true;
     }
     $("btnCopyLink").addEventListener("click", function(){

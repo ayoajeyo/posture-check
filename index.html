@@ -777,6 +777,12 @@
   .rom-roundbar .rr-no{flex:0 0 auto; background:var(--blue); color:#fff; font-weight:800; font-size:14px; border-radius:9px; padding:6px 10px;}
   .rom-roundbar .rr-txt{flex:1; min-width:0; display:flex; flex-direction:column;} .rom-roundbar .rr-txt b{font-size:14px;} .rom-roundbar .rr-txt em{font-style:normal; font-size:11.5px; color:var(--ink-soft);}
   .rom-roundbar .btn{white-space:nowrap; flex:0 0 auto;}
+  .rom-rounds{display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:0 2px 4px; margin:-4px 0 12px; scroll-snap-type:x proximity;}
+  .rom-rounds[hidden]{display:none!important;} .rom-rounds::-webkit-scrollbar{display:none;}
+  .rom-rounds button{flex:0 0 auto; scroll-snap-align:start; display:flex; flex-direction:column; align-items:center; gap:1px; min-width:72px; padding:7px 12px; border-radius:12px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:inherit; cursor:pointer;}
+  .rom-rounds button b{font-size:14px; font-weight:800;} .rom-rounds button em{font-style:normal; font-size:11px; color:var(--ink-soft);}
+  .rom-rounds button[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#fff;} .rom-rounds button[aria-pressed="true"] em{color:rgba(255,255,255,.85);}
+  .rom-rounds button.new{border-style:dashed;}
   .rc-prev{font-size:11px; color:var(--ink-soft); margin-top:3px;}
   .rom-siderow{display:flex; align-items:stretch; gap:8px; margin-bottom:12px;}
   .rom-siderow .rom-side{margin-bottom:0; flex:1 1 auto;} .rom-siderow .rom-side button{flex:1;}
@@ -1478,6 +1484,7 @@
       <div class="rr-txt"><b id="romRoundTxt">1차 측정</b><em id="romRoundSub"></em></div>
       <button type="button" class="btn primary sm" id="btnRomNextRound">다음 회차 측정</button>
     </div>
+    <div class="rom-rounds" id="romRounds" role="group" aria-label="회차 선택" hidden></div>
     <nav class="tabs rom-joints" id="romJoints" role="tablist"></nav>
     <div class="rom-siderow">
     <div class="rom-side" id="romSide" role="group" aria-label="측정 방향">
@@ -1488,7 +1495,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v90</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v91</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1501,10 +1508,11 @@
       <div class="rr-txt"><b id="scolRoundTxt">1차 측정</b><em id="scolRoundSub"></em></div>
       <button type="button" class="btn primary sm" id="btnScolNextRound">다음 회차 측정</button>
     </div>
+    <div class="rom-rounds" id="scolRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v90</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v91</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -5498,6 +5506,25 @@
       $(px + "RoundTxt").textContent = state.member.name + " · " + n + "차 측정";
       $(px + "RoundSub").textContent = has ? "측정 결과는 " + n + "차 회차로 저장돼요" : (n > 1 ? "새 회차 · 측정하면 " + n + "차로 저장돼요" : "첫 측정 · 1차로 저장돼요");
       var b = $(px === "rom" ? "btnRomNextRound" : "btnScolNextRound"); b.disabled = !has; b.textContent = (Math.max(mx, n) + 1) + "차 측정 시작";
+      // v91 회차 선택 스크롤
+      var box = $(px + "Rounds"); if(!box) return;
+      var top = Math.max(mx, n); box.hidden = top < 2;
+      if(top < 2){ box.innerHTML = ""; return; }
+      var html = "";
+      for(var k = 1; k <= top; k++){
+        var R = rom.all.filter(function(r){ return romRoundOf(r) === k; });
+        var last = R.length ? R.reduce(function(a, r){ return Math.max(a, r.at); }, 0) : 0;
+        var sub = last ? fmtDate(last).slice(5, 10).replace("-", ".") + " · " + R.length + "건" : "새 회차";
+        html += '<button type="button" data-rn="' + k + '" aria-pressed="' + (k === n) + '"' + (last ? "" : ' class="new"') + '><b>' + k + '차</b><em>' + sub + '</em></button>';
+      }
+      box.innerHTML = html;
+      box.querySelectorAll("button").forEach(function(btn){ btn.addEventListener("click", function(){
+        var k = +btn.getAttribute("data-rn"); if(!state.member || k === romCurRound()) return;
+        rom.cur = { mid: state.member.id, n: k };
+        toast(state.member.name + " 회원 " + k + "차 기록을 보고 있어요. 이 상태에서 측정하면 " + k + "차로 저장돼요.");
+        if(state.view === "scol" && typeof renderScol === "function") renderScol(); else renderRom();
+      }); });
+      var on = box.querySelector('[aria-pressed="true"]'); if(on) box.scrollLeft = Math.max(0, on.offsetLeft - box.clientWidth / 2 + on.offsetWidth / 2);
     });
   }
   $("btnScolNextRound").addEventListener("click", function(){ $("btnRomNextRound").click(); });

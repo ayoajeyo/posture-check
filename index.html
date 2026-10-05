@@ -1488,7 +1488,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v88</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v89</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1504,7 +1504,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v88</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v89</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -5311,7 +5311,7 @@
   // v70 메뉴 순서: 목 · 허리 · 어깨 · 무릎 · 고관절 · 발목 · 팔꿈치
   (function(){ var ord = ["neck", "trunk", "shoulder", "knee", "hip", "ankle", "elbow"]; ROM_JOINTS.sort(function(a, b){ return ord.indexOf(a.k) - ord.indexOf(b.k); }); })();
   var SCOL_JOINT = { k:"scol", n:"측만증", single:true, kind:"tilt", pts:["scL","scR"], moves:[
-    { k:"atr", n:"측만증 측정", normal:0, grade:"atr", guide:"<b>뒤에서 등 높이로</b> 촬영 · 무릎을 펴고 양팔을 모아 <b>허리를 앞으로 숙인</b> 자세 · ①선: <b>좌측 가장 높은 점</b> ↔ <b>우측 가장 높은 점</b>을 이은 선 · ②선: <b>바닥에 수평인 선</b> · 두 선의 각도 (측정각 0–20°) · 수평계를 초록으로 맞춰 촬영" }
+    { k:"atr", n:"측만증 측정", normal:0, grade:"atr", guide:"<b>정면(또는 뒤)에서 등 높이로</b> 촬영 · 무릎을 펴고 양팔을 모아 <b>허리를 앞으로 숙인</b> 자세 · <b>좌측 허리(등)의 가장 높은 곳</b>과 <b>우측 허리(등)의 가장 높은 곳</b> 두 점을 이은 선 ↔ <b>바닥 수평선</b> 각도 · 수평계를 초록으로 맞춰 촬영" }
   ]};
   var ROM_ALL = ROM_JOINTS.concat([SCOL_JOINT]);
   Object.assign(ROM_LM, { ear:[7,8], ear_o:[8,7], eye:[2,5], nose:[0,0], heel:[29,30], toe:[31,32], finger:[19,20] });
@@ -5819,7 +5819,7 @@
     romSyncView(); if(typeof romRotSync === "function") romRotSync();
     var mv = romMove(), val = romAngle(), jd = romJudge(mv, val);
     $("romVal").textContent = val == null ? "–" : val + "°";
-    $("romNorm").textContent = mv.grade ? (mv.grade === "atr" ? "0–20° (5° 미만 정상)" : "10° 미만") : mv.normal + "°";
+    $("romNorm").textContent = mv.grade ? (mv.grade === "atr" ? "5° 미만" : "10° 미만") : mv.normal + "°";
     $("romJudge").textContent = jd.txt; $("romJudge").style.color = jd.cls === "good" ? "var(--good)" : jd.cls === "warn" ? "var(--warn)" : jd.cls === "crit" ? "var(--crit)" : "";
   }
   // u = 화면 1px에 해당하는 이미지 픽셀 수

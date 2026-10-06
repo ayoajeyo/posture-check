@@ -985,6 +985,9 @@
   /* v93 PRO 무료 체험 */
   .trial-bar{display:flex; align-items:center; gap:10px; padding:9px 12px; margin:0 0 12px; border-radius:14px; background:linear-gradient(135deg,rgba(255,206,120,.22),rgba(47,107,255,.16)); border:1px solid rgba(255,206,120,.6);}
   .trial-bar[hidden]{display:none!important;}
+  /* v94 Play 설치 앱: 앱 안 결제 안내 숨김 (Google Play 결제 정책 · 소비 전용 방식) */
+  body.is-play .play-hide{display:none!important;}
+  body:not(.is-play) .play-only{display:none!important;}
   .trial-bar .tb-ic{font-size:20px; flex:0 0 auto;}
   .trial-bar .tb-txt{flex:1; min-width:0;} .trial-bar b{display:block; font-size:14px;} .trial-bar b u{text-decoration:none; color:#FFCE78;} .trial-bar em{display:block; font-style:normal; font-size:11.5px; color:var(--ink-soft);}
   .trial-bar .btn{width:auto!important; flex:0 0 auto!important; min-width:0!important; white-space:nowrap; padding:8px 14px;} .trial-bar b,.trial-bar em{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
@@ -1098,7 +1101,7 @@
   <div class="trial-bar" id="trialBar" hidden role="status">
     <span class="tb-ic" aria-hidden="true">🎁</span>
     <div class="tb-txt"><b id="tbTitle">PRO 무료 체험 중</b><em id="tbSub"></em></div>
-    <button type="button" class="btn primary sm" id="btnTbPay">결제 안내</button>
+    <button type="button" class="btn primary sm" id="btnTbPay"><span class="play-hide">결제 안내</span><span class="play-only">코드 입력</span></button>
   </div>
   <div class="bk-banner" id="bkBanner" hidden role="status">
     <span class="bk-ic" aria-hidden="true">💾</span>
@@ -1449,7 +1452,7 @@
   </section>
   <section class="view" id="view-settings" hidden>
     <div class="set-lock" id="setLock">
-      <div><b>🔒 PRO 플랜 전용 메뉴</b><span>미리 보기 중이에요. 저장하려면 PRO 플랜이 필요해요.<br>유료 플랜 문의 · <a href="mailto:aesonge26@gmail.com" class="pro-mail-link">aesonge26@gmail.com</a></span></div>
+      <div><b>🔒 PRO 플랜 전용 메뉴</b><span>미리 보기 중이에요. 저장하려면 PRO 플랜이 필요해요.<span class="play-hide"><br>유료 플랜 문의 · <a href="mailto:aesonge26@gmail.com" class="pro-mail-link">aesonge26@gmail.com</a></span></span></div>
       <button type="button" class="btn primary sm" id="btnSetPro">PRO 알아보기</button>
     </div>
     <p id="setOn" hidden style="margin:0 0 12px"><span class="set-on">✓ PRO 이용 중</span></p>
@@ -1517,7 +1520,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v93</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v94</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1534,7 +1537,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v93</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v94</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1705,7 +1708,7 @@
   <div class="confirm-box pro-box">
     <span class="pro-badge">PRO</span>
     <h3 id="proTitle">유료 플랜에서 이용할 수 있어요</h3>
-    <button type="button" class="pro-jump" id="btnProJump">🔑 이미 결제했어요 · 이용 코드 입력하기 ↓</button>
+    <button type="button" class="pro-jump" id="btnProJump"><span class="play-hide">🔑 이미 결제했어요 · 이용 코드 입력하기 ↓</span><span class="play-only">🔑 이용 코드 입력하기 ↓</span></button>
     <p id="proDesc">설정 메뉴는 <b>아요바디요 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.</p>
     <ul id="proList">
       <li>센터명·로고를 리포트·운동 카드·비교 이미지에 표시</li>
@@ -1713,19 +1716,19 @@
       <li>앱 상단을 센터 브랜드로 변경</li>
       <li>자주 쓰는 결제 항목·금액 기본값 저장</li>
     </ul>
-    <div class="price-grid" aria-label="PRO 요금">
+    <div class="price-grid play-hide" aria-label="PRO 요금">
       <div><span>1개월</span><b>8,900원</b><em>월 8,900원<br><u>기본</u></em></div>
       <div><span>3개월</span><b>23,900원</b><em>월 7,967원<br><u>10% 할인</u></em></div>
       <div><span>6개월</span><b>42,900원</b><em>월 7,150원<br><u>20% 할인</u></em></div>
       <div class="best"><i>추천</i><span>12개월</span><b>69,900원</b><em>월 5,825원<br><u>35% 할인</u></em></div>
     </div>
-    <div class="pay-steps" id="paySteps">
+    <div class="pay-steps play-hide" id="paySteps">
       <h4>💳 결제 방법 · 계좌 이체</h4>
       <div class="ps-row"><i>1</i><span><b>메일로 신청</b> · 아래 <b>메일로 결제 신청</b>을 누르면 기기 코드가 자동으로 들어가요. 희망 기간과 입금자명만 적어 보내주세요.</span></div>
       <div class="ps-row"><i>2</i><span><b>입금</b> · 답장 메일로 안내받은 계좌로 입금해 주세요.</span></div>
       <div class="ps-row"><i>3</i><span><b>이용 코드 입력</b> · 입금 확인 후 이 기기 전용 이용 코드를 메일로 보내드려요. 아래 칸에 붙여넣으면 바로 PRO가 켜져요.</span></div>
     </div>
-    <div class="pro-ask">
+    <div class="pro-ask play-hide">
       <span>결제 신청 · 문의</span>
       <b id="proMailAddr">aesonge26@gmail.com</b>
       <div class="pro-ask-btns"><button type="button" class="btn primary sm" id="btnProMail">메일로 결제 신청</button><button type="button" class="btn line sm" id="btnProCopy">주소 복사</button></div>
@@ -1733,7 +1736,8 @@
     <div class="pro-code on" id="proCodeRow">
       <h4 class="pro-code-h">🔑 이용 코드 입력</h4>
       <div class="dev-box"><div><span>이 기기 코드</span><b class="dev-id">AYO-····-····</b></div><button type="button" class="btn line sm dev-copy">복사</button></div>
-      <p>결제 후 위 <b>기기 코드</b>를 보내주시면 이 기기 전용 이용 코드를 보내드려요.</p>
+      <p class="play-hide">결제 후 위 <b>기기 코드</b>를 보내주시면 이 기기 전용 이용 코드를 보내드려요.</p>
+      <p class="play-only">PRO 이용 코드가 있으면 아래에 붙여넣어 주세요. 이용 코드는 위 <b>기기 코드</b> 전용으로 발급돼요.</p>
       <textarea id="proCode" rows="3" placeholder="받은 이용 코드를 붙여넣으세요 (AYO1-로 시작)" autocomplete="off" spellcheck="false"></textarea>
       <p class="lic-msg" id="proCodeMsg" hidden></p>
       <button type="button" class="btn primary sm" id="btnProCode">이용 코드 적용</button>
@@ -1746,9 +1750,9 @@
   <div class="confirm-box te-box">
     <div class="te-ic" aria-hidden="true">🎁</div>
     <h3 id="teTitle">7일 PRO 무료 체험이 끝났어요</h3>
-    <p>지금부터는 <b>무료 버전</b>으로 이용돼요.<br>체험 기간에 저장한 <b>회원·측정 기록은 그대로</b> 남아 있어요.<br>PRO를 계속 쓰시려면 결제 안내를 확인해 주세요.</p>
+    <p>지금부터는 <b>무료 버전</b>으로 이용돼요.<br>체험 기간에 저장한 <b>회원·측정 기록은 그대로</b> 남아 있어요.<br><span class="play-hide">PRO를 계속 쓰시려면 결제 안내를 확인해 주세요.</span><span class="play-only">PRO 이용 코드가 있으면 입력해 주세요.</span></p>
     <div class="te-acts">
-      <button type="button" class="btn primary" id="btnTePay">💳 유료 결제 안내 보기</button>
+      <button type="button" class="btn primary" id="btnTePay"><span class="play-hide">💳 유료 결제 안내 보기</span><span class="play-only">🔑 이용 코드 입력</span></button>
       <button type="button" class="btn line" id="btnTeBackup">💾 기록 백업하기</button>
       <button type="button" class="btn line" id="btnTeClose">무료로 계속 쓰기</button>
     </div>
@@ -7428,6 +7432,19 @@
   function fmtYmd(k){ return k ? k.slice(0, 4) + "." + k.slice(4, 6) + "." + k.slice(6, 8) : "–"; }
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
+  /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
+  var PLAY_PKG = "com.physiomaster.posture";
+  function isPlayApp(){
+    try{
+      var q = new URLSearchParams(location.search);
+      if(q.get("play") === "1") lsSet("ayo_play", "1");
+      if(q.get("play") === "0") localStorage.removeItem("ayo_play");
+    }catch(e){}
+    if(/^android-app:\/\//.test(document.referrer || "") && document.referrer.indexOf(PLAY_PKG) >= 0) lsSet("ayo_play", "1");
+    return lsGet("ayo_play") === "1";
+  }
+  var IS_PLAY = isPlayApp();
+  document.body.classList.toggle("is-play", IS_PLAY);
   /* v93 설치 후 7일 PRO 무료 체험 (첫 실행 시각 기준) */
   var TRIAL_DAYS = 7;
   function trialStart(){
@@ -7545,8 +7562,8 @@
     trialStart(); trialTick();
     if(!licValid() && !trialActive() && !lsGet("ayo_trial_end_shown")) setTimeout(function(){ if(!licValid()) onTrialEnd(false); }, 1500);
   }, 600);
-  $("btnTbPay").addEventListener("click", function(){ openProGate("trial"); });
-  $("btnTePay").addEventListener("click", function(){ $("trialEnd").hidden = true; openProGate("trial"); });
+  $("btnTbPay").addEventListener("click", function(){ openProGate("trial", IS_PLAY ? { code: true } : null); });
+  $("btnTePay").addEventListener("click", function(){ $("trialEnd").hidden = true; openProGate("trial", IS_PLAY ? { code: true } : null); });
   $("btnTeClose").addEventListener("click", function(){ $("trialEnd").hidden = true; toast("무료 버전으로 계속 이용해요. PRO는 더보기 → 설정에서 언제든 켤 수 있어요."); });
   $("btnTeBackup").addEventListener("click", function(){ $("trialEnd").hidden = true; openBkSheet(); });
   /* v93 백업 시트 (무료 버전에서도 백업·복원 가능) */
@@ -7761,7 +7778,8 @@
     var cp = PRO_COPY[kind] || PRO_COPY[state.view === "report" ? "report" : "settings"];
     $("proDesc").innerHTML = cp.d; $("proList").innerHTML = cp.l.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("");
     proKind = ["report", "rom", "scol", "members", "trial"].indexOf(kind) >= 0 ? kind : "settings";
-    $("proTitle").textContent = trialActive() ? "PRO 무료 체험 중 · " + trialLeftTxt() + " 남음" : kind === "trial" ? "PRO를 계속 이용하려면" : "유료 플랜에서 이용할 수 있어요";
+    $("proTitle").textContent = trialActive() ? "PRO 무료 체험 중 · " + trialLeftTxt() + " 남음" : kind === "trial" ? "PRO를 계속 이용하려면" : IS_PLAY ? "PRO 기능이에요" : "유료 플랜에서 이용할 수 있어요";
+    if(IS_PLAY){ $("proDesc").innerHTML = $("proDesc").innerHTML.replace(/ 플랜 전용 기능/g, " 기능"); }
     $("btnProPreview").hidden = ["settings", "report", "members"].indexOf(proKind) < 0 || trialActive();
     $("proCodeRow").classList.add("on"); $("proCode").value = ""; $("proCodeMsg").hidden = true;
     var ov = $("proGate"); setTimeout(function(){ ov.scrollTop = 0; }, 0);
@@ -7814,8 +7832,8 @@
     var body = "아요바디요 PRO 결제를 신청합니다.\n\n- 기기 코드: " + deviceCode() + "\n- 희망 기간(하나만 남겨주세요): 1개월(8,900원) / 3개월(23,900원) / 6개월(42,900원) / 12개월(69,900원)\n- 입금자명: \n- 센터명: " + (st.name || "") + "\n- 연락처: " + (st.contact || "") + "\n- 문의 내용: \n\n※ 답장으로 입금 계좌를 안내해 드리고, 입금 확인 후 이 기기 전용 이용 코드를 보내드려요.";
     return "mailto:" + PRO_MAIL + "?subject=" + encodeURIComponent("[아요바디요] PRO 결제 신청") + "&body=" + encodeURIComponent(body);
   }
-  $("btnProMail").addEventListener("click", function(){ window.location.href = proMailHref(); });
-  document.querySelectorAll(".pro-mail-link").forEach(function(a){ a.addEventListener("click", function(e){ e.preventDefault(); window.location.href = proMailHref(); }); });
+  $("btnProMail").addEventListener("click", function(){ if(IS_PLAY) return; window.location.href = proMailHref(); });
+  document.querySelectorAll(".pro-mail-link").forEach(function(a){ a.addEventListener("click", function(e){ e.preventDefault(); if(IS_PLAY) return; window.location.href = proMailHref(); }); });
   $("btnProCopy").addEventListener("click", function(){
     var done = function(){ toast("메일 주소를 복사했어요: " + PRO_MAIL); };
     if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(PRO_MAIL).then(done, function(){ window.prompt("아래 주소를 길게 눌러 복사하세요", PRO_MAIL); });

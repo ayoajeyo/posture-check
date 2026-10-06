@@ -48,10 +48,4 @@ self.addEventListener("fetch", (e) => {
       if(res && res.ok){ const copy = res.clone(); caches.open(SHELL).then((c) => c.put(req, copy)); }
       return res;
     }).catch(async () => {
-      const hit = await caches.match(req, { ignoreSearch: true });
-      if(hit) return hit;
-      if(req.mode === "navigate") return caches.match("./index.html");
-      return Response.error();
-    }));
-  }
-});
+      const hit = await caches.match(req, { ignoreSearch: tru

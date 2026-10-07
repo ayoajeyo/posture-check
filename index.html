@@ -1520,7 +1520,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v96</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v97</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1537,7 +1537,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v96</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v97</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -5465,6 +5465,7 @@
   }
   var ROM_REFNAME = { down:"수직(아래)", up:"수직(위)", horiz:"수평", arm:"위팔 연장선" };
   var ROM_COL = ["#FFB547", "#FF6FAE", "#4FD1E8"];
+  var ROM_HV_TOL = 1;   // v97 수평·수직으로 볼 허용 오차(도)
   function romPts(){ var mv = romMove && romS && romS.mv ? romMove() : null; return (mv && mv.pts) || romJoint().pts; }
   function romKind(){ var mv = romS && romS.mv ? romMove() : null; return (mv && mv.kind) || romJoint().kind || "dir"; }
   function romIsLm(n){ return !!(ROM_LM[n] || ROM_DERIV[n] || ["foot", "mtp", "c7", "tcenter", "headtop"].indexOf(n) >= 0 || (typeof ROM_MID !== "undefined" && ROM_MID[n])); }
@@ -5931,6 +5932,7 @@
     var a = romRotA();
     g.save();
     if(a){ g.translate(romS.w / 2, romS.h / 2); g.rotate(a); g.translate(-romS.w / 2, -romS.h / 2); }
+    romS._live = !noView;   // v97 수평·수직 안내는 편집 화면에서만 (저장 이미지에는 안 넣음)
     try{ romPaint0(g, u); } finally { g.restore(); g.restore(); }
   }
   function romPaint0(g, u){
@@ -5941,10 +5943,22 @@
     if(romKind() === "tilt"){ scolPaintTilt(g, u); return; }
     var V = P[0], D = P[1], dir = romRefDir(), segL = Math.hypot(D.x - V.x, D.y - V.y) || 100;
     var refL = Math.max(segL * 1.2, 110 * u), A = { x: V.x + dir.x * refL, y: V.y + dir.y * refL };
+    /* v97 측정선이 화면 기준 수평/수직이면 굵게 + '수평'/'수직' 표시 (사진 회전까지 반영) */
+    var hvRot = romRotA(), hvLive = romS._live !== false;
+    function romHV(p, q){
+      if(!hvLive || !p || !q) return null;
+      var dx = q.x - p.x, dy = q.y - p.y;
+      if(Math.hypot(dx, dy) < 10 * u) return null;
+      var m = ((Math.atan2(dy, dx) + hvRot) * 180 / Math.PI) % 180; if(m < 0) m += 180;
+      if(m <= ROM_HV_TOL || m >= 180 - ROM_HV_TOL) return "h";
+      if(Math.abs(m - 90) <= ROM_HV_TOL) return "v";
+      return null;
+    }
+    var hv1 = romHV(P[2], V), hv2 = romHV(V, D);
     g.lineCap = "round";
     if(P[2]){   // 측정선 1: 기준점 – 꼭짓점
-      g.strokeStyle = "rgba(0,0,0,.35)"; g.lineWidth = 8 * u; g.beginPath(); g.moveTo(P[2].x, P[2].y); g.lineTo(V.x, V.y); g.stroke();
-      g.strokeStyle = ROM_COL[2]; g.lineWidth = 5 * u; g.beginPath(); g.moveTo(P[2].x, P[2].y); g.lineTo(V.x, V.y); g.stroke();
+      g.strokeStyle = "rgba(0,0,0,.35)"; g.lineWidth = (hv1 ? 12 : 8) * u; g.beginPath(); g.moveTo(P[2].x, P[2].y); g.lineTo(V.x, V.y); g.stroke();
+      g.strokeStyle = ROM_COL[2]; g.lineWidth = (hv1 ? 9 : 5) * u; g.beginPath(); g.moveTo(P[2].x, P[2].y); g.lineTo(V.x, V.y); g.stroke();
     }
     // 연장선 (점선, 펴면 0°인 관절만)
     if(romKind() === "ext"){
@@ -5959,8 +5973,8 @@
       g.fillText("↻", A.x, A.y + 0.5 * u); g.textAlign = "left"; g.textBaseline = "alphabetic";
     }
     // 관절 → 말단
-    g.strokeStyle = "rgba(0,0,0,.35)"; g.lineWidth = 8 * u; g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(D.x, D.y); g.stroke();
-    g.strokeStyle = "#2F6BFF"; g.lineWidth = 5 * u; g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(D.x, D.y); g.stroke();
+    g.strokeStyle = "rgba(0,0,0,.35)"; g.lineWidth = (hv2 ? 12 : 8) * u; g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(D.x, D.y); g.stroke();
+    g.strokeStyle = "#2F6BFF"; g.lineWidth = (hv2 ? 9 : 5) * u; g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(D.x, D.y); g.stroke();
     // 각도 호
     var a1 = Math.atan2(dir.y, dir.x), a2 = Math.atan2(D.y - V.y, D.x - V.x), d = a2 - a1;
     while(d > Math.PI) d -= 2 * Math.PI; while(d < -Math.PI) d += 2 * Math.PI;
@@ -5968,6 +5982,21 @@
     g.fillStyle = "rgba(255,181,71,.30)"; g.strokeStyle = "#FFB547"; g.lineWidth = 3 * u;
     g.beginPath(); g.moveTo(V.x, V.y); g.arc(V.x, V.y, R, a1, a1 + d, d < 0); g.closePath(); g.fill();
     g.beginPath(); g.arc(V.x, V.y, R, a1, a1 + d, d < 0); g.stroke();
+    // v97 수평/수직 라벨: 선 가운데 옆, 다른 선과 겹치지 않는 쪽에 똑바로 표시
+    function romHVTag(p, q, other, kind, col){
+      var dx = q.x - p.x, dy = q.y - p.y, L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L;
+      if(other && (nx * (other.x - V.x) + ny * (other.y - V.y)) > 0){ nx = -nx; ny = -ny; }
+      var x = (p.x + q.x) / 2 + nx * 30 * u, y = (p.y + q.y) / 2 + ny * 30 * u, txt = kind === "h" ? "수평" : "수직";
+      g.save(); g.translate(x, y); if(hvRot) g.rotate(-hvRot);
+      g.font = "800 " + (15 * u) + "px 'IBM Plex Sans KR', sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+      var w = g.measureText(txt).width + 18 * u, h = 26 * u;
+      g.fillStyle = "rgba(13,21,40,.9)"; rr(g, -w / 2, -h / 2, w, h, 8 * u); g.fill();
+      g.strokeStyle = col; g.lineWidth = 2 * u; rr(g, -w / 2, -h / 2, w, h, 8 * u); g.stroke();
+      g.fillStyle = col; g.fillText(txt, 0, 1 * u);
+      g.restore();
+    }
+    if(hv1) romHVTag(P[2], V, D, hv1, ROM_COL[2]);
+    if(hv2) romHVTag(V, D, P[2] || { x: V.x + dir.x, y: V.y + dir.y }, hv2, "#5B8CFF");
     // 점 + 이름
     P.forEach(function(p, i){
       g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 3 * u;

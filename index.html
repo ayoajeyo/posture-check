@@ -738,12 +738,6 @@
   .lic-row{display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid var(--line); font-size:13.5px;}
   .lic-row:first-of-type{border-top:0;}
   .lic-row span{color:var(--ink-soft);} .lic-row b{font-family:var(--font-num);}
-  /* v98 측정점 학습 보정 */
-  .ptcal-tg{display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700; margin:4px 0 6px; cursor:pointer;}
-  .ptcal-tg input{width:20px; height:20px; accent-color:var(--blue);}
-  .ptcal-list .lic-row b{font-family:inherit; font-weight:700; font-size:12.5px; text-align:right;}
-  .ptcal-list .on{color:var(--good);} .ptcal-list .wait{color:var(--ink-soft); font-weight:600;}
-  .ptcal-empty{font-size:12.5px; color:var(--ink-soft); margin:6px 0 0;}
   .lic-warn{color:var(--warn) !important;} .lic-bad{color:var(--crit) !important;}
   /* v54 상단 PRO 표시 */
   .pro-chip{position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:6px; margin-left:auto; flex:0 0 auto; font-family:inherit; cursor:pointer;
@@ -1469,13 +1463,6 @@
       <div class="lic-row"><span>이용 기간</span><b id="licExp">–</b></div>
       <div class="stage-controls" style="margin-top:10px"><button type="button" class="btn line sm dev-copy">기기 코드 복사</button><button type="button" class="btn primary sm" id="btnLicInput">이용 코드 입력·연장</button></div>
     </section>
-    <section class="card" id="ptcalCard">
-      <h2>측정점 학습 보정</h2>
-      <p class="sub">자동 인식된 점을 손으로 옮기면 그 차이를 이 기기에 기억해요. 같은 점을 3번 이상 비슷한 방향으로 고치면, 다음 자동 인식부터 평균만큼 미리 옮겨서 보여줘요. 쓸수록 촬영 환경에 맞게 정확해져요. 기록은 이 기기에만 저장돼요.</p>
-      <label class="ptcal-tg"><input type="checkbox" id="ptcalOn" checked> 학습 보정 사용</label>
-      <div class="ptcal-list" id="ptcalList"></div>
-      <div class="stage-controls" style="margin-top:10px"><button type="button" class="btn line sm" id="btnPtcalReset">학습 기록 초기화</button></div>
-    </section>
     <fieldset class="set-fs" id="setFs">
     <section class="card set-form">
       <h2>센터 정보</h2>
@@ -1533,7 +1520,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v98</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v97</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1550,7 +1537,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v98</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v97</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2640,7 +2627,7 @@
     s.history = [];
     s.centerX = undefined;
     s.faceSign = -1;
-    s.rot = 0; s.rotPivot = null; s.personBox = null; s.cal = null;
+    s.rot = 0; s.rotPivot = null; s.personBox = null;
     if(state.rotMode) setRotMode(false);
     s.captureRoll = state.pendingRoll; state.pendingRoll = null;
     var img = new Image();
@@ -2792,9 +2779,6 @@
     Object.keys(s.points).forEach(function(k){
       var q = rotatePt(s, s.points[k].x, s.points[k].y, d);
       s.points[k].x = q.x; s.points[k].y = q.y;
-    });
-    if(s.cal) Object.keys(s.cal.raw).forEach(function(k){
-      var r = s.cal.raw[k], q = rotatePt(s, r.x, r.y, d); r.x = q.x; r.y = q.y;
     });
     s.rot = deg;
     syncRotBar(); requestDraw(); renderResults();
@@ -2968,18 +2952,7 @@
     if(!lm){ applyGrid(s, img, null); toast("자동 인식을 하지 못했어요. 점을 직접 짚어주세요."); return; }
     if(!plausiblePose(lm)){ applyGrid(s, img, null); toast("자동 인식 결과가 정확하지 않아 적용하지 않았어요. 점을 직접 짚어주세요."); return; }
     applyGrid(s, img, lm);
-    // v98 학습 보정: 자동 위치(raw)를 기억하고, 자주 고치는 점은 평균 보정값만큼 미리 옮겨 둠
-    var cal = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), mode: state.mode, img: img, S: ptcalBodyScale(s, lm), face: 1, raw: {} };
-    var calO = ptcalLoad(), calUsed = [];
-    function calApply(key, p){
-      cal.raw[key] = { x: p.x, y: p.y };
-      if(!calO.on) return p;
-      var m = ptcalMean(calO, cal.mode + ":" + key);
-      if(!m) return p;
-      calUsed.push(ptcalLabel(cal.mode, key));
-      return { x: p.x + m.x * cal.S * cal.face, y: p.y + m.y * cal.S, vis: p.vis };
-    }
-    s.cal = cal;
+
 
     function pt(i){
       var p = lm[i];
@@ -3019,11 +2992,10 @@
         knee: bestLm(25, 26),
         malleolus: bestLm(27, 28)
       };
-      cal.face = s.faceSign || 1;   // 측면: 앞/뒤 방향 기준으로 보정값을 맞춤
       c.chain.forEach(function(cp){
         var p = map[cp.key];
         if(s.points[cp.key]) return;
-        if(p){ p = calApply(cp.key, p); s.points[cp.key] = { x: p.x, y: p.y, color: cp.color, label: cp.label }; }
+        if(p){ s.points[cp.key] = { x: p.x, y: p.y, color: cp.color, label: cp.label }; }
         else { missing.push(cp.label); }
       });
     } else {
@@ -3033,7 +3005,7 @@
         var idx = FRONT_LM_MAP[step.key];
         var p = (idx !== undefined) ? pt(idx) : null;
         if(s.points[step.key]) return;
-        if(p){ p = calApply(step.key, p); s.points[step.key] = { x: p.x, y: p.y, color: step.color, label: step.label }; }
+        if(p){ s.points[step.key] = { x: p.x, y: p.y, color: step.color, label: step.label }; }
         else { missing.push(step.label); }
       });
     }
@@ -3042,97 +3014,10 @@
     updateMarkingHint();
     if(missing.length){
       toast("일부 지점(" + missing.join(", ") + ")은 자동 인식하지 못했어요. 직접 짚어주세요.");
-    } else if(calUsed.length){
-      toast("자동 인식 완료! 학습 보정 적용: " + calUsed.join(", "));
     } else {
       toast(c.type === "chain" ? "자동 인식 완료! 점을 드래그하면 위치를 미세 조정할 수 있어요." : "자동 인식 완료! 점과 빨간 기준선(↔ 손잡이)을 끌어 조정할 수 있어요.");
     }
   }
-
-  /* ===================== v98 측정점 학습 보정 =====================
-     자동 인식 위치 → 사용자가 고친 위치의 차이를 '몸 길이(코~발목) 대비 비율'로 기기에 쌓아 두고,
-     같은 점을 3번 이상 같은 방향으로 고쳤으면 다음 자동 인식부터 평균만큼 미리 옮겨 둔다.
-     안 고친 경우도 0으로 기록되므로 가끔만 고치는 점은 평균이 작아져 적용되지 않는다. */
-  var PTCAL_KEY = "ayo_ptcal_v1", PTCAL_MAX = 20, PTCAL_MIN_N = 3, PTCAL_MIN = 0.003, PTCAL_CAP = 0.08, PTCAL_OUT = 0.15;
-  function ptcalLoad(){
-    try{ var o = JSON.parse(localStorage.getItem(PTCAL_KEY) || "null"); if(o && o.d){ if(o.on === undefined) o.on = true; return o; } }catch(e){}
-    return { on: true, d: {} };
-  }
-  function ptcalSave(o){ try{ localStorage.setItem(PTCAL_KEY, JSON.stringify(o)); }catch(e){} }
-  function ptcalLabel(mode, key){
-    if(mode === "side") return SHORT_LABEL[key] || key;
-    var k = key.split("_"), pr = MODES.front.pairs.filter(function(q){ return q.key === k[0]; })[0];
-    return (pr ? pr.label : k[0]) + (k[1] === "0" ? "(왼쪽)" : "(오른쪽)");
-  }
-  function ptcalMean(o, id){
-    var a = (o.d[id] || []).filter(function(v){ return Math.hypot(v.x, v.y) <= PTCAL_OUT; });   // 엉뚱하게 크게 옮긴 경우는 제외
-    if(a.length < PTCAL_MIN_N) return null;
-    var mx = 0, my = 0;
-    a.forEach(function(v){ mx += v.x; my += v.y; });
-    mx /= a.length; my /= a.length;
-    var m = Math.hypot(mx, my);
-    if(m < PTCAL_MIN) return null;
-    if(m > PTCAL_CAP){ mx *= PTCAL_CAP / m; my *= PTCAL_CAP / m; }
-    return { x: mx, y: my, n: a.length, m: Math.min(m, PTCAL_CAP) };
-  }
-  function ptcalBodyScale(s, lm){
-    function P(i){ var p = lm[i]; return p ? { x: p.x * s.w, y: p.y * s.h } : null; }
-    var top = P(0) || P(7) || P(8), la = P(27), ra = P(28);
-    var bot = la && ra ? { x: (la.x + ra.x) / 2, y: (la.y + ra.y) / 2 } : (la || ra);
-    var S = top && bot ? Math.hypot(bot.x - top.x, bot.y - top.y) : 0;
-    return S > 50 ? S : s.h * 0.8;
-  }
-  // 결과가 다시 계산될 때마다(점을 옮길 때마다) 이번 사진의 '자동→최종' 차이를 갱신 저장
-  function ptcalRecord(s){
-    var c = s && s.cal;
-    if(!c || c.mode !== state.mode || c.img !== s.img) return;
-    var o = ptcalLoad();
-    if(!o.on) return;
-    var changed = false;
-    Object.keys(c.raw).forEach(function(key){
-      var p = s.points[key], r = c.raw[key];
-      if(!p || !r) return;
-      var v = { id: c.id, x: +(((p.x - r.x) / c.S) * c.face).toFixed(4), y: +((p.y - r.y) / c.S).toFixed(4) };
-      var id = c.mode + ":" + key, a = o.d[id] || (o.d[id] = []);
-      var i = -1;
-      for(var j = 0; j < a.length; j++){ if(a[j].id === v.id){ i = j; break; } }
-      if(i >= 0){ if(a[i].x === v.x && a[i].y === v.y) return; a[i] = v; }
-      else { a.push(v); if(a.length > PTCAL_MAX) a.splice(0, a.length - PTCAL_MAX); }
-      changed = true;
-    });
-    if(changed){ ptcalSave(o); ptcalRender(); }
-  }
-  function ptcalRender(){
-    var box = $("ptcalList"), tg = $("ptcalOn");
-    if(!box) return;
-    var o = ptcalLoad();
-    if(tg) tg.checked = !!o.on;
-    var rows = [];
-    ["front", "side"].forEach(function(mode){
-      var keys = mode === "side" ? MODES.side.chain.map(function(c){ return c.key; })
-        : [].concat.apply([], MODES.front.pairs.map(function(q){ return [q.key + "_0", q.key + "_1"]; }));
-      keys.forEach(function(key){
-        var a = o.d[mode + ":" + key];
-        if(!a || !a.length) return;
-        var m = ptcalMean(o, mode + ":" + key), st;
-        if(m) st = '<b class="on">보정 적용 중 · 몸 길이의 ' + (m.m * 100).toFixed(1) + '% · ' + a.length + '회</b>';
-        else if(a.length < PTCAL_MIN_N) st = '<b class="wait">기록 ' + a.length + '회 · ' + PTCAL_MIN_N + '회부터 판단</b>';
-        else st = '<b class="wait">기록 ' + a.length + '회 · 보정 필요 없음</b>';
-        rows.push('<div class="lic-row"><span>' + (mode === "side" ? "측면 · " : "정면 · ") + ptcalLabel(mode, key) + '</span>' + st + '</div>');
-      });
-    });
-    box.innerHTML = rows.length ? rows.join("") : '<p class="ptcal-empty">아직 학습 기록이 없어요. 자동 인식 후 점을 옮겨 측정하면 여기에 쌓여요.</p>';
-  }
-  (function(){
-    var tg = $("ptcalOn"), rb = $("btnPtcalReset");
-    if(tg) tg.addEventListener("change", function(){ var o = ptcalLoad(); o.on = tg.checked; ptcalSave(o); ptcalRender(); toast(tg.checked ? "학습 보정을 켰어요" : "학습 보정을 껐어요. 기록은 그대로 남아 있어요."); });
-    if(rb) rb.addEventListener("click", function(){
-      if(!window.confirm("측정점 학습 기록을 모두 지울까요?\n다음 자동 인식부터는 보정 없이 처음 상태로 인식해요.")) return;
-      var o = ptcalLoad(); o.d = {}; ptcalSave(o); ptcalRender(); toast("학습 기록을 초기화했어요");
-    });
-    document.addEventListener("click", function(e){ var t = e.target.closest && e.target.closest('[data-view="settings"]'); if(t) setTimeout(ptcalRender, 0); });
-    ptcalRender();
-  })();
 
   function showFrozen(){
     video.hidden = true; guideOverlay.hidden = true; hintChip.hidden = true; emptyCam.hidden = true;
@@ -3942,7 +3827,6 @@
       });
     }
     resultCard.hidden = false;
-    ptcalRecord(s);
   }
 
   /* ---------- save image ---------- */

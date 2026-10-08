@@ -1574,7 +1574,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v101</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v102</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1591,7 +1591,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v101</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v102</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -9057,9 +9057,16 @@
     var c = sbClient();
     $("auBusyTxt").textContent = "네이버 계정으로 로그인하고 있어요…";
     return c.functions.invoke("naver-auth", { body: { code: code, state: st } }).then(function(r){
+      // 서버 함수가 보낸 실제 오류 문구를 꺼내 보여줌
+      if(r.error && r.error.context && typeof r.error.context.json === "function"){
+        return r.error.context.json().catch(function(){ return null; }).then(function(j){
+          var er = new Error(j && j.error ? j.error + (j.detail ? " (" + j.detail + ")" : "") : (r.error.message || "네이버 로그인에 실패했어요."));
+          er.naver = true; throw er;
+        });
+      }
       if(r.error || !r.data || !r.data.token_hash) throw (r.error || new Error((r.data && r.data.error) || "네이버 로그인에 실패했어요."));
       return c.auth.verifyOtp({ token_hash: r.data.token_hash, type: "magiclink" });
-    }).then(function(r){ if(r.error) throw r.error; }).catch(function(e){ ACC.bootMsg = auErr(e); });
+    }).then(function(r){ if(r.error) throw r.error; }).catch(function(e){ ACC.bootMsg = e && e.naver ? e.message : auErr(e); });
   }
 
   /* ---- 로그인 후 ---- */

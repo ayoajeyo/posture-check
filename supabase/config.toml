@@ -1,0 +1,10 @@
+# Supabase CLI 배포 설정 (npx supabase functions deploy)
+project_id = "doltciamvnrrysoynbzo"
+
+# 로그인 전에 호출되는 함수 → 게이트웨이 JWT 검사 끔 (함수 안에서 네이버 인증으로 확인)
+[functions.naver-auth]
+verify_jwt = false
+
+# 함수 안에서 직접 로그인 토큰을 확인함
+[functions.delete-account]
+verify_jwt = false

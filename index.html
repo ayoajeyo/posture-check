@@ -323,6 +323,21 @@
   .confirm-box{background:var(--surface); color:var(--ink); border-radius:18px; padding:22px 20px 16px; width:100%; max-width:340px; box-shadow:0 20px 50px rgba(0,0,0,.35); border:1px solid var(--line);}
   .confirm-msg{margin:0 0 18px; font-size:15px; line-height:1.6; font-weight:600; text-align:center; word-break:keep-all;}
   .confirm-btns{display:flex; gap:8px;}
+  /* v99 관리자 모드 */
+  .adm-chip{font-size:11px; font-weight:800; letter-spacing:.04em; color:#0B1222; background:#FFB547; border-radius:6px; padding:3px 7px; white-space:nowrap;}
+  .adm-in{width:100%; font-family:inherit; font-size:16px; padding:11px 12px; border-radius:11px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); margin:6px 0 4px; box-sizing:border-box; letter-spacing:.08em;}
+  .adm-msg{font-size:12.5px; color:var(--ink-soft); min-height:18px; margin:2px 0 10px;}
+  .adm-msg.err{color:var(--crit);}
+  #admPanel{position:fixed; right:8px; bottom:calc(84px + env(safe-area-inset-bottom, 0px)); z-index:120; width:min(330px, calc(100vw - 16px)); max-height:42vh; display:flex; flex-direction:column; background:rgba(11,18,34,.94); color:#E9EEF8; border:1px solid #FFB547; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.4); font-size:12px;}
+  #admPanel .ap-h{display:flex; align-items:center; gap:6px; padding:8px 10px; border-bottom:1px solid rgba(255,181,71,.35);}
+  #admPanel .ap-h b{flex:1; min-width:0; font-size:12px; color:#FFB547; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  #admPanel .ap-h button{font-family:inherit; font-size:11.5px; font-weight:700; border:1px solid rgba(255,255,255,.25); background:transparent; color:#E9EEF8; border-radius:7px; padding:4px 8px; cursor:pointer;}
+  #admPanel .ap-b{overflow:auto; padding:6px 10px 8px; font-family:var(--font-num), ui-monospace, monospace; font-variant-numeric:tabular-nums;}
+  #admPanel .ap-r{display:flex; gap:8px; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,.08);}
+  #admPanel .ap-r span:first-child{font-family:inherit; color:#B9C4DA; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  #admPanel .ap-r span:last-child{white-space:nowrap;}
+  #admPanel .ap-m{color:#97A3BC; padding:2px 0 4px;}
+  #admPanel.min .ap-b{display:none;}
   .confirm-btns button{flex:1; font-family:inherit; font-size:14.5px; font-weight:700; border-radius:11px; padding:12px; cursor:pointer; border:1px solid var(--line); background:var(--surface-2); color:var(--ink);}
   .confirm-btns button.yes{background:var(--crit); border-color:var(--crit); color:#fff;}
   .inapp-banner{
@@ -1094,6 +1109,7 @@
       </div>
       <button type="button" class="pro-chip" id="proChip" hidden title="PRO 이용 정보 보기"><svg class="pc-i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 3.5L12 5l4.5 6.5L21 8l-2 10H5L3 8z" fill="currentColor"/><path d="M5.5 20.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="pc-k">PRO</span><span class="pc-s">멤버십</span><span class="pc-d" id="proChipD"></span></button>
       <button type="button" class="gs-btn" id="btnGs" aria-label="회원 검색"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><span>회원 검색</span><kbd>/</kbd></button>
+      <span class="adm-chip" id="admChip" hidden>관리자</span>
       <span class="now-chip mono" id="nowChip"></span>
     </div>
   </header>
@@ -1520,7 +1536,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v97</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v99</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1537,7 +1553,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v97</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v99</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1785,9 +1801,20 @@
       <button type="button" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span></button>
     </div>
     <button type="button" class="btn line" id="btnMoreBk" style="width:100%;margin-top:10px">💾 백업 · 복원 · 기기 변경</button>
+    <button type="button" class="btn line" id="btnMoreAdm" style="width:100%;margin-top:8px">🔧 관리자 모드</button>
     <div class="confirm-btns"><button type="button" class="no" id="btnMoreClose">닫기</button></div>
   </div>
 </div>
+<div class="confirm-overlay" id="admSheet" hidden role="dialog" aria-modal="true" aria-labelledby="admTitle">
+  <div class="confirm-box">
+    <h3 id="admTitle">관리자 모드</h3>
+    <p class="sub" id="admDesc">관리자 코드를 입력하면 측정 화면에서 찍은 점의 좌표(사진 픽셀 기준)가 보여요.</p>
+    <input type="password" class="adm-in" id="admCode" autocomplete="off" autocapitalize="characters" placeholder="관리자 코드">
+    <p class="adm-msg" id="admMsg"></p>
+    <div class="confirm-btns"><button type="button" class="no" id="btnAdmClose">닫기</button><button type="button" class="yes ok" id="btnAdmGo">확인</button></div>
+  </div>
+</div>
+<div id="admPanel" hidden><div class="ap-h"><b id="admPanelT">측정점 좌표</b><button type="button" id="btnAdmCopy">복사</button><button type="button" id="btnAdmMin">접기</button></div><div class="ap-b" id="admPanelB"></div></div>
 <div class="confirm-overlay" id="gsOverlay" hidden role="dialog" aria-modal="true" aria-label="회원 검색">
   <div class="confirm-box gs-box">
     <div class="gs-input"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input id="gsInput" type="search" placeholder="이름·회원번호·전화번호·초성(ㄱㅇㄱ)" autocomplete="off" enterkeyhint="search"></div>
@@ -2152,6 +2179,8 @@
     toast._t = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200);
   }
 
+  var ADM = { on: false };   // v99 관리자 모드 (아래에서 저장값으로 복원)
+  try{ ADM.on = localStorage.getItem("ayo_admin") === "1"; }catch(e){}
   function cur(){ return state.byMode[state.mode]; }
   function cfg(){ return MODES[state.mode]; }
   function cssVar(gcls){
@@ -3558,17 +3587,28 @@
   }
 
   function drawPoint(p, color, px, active){
-    var r = (active ? 10 : 7) * px;
+    var r = (active ? 5 : 3.5) * px;   // v99 점 크기 절반 (터치 인식 범위는 그대로)
     if(active){
-      ctx.beginPath(); ctx.arc(p.x, p.y, 20*px, 0, Math.PI*2);
+      ctx.beginPath(); ctx.arc(p.x, p.y, 12*px, 0, Math.PI*2);
       ctx.fillStyle = "rgba(255,255,255,.18)"; ctx.fill();
     }
     ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2);
     ctx.fillStyle = color; ctx.fill();
-    ctx.lineWidth = 2.5*px; ctx.strokeStyle = "#fff"; ctx.stroke();
+    ctx.lineWidth = 1.6*px; ctx.strokeStyle = "#fff"; ctx.stroke();
     // 정확한 위치 확인용 중심 점
-    ctx.beginPath(); ctx.arc(p.x, p.y, 1.6*px, 0, Math.PI*2);
+    ctx.beginPath(); ctx.arc(p.x, p.y, 1*px, 0, Math.PI*2);
     ctx.fillStyle = "#fff"; ctx.fill();
+  }
+  // v99 관리자 모드: 점 옆에 사진 픽셀 좌표 표시 (편집 화면에서만)
+  function admCoord(g, p, u){
+    if(!ADM.on) return;
+    var t = Math.round(p.x) + ", " + Math.round(p.y);
+    g.save();
+    g.font = "700 " + (10.5 * u) + "px ui-monospace, monospace";
+    var w = g.measureText(t).width + 8 * u, x = p.x - w / 2, y = p.y + 9 * u;
+    g.fillStyle = "rgba(255,181,71,.92)"; rr(g, x, y, w, 15 * u, 4 * u); g.fill();
+    g.fillStyle = "#0B1222"; g.textBaseline = "middle"; g.textAlign = "left"; g.fillText(t, x + 4 * u, y + 7.8 * u);
+    g.restore();
   }
 
   // 이미지 좌표계로 변환된 ctx 위에 사진 + 선 + 점을 그린다. px = 화면 1px(CSS)에 해당하는 이미지 좌표 길이
@@ -3618,6 +3658,7 @@
         var p = s.points[cp.key];
         if(!p) return;
         drawPoint(p, cp.color, px, dragKey === cp.key);
+        if(showLabels) admCoord(ctx, p, px);
         if(showLabels){
           var dv = null;
           if(devs){ devs.forEach(function(d){ if(d.point.key === cp.key) dv = d; }); }
@@ -3676,6 +3717,7 @@
           var p = s.points[k];
           if(!p) return;
           drawPoint(p, pair.color, px, dragKey === k);
+          if(showLabels) admCoord(ctx, p, px);
           if(showLabels && !(p0 && p1)) drawLabel(p.x, p.y, pair.label, px);
         });
       });
@@ -6000,9 +6042,10 @@
     // 점 + 이름
     P.forEach(function(p, i){
       g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 3 * u;
-      if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 22 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
-      g.beginPath(); g.arc(p.x, p.y, (i === 0 ? 12 : 11) * u, 0, Math.PI * 2); g.fill(); g.stroke();
-      g.fillStyle = "#fff"; g.beginPath(); g.arc(p.x, p.y, 2.5 * u, 0, Math.PI * 2); g.fill();
+      if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 13 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
+      g.lineWidth = 2 * u; g.beginPath(); g.arc(p.x, p.y, (i === 0 ? 6 : 5.5) * u, 0, Math.PI * 2); g.fill(); g.stroke();
+      g.fillStyle = "#fff"; g.beginPath(); g.arc(p.x, p.y, 1.3 * u, 0, Math.PI * 2); g.fill();
+      if(romS._live !== false) admCoord(g, p, u);
       var nm = ROM_PTNAME[romPts()[i]].replace(/\(.*\)/, "");
       g.font = "700 " + (13 * u) + "px 'IBM Plex Sans KR', sans-serif";
       var tw = g.measureText(nm).width + 12 * u, tx = p.x + 16 * u, ty = p.y - 26 * u;
@@ -6731,9 +6774,10 @@
     // 점
     var names = ["좌측 높은 점", "우측 높은 점"];
     P.forEach(function(p, i){
-      if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 22 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
-      g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 3 * u; g.beginPath(); g.arc(p.x, p.y, 12 * u, 0, Math.PI * 2); g.fill(); g.stroke();
-      g.fillStyle = "#fff"; g.beginPath(); g.arc(p.x, p.y, 2.5 * u, 0, Math.PI * 2); g.fill();
+      if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 13 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
+      g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 2 * u; g.beginPath(); g.arc(p.x, p.y, 6 * u, 0, Math.PI * 2); g.fill(); g.stroke();
+      g.fillStyle = "#fff"; g.beginPath(); g.arc(p.x, p.y, 1.3 * u, 0, Math.PI * 2); g.fill();
+      if(romS._live !== false) admCoord(g, p, u);
       g.font = "700 " + (13 * u) + "px 'IBM Plex Sans KR', sans-serif";
       var nm = names[i], w2 = g.measureText(nm).width + 12 * u, tx = i === 0 ? p.x - 16 * u - w2 : p.x + 16 * u, ty = p.y - 34 * u;
       tx = Math.max(2 * u, Math.min(romS.w - w2 - 2 * u, tx));
@@ -6774,8 +6818,9 @@
     g.setLineDash([]);
     P.forEach(function(p, i){
       g.fillStyle = cols[i < 2 ? 0 : 1]; g.strokeStyle = "#fff"; g.lineWidth = 3 * u;
-      if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 22 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
-      g.beginPath(); g.arc(p.x, p.y, 11 * u, 0, Math.PI * 2); g.fill(); g.stroke();
+      if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 13 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
+      g.lineWidth = 2 * u; g.beginPath(); g.arc(p.x, p.y, 5.5 * u, 0, Math.PI * 2); g.fill(); g.stroke();
+      if(romS._live !== false) admCoord(g, p, u);
     });
     var val = scolCobb(P), txt = "Cobb " + val + "°", lx = ok && X.x > 0 && X.x < romS.w && X.y > 0 && X.y < romS.h ? X.x : (m1.x + m2.x) / 2 + romS.w * 0.18, ly = ok && X.y > 0 && X.y < romS.h ? X.y : (m1.y + m2.y) / 2;
     g.font = "800 " + (24 * u) + "px 'IBM Plex Sans KR', sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
@@ -7932,6 +7977,95 @@
   function overlayClose(id){ var o = $(id); o.addEventListener("click", function(e){ if(e.target === o) o.hidden = true; }); }
   ["progForm", "assignPick", "csForm", "slForm", "moreSheet"].forEach(overlayClose);
   $("btnMoreClose").addEventListener("click", function(){ $("moreSheet").hidden = true; });
+  /* ===================== v99 관리자 모드 =====================
+     관리자 코드(해시로만 보관)로 켜면: 측정 화면의 점마다 사진 픽셀 좌표 표시 + 좌표 목록 패널(복사 가능). 이 기기에만 저장. */
+  var ADM_HASH = "f0623c34c6f0d2e79140e15d1d09ee9ddf2ba0c0f6719ce53a5a469d339d50cc";
+  function admSync(){
+    $("admChip").hidden = !ADM.on;
+    $("btnMoreAdm").textContent = ADM.on ? "🔧 관리자 모드 (사용 중)" : "🔧 관리자 모드";
+    if(!ADM.on) $("admPanel").hidden = true;
+    if(typeof requestDraw === "function") requestDraw();
+    if(romS && romS.img && !$("romSheet").hidden) romDraw();
+  }
+  function admOpen(){
+    $("admMsg").textContent = ""; $("admMsg").className = "adm-msg"; $("admCode").value = "";
+    $("admCode").hidden = ADM.on;
+    $("admDesc").textContent = ADM.on ? "관리자 모드를 사용 중이에요. 측정 화면에서 점의 좌표가 보여요." : "관리자 코드를 입력하면 측정 화면에서 찍은 점의 좌표(사진 픽셀 기준)가 보여요.";
+    $("btnAdmGo").textContent = ADM.on ? "관리자 모드 끄기" : "확인";
+    $("admSheet").hidden = false;
+    if(!ADM.on) setTimeout(function(){ try{ $("admCode").focus(); }catch(e){} }, 50);
+  }
+  function admSha(t){
+    var b = new TextEncoder().encode(t);
+    return crypto.subtle.digest("SHA-256", b).then(function(h){ return Array.from(new Uint8Array(h)).map(function(x){ return ("0" + x.toString(16)).slice(-2); }).join(""); });
+  }
+  function admTry(){
+    if(ADM.on){ ADM.on = false; lsSet("ayo_admin", "0"); $("admSheet").hidden = true; admSync(); toast("관리자 모드를 껐어요"); return; }
+    var v = ($("admCode").value || "").replace(/\s+/g, "").toUpperCase();
+    if(!v){ $("admMsg").textContent = "코드를 입력해 주세요."; $("admMsg").className = "adm-msg err"; return; }
+    if(!(window.crypto && crypto.subtle)){ $("admMsg").textContent = "이 화면에서는 코드를 확인할 수 없어요. 앱 주소(https)로 열어 주세요."; $("admMsg").className = "adm-msg err"; return; }
+    admSha(v).then(function(h){
+      if(h !== ADM_HASH){ $("admMsg").textContent = "코드가 맞지 않아요."; $("admMsg").className = "adm-msg err"; return; }
+      ADM.on = true; lsSet("ayo_admin", "1"); $("admSheet").hidden = true; admSync(); toast("관리자 모드를 켰어요");
+    });
+  }
+  $("btnMoreAdm").addEventListener("click", function(){ $("moreSheet").hidden = true; admOpen(); });
+  $("btnAdmClose").addEventListener("click", function(){ $("admSheet").hidden = true; });
+  $("btnAdmGo").addEventListener("click", admTry);
+  $("admCode").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); admTry(); } });
+  $("btnAdmMin").addEventListener("click", function(){ var p = $("admPanel"); p.classList.toggle("min"); this.textContent = p.classList.contains("min") ? "펼치기" : "접기"; });
+  // 지금 보이는 측정 화면의 점 목록 (사진 픽셀 좌표)
+  function admData(){
+    var r2 = function(v){ return Math.round(v * 10) / 10; };
+    if(!$("romSheet").hidden && romS.img && romS.pts){
+      var J = romJoint(), mv = romMove(), nm = romPts(), val = null;
+      try{ val = romAngle(); }catch(e){}
+      return { screen: J.k === "scol" ? "측만증" : "ROM", title: (J.n || "") + (mv && mv.n && J.k !== "scol" ? " " + mv.n : "") + (rom.side && rom.side !== "C" && J.k !== "scol" ? " (" + (rom.side === "R" ? "우측" : "좌측") + ")" : ""),
+        image: { w: romS.w, h: romS.h }, rotate: romS.roll || 0, value: val == null ? null : val + "°",
+        points: romS.pts.map(function(p, i){ var k = nm && nm[i]; return { name: (i + 1) + " " + ((k && ROM_PTNAME[k]) || k || "점"), x: r2(p.x), y: r2(p.y) }; }) };
+    }
+    if(state.view === "analyze"){
+      var s = cur(), c = cfg();
+      if(!s.img) return null;
+      var pts = [];
+      flatSteps().forEach(function(st, i){
+        var p = s.points[st.key]; if(!p) return;
+        var nm2 = st.kind === "chain" ? st.num + " " + st.short : st.short + (st.idx === 0 ? " ①" : " ②");
+        pts.push({ name: nm2, x: r2(p.x), y: r2(p.y) });
+      });
+      if(c.type !== "chain" && isFinite(frontCenterX(s))) pts.push({ name: "기준선(세로)", x: r2(frontCenterX(s)), y: null });
+      return { screen: "체형분석", title: c.type === "chain" ? "측면 · 플럼라인" : "정면 · 좌우 높낮이", image: { w: s.w, h: s.h }, rotate: s.rot || 0, value: null, points: pts };
+    }
+    return null;
+  }
+  var admLast = null;
+  function admRender(){
+    var pn = $("admPanel");
+    if(!ADM.on){ pn.hidden = true; return; }
+    var d = admData();
+    if(!d || !d.points.length){ pn.hidden = true; admLast = null; return; }
+    var key = JSON.stringify(d);
+    pn.hidden = false;
+    if(key === admLast) return;
+    admLast = key;
+    $("admPanelT").textContent = "좌표 · " + d.screen + " · " + d.title;
+    var h = '<div class="ap-m">사진 ' + d.image.w + ' × ' + d.image.h + 'px' + (d.rotate ? ' · 회전 ' + d.rotate + '°' : '') + (d.value ? ' · 측정값 ' + d.value : '') + '</div>';
+    d.points.forEach(function(p){
+      var pc = d.image.w && d.image.h && p.y != null ? ' <span style="opacity:.55">(' + (p.x / d.image.w * 100).toFixed(1) + '%, ' + (p.y / d.image.h * 100).toFixed(1) + '%)</span>' : '';
+      h += '<div class="ap-r"><span>' + esc(p.name) + '</span><span>' + (p.y == null ? 'x ' + p.x : p.x + ', ' + p.y) + pc + '</span></div>';
+    });
+    $("admPanelB").innerHTML = h;
+  }
+  $("btnAdmCopy").addEventListener("click", function(){
+    var d = admData(); if(!d) return;
+    d.app = "아요바디요"; d.version = "v99"; d.at = new Date().toISOString();
+    var t = JSON.stringify(d, null, 2);
+    var done = function(){ toast("좌표를 복사했어요"); };
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, function(){ window.prompt("복사해서 쓰세요", t); });
+    else window.prompt("복사해서 쓰세요", t);
+  });
+  setInterval(admRender, 400);
+  admSync();
   document.querySelectorAll("#moreSheet [data-go]").forEach(function(b){ b.addEventListener("click", function(){ $("moreSheet").hidden = true; showView(b.getAttribute("data-go")); }); });
 
   /* ---------------- 운동관리 ---------------- */

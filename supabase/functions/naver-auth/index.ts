@@ -36,6 +36,13 @@ Deno.serve(async (req) => {
 
     const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email });
     if (error || !data?.properties?.hashed_token) return json(req, { error: "로그인 토큰을 만들지 못했어요" }, 500);
+    // 보안: 같은 이메일로 '인증 안 된' 이메일 가입이 먼저 있었다면(남이 미리 만들어 둔 계정일 수 있음)
+    // 그 비밀번호는 무효로 바꾸고 네이버로 확인된 본인 계정으로 확정
+    const u = data.user;
+    if (u && !u.email_confirmed_at) {
+      const rnd = crypto.randomUUID() + crypto.randomUUID();
+      await admin.auth.admin.updateUserById(u.id, { password: rnd, email_confirm: true });
+    }
     return json(req, { token_hash: data.properties.hashed_token, email });
   } catch (e) {
     return json(req, { error: "서버 오류", detail: String(e) }, 500);

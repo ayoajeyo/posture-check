@@ -14,12 +14,15 @@ Deno.serve(async (req) => {
     if (error || !u?.user) return json(req, { error: "로그인이 필요해요" }, 401);
     const uid = u.user.id;
 
-    // 사진 폴더 비우기 (1000개씩)
-    for (;;) {
-      const { data: files } = await admin.storage.from("photos").list(uid, { limit: 1000 });
-      if (!files || !files.length) break;
-      await admin.storage.from("photos").remove(files.map((f) => uid + "/" + f.name));
-      if (files.length < 1000) break;
+    // 사진 폴더 비우기: photos/{uid}/ 와 photos/{uid}/blobs/ (1000개씩)
+    for (const dir of [uid + "/blobs", uid]) {
+      for (let guard = 0; guard < 200; guard++) {
+        const { data: files } = await admin.storage.from("photos").list(dir, { limit: 1000 });
+        const real = (files || []).filter((f) => f.id);   // 폴더 항목(id 없음)은 제외
+        if (!real.length) break;
+        await admin.storage.from("photos").remove(real.map((f) => dir + "/" + f.name));
+        if (real.length < 1000) break;
+      }
     }
     const del = await admin.auth.admin.deleteUser(uid);
     if (del.error) return json(req, { error: "계정 삭제 실패", detail: del.error.message }, 500);

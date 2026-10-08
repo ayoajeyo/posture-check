@@ -328,6 +328,44 @@
   .adm-in{width:100%; font-family:inherit; font-size:16px; padding:11px 12px; border-radius:11px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); margin:6px 0 4px; box-sizing:border-box; letter-spacing:.08em;}
   .adm-msg{font-size:12.5px; color:var(--ink-soft); min-height:18px; margin:2px 0 10px;}
   .adm-msg.err{color:var(--crit);}
+  /* v100 계정 · 로그인 */
+  html.au-lock, html.au-lock body{overflow:hidden;}
+  .auth-gate{position:fixed; inset:0; z-index:200; background:var(--bg); display:flex; align-items:flex-start; justify-content:center; padding:28px 16px; overflow-y:auto; -webkit-overflow-scrolling:touch;}
+  .auth-gate[hidden]{display:none;}
+  .auth-card{margin:auto; width:100%; max-width:380px; background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:20px; padding:24px 20px 18px; box-shadow:0 20px 50px -24px rgba(0,0,0,.35); box-sizing:border-box;}
+  .au-brand{display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:14px;}
+  .au-brand img{width:64px; height:64px; border-radius:16px;}
+  .au-brand b{font-size:18px; letter-spacing:.04em;}
+  .au-brand small{font-size:12px; color:var(--ink-soft);}
+  .au-pane h2{font-size:17px; margin:4px 0 10px;}
+  .au-pane p.sub{font-size:13px; color:var(--ink-soft); line-height:1.6; margin:0 0 10px;}
+  .au-in{letter-spacing:0; margin:5px 0;}
+  .au-btn{width:100%; margin-top:4px;}
+  .au-links{display:flex; justify-content:space-between; margin-top:12px;}
+  .au-links button, .au-link{background:none; border:0; padding:6px 2px; font:inherit; font-size:13px; color:var(--ink-soft); text-decoration:underline; cursor:pointer;}
+  .au-or{display:flex; align-items:center; gap:10px; margin:16px 0 10px; font-size:12px; color:var(--ink-soft);}
+  .au-or:before, .au-or:after{content:""; flex:1; height:1px; background:var(--line);}
+  .au-sb{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; height:46px; border-radius:12px; font:inherit; font-size:14.5px; font-weight:700; cursor:pointer; margin-top:8px; border:1px solid transparent;}
+  .au-sb[hidden]{display:none;}
+  .au-sb.google{background:#fff; color:#1f1f1f; border-color:#DADCE0;}
+  .au-sb.kakao{background:#FEE500; color:rgba(0,0,0,.85);}
+  .au-sb.naver{background:#03C75A; color:#fff;}
+  .au-sb i{font-style:normal; font-weight:900; width:18px; text-align:center;}
+  .au-agree{border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin:8px 0 6px; font-size:13px;}
+  .au-agree label{display:flex; gap:8px; align-items:flex-start; padding:5px 0; line-height:1.45; cursor:pointer;}
+  .au-agree label input{margin-top:2px; width:17px; height:17px; flex-shrink:0;}
+  .au-agree label.all{border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:3px;}
+  .au-agree a{color:var(--ink-soft);}
+  .au-fine{font-size:11.5px; color:var(--ink-soft); line-height:1.55; margin:4px 0 0;}
+  .au-spin{width:28px; height:28px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--navy); margin:18px auto; animation:auSpin .8s linear infinite;}
+  @keyframes auSpin{to{transform:rotate(360deg)}}
+  .acc-stat{font-size:13px; line-height:1.6; background:var(--surface-2); border-radius:12px; padding:10px 12px; margin:6px 0 12px;}
+  .acc-stat b{font-weight:700;}
+  .acc-ask{border:1px solid var(--crit); border-radius:12px; padding:10px 12px; margin-top:10px; font-size:13px; line-height:1.55;}
+  .acc-ask[hidden]{display:none;}
+  .acc-ask .row{display:flex; gap:8px; margin-top:8px;}
+  .acc-ask .row button{flex:1;}
+  button.btn.acc-danger{color:var(--crit); border-color:var(--crit);}
   #admPanel{position:fixed; right:8px; bottom:calc(84px + env(safe-area-inset-bottom, 0px)); z-index:120; width:min(330px, calc(100vw - 16px)); max-height:42vh; display:flex; flex-direction:column; background:rgba(11,18,34,.94); color:#E9EEF8; border:1px solid #FFB547; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.4); font-size:12px;}
   #admPanel .ap-h{display:flex; align-items:center; gap:6px; padding:8px 10px; border-bottom:1px solid rgba(255,181,71,.35);}
   #admPanel .ap-h b{flex:1; min-width:0; font-size:12px; color:#FFB547; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
@@ -1536,7 +1574,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v99</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v100</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1553,7 +1591,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v99</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v100</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1648,6 +1686,101 @@
 </div>
 
 
+<!-- v100 계정 · 로그인 (로그인 후 사용, 데이터는 계정 서버에 저장) -->
+<div class="auth-gate" id="authGate" role="dialog" aria-modal="true" aria-label="로그인">
+  <div class="auth-card">
+    <div class="au-brand"><img src="icons/icon-192.png" alt=""><b>아요바디요</b><small>체형 분석 · 회원 관리</small></div>
+
+    <div class="au-pane" data-pane="busy"><div class="au-spin"></div><p class="sub" style="text-align:center" id="auBusyTxt">계정을 확인하고 있어요…</p></div>
+
+    <div class="au-pane" data-pane="login" hidden>
+      <h2>로그인</h2>
+      <input type="email" class="adm-in au-in" id="auLEmail" autocomplete="email" inputmode="email" placeholder="이메일(아이디)">
+      <input type="password" class="adm-in au-in" id="auLPw" autocomplete="current-password" placeholder="비밀번호">
+      <p class="adm-msg" id="auLMsg"></p>
+      <button type="button" class="btn primary au-btn" id="auLGo">로그인</button>
+      <button type="button" class="au-link" id="auResend" hidden>인증 메일 다시 보내기</button>
+      <div class="au-links"><button type="button" data-au="signup">이메일로 회원가입</button><button type="button" data-au="reset">비밀번호 찾기</button></div>
+      <div id="auSocial" hidden>
+        <div class="au-or">간편 로그인</div>
+        <button type="button" class="au-sb google" data-prov="google" hidden><i style="color:#4285F4">G</i>Google로 계속하기</button>
+        <button type="button" class="au-sb kakao" data-prov="kakao" hidden><i>K</i>카카오로 계속하기</button>
+        <button type="button" class="au-sb naver" data-prov="naver" hidden><i>N</i>네이버로 계속하기</button>
+      </div>
+    </div>
+
+    <div class="au-pane" data-pane="signup" hidden>
+      <h2>회원가입</h2>
+      <input type="email" class="adm-in au-in" id="auSEmail" autocomplete="email" inputmode="email" placeholder="이메일(아이디)">
+      <input type="password" class="adm-in au-in" id="auSPw" autocomplete="new-password" placeholder="비밀번호 (8자 이상)">
+      <input type="password" class="adm-in au-in" id="auSPw2" autocomplete="new-password" placeholder="비밀번호 확인">
+      <div class="au-agree" data-agree>
+        <label class="all"><input type="checkbox" data-all><b>모두 동의</b></label>
+        <label><input type="checkbox" data-req>[필수] 이용약관 · 개인정보 수집·이용 동의 <a href="privacy.html" target="_blank" rel="noopener">보기</a></label>
+        <label><input type="checkbox" data-req>[필수] 민감정보(회원의 신체 측정값 · 체형 사진) 처리 동의</label>
+        <p class="au-fine">측정한 회원(고객)의 체형·관절 측정값과 측정 사진을 계정 서버에 저장해 다른 기기에서도 불러올 수 있게 해요. 계정을 삭제하면 함께 삭제돼요.</p>
+      </div>
+      <p class="adm-msg" id="auSMsg"></p>
+      <button type="button" class="btn primary au-btn" id="auSGo">가입하기</button>
+      <div class="au-links"><button type="button" data-au="login">로그인으로 돌아가기</button></div>
+    </div>
+
+    <div class="au-pane" data-pane="reset" hidden>
+      <h2>비밀번호 찾기</h2>
+      <p class="sub">가입한 이메일로 비밀번호 재설정 링크를 보내드려요.</p>
+      <input type="email" class="adm-in au-in" id="auREmail" autocomplete="email" inputmode="email" placeholder="이메일(아이디)">
+      <p class="adm-msg" id="auRMsg"></p>
+      <button type="button" class="btn primary au-btn" id="auRGo">재설정 메일 보내기</button>
+      <div class="au-links"><button type="button" data-au="login">로그인으로 돌아가기</button></div>
+    </div>
+
+    <div class="au-pane" data-pane="newpw" hidden>
+      <h2>새 비밀번호 설정</h2>
+      <input type="password" class="adm-in au-in" id="auNPw" autocomplete="new-password" placeholder="새 비밀번호 (8자 이상)">
+      <input type="password" class="adm-in au-in" id="auNPw2" autocomplete="new-password" placeholder="새 비밀번호 확인">
+      <p class="adm-msg" id="auNMsg"></p>
+      <button type="button" class="btn primary au-btn" id="auNGo">변경하고 시작하기</button>
+    </div>
+
+    <div class="au-pane" data-pane="sent" hidden>
+      <h2 id="auSentTitle">메일을 확인해 주세요</h2>
+      <p class="sub" id="auSentTxt"></p>
+      <button type="button" class="btn primary au-btn" data-au="login">로그인 화면으로</button>
+    </div>
+
+    <div class="au-pane" data-pane="consent" hidden>
+      <h2>처음 오셨네요</h2>
+      <p class="sub" id="auCWho"></p>
+      <div class="au-agree" data-agree>
+        <label class="all"><input type="checkbox" data-all><b>모두 동의</b></label>
+        <label><input type="checkbox" data-req>[필수] 이용약관 · 개인정보 수집·이용 동의 <a href="privacy.html" target="_blank" rel="noopener">보기</a></label>
+        <label><input type="checkbox" data-req>[필수] 민감정보(회원의 신체 측정값 · 체형 사진) 처리 동의</label>
+        <p class="au-fine">측정한 회원(고객)의 체형·관절 측정값과 측정 사진을 계정 서버에 저장해 다른 기기에서도 불러올 수 있게 해요. 계정을 삭제하면 함께 삭제돼요.</p>
+      </div>
+      <p class="adm-msg" id="auCMsg"></p>
+      <button type="button" class="btn primary au-btn" id="auCGo">동의하고 시작하기</button>
+      <div class="au-links"><button type="button" id="auCOut">다른 계정으로 로그인</button></div>
+    </div>
+
+    <div class="au-pane" data-pane="offline" hidden>
+      <h2>인터넷 연결이 필요해요</h2>
+      <p class="sub">처음 한 번은 인터넷에 연결된 상태에서 로그인해야 해요. 로그인한 뒤에는 인터넷이 끊겨도 쓸 수 있고, 연결되면 자동으로 서버에 저장돼요.</p>
+      <button type="button" class="btn primary au-btn" id="auRetry">다시 시도</button>
+    </div>
+  </div>
+</div>
+<div class="confirm-overlay" id="accSheet" hidden role="dialog" aria-modal="true" aria-labelledby="accTitle">
+  <div class="confirm-box">
+    <h3 id="accTitle">계정 · 서버 저장</h3>
+    <p class="sub" id="accEmail"></p>
+    <div class="acc-stat" id="accStat"></div>
+    <button type="button" class="btn primary" id="btnAccSync" style="width:100%">지금 동기화</button>
+    <button type="button" class="btn line" id="btnAccOut" style="width:100%;margin-top:8px">로그아웃</button>
+    <button type="button" class="btn line acc-danger" id="btnAccDel" style="width:100%;margin-top:8px">계정 삭제</button>
+    <div class="acc-ask" id="accAsk" hidden><div id="accAskTxt"></div><div class="row"><button type="button" class="btn line" id="btnAccAskNo">취소</button><button type="button" class="btn primary" id="btnAccAskYes">확인</button></div></div>
+    <div class="confirm-btns"><button type="button" class="no" id="btnAccClose">닫기</button></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <div class="confirm-overlay" id="mbForm" hidden role="dialog" aria-modal="true" aria-labelledby="mbFormTitle">
@@ -1801,6 +1934,7 @@
       <button type="button" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span></button>
     </div>
     <button type="button" class="btn line" id="btnMoreBk" style="width:100%;margin-top:10px">💾 백업 · 복원 · 기기 변경</button>
+    <button type="button" class="btn line" id="btnMoreAcc" style="width:100%;margin-top:8px">👤 계정 · 서버 저장</button>
     <button type="button" class="btn line" id="btnMoreAdm" style="width:100%;margin-top:8px">🔧 관리자 모드</button>
     <div class="confirm-btns"><button type="button" class="no" id="btnMoreClose">닫기</button></div>
   </div>
@@ -4418,7 +4552,7 @@
       });
     });
   }
-  function rawPut(store, o){
+  function rawPut0(store, o){
     return idb().then(function(d){
       if(!d){ var a = MEM[store], i = a.findIndex(function(x){ return x.id === o.id; }); if(i >= 0) a[i] = o; else a.push(o); return o; }
       return new Promise(function(res, rej){
@@ -4427,7 +4561,7 @@
       });
     });
   }
-  function rawDel(store, id){
+  function rawDel0(store, id){
     return idb().then(function(d){
       if(!d){ MEM[store] = MEM[store].filter(function(x){ return x.id !== id; }); return; }
       return new Promise(function(res){
@@ -4459,7 +4593,8 @@
   function dbFull(store, o){
     var f = HEAVY[store];
     if(!o || !f || o[f] != null || !o.blob) return Promise.resolve(o);
-    return rawGet("blobs", store + ":" + o.id).then(function(b){ var c = Object.assign({}, o); if(b) c[f] = b.v; return c; });
+    var bk = store + ":" + o.id;
+    return rawGet("blobs", bk).then(function(b){ return b || blobFetch(bk); }).then(function(b){ var c = Object.assign({}, o); if(b) c[f] = b.v; return c; });
   }
   // 예전 기록(사진이 기록 안에 들어 있음)을 한 번만 나눠 담기
   function blobMigrate(){
@@ -8556,6 +8691,528 @@
   $("btnPtGuide").addEventListener("click", openPtGuide);
   $("btnPtGuideClose").addEventListener("click", function(){ $("ptGuide").hidden = true; });
   $("ptGuide").addEventListener("click", function(e){ if(e.target === $("ptGuide")) $("ptGuide").hidden = true; });
+
+  /* ===================== v100 계정 · 서버 저장 (Supabase) =====================
+     - 로그인해야 사용. 이메일(아이디)·Google·카카오·네이버
+     - 기기 저장소(IndexedDB)는 그대로 쓰고, 바뀐 기록만 서버(ayo_items)·사진 저장소(photos)에 올림
+     - 다른 기기에서 바뀐 기록은 updated_at 기준으로 내려받음 */
+  var SB_URL = "https://doltciamvnrrysoynbzo.supabase.co";
+  var SB_KEY = "sb_publishable_tla5mhOH6x6DkFcqBcPeLw_KX4dgCEQ";   // 공개 키 (RLS로 본인 데이터만 접근)
+  var SB_LIB = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js";
+  var NAVER_CLIENT_ID = "";   // 네이버 개발자센터 Client ID (공개값). 비어 있으면 네이버 버튼 숨김
+  var SB_TOKEN_KEY = "sb-doltciamvnrrysoynbzo-auth-token";
+  var SYNC_STORES = ["members", "records", "roms", "programs", "assigns", "consults", "sales"];
+  var ACC = { uid: null, user: null, ready: false, busy: null, again: false, state: "", last: 0, err: "", recovery: false, booted: false };
+  var sb = null;
+
+  /* ---- 바뀐 기록 대기열 (localStorage) ---- */
+  function sqLoad(){ try{ return JSON.parse(lsGet("ayo_sq") || "{}") || {}; }catch(e){ return {}; } }
+  var SQ = SQ || sqLoad();   // 앱 시작 중 이 줄보다 먼저 저장된 변경도 유지
+  var sqN = sqN || 0;
+  function sqVer(){ sqN = (sqN || 0) + 1; return sqN + Date.now(); }
+  function sqSave(){ clearTimeout(sqSave._t); sqSave._t = setTimeout(function(){ lsSet("ayo_sq", JSON.stringify(SQ)); }, 150); }
+  function sqSaveNow(){ clearTimeout(sqSave._t); lsSet("ayo_sq", JSON.stringify(SQ)); }
+  function sqAdd(store, id){
+    if(store !== "blobs" && SYNC_STORES.indexOf(store) < 0) return;
+    if(!SQ) SQ = sqLoad();
+    SQ[store + "|" + id] = sqVer();
+    sqSave(); syncSoon();
+  }
+  function sqCount(){ return Object.keys(SQ).length; }
+
+  // 저장·삭제는 모두 여기를 지나감 → 대기열에 등록 (서버에서 받은 기록은 noSync)
+  function rawPut(store, o, noSync){ return rawPut0(store, o).then(function(r){ if(!noSync) sqAdd(store, o.id); return r; }); }
+  function rawDel(store, id, noSync){ return rawDel0(store, id).then(function(r){ if(!noSync) sqAdd(store, id); return r; }); }
+
+  function idbKeys(store){
+    return idb().then(function(d){
+      if(!d) return MEM[store].map(function(x){ return x.id; });
+      return new Promise(function(res){
+        try{ var q = d.transaction(store).objectStore(store).getAllKeys(); q.onsuccess = function(){ res(q.result || []); }; q.onerror = function(){ res([]); }; }
+        catch(e){ res([]); }
+      });
+    });
+  }
+  function idbHas(store, id){
+    return idb().then(function(d){
+      if(!d) return MEM[store].some(function(x){ return x.id === id; });
+      return new Promise(function(res){
+        try{ var q = d.transaction(store).objectStore(store).count(id); q.onsuccess = function(){ res(q.result > 0); }; q.onerror = function(){ res(false); }; }
+        catch(e){ res(false); }
+      });
+    });
+  }
+  function localClear(){
+    var all = SYNC_STORES.concat(["blobs"]);
+    return idb().then(function(d){
+      if(!d){ all.forEach(function(s){ MEM[s] = []; }); return; }
+      return new Promise(function(res){
+        try{ var t = d.transaction(all, "readwrite"); all.forEach(function(s){ t.objectStore(s).clear(); }); t.oncomplete = function(){ res(); }; t.onerror = function(){ res(); }; t.onabort = function(){ res(); }; }
+        catch(e){ res(); }
+      });
+    }).then(function(){ SQ = {}; sqSaveNow(); lsSet("ayo_pull", ""); syncRefresh(true); });
+  }
+  function localCount(){
+    return Promise.all(SYNC_STORES.map(idbKeys)).then(function(a){ return a.reduce(function(s, k){ return s + k.length; }, 0); });
+  }
+
+  /* ---- Supabase 라이브러리 ---- */
+  var sbLibP = null;
+  function loadSbLib(){
+    if(window.supabase && window.supabase.createClient) return Promise.resolve(true);
+    if(sbLibP) return sbLibP;
+    sbLibP = new Promise(function(res){
+      var s = document.createElement("script"), done = false;
+      var fin = function(ok){ if(done) return; done = true; if(!ok) sbLibP = null; res(ok && !!(window.supabase && window.supabase.createClient)); };
+      s.src = SB_LIB; s.async = true; s.crossOrigin = "anonymous";
+      s.onload = function(){ fin(true); }; s.onerror = function(){ fin(false); };
+      setTimeout(function(){ fin(false); }, 12000);
+      document.head.appendChild(s);
+    });
+    return sbLibP;
+  }
+  function sbClient(){
+    if(sb) return sb;
+    if(!(window.supabase && window.supabase.createClient)) return null;
+    sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+    return sb;
+  }
+  function cachedUser(){
+    try{ var s = JSON.parse(localStorage.getItem(SB_TOKEN_KEY) || "null"); return s && s.user && s.user.id ? s.user : null; }catch(e){ return null; }
+  }
+  function homeUrl(){ return location.origin + location.pathname; }
+
+  /* ---- 서버로 올리기 ---- */
+  function blobPath(id){ return ACC.uid + "/blobs/" + String(id).replace(/[^A-Za-z0-9_.-]/g, "_") + ".json"; }
+  function syncPush(){
+    var c = sbClient(); if(!c || !ACC.uid) return Promise.resolve();
+    var keys = Object.keys(SQ); if(!keys.length) return Promise.resolve();
+    var items = [], blobs = [];
+    keys.forEach(function(k){ var i = k.indexOf("|"), s = k.slice(0, i); (s === "blobs" ? blobs : items).push({ k: k, s: s, id: k.slice(i + 1), ver: SQ[k] }); });
+    var done = function(e){ if(SQ[e.k] === e.ver) delete SQ[e.k]; };
+    // 사진 먼저 (다른 기기가 기록을 받았을 때 사진도 바로 받을 수 있게)
+    var p = Promise.resolve();
+    blobs.forEach(function(e){
+      p = p.then(function(){
+        return rawGet("blobs", e.id).then(function(b){
+          var bucket = c.storage.from("photos");
+          if(!b) return bucket.remove([blobPath(e.id)]).then(function(r){ if(r.error) throw r.error; done(e); });
+          var file = new Blob([JSON.stringify({ v: b.v })], { type: "application/json" });
+          return bucket.upload(blobPath(e.id), file, { upsert: true, contentType: "application/json" }).then(function(r){ if(r.error) throw r.error; done(e); });
+        });
+      });
+    });
+    for(var i = 0; i < items.length; i += 100){
+      (function(chunk){
+        p = p.then(function(){
+          return Promise.all(chunk.map(function(e){ return rawGet(e.s, e.id); })).then(function(objs){
+            var rows = chunk.map(function(e, j){ var o = objs[j]; return { user_id: ACC.uid, store: e.s, id: e.id, data: o || {}, deleted: !o }; });
+            return c.from("ayo_items").upsert(rows, { onConflict: "user_id,store,id" }).then(function(r){ if(r.error) throw r.error; chunk.forEach(done); });
+          });
+        });
+      })(items.slice(i, i + 100));
+    }
+    return p.then(sqSaveNow, function(err){ sqSaveNow(); throw err; });
+  }
+
+  /* ---- 서버에서 받기 ---- */
+  function pullCursor(){ try{ var o = JSON.parse(lsGet("ayo_pull") || "null"); return o && o.uid === ACC.uid ? o.at : null; }catch(e){ return null; } }
+  function syncPull(){
+    var c = sbClient(); if(!c || !ACC.uid) return Promise.resolve();
+    var since = pullCursor() || "1970-01-01T00:00:00Z", maxTs = null, changed = 0, need = [], PAGE = 500;
+    var page = function(off){
+      return c.from("ayo_items").select("store,id,data,deleted,updated_at").gt("updated_at", since)
+        .order("updated_at", { ascending: true }).order("store").order("id").range(off, off + PAGE - 1)
+        .then(function(r){
+          if(r.error) throw r.error;
+          var rows = r.data || [];
+          return Promise.all(rows.map(function(row){
+            if(!maxTs || row.updated_at > maxTs) maxTs = row.updated_at;
+            if(SQ[row.store + "|" + row.id]) return null;   // 이 기기에서 아직 안 올린 변경이 우선
+            changed++;
+            if(row.deleted){
+              return rawDel0(row.store, row.id).then(function(){ if(HEAVY[row.store]) return rawDel0("blobs", row.store + ":" + row.id); });
+            }
+            var o = row.data || {}; if(o.id == null) o.id = row.id;
+            if(HEAVY[row.store] && o.blob) need.push(row.store + ":" + row.id);
+            return rawPut0(row.store, o);
+          })).then(function(){ if(rows.length === PAGE) return page(off + PAGE); });
+        });
+    };
+    return page(0).then(function(){
+      if(maxTs){
+        var t = new Date(Date.parse(maxTs) - 10000).toISOString();   // 동시에 저장된 기록을 놓치지 않게 10초 겹쳐 받음
+        lsSet("ayo_pull", JSON.stringify({ uid: ACC.uid, at: t }));
+      }
+      if(changed) syncRefresh();
+      if(need.length) blobBackfill(need);
+    });
+  }
+  // 사진은 필요한 것만 뒤에서 천천히 받기
+  var blobWant = {};
+  function blobFetch(id){
+    var c = sbClient(); if(!c || !ACC.uid || !navigator.onLine) return Promise.resolve(null);
+    if(blobWant[id]) return blobWant[id];
+    blobWant[id] = c.storage.from("photos").download(blobPath(id)).then(function(r){
+      if(r.error || !r.data) return null;
+      return r.data.text().then(function(t){ var j = JSON.parse(t); var b = { id: id, v: j.v }; return rawPut0("blobs", b).then(function(){ return b; }); });
+    }).catch(function(){ return null; }).then(function(b){ delete blobWant[id]; return b; });
+    return blobWant[id];
+  }
+  function blobBackfill(ids){
+    var q = ids.slice(), run = function(){
+      var id = q.shift(); if(!id) return Promise.resolve();
+      return idbHas("blobs", id).then(function(h){ return h ? null : blobFetch(id); }).then(run);
+    };
+    run(); run();
+  }
+
+  /* ---- 동기화 실행 ---- */
+  function syncSoon(){ if(!ACC || !ACC.ready) return; clearTimeout(syncSoon._t); syncSoon._t = setTimeout(syncNow, 2500); }
+  function syncNow(){
+    if(!ACC.ready || !ACC.uid) return Promise.resolve();
+    if(ACC.busy){ ACC.again = true; return ACC.busy; }
+    if(!navigator.onLine){ ACC.state = "offline"; accRender(); return Promise.resolve(); }
+    var go = function(){
+      if(!sbClient()) return loadSbLib().then(function(ok){ if(!ok) throw new Error("offline"); return authAttach(); });
+      return Promise.resolve();
+    };
+    ACC.state = "sync"; accRender();
+    ACC.busy = go().then(syncPush).then(syncPull).then(function(){
+      ACC.state = "ok"; ACC.err = ""; ACC.last = Date.now();
+    }, function(e){
+      ACC.state = navigator.onLine ? "err" : "offline"; ACC.err = (e && (e.message || e.error_description)) || String(e);
+      console.warn("[AYO] sync", e);
+    }).then(function(){
+      ACC.busy = null; accRender();
+      if(ACC.again){ ACC.again = false; syncSoon(); }
+    });
+    return ACC.busy;
+  }
+  window.addEventListener("online", function(){ syncNow(); });
+  document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "visible") syncNow(); else if(sqCount()) syncNow(); });
+  setInterval(function(){ if(document.visibilityState === "visible") syncNow(); }, 60000);
+
+  // 다른 기기에서 받은 내용이 화면에 보이도록 목록형 화면만 다시 그림 (측정 중인 화면은 건드리지 않음)
+  function syncRefresh(all){
+    try{ if(typeof romCache !== "undefined" && romCache) romCache.all = null; }catch(e){}
+    laCache = null;
+    var v = state.view;
+    try{
+      if(v === "members"){ if(!mbCurrent || all) mbShowList(); }
+      else if(v === "dash") renderDash();
+      else if(v === "exercise") renderExercise();
+      else if(v === "consult") renderConsult();
+      else if(v === "sales") renderSales();
+    }catch(e){ console.warn("[AYO] refresh", e); }
+  }
+
+  /* ---- 로그인 화면 ---- */
+  function auShow(p){
+    $("authGate").hidden = false; document.documentElement.classList.add("au-lock");
+    document.querySelectorAll("#authGate .au-pane").forEach(function(el){ el.hidden = el.getAttribute("data-pane") !== p; });
+    ["auLMsg", "auSMsg", "auRMsg", "auNMsg", "auCMsg"].forEach(function(k){ $(k).textContent = ""; $(k).classList.remove("err"); });
+    $("auResend").hidden = true;
+  }
+  function auHide(){ $("authGate").hidden = true; document.documentElement.classList.remove("au-lock"); }
+  function auMsg(k, t, err){ $(k).textContent = t || ""; $(k).classList.toggle("err", !!err); }
+  function auErr(e){
+    var m = String((e && (e.message || e.error_description || e.msg)) || e || "");
+    if(/Invalid login credentials/i.test(m)) return "이메일 또는 비밀번호가 맞지 않아요.";
+    if(/Email not confirmed/i.test(m)) return "이메일 인증이 아직 안 됐어요. 받은 메일의 링크를 눌러 주세요.";
+    if(/already registered|already been registered|exists/i.test(m)) return "이미 가입된 이메일이에요. 로그인하거나 비밀번호 찾기를 이용해 주세요.";
+    if(/Password should be|at least|weak/i.test(m)) return "비밀번호가 너무 짧거나 쉬워요. 8자 이상으로 정해 주세요.";
+    if(/rate limit|security purposes|too many/i.test(m)) return "요청이 너무 잦아요. 잠시 뒤 다시 시도해 주세요.";
+    if(/invalid.*email|valid email|Unable to validate email/i.test(m)) return "이메일 주소를 다시 확인해 주세요.";
+    if(/same.*password|different from the old/i.test(m)) return "이전과 다른 비밀번호로 정해 주세요.";
+    if(/Failed to fetch|NetworkError|network|offline|Load failed/i.test(m)) return "인터넷 연결을 확인해 주세요.";
+    if(/expired|invalid.*(token|otp|link)/i.test(m)) return "링크가 만료됐거나 이미 사용됐어요. 다시 시도해 주세요.";
+    return m || "문제가 생겼어요. 잠시 뒤 다시 시도해 주세요.";
+  }
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  function agreeOk(box){ return Array.prototype.every.call(box.querySelectorAll("[data-req]"), function(c){ return c.checked; }); }
+  document.querySelectorAll("#authGate [data-agree]").forEach(function(box){
+    var all = box.querySelector("[data-all]"), reqs = box.querySelectorAll("[data-req]");
+    all.addEventListener("change", function(){ reqs.forEach(function(c){ c.checked = all.checked; }); });
+    reqs.forEach(function(c){ c.addEventListener("change", function(){ all.checked = agreeOk(box); }); });
+  });
+  document.querySelectorAll("#authGate [data-au]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var p = b.getAttribute("data-au"), em = ($("auLEmail").value || "").trim();
+      auShow(p);
+      if(p === "signup" && em && !$("auSEmail").value) $("auSEmail").value = em;
+      if(p === "reset" && em && !$("auREmail").value) $("auREmail").value = em;
+    });
+  });
+  function busyBtn(id, on, txt){ var b = $(id); if(on){ b._t = b.textContent; b.disabled = true; b.textContent = txt || "잠시만요…"; } else { b.disabled = false; if(b._t) b.textContent = b._t; } }
+
+  $("auLGo").addEventListener("click", function(){
+    var c = sbClient(), em = $("auLEmail").value.trim(), pw = $("auLPw").value;
+    if(!c){ auShow("offline"); return; }
+    if(!EMAIL_RE.test(em)) return auMsg("auLMsg", "이메일 주소를 입력해 주세요.", true);
+    if(!pw) return auMsg("auLMsg", "비밀번호를 입력해 주세요.", true);
+    busyBtn("auLGo", true, "로그인 중…");
+    c.auth.signInWithPassword({ email: em, password: pw }).then(function(r){
+      busyBtn("auLGo", false);
+      if(r.error){ auMsg("auLMsg", auErr(r.error), true); if(/not confirmed/i.test(r.error.message || "")) $("auResend").hidden = false; return; }
+      onAuthed(r.data.user);
+    }, function(e){ busyBtn("auLGo", false); auMsg("auLMsg", auErr(e), true); });
+  });
+  $("auLPw").addEventListener("keydown", function(e){ if(e.key === "Enter") $("auLGo").click(); });
+  $("auResend").addEventListener("click", function(){
+    var c = sbClient(), em = $("auLEmail").value.trim(); if(!c || !em) return;
+    c.auth.resend({ type: "signup", email: em, options: { emailRedirectTo: homeUrl() } }).then(function(r){
+      auMsg("auLMsg", r.error ? auErr(r.error) : "인증 메일을 다시 보냈어요. 메일함(스팸함 포함)을 확인해 주세요.", !!r.error);
+    });
+  });
+
+  $("auSGo").addEventListener("click", function(){
+    var c = sbClient(), em = $("auSEmail").value.trim(), pw = $("auSPw").value, pw2 = $("auSPw2").value;
+    if(!c){ auShow("offline"); return; }
+    if(!EMAIL_RE.test(em)) return auMsg("auSMsg", "이메일 주소를 다시 확인해 주세요.", true);
+    if(pw.length < 8) return auMsg("auSMsg", "비밀번호는 8자 이상으로 정해 주세요.", true);
+    if(pw !== pw2) return auMsg("auSMsg", "비밀번호 확인이 일치하지 않아요.", true);
+    if(!agreeOk($("auSGo").closest(".au-pane").querySelector("[data-agree]"))) return auMsg("auSMsg", "필수 항목에 동의해 주세요.", true);
+    busyBtn("auSGo", true, "가입 중…");
+    lsSet("ayo_agree_pending", em.toLowerCase());
+    c.auth.signUp({ email: em, password: pw, options: { emailRedirectTo: homeUrl() } }).then(function(r){
+      busyBtn("auSGo", false);
+      if(r.error) return auMsg("auSMsg", auErr(r.error), true);
+      if(r.data && r.data.session){ onAuthed(r.data.user); return; }
+      if(r.data && r.data.user && r.data.user.identities && !r.data.user.identities.length){
+        return auMsg("auSMsg", "이미 가입된 이메일이에요. 로그인하거나 비밀번호 찾기를 이용해 주세요.", true);
+      }
+      $("auLEmail").value = em;
+      auShow("sent");
+      $("auSentTitle").textContent = "인증 메일을 보냈어요";
+      $("auSentTxt").innerHTML = "<b>" + esc(em) + "</b>으로 보낸 메일의 <b>인증 링크</b>를 누르면 가입이 끝나고 바로 로그인돼요. 메일이 안 보이면 스팸함도 확인해 주세요.";
+    }, function(e){ busyBtn("auSGo", false); auMsg("auSMsg", auErr(e), true); });
+  });
+
+  $("auRGo").addEventListener("click", function(){
+    var c = sbClient(), em = $("auREmail").value.trim();
+    if(!c){ auShow("offline"); return; }
+    if(!EMAIL_RE.test(em)) return auMsg("auRMsg", "이메일 주소를 다시 확인해 주세요.", true);
+    busyBtn("auRGo", true, "보내는 중…");
+    c.auth.resetPasswordForEmail(em, { redirectTo: homeUrl() }).then(function(r){
+      busyBtn("auRGo", false);
+      if(r.error) return auMsg("auRMsg", auErr(r.error), true);
+      auShow("sent");
+      $("auSentTitle").textContent = "재설정 메일을 보냈어요";
+      $("auSentTxt").innerHTML = "<b>" + esc(em) + "</b>으로 보낸 메일의 링크를 누르면 새 비밀번호를 정할 수 있어요.";
+    }, function(e){ busyBtn("auRGo", false); auMsg("auRMsg", auErr(e), true); });
+  });
+
+  $("auNGo").addEventListener("click", function(){
+    var c = sbClient(), pw = $("auNPw").value, pw2 = $("auNPw2").value;
+    if(pw.length < 8) return auMsg("auNMsg", "비밀번호는 8자 이상으로 정해 주세요.", true);
+    if(pw !== pw2) return auMsg("auNMsg", "비밀번호 확인이 일치하지 않아요.", true);
+    busyBtn("auNGo", true, "변경 중…");
+    c.auth.updateUser({ password: pw }).then(function(r){
+      busyBtn("auNGo", false);
+      if(r.error) return auMsg("auNMsg", auErr(r.error), true);
+      ACC.recovery = false; toast("비밀번호를 바꿨어요.");
+      onAuthed(r.data.user);
+    }, function(e){ busyBtn("auNGo", false); auMsg("auNMsg", auErr(e), true); });
+  });
+
+  $("auCGo").addEventListener("click", function(){
+    if(!agreeOk($("auCGo").closest(".au-pane").querySelector("[data-agree]"))) return auMsg("auCMsg", "필수 항목에 동의해 주세요.", true);
+    busyBtn("auCGo", true, "저장 중…");
+    saveConsent().then(function(r){
+      busyBtn("auCGo", false);
+      if(r && r.error) return auMsg("auCMsg", auErr(r.error), true);
+      authProceed();
+    }, function(e){ busyBtn("auCGo", false); auMsg("auCMsg", auErr(e), true); });
+  });
+  $("auCOut").addEventListener("click", function(){ var c = sbClient(); ACC.uid = null; ACC.user = null; (c ? c.auth.signOut() : Promise.resolve()).catch(function(){}).then(function(){ auShow("login"); }); });
+  $("auRetry").addEventListener("click", function(){ authBoot(); });
+
+  // 간편 로그인
+  document.querySelectorAll("#auSocial [data-prov]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var p = b.getAttribute("data-prov"), c = sbClient();
+      if(!c){ auShow("offline"); return; }
+      if(p === "naver"){
+        var st = uid() + uid();
+        lsSet("ayo_nv_state", st);
+        location.href = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" + encodeURIComponent(NAVER_CLIENT_ID) +
+          "&redirect_uri=" + encodeURIComponent(homeUrl()) + "&state=" + encodeURIComponent(st);
+        return;
+      }
+      c.auth.signInWithOAuth({ provider: p, options: { redirectTo: homeUrl() } }).then(function(r){ if(r.error) auMsg("auLMsg", auErr(r.error), true); });
+    });
+  });
+  function loadProviders(){
+    fetch(SB_URL + "/auth/v1/settings", { headers: { apikey: SB_KEY } }).then(function(r){ return r.json(); }).then(function(s){
+      var ext = (s && s.external) || {}, any = false;
+      document.querySelectorAll("#auSocial [data-prov]").forEach(function(b){
+        var p = b.getAttribute("data-prov"), on = p === "naver" ? !!NAVER_CLIENT_ID : !!ext[p];
+        b.hidden = !on; if(on) any = true;
+      });
+      $("auSocial").hidden = !any;
+    }).catch(function(){});
+  }
+  function naverFinish(code, st){
+    var c = sbClient();
+    $("auBusyTxt").textContent = "네이버 계정으로 로그인하고 있어요…";
+    return c.functions.invoke("naver-auth", { body: { code: code, state: st } }).then(function(r){
+      if(r.error || !r.data || !r.data.token_hash) throw (r.error || new Error((r.data && r.data.error) || "네이버 로그인에 실패했어요."));
+      return c.auth.verifyOtp({ token_hash: r.data.token_hash, type: "magiclink" });
+    }).then(function(r){ if(r.error) throw r.error; }).catch(function(e){ ACC.bootMsg = auErr(e); });
+  }
+
+  /* ---- 로그인 후 ---- */
+  function saveConsent(){
+    var c = sbClient(), now = new Date().toISOString();
+    lsSet("ayo_agree_pending", "");
+    return c.from("ayo_profiles").upsert({ user_id: ACC.uid, agreed_terms: now, agreed_sensitive: now }, { onConflict: "user_id" });
+  }
+  function onAuthed(user, offline){
+    if(!user) return;
+    if(ACC.uid === user.id) return;
+    ACC.uid = user.id; ACC.user = user; accRender();
+    if(offline){ authProceed(); return; }
+    var c = sbClient();
+    auShow("busy"); $("auBusyTxt").textContent = "계정을 확인하고 있어요…";
+    c.from("ayo_profiles").select("agreed_terms,agreed_sensitive").eq("user_id", user.id).maybeSingle().then(function(r){
+      if(r.error){ authProceed(); return; }   // 네트워크 문제 등: 사용은 막지 않음
+      if(r.data && r.data.agreed_terms && r.data.agreed_sensitive) return authProceed();
+      if((user.email || "").toLowerCase() && lsGet("ayo_agree_pending") === (user.email || "").toLowerCase()){
+        return saveConsent().then(function(){ authProceed(); });
+      }
+      auShow("consent");
+      $("auCWho").textContent = (user.email || "새 계정") + " 계정으로 시작해요. 아래 내용에 동의해 주세요.";
+    }, function(){ authProceed(); });
+  }
+  function authProceed(){
+    if(ACC.ready && ACC.proceeded === ACC.uid){ auHide(); return; }
+    ACC.proceeded = ACC.uid;
+    auHide();
+    var uidNow = ACC.uid, owner = lsGet("ayo_owner") || "";
+    var p;
+    if(owner === uidNow) p = Promise.resolve();
+    else if(!owner){
+      // 처음 로그인: 이 기기에 있던 기록을 계정으로 옮김
+      p = localCount().then(function(n){
+        lsSet("ayo_owner", uidNow);
+        if(!n) return;
+        toast("이 기기의 기존 기록을 계정 서버로 옮기고 있어요.");
+        return Promise.all(SYNC_STORES.concat(["blobs"]).map(function(s){
+          return idbKeys(s).then(function(ks){ ks.forEach(function(id){ SQ[s + "|" + id] = sqVer(); }); });
+        })).then(sqSaveNow);
+      });
+    } else {
+      // 다른 계정이 쓰던 기기: 이전 계정의 기록은 지우고 이 계정 기록을 받음
+      p = localClear().then(function(){ lsSet("ayo_owner", uidNow); });
+    }
+    p.then(function(){ ACC.ready = true; accRender(); return syncNow(); }).then(function(){
+      if(ACC.state === "ok" && ACC.firstToast !== uidNow){ ACC.firstToast = uidNow; }
+    });
+  }
+
+  function authAttach(){
+    var c = sbClient(); if(!c || authAttach._on) return Promise.resolve();
+    authAttach._on = true;
+    c.auth.onAuthStateChange(function(ev, session){
+      if(ev === "PASSWORD_RECOVERY"){ ACC.recovery = true; setTimeout(function(){ auShow("newpw"); }, 0); return; }
+      if(ev === "SIGNED_IN" && session && session.user && !ACC.recovery && ACC.booted && ACC.uid !== session.user.id){
+        setTimeout(function(){ onAuthed(session.user); }, 0);
+      }
+    });
+    return Promise.resolve();
+  }
+  function authBoot(){
+    auShow("busy"); $("auBusyTxt").textContent = "계정을 확인하고 있어요…";
+    if(/type=recovery/.test(location.hash)) ACC.recovery = true;
+    var hashErr = /error_description=([^&]+)/.exec(location.hash);
+    loadSbLib().then(function(ok){
+      if(!ok){
+        var u = cachedUser();
+        if(u){ ACC.booted = true; onAuthed(u, true); } else auShow("offline");
+        return;
+      }
+      var c = sbClient(); authAttach();
+      var q = new URLSearchParams(location.search), code = q.get("code"), st = q.get("state"), p = Promise.resolve();
+      if(code && st && st === lsGet("ayo_nv_state")){
+        lsSet("ayo_nv_state", "");
+        try{ history.replaceState(null, "", homeUrl()); }catch(e){}
+        p = naverFinish(code, st);
+      }
+      return p.then(function(){ return c.auth.getSession(); }).then(function(r){
+        ACC.booted = true;
+        var s = r && r.data && r.data.session;
+        if(location.hash && /access_token|error/.test(location.hash)){ try{ history.replaceState(null, "", homeUrl() + location.search); }catch(e){} }
+        if(ACC.recovery && s){ ACC.uid = null; auShow("newpw"); return; }
+        if(s && s.user){ onAuthed(s.user); return; }
+        var u = cachedUser();
+        if(u && !navigator.onLine){ onAuthed(u, true); return; }
+        auShow("login"); loadProviders();
+        var m = ACC.bootMsg || (hashErr ? auErr(decodeURIComponent(hashErr[1].replace(/\+/g, " "))) : "");
+        if(m) auMsg("auLMsg", m, true);
+        ACC.bootMsg = "";
+      }, function(e){
+        ACC.booted = true;
+        var u = cachedUser(); if(u){ onAuthed(u, true); return; }
+        auShow("login"); loadProviders(); auMsg("auLMsg", auErr(e), true);
+      });
+    });
+  }
+
+  /* ---- 더보기 → 계정 ---- */
+  function fmtAgo(t){ if(!t) return "아직 없음"; var s = Math.round((Date.now() - t) / 1000); return s < 60 ? "방금 전" : s < 3600 ? Math.floor(s / 60) + "분 전" : fmtDate(t); }
+  function accRender(){
+    if(!$("accSheet")) return;
+    var u = ACC.user, n = sqCount();
+    var prov = u && u.app_metadata && u.app_metadata.provider;
+    var pv = { email: "이메일", google: "Google", kakao: "카카오" }[prov] || (u && u.user_metadata && u.user_metadata.provider === "naver" ? "네이버" : prov || "");
+    $("accEmail").textContent = u ? (u.email || "(이메일 없음)") + (pv ? " · " + pv + " 로그인" : "") : "로그인 안 됨";
+    var st = { sync: "🔄 동기화 중…", ok: "✅ 서버에 저장됨", err: "⚠️ 서버 저장 실패 — 잠시 뒤 자동으로 다시 시도해요", offline: "📴 오프라인 — 연결되면 자동으로 올려요", "": "준비 중" }[ACC.state || ""];
+    $("accStat").innerHTML = "<b>" + st + "</b><br>올릴 변경: " + n + "건 · 마지막 동기화: " + fmtAgo(ACC.last) +
+      (ACC.state === "err" && ACC.err ? '<br><small style="opacity:.7">' + esc(ACC.err).slice(0, 120) + "</small>" : "");
+  }
+  function accAsk(html, yesTxt, fn){
+    $("accAskTxt").innerHTML = html; $("btnAccAskYes").textContent = yesTxt; $("accAsk").hidden = false;
+    accAsk._fn = fn;
+  }
+  $("btnAccAskNo").addEventListener("click", function(){ $("accAsk").hidden = true; accAsk._fn = null; });
+  $("btnAccAskYes").addEventListener("click", function(){ var f = accAsk._fn; $("accAsk").hidden = true; accAsk._fn = null; if(f) f(); });
+  function accOpen(){ $("accAsk").hidden = true; accRender(); $("accSheet").hidden = false; }
+  $("btnAccClose").addEventListener("click", function(){ $("accSheet").hidden = true; });
+  $("accSheet").addEventListener("click", function(e){ if(e.target === $("accSheet")) $("accSheet").hidden = true; });
+  $("btnAccSync").addEventListener("click", function(){ syncNow().then(function(){ toast(ACC.state === "ok" ? "서버와 동기화했어요." : "지금은 동기화할 수 없어요. 연결을 확인해 주세요."); }); });
+  function doLogout(){
+    var c = sbClient();
+    $("accSheet").hidden = true; auShow("busy"); $("auBusyTxt").textContent = "로그아웃하고 있어요…";
+    localClear().then(function(){
+      lsSet("ayo_owner", ""); lsSet("ayo_pull", "");
+      return c ? c.auth.signOut().catch(function(){}) : null;
+    }).then(function(){ try{ localStorage.removeItem(SB_TOKEN_KEY); }catch(e){} location.replace(homeUrl()); });
+  }
+  $("btnAccOut").addEventListener("click", function(){
+    busyBtn("btnAccOut", true, "남은 변경 올리는 중…");
+    syncNow().then(function(){
+      busyBtn("btnAccOut", false);
+      var n = sqCount();
+      accAsk(n ? "아직 서버에 못 올린 변경이 <b>" + n + "건</b> 있어요. 지금 로그아웃하면 이 변경은 사라져요."
+               : "로그아웃하면 이 기기에 저장된 기록은 지워지고, 다시 로그인하면 서버에서 불러와요.", n ? "그래도 로그아웃" : "로그아웃", doLogout);
+    });
+  });
+  $("btnAccDel").addEventListener("click", function(){
+    accAsk("계정과 서버에 저장된 <b>모든 회원·측정 기록·사진</b>이 영구 삭제되고 되돌릴 수 없어요. 필요하면 먼저 <b>백업</b>을 받아 두세요.", "계정 영구 삭제", function(){
+      var c = sbClient(); if(!c || !navigator.onLine){ toast("인터넷 연결 후 다시 시도해 주세요."); return; }
+      busyBtn("btnAccDel", true, "삭제 중…");
+      c.functions.invoke("delete-account", { body: {} }).then(function(r){
+        busyBtn("btnAccDel", false);
+        if(r.error){ toast("계정 삭제에 실패했어요. 잠시 뒤 다시 시도해 주세요."); console.warn("[AYO] delete", r.error); return; }
+        toast("계정을 삭제했어요.");
+        doLogout();
+      }, function(){ busyBtn("btnAccDel", false); toast("계정 삭제에 실패했어요."); });
+    });
+  });
+  $("btnMoreAcc").addEventListener("click", function(){ $("moreSheet").hidden = true; accOpen(); });
+
+  authBoot();
 
 })();
 </script>

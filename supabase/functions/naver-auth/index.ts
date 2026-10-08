@@ -4,7 +4,7 @@
 // 앱은 supabase.auth.verifyOtp({ token_hash, type: "magiclink" })로 로그인 완료.
 // 필요한 비밀값(Supabase 대시보드 > Edge Functions > Secrets): NAVER_CLIENT_ID, NAVER_CLIENT_SECRET
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { cors, json } from "../_cors.ts";
+import { adminKey, cors, json } from "../_cors.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors(req) });
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     if (!p || !p.email) return json(req, { error: "네이버 계정의 이메일 제공 동의가 필요해요" }, 400);
     const email = String(p.email).toLowerCase();
 
-    const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    const admin = createClient(Deno.env.get("SUPABASE_URL")!, adminKey(), {
       auth: { autoRefreshToken: false, persistSession: false },
     });
     // 처음이면 계정 생성(이메일 확인 완료 상태). 이미 있으면 오류가 나도 그대로 진행.
@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
     }).catch(() => null);
 
     const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email });
-    if (error || !data?.properties?.hashed_token) return json(req, { error: "로그인 토큰을 만들지 못했어요" }, 500);
+    if (error || !data?.properties?.hashed_token) return json(req, { error: "로그인 토큰을 만들지 못했어요", detail: error?.message }, 500);
     // 보안: 같은 이메일로 '인증 안 된' 이메일 가입이 먼저 있었다면(남이 미리 만들어 둔 계정일 수 있음)
     // 그 비밀번호는 무효로 바꾸고 네이버로 확인된 본인 계정으로 확정
     const u = data.user;

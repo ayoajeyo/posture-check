@@ -1574,7 +1574,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v100</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v101</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1591,7 +1591,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v100</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v101</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -8699,7 +8699,7 @@
   var SB_URL = "https://doltciamvnrrysoynbzo.supabase.co";
   var SB_KEY = "sb_publishable_tla5mhOH6x6DkFcqBcPeLw_KX4dgCEQ";   // 공개 키 (RLS로 본인 데이터만 접근)
   var SB_LIB = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js";
-  var NAVER_CLIENT_ID = "";   // 네이버 개발자센터 Client ID (공개값). 비어 있으면 네이버 버튼 숨김
+  var NAVER_CLIENT_ID = "JZgl2WfIdOQY_12OSEgz";   // 네이버 개발자센터 Client ID (공개값). 비어 있으면 네이버 버튼 숨김
   var SB_TOKEN_KEY = "sb-doltciamvnrrysoynbzo-auth-token";
   var SYNC_STORES = ["members", "records", "roms", "programs", "assigns", "consults", "sales"];
   var ACC = { uid: null, user: null, ready: false, busy: null, again: false, state: "", last: 0, err: "", recovery: false, booted: false };
@@ -8780,7 +8780,7 @@
   function cachedUser(){
     try{ var s = JSON.parse(localStorage.getItem(SB_TOKEN_KEY) || "null"); return s && s.user && s.user.id ? s.user : null; }catch(e){ return null; }
   }
-  function homeUrl(){ return location.origin + location.pathname; }
+  function homeUrl(){ return location.origin + location.pathname.replace(/index\.html$/, ""); }   // 네이버 Callback URL과 똑같이 맞춤
 
   /* ---- 서버로 올리기 ---- */
   function blobPath(id){ return ACC.uid + "/blobs/" + String(id).replace(/[^A-Za-z0-9_.-]/g, "_") + ".json"; }
@@ -9134,6 +9134,12 @@
       }
       var c = sbClient(); authAttach();
       var q = new URLSearchParams(location.search), code = q.get("code"), st = q.get("state"), p = Promise.resolve();
+      if(st && !code && st === lsGet("ayo_nv_state")){
+        // 네이버 화면에서 취소·동의 거부
+        lsSet("ayo_nv_state", "");
+        try{ history.replaceState(null, "", homeUrl()); }catch(e){}
+        ACC.bootMsg = "네이버 로그인을 취소했어요.";
+      }
       if(code && st && st === lsGet("ayo_nv_state")){
         lsSet("ayo_nv_state", "");
         try{ history.replaceState(null, "", homeUrl()); }catch(e){}
@@ -9165,7 +9171,7 @@
     if(!$("accSheet")) return;
     var u = ACC.user, n = sqCount();
     var prov = u && u.app_metadata && u.app_metadata.provider;
-    var pv = { email: "이메일", google: "Google", kakao: "카카오" }[prov] || (u && u.user_metadata && u.user_metadata.provider === "naver" ? "네이버" : prov || "");
+    var pv = (u && u.user_metadata && u.user_metadata.provider === "naver") ? "네이버" : ({ email: "이메일", google: "Google", kakao: "카카오" }[prov] || prov || "");
     $("accEmail").textContent = u ? (u.email || "(이메일 없음)") + (pv ? " · " + pv + " 로그인" : "") : "로그인 안 됨";
     var st = { sync: "🔄 동기화 중…", ok: "✅ 서버에 저장됨", err: "⚠️ 서버 저장 실패 — 잠시 뒤 자동으로 다시 시도해요", offline: "📴 오프라인 — 연결되면 자동으로 올려요", "": "준비 중" }[ACC.state || ""];
     $("accStat").innerHTML = "<b>" + st + "</b><br>올릴 변경: " + n + "건 · 마지막 동기화: " + fmtAgo(ACC.last) +

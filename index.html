@@ -1586,7 +1586,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v103</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v104</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1603,7 +1603,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v103</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v104</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -7748,8 +7748,9 @@
     var b = romFit(o.a, vw, vh, 0.94);
     var path = function(){ g.beginPath(); o.p.forEach(function(p){ for(var i = 0; i < p.length; i += 2){ var x = b.x + p[i] / 1000 * b.w, y = b.y + p[i + 1] / 1000 * b.h; if(i === 0) g.moveTo(x, y); else g.lineTo(x, y); } }); };
     g.save(); g.lineJoin = "round"; g.lineCap = "round";
-    path(); g.strokeStyle = "rgba(0,0,0,.4)"; g.lineWidth = 5; g.stroke();
-    path(); g.strokeStyle = "rgba(234,241,239,.92)"; g.lineWidth = 2.4; g.stroke();
+    path(); g.strokeStyle = "rgba(13,21,40,.75)"; g.lineWidth = 7; g.stroke();   // 밝은 벽·커튼 앞에서도 잘 보이게 어두운 테두리 + 밝은 선
+    path(); g.strokeStyle = "#FFFFFF"; g.lineWidth = 3.2; g.stroke();
+    path(); g.strokeStyle = "rgba(79,209,232,.9)"; g.lineWidth = 1.4; g.stroke();
     g.restore();
     tag.hidden = false; tag.className = "rom-gtag"; tag.textContent = "기본 자세 테두리에 몸을 맞춰 촬영하세요";
   }

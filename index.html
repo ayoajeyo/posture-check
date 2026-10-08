@@ -1524,10 +1524,10 @@
     <p id="setOn" hidden style="margin:0 0 12px"><span class="set-on">✓ PRO 이용 중</span></p>
     <section class="card lic-card">
       <h2>PRO 이용 정보</h2>
-      <div class="lic-row"><span>이 기기 코드</span><b class="dev-id">AYO-····-····</b></div>
+      <div class="lic-row"><span>계정 코드</span><b class="dev-id">AYO-····-····</b></div>
       <div class="lic-row"><span>이용 상태</span><b id="licState">무료</b></div>
       <div class="lic-row"><span>이용 기간</span><b id="licExp">–</b></div>
-      <div class="stage-controls" style="margin-top:10px"><button type="button" class="btn line sm dev-copy">기기 코드 복사</button><button type="button" class="btn primary sm" id="btnLicInput">이용 코드 입력·연장</button></div>
+      <div class="stage-controls" style="margin-top:10px"><button type="button" class="btn line sm dev-copy">계정 코드 복사</button><button type="button" class="btn primary sm" id="btnLicInput">이용 코드 입력·연장</button></div>
     </section>
     <fieldset class="set-fs" id="setFs">
     <section class="card set-form">
@@ -1586,7 +1586,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v105</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v106</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1603,7 +1603,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v105</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v106</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1617,18 +1617,18 @@
       <div class="mb-list" id="mbItems"></div>
       <p class="mb-empty" id="mbEmpty" hidden>등록된 회원이 없어요. <b>+ 회원 등록</b>으로 시작하세요.</p>
       <section class="card mb-backup">
-        <h2>기록 백업</h2>
-        <p class="sub" id="bkInfo">회원 정보와 측정 기록은 <b>이 기기 안에만</b> 저장돼요. 휴대폰을 바꾸거나 앱을 지우기 전에 백업 파일을 저장해 두세요.</p>
+        <h2>내 데이터 내보내기</h2>
+        <p class="sub" id="bkInfo">회원 정보와 측정 기록은 <b>계정 서버에 자동 저장</b>돼요. 센터에서 따로 보관하고 싶을 때만 파일로 내보내세요.</p>
         <div class="stage-controls" style="margin-top:0">
-          <button type="button" class="btn primary" id="btnBkExport">💾 지금 백업하기</button>
-          <button type="button" class="btn line" id="btnBkImport">백업 불러오기</button>
+          <button type="button" class="btn primary" id="btnBkExport">💾 파일로 내보내기</button>
+          <button type="button" class="btn line" id="btnBkImport">파일 불러오기</button>
           <input type="file" id="bkFile" accept=".json,application/json">
         </div>
-        <div class="bk-opts">
+        <div class="bk-opts" hidden>
           <label for="bkCycle">백업 알림</label>
           <select id="bkCycle"><option value="1">매일</option><option value="3">3일마다</option><option value="7">7일마다 (권장)</option><option value="14">14일마다</option><option value="0">알림 끄기</option></select>
         </div>
-        <div class="bk-move">
+        <div class="bk-move" hidden>
           <b>📱 휴대폰을 바꾸거나 앱을 다시 설치할 때</b>
           <ol>
             <li>이전 폰에서 <b>지금 백업하기</b> → Google Drive 또는 카톡 나와의 채팅에 저장</li>
@@ -1636,7 +1636,7 @@
             <li>PRO 이용 중이었다면 <b>이용권 이전 요청</b> 메일로 새 기기용 코드를 받으세요</li>
           </ol>
         </div>
-        <p class="bk-tip">💡 <b>지금 백업하기</b>를 누르면 공유 창이 열려요 → <b>Google Drive</b> 또는 <b>카카오톡 '나와의 채팅'</b>을 고르면 폰을 바꾸거나 앱을 지워도 안전하게 보관돼요. 새 폰에서는 <b>백업 불러오기</b>로 그대로 복원돼요.</p>
+        <p class="bk-tip" hidden>💡 <b>지금 백업하기</b>를 누르면 공유 창이 열려요 → <b>Google Drive</b> 또는 <b>카카오톡 '나와의 채팅'</b>을 고르면 폰을 바꾸거나 앱을 지워도 안전하게 보관돼요. 새 폰에서는 <b>백업 불러오기</b>로 그대로 복원돼요.</p>
       </section>
     </div>
     <div id="mbDetail" hidden>
@@ -1885,9 +1885,9 @@
     </div>
     <div class="pay-steps play-hide" id="paySteps">
       <h4>💳 결제 방법 · 계좌 이체</h4>
-      <div class="ps-row"><i>1</i><span><b>메일로 신청</b> · 아래 <b>메일로 결제 신청</b>을 누르면 기기 코드가 자동으로 들어가요. 희망 기간과 입금자명만 적어 보내주세요.</span></div>
+      <div class="ps-row"><i>1</i><span><b>메일로 신청</b> · 아래 <b>메일로 결제 신청</b>을 누르면 계정 코드가 자동으로 들어가요. 희망 기간과 입금자명만 적어 보내주세요.</span></div>
       <div class="ps-row"><i>2</i><span><b>입금</b> · 답장 메일로 안내받은 계좌로 입금해 주세요.</span></div>
-      <div class="ps-row"><i>3</i><span><b>이용 코드 입력</b> · 입금 확인 후 이 기기 전용 이용 코드를 메일로 보내드려요. 아래 칸에 붙여넣으면 바로 PRO가 켜져요.</span></div>
+      <div class="ps-row"><i>3</i><span><b>이용 코드 입력</b> · 입금 확인 후 이 계정 전용 이용 코드를 메일로 보내드려요. 아래 칸에 붙여넣으면 바로 PRO가 켜져요.</span></div>
     </div>
     <div class="pro-ask play-hide">
       <span>결제 신청 · 문의</span>
@@ -1896,9 +1896,9 @@
     </div>
     <div class="pro-code on" id="proCodeRow">
       <h4 class="pro-code-h">🔑 이용 코드 입력</h4>
-      <div class="dev-box"><div><span>이 기기 코드</span><b class="dev-id">AYO-····-····</b></div><button type="button" class="btn line sm dev-copy">복사</button></div>
-      <p class="play-hide">결제 후 위 <b>기기 코드</b>를 보내주시면 이 기기 전용 이용 코드를 보내드려요.</p>
-      <p class="play-only">PRO 이용 코드가 있으면 아래에 붙여넣어 주세요. 이용 코드는 위 <b>기기 코드</b> 전용으로 발급돼요.</p>
+      <div class="dev-box"><div><span>계정 코드</span><b class="dev-id">AYO-····-····</b></div><button type="button" class="btn line sm dev-copy">복사</button></div>
+      <p class="play-hide">결제 후 위 <b>계정 코드</b>를 보내주시면 이 계정 전용 이용 코드를 보내드려요. 어느 기기에서 로그인해도 그대로 PRO가 유지돼요.</p>
+      <p class="play-only">PRO 이용 코드가 있으면 아래에 붙여넣어 주세요. 이용 코드는 위 <b>계정 코드</b> 전용으로 발급돼요.</p>
       <textarea id="proCode" rows="3" placeholder="받은 이용 코드를 붙여넣으세요 (AYO1-로 시작)" autocomplete="off" spellcheck="false"></textarea>
       <p class="lic-msg" id="proCodeMsg" hidden></p>
       <button type="button" class="btn primary sm" id="btnProCode">이용 코드 적용</button>
@@ -1910,21 +1910,22 @@
 <div class="confirm-overlay" id="trialEnd" hidden role="dialog" aria-modal="true" aria-labelledby="teTitle">
   <div class="confirm-box te-box">
     <div class="te-ic" aria-hidden="true">🎁</div>
-    <h3 id="teTitle">7일 PRO 무료 체험이 끝났어요</h3>
+    <h3 id="teTitle">가입 후 7일 PRO 무료 체험이 끝났어요</h3>
     <p>지금부터는 <b>무료 버전</b>으로 이용돼요.<br>체험 기간에 저장한 <b>회원·측정 기록은 그대로</b> 남아 있어요.<br><span class="play-hide">PRO를 계속 쓰시려면 결제 안내를 확인해 주세요.</span><span class="play-only">PRO 이용 코드가 있으면 입력해 주세요.</span></p>
     <div class="te-acts">
       <button type="button" class="btn primary" id="btnTePay"><span class="play-hide">💳 유료 결제 안내 보기</span><span class="play-only">🔑 이용 코드 입력</span></button>
-      <button type="button" class="btn line" id="btnTeBackup">💾 기록 백업하기</button>
+      <button type="button" class="btn line" id="btnTeBackup" hidden>💾 기록 백업하기</button>
       <button type="button" class="btn line" id="btnTeClose">무료로 계속 쓰기</button>
     </div>
   </div>
 </div>
 <div class="confirm-overlay" id="bkSheet" hidden role="dialog" aria-modal="true" aria-labelledby="bkSheetT">
   <div class="confirm-box bk-sheet">
-    <h3 id="bkSheetT">💾 백업 · 기기 변경</h3>
-    <p class="sub" id="bkSheetInfo">회원 정보와 측정 기록(사진 포함)은 이 기기 안에만 저장돼요.</p>
-    <div class="stage-controls"><button type="button" class="btn primary" id="btnBkS1">💾 지금 백업하기</button><button type="button" class="btn line" id="btnBkS2">백업 불러오기</button></div>
-    <div class="bk-move">
+    <h3 id="bkSheetT">💾 내 데이터 내보내기</h3>
+    <p class="sub" id="bkSheetInfo">회원 정보와 측정 기록(사진 포함)은 계정 서버에 자동 저장돼요.</p>
+    <div class="stage-controls"><button type="button" class="btn primary" id="btnBkS1">💾 파일로 내보내기</button><button type="button" class="btn line" id="btnBkS2">파일 불러오기</button></div>
+    <p class="sub" style="margin-top:10px">휴대폰을 바꿔도 같은 계정으로 <b>로그인만 하면</b> 기록이 그대로 나와요. 내보낸 파일은 센터 보관용이에요.</p>
+    <div class="bk-move" hidden>
       <b>📱 휴대폰을 바꾸거나 앱을 다시 설치할 때</b>
       <ol>
         <li>이전 폰에서 <b>지금 백업하기</b> → <b>Google Drive</b> 또는 <b>카톡 나와의 채팅</b>에 저장</li>
@@ -1945,7 +1946,7 @@
       <button type="button" data-go="report"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/></svg><span>종합 리포트</span></button>
       <button type="button" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span></button>
     </div>
-    <button type="button" class="btn line" id="btnMoreBk" style="width:100%;margin-top:10px">💾 백업 · 복원 · 기기 변경</button>
+    <button type="button" class="btn line" id="btnMoreBk" style="width:100%;margin-top:10px">💾 내 데이터 내보내기 · 불러오기</button>
     <button type="button" class="btn line" id="btnMoreAcc" style="width:100%;margin-top:8px">👤 계정 · 서버 저장</button>
     <button type="button" class="btn line" id="btnMoreAdm" style="width:100%;margin-top:8px">🔧 관리자 모드</button>
     <div class="confirm-btns"><button type="button" class="no" id="btnMoreClose">닫기</button></div>
@@ -5095,14 +5096,14 @@
     loadAll().then(function(res){
       var last = lsGet("ayo_last_backup");
       var dirty = +(lsGet("ayo_bk_dirty") || 0), days = last ? Math.floor((Date.now() - +last) / 864e5) : null;
-      $("bkInfo").innerHTML = "회원 <b>" + res[0].length + "명</b> · 측정 기록 <b>" + res[1].length + "건</b>이 이 기기 안에만 저장돼 있어요. " +
+      $("bkInfo").innerHTML = "회원 <b>" + res[0].length + "명</b> · 측정 기록 <b>" + res[1].length + "건</b>이 계정 서버에 자동 저장돼요. 따로 보관하고 싶을 때만 파일로 내보내세요." + (last ? " 마지막 내보내기: <b>" + fmtDate(+last) + "</b>" : ""); if(0) $("bkInfo").innerHTML +=
         (last ? "마지막 백업: <b>" + fmtDate(+last) + "</b> (" + (days === 0 ? "오늘" : days + "일 전") + ")" + (dirty ? " · 그 뒤 <b class=\"bk-warn\">" + dirty + "건 변경</b>" : " · 그 뒤 변경 없음 ✓") : "<b class=\"bk-warn\">아직 백업한 적이 없어요.</b> 휴대폰을 바꾸거나 앱을 지우기 전에 꼭 저장하세요.");
       $("bkCycle").value = lsGet("ayo_bk_cycle") || "7";
     });
   }
   /* v77 백업 알림: 정한 주기가 지났고 그 사이 바뀐 기록이 있으면 화면 위에 안내 */
   function bkCheck(){
-    var ban = $("bkBanner"); if(!ban) return;
+    var ban = $("bkBanner"); if(ban) ban.hidden = true; return;   // v106 계정 서버에 자동 저장 → 백업 알림 없음
     var cyc = +(lsGet("ayo_bk_cycle") || 7), last = +(lsGet("ayo_last_backup") || 0), dirty = +(lsGet("ayo_bk_dirty") || 0), snooze = +(lsGet("ayo_bk_snooze") || 0);
     var due = cyc > 0 && dirty > 0 && Date.now() > snooze && (!last || Date.now() - last >= cyc * 864e5);
     if(!due){ ban.hidden = true; return; }
@@ -5137,21 +5138,20 @@
   }
   $("btnBkExport").addEventListener("click", function(){
     loadAll().then(function(res){
-      if(!res[0].length){ toast("백업할 회원이 없어요."); return; }
+      if(!res[0].length){ toast("내보낼 회원이 없어요."); return; }
       var data = { app: "아요바디요", kind: "backup", version: 2, exportedAt: new Date().toISOString(), members: res[0], records: [] };
       var full = function(st, L){ return Promise.all(L.map(function(x){ return dbFull(st, x).then(function(y){ var c = Object.assign({}, y); delete c.blob; return c; }); })); };
       var fill = full("records", res[1]).then(function(R){ data.records = R; });
       fill = OPS_STORES.reduce(function(p, st){ return p.then(function(){ return dbAll(st).then(function(L){ return full(st, L); }).then(function(L){ data[st] = L; }); }); }, fill);
       delete data.extra;
       data.settings = getSettings();
-      data.license = { code: lsGet("ayo_license") || "", device: deviceCode() };
-      data.trialStart = trialStart();
+
       fill.then(function(){
       var blob = new Blob([JSON.stringify(data)], { type: "application/json" });
       var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
       lsSet("ayo_last_backup", String(Date.now())); lsSet("ayo_bk_dirty", "0"); lsSet("ayo_bk_snooze", "0"); if(typeof bkCheck === "function") bkCheck();
       deliverFile(blob, "AYO_backup_" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "_" + z(d.getHours()) + z(d.getMinutes()) + ".json",
-        "백업 파일을 만들었어요. 구글드라이브나 카톡 나에게 보내기로 보관하세요.");
+        "내보내기 파일을 만들었어요. 센터 보관용으로 저장해 두세요.");
       bkInfoRender();
       });
     });
@@ -7912,16 +7912,18 @@
      서명은 발급 도구(대표 PC)의 비밀 키로만 만들 수 있고, 앱은 공개 키(license-pub.json)로 확인만 한다. */
   var B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
   var LIC = { ok: false, exp: null, dev: null, code: null };
+  /* v106 이용권은 기기가 아니라 '계정'에 묶음: 계정 코드 = 로그인한 계정 ID에서 만든 8자리 (어느 기기에서 로그인해도 같음) */
+  function acctUid(){ try{ if(typeof ACC !== "undefined" && ACC && ACC.uid) return ACC.uid; var u = cachedUser(); return u ? u.id : null; }catch(e){ return null; } }
   function deviceId(){
-    var d = lsGet("ayo_device");
-    if(!d || !/^[0-9A-Z]{8}$/.test(d)){
-      var a = new Uint8Array(8); (window.crypto || window.msCrypto).getRandomValues(a);
-      d = Array.prototype.map.call(a, function(x){ return B32[x & 31]; }).join("");
-      lsSet("ayo_device", d);
-    }
+    var u = acctUid(); if(!u) return "--------";
+    var h1 = 0x811c9dc5, h2 = 0x01000193 ^ 0x5bd1e995;
+    for(var i = 0; i < u.length; i++){ var c = u.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ c, 2246822519) >>> 0; }
+    var bits = h1.toString(2).padStart(32, "0") + h2.toString(2).padStart(32, "0"), d = "";
+    for(var k = 0; k < 8; k++) d += B32[parseInt(bits.substr(k * 5, 5), 2)];
     return d;
   }
   function deviceCode(){ var d = deviceId(); return "AYO-" + d.slice(0, 4) + "-" + d.slice(4); }
+  function admPro(){ return typeof ADM !== "undefined" && !!(ADM && ADM.on); }   // v106 관리자 모드 = PRO
   function todayKey(){ var t = new Date(); return t.getFullYear() + ("0" + (t.getMonth() + 1)).slice(-2) + ("0" + t.getDate()).slice(-2); }
   function fmtYmd(k){ return k ? k.slice(0, 4) + "." + k.slice(4, 6) + "." + k.slice(6, 8) : "–"; }
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
@@ -7939,13 +7941,14 @@
   }
   var IS_PLAY = isPlayApp();
   document.body.classList.toggle("is-play", IS_PLAY);
-  /* v93 설치 후 7일 PRO 무료 체험 (첫 실행 시각 기준) */
+  /* v106 PRO 무료 체험 = 회원가입 후 7일 (계정 생성 시각 기준, 기기를 바꾸거나 앱을 지워도 그대로) */
   var TRIAL_DAYS = 7;
   function trialStart(){
-    var t = +(lsGet("ayo_trial_start") || 0);
-    if(!t){ t = Date.now(); lsSet("ayo_trial_start", String(t)); }
-    return t;
+    var u = null; try{ u = (typeof ACC !== "undefined" && ACC && ACC.user) || cachedUser(); }catch(e){}
+    var t = u && Date.parse(u.created_at || "");
+    return t && isFinite(t) ? t : Date.now();
   }
+  function trialKey(){ return "ayo_trial_end_shown_" + (acctUid() || "x"); }
   function trialEndAt(){ return trialStart() + TRIAL_DAYS * 864e5; }
   function trialLeftMs(){
     var now = Date.now(), seen = +(lsGet("ayo_trial_seen") || 0);
@@ -7953,7 +7956,7 @@
     if(now > seen) lsSet("ayo_trial_seen", String(now));
     return Math.max(0, trialEndAt() - now);
   }
-  function trialActive(){ return !licValid() && trialLeftMs() > 0; }
+  function trialActive(){ return !licValid() && !admPro() && trialLeftMs() > 0; }
   function trialLeftTxt(){
     var ms = trialLeftMs(), d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.max(1, Math.ceil(ms % 36e5 / 6e4));
     return d >= 1 ? Math.ceil(ms / 864e5) + "일" : h >= 1 ? h + "시간" : m + "분";
@@ -7987,7 +7990,8 @@
   function licApply(raw){
     var p = parseLic(raw);
     if(!p) return Promise.resolve({ ok: false, msg: "이용 코드 형식이 올바르지 않아요. 받은 코드를 그대로 붙여넣어 주세요." });
-    if(p.dev !== deviceId()) return Promise.resolve({ ok: false, msg: "이 기기용 코드가 아니에요. 이 기기 코드(" + deviceCode() + ")로 발급받아 주세요." });
+    if(!acctUid()) return Promise.resolve({ ok: false, msg: "로그인한 뒤 입력해 주세요." });
+    if(p.dev !== deviceId()) return Promise.resolve({ ok: false, msg: "이 계정용 코드가 아니에요. 계정 코드(" + deviceCode() + ")로 발급받아 주세요." });
     return verifyLic(p).then(function(ok){
       if(ok === null) return { ok: false, msg: "인터넷에 연결한 뒤 다시 시도해주세요. (확인용 키를 불러오지 못했어요)" };
       if(!ok) return { ok: false, msg: "올바르지 않은 이용 코드예요. 코드를 다시 확인해주세요." };
@@ -7995,15 +7999,16 @@
       lsSet("ayo_license", p.code); lsSet("ayo_license_v", p.code);
       LIC = { ok: true, exp: p.exp, dev: p.dev, code: p.code };
       updateLicUI();
+      if(typeof licSaveServer === "function") licSaveServer(p.code);   // 다른 기기에서 로그인해도 PRO 유지
       return { ok: true, exp: p.exp };
     });
   }
   function syncProBadge(){
     var chip = $("proChip"); if(!chip) return;
-    var on = licValid(), tr = !on && trialActive();
+    var adm = admPro() && !licValid(), on = licValid() || adm, tr = !on && trialActive();
     chip.hidden = !on && !tr;
     chip.classList.toggle("trial", tr);
-    chip.querySelector(".pc-s").textContent = tr ? "무료 체험" : "멤버십";
+    chip.querySelector(".pc-s").textContent = tr ? "무료 체험" : adm ? "관리자" : "멤버십";
     if(tr){
       var dl = Math.ceil(trialLeftMs() / 864e5);
       $("proChipD").textContent = trialLeftMs() < 864e5 ? "오늘 종료" : "D-" + dl;
@@ -8011,7 +8016,8 @@
       chip.title = "PRO 무료 체험 중 · " + fmtDate(trialEndAt()) + "까지";
     }
     syncTrialBar();
-    if(on){
+    if(adm){ $("proChipD").textContent = ""; chip.classList.remove("warn"); chip.title = "관리자 모드 · PRO 기능 사용"; }
+    else if(on){
       var dl = daysLeft(LIC.exp);
       $("proChipD").textContent = dl <= 7 ? (dl === 0 ? "오늘 종료" : "D-" + dl) : "";
       chip.classList.toggle("warn", dl <= 7);
@@ -8033,7 +8039,7 @@
   var trialWas = null;
   function trialTick(){
     var now = trialActive();
-    if(trialWas === true && !now && !licValid()) onTrialEnd(true);
+    if(trialWas === true && !now && !licValid() && !admPro()) onTrialEnd(true);
     trialWas = now;
     syncProBadge();
   }
@@ -8046,15 +8052,14 @@
   }
   function onTrialEnd(live){
     if(live) proRefresh();
-    if(lsGet("ayo_trial_end_shown")) return;
-    lsSet("ayo_trial_end_shown", String(Date.now()));
+    if(!acctUid() || lsGet(trialKey())) return;
+    lsSet(trialKey(), String(Date.now()));
     $("proGate").hidden = true; $("trialEnd").hidden = false;
   }
   setInterval(trialTick, 30000);
   document.addEventListener("visibilitychange", function(){ if(!document.hidden) trialTick(); });
   setTimeout(function(){
-    trialStart(); trialTick();
-    if(!licValid() && !trialActive() && !lsGet("ayo_trial_end_shown")) setTimeout(function(){ if(!licValid()) onTrialEnd(false); }, 1500);
+    trialTick();
   }, 600);
   $("btnTbPay").addEventListener("click", function(){ openProGate("trial", IS_PLAY ? { code: true } : null); });
   $("btnTePay").addEventListener("click", function(){ $("trialEnd").hidden = true; openProGate("trial", IS_PLAY ? { code: true } : null); });
@@ -8064,7 +8069,7 @@
   function openBkSheet(){
     loadAll().then(function(res){
       var last = lsGet("ayo_last_backup");
-      $("bkSheetInfo").innerHTML = "회원 <b>" + res[0].length + "명</b> · 측정 기록 <b>" + res[1].length + "건</b>(사진 포함)이 이 기기 안에만 저장돼 있어요. " + (last ? "마지막 백업: <b>" + fmtDate(+last) + "</b>" : "<b class=\"bk-warn\">아직 백업한 적이 없어요.</b>");
+      $("bkSheetInfo").innerHTML = "회원 <b>" + res[0].length + "명</b> · 측정 기록 <b>" + res[1].length + "건</b>(사진 포함)이 계정 서버에 자동 저장돼 있어요." + (last ? " 마지막 내보내기: <b>" + fmtDate(+last) + "</b>" : "");
     });
     $("bkSheet").hidden = false;
   }
@@ -8074,11 +8079,9 @@
   $("btnBkSClose").addEventListener("click", function(){ $("bkSheet").hidden = true; });
   $("bkSheet").addEventListener("click", function(e){ if(e.target === $("bkSheet")) $("bkSheet").hidden = true; });
   /* v93 백업 속 이용권·체험 정보 */
-  function bkLicCarry(data){
-    var ts = +(data && data.trialStart || 0);
-    if(ts && ts < trialStart() && ts > 1.6e12){ lsSet("ayo_trial_start", String(ts)); syncProBadge(); }
-  }
-  function bkLicOffer(data){
+  function bkLicCarry(){}   // v106 체험·이용권은 계정 기준이라 백업에서 옮기지 않음
+  function bkLicOffer(){}
+  function bkLicOfferOld(data){
     var p = parseLic(data && data.license && data.license.code);
     if(!p || p.exp < todayKey() || p.dev === deviceId() || licValid()) return;
     var old = "AYO-" + p.dev.slice(0, 4) + "-" + p.dev.slice(4);
@@ -8091,7 +8094,9 @@
     document.querySelectorAll(".dev-id").forEach(function(el){ el.textContent = deviceCode(); });
     var st = $("licState"), ex = $("licExp"); if(!st) return;
     st.className = ""; ex.className = "";
-    if(licValid()){
+    if(admPro() && !licValid()){
+      st.textContent = "PRO (관리자 모드)"; ex.textContent = "관리자 모드를 켜 둔 동안";
+    } else if(licValid()){
       var dl = daysLeft(LIC.exp);
       st.textContent = "PRO 이용 중";
       ex.textContent = fmtYmd(LIC.exp) + "까지 (" + (dl === 0 ? "오늘 종료" : "D-" + dl) + ")";
@@ -8102,18 +8107,18 @@
       if(trialLeftMs() < 2 * 864e5) ex.className = "lic-warn";
     } else if(LIC.exp && LIC.dev === deviceId()){
       st.textContent = "기간 만료"; st.className = "lic-bad"; ex.textContent = fmtYmd(LIC.exp) + " 종료";
-    } else { st.textContent = "무료"; ex.textContent = lsGet("ayo_trial_start") ? "무료 체험 종료 (" + fmtDate(trialEndAt()).slice(0, 10) + ")" : "–"; }
+    } else { st.textContent = "무료"; ex.textContent = acctUid() ? "무료 체험 종료 (" + fmtDate(trialEndAt()).slice(0, 10) + ")" : "–"; }
   }
   function copyText(t, okMsg){
     var done = function(){ toast(okMsg); };
     if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, function(){ window.prompt("아래 내용을 길게 눌러 복사하세요", t); });
     else window.prompt("아래 내용을 길게 눌러 복사하세요", t);
   }
-  document.querySelectorAll(".dev-copy").forEach(function(b){ b.addEventListener("click", function(){ copyText(deviceCode(), "기기 코드를 복사했어요: " + deviceCode()); }); });
+  document.querySelectorAll(".dev-copy").forEach(function(b){ b.addEventListener("click", function(){ copyText(deviceCode(), "계정 코드를 복사했어요: " + deviceCode()); }); });
   $("btnLicInput").addEventListener("click", function(){ openProGate("settings", { code: true }); });
   function licInit(){
-    try{ localStorage.removeItem("ayo_pro"); }catch(e){}   // 예전 공통 코드는 더 이상 사용하지 않음
-    deviceId(); updateLicUI();
+    try{ localStorage.removeItem("ayo_pro"); localStorage.removeItem("ayo_trial_start"); }catch(e){}   // 예전 방식(공통 코드·기기 기준 체험)은 사용하지 않음
+    LIC = { ok: false, exp: null, dev: null, code: null }; updateLicUI();
     var p = parseLic(lsGet("ayo_license"));
     if(!p) return;
     verifyLic(p).then(function(ok){
@@ -8133,7 +8138,7 @@
   /* ===================== v47 설정 · PRO 플랜 ===================== */
   var SET_KEY = "ayo_settings", PRO_KEY = "ayo_pro";
   var DEFAULT_ITEMS = [ { n:"체형분석", a:30000 }, { n:"필라테스 10회권", a:0 }, { n:"PT 10회권", a:0 }, { n:"1개월 회원권", a:0 } ];
-  function isPro(){ return licValid() || trialActive(); }
+  function isPro(){ return licValid() || admPro() || trialActive(); }
   function getSettings(){
     var o = null; try{ o = JSON.parse(lsGet(SET_KEY) || "null"); }catch(e){}
     o = o || {};
@@ -8323,7 +8328,7 @@
   var PRO_MAIL = "aesonge26@gmail.com";
   function proMailHref(){
     var st = getSettings();
-    var body = "아요바디요 PRO 결제를 신청합니다.\n\n- 기기 코드: " + deviceCode() + "\n- 희망 기간(하나만 남겨주세요): 1개월(8,900원) / 3개월(23,900원) / 6개월(42,900원) / 12개월(69,900원)\n- 입금자명: \n- 센터명: " + (st.name || "") + "\n- 연락처: " + (st.contact || "") + "\n- 문의 내용: \n\n※ 답장으로 입금 계좌를 안내해 드리고, 입금 확인 후 이 기기 전용 이용 코드를 보내드려요.";
+    var body = "아요바디요 PRO 결제를 신청합니다.\n\n- 계정 코드: " + deviceCode() + "\n- 로그인 이메일: " + ((typeof ACC !== "undefined" && ACC.user && ACC.user.email) || "") + "\n- 희망 기간(하나만 남겨주세요): 1개월(8,900원) / 3개월(23,900원) / 6개월(42,900원) / 12개월(69,900원)\n- 입금자명: \n- 센터명: " + (st.name || "") + "\n- 연락처: " + (st.contact || "") + "\n- 문의 내용: \n\n※ 답장으로 입금 계좌를 안내해 드리고, 입금 확인 후 이 계정 전용 이용 코드를 보내드려요.";
     return "mailto:" + PRO_MAIL + "?subject=" + encodeURIComponent("[아요바디요] PRO 결제 신청") + "&body=" + encodeURIComponent(body);
   }
   $("btnProMail").addEventListener("click", function(){ if(IS_PLAY) return; window.location.href = proMailHref(); });
@@ -8402,6 +8407,8 @@
   var ADM_HASH = "662f5bbd3664bd4b2da29497ddc292a201b958b60dc6b8ff830e2f6baf267d2e";
   function admSync(){
     $("admChip").hidden = !ADM.on;
+    if(typeof proRefresh === "function" && admSync._was !== undefined && admSync._was !== ADM.on){ try{ proRefresh(); }catch(e){} }
+    admSync._was = ADM.on;
     $("btnMoreAdm").textContent = ADM.on ? "🔧 관리자 모드 (사용 중)" : "🔧 관리자 모드";
     if(!ADM.on) $("admPanel").hidden = true;
     if(typeof requestDraw === "function") requestDraw();
@@ -8426,7 +8433,7 @@
     if(!(window.crypto && crypto.subtle)){ $("admMsg").textContent = "이 화면에서는 코드를 확인할 수 없어요. 앱 주소(https)로 열어 주세요."; $("admMsg").className = "adm-msg err"; return; }
     admSha(v).then(function(h){
       if(h !== ADM_HASH){ $("admMsg").textContent = "코드가 맞지 않아요."; $("admMsg").className = "adm-msg err"; return; }
-      ADM.on = true; lsSet("ayo_admin", "1"); $("admSheet").hidden = true; admSync(); toast("관리자 모드를 켰어요");
+      ADM.on = true; lsSet("ayo_admin", "1"); $("admSheet").hidden = true; admSync(); toast("관리자 모드를 켰어요 · PRO 기능을 모두 쓸 수 있어요");
     });
   }
   $("btnMoreAdm").addEventListener("click", function(){ $("moreSheet").hidden = true; admOpen(); });
@@ -9450,11 +9457,29 @@
       // 다른 계정이 쓰던 기기: 이전 계정의 기록은 지우고 이 계정 기록을 받음
       p = localClear().then(function(){ lsSet("ayo_owner", uidNow); });
     }
-    p.then(function(){ ACC.ready = true; accRender(); return syncNow(); }).then(function(){
+    p.then(function(){ ACC.ready = true; accRender(); licAfterLogin(); return syncNow(); }).then(function(){
       if(ACC.state === "ok" && ACC.firstToast !== uidNow){ ACC.firstToast = uidNow; }
     });
   }
 
+  /* v106 PRO 이용권·체험을 계정 기준으로: 로그인하면 계정에 저장된 이용 코드를 불러와 확인 */
+  function licAfterLogin(){
+    try{ licInit(); trialTick(); updateLicUI(); }catch(e){}
+    setTimeout(function(){ try{ if(!isPro() && !lsGet(trialKey())) onTrialEnd(false); }catch(e){} }, 2500);   // 체험이 이미 끝난 계정: 한 번 안내
+    var c = sbClient(); if(!c || !ACC.uid || !navigator.onLine) return;
+    c.from("ayo_profiles").select("settings").eq("user_id", ACC.uid).maybeSingle().then(function(r){
+      var code = r && r.data && r.data.settings && r.data.settings.license;
+      if(code && code !== lsGet("ayo_license")){ lsSet("ayo_license", code); licInit(); }
+      else if(!code && lsGet("ayo_license") && LIC.ok) licSaveServer(lsGet("ayo_license"));
+    }, function(){});
+  }
+  function licSaveServer(code){
+    var c = sbClient(); if(!c || !ACC.uid) return;
+    c.from("ayo_profiles").select("settings").eq("user_id", ACC.uid).maybeSingle().then(function(r){
+      var st = (r && r.data && r.data.settings) || {}; st.license = code;
+      return c.from("ayo_profiles").upsert({ user_id: ACC.uid, settings: st }, { onConflict: "user_id" });
+    }).then(null, function(){});
+  }
   function authAttach(){
     var c = sbClient(); if(!c || authAttach._on) return Promise.resolve();
     authAttach._on = true;
@@ -9535,7 +9560,7 @@
     var c = sbClient();
     $("accSheet").hidden = true; auShow("busy"); $("auBusyTxt").textContent = "로그아웃하고 있어요…";
     localClear().then(function(){
-      lsSet("ayo_owner", ""); lsSet("ayo_pull", "");
+      lsSet("ayo_owner", ""); lsSet("ayo_pull", ""); lsSet("ayo_license", ""); lsSet("ayo_license_v", "");
       return c ? c.auth.signOut().catch(function(){}) : null;
     }).then(function(){ try{ localStorage.removeItem(SB_TOKEN_KEY); }catch(e){} location.replace(homeUrl()); });
   }

@@ -1764,7 +1764,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v119</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v120</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1781,7 +1781,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v119</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v120</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -8935,7 +8935,7 @@
       ws.columns = [
         { header: "부위", width: 11.19 }, { header: "동작", width: 11.19 }, { header: "수정전(사진)", width: 40.44 }, { header: "수정후(사진)", width: 40.44 },
         { header: "1선(시작점/끝점)", width: 38.13 }, { header: "2선(시작점/끝점)", width: 32.63 }, { header: "각도축", width: 35.38 }, { header: "세부설명(수정해야될 사항)", width: 73.13 },
-        { header: "수정전 좌표(사진 픽셀 x, y)", width: 34 }, { header: "수정후 좌표(사진 픽셀 x, y)", width: 34 }, { header: "각도(수정전 → 수정후)", width: 18 }, { header: "회원 · 측정일 · 사진 크기", width: 24 }
+        { header: "수정전 좌표(사진 픽셀 x, y)", width: 34 }, { header: "수정후 좌표(사진 픽셀 x, y)", width: 34 }, { header: "각도(수정전 → 수정후)", width: 18 }, { header: "회원 · 측정일 · 사진 크기", width: 24 }, { header: "세부사항(직접 입력)", width: 60 }
       ];
       var font = { name: "맑은 고딕", size: 11 }, al = { vertical: "middle", wrapText: true };
       ws.getRow(1).eachCell(function(c){ c.font = Object.assign({ bold: true }, font); c.alignment = { vertical: "middle", horizontal: "center", wrapText: true }; c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFE4E8F1" } }; });
@@ -8943,7 +8943,7 @@
       return Promise.all(jobs).then(function(sizes){
         L.forEach(function(x, i){
           var r = admxRow(x), rn = i + 2;
-          var row = ws.addRow([r.a, r.b, "", "", r.e, r.f, r.g, r.h, r.ib, r.ia, r.k, (x.member || "회원 미지정") + "\n" + fmtDate(x.at) + "\n" + x.w + "×" + x.h + "px"]);
+          var row = ws.addRow([r.a, r.b, "", "", r.e, r.f, r.g, r.h, r.ib, r.ia, r.k, (x.member || "회원 미지정") + "\n" + fmtDate(x.at) + "\n" + x.w + "×" + x.h + "px", ""]);   // v120 마지막 열 = 직접 적는 빈칸
           row.height = 314.65;
           row.eachCell({ includeEmpty: true }, function(c){ c.font = font; c.alignment = al; });
           [[x.before, sizes[i][0], 2], [x.after, sizes[i][1], 3]].forEach(function(v){

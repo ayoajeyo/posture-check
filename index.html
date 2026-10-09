@@ -1203,6 +1203,19 @@
   .adm-xls{margin:4px 0 12px; padding:12px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2);}
   .adm-xls b{display:block; font-size:14px; margin-bottom:4px;}
   .adm-xls p{margin:0 0 10px; font-size:12.5px; line-height:1.55; color:var(--ink-soft);}
+  /* v121 정확도 채점 */
+  .bench-tabs{display:flex; gap:6px; margin-bottom:8px;}
+  .bench-tab{flex:1; padding:7px 0; border:1px solid var(--line); border-radius:9px; background:var(--surface); color:var(--ink-soft); font:inherit; font-size:12.5px; font-weight:700; cursor:pointer;}
+  .bench-tab[aria-pressed="true"]{background:var(--ink); color:var(--surface); border-color:var(--ink);}
+  .bench-out{max-height:46vh; overflow-y:auto; display:flex; flex-direction:column; gap:6px;}
+  .bench-sum{font-size:12.5px; line-height:1.55; color:var(--ink-soft); padding:2px 2px 4px;}
+  .bench-sum strong{color:var(--ink);}
+  .bench-row{padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:var(--surface); font-size:12px; line-height:1.55; color:var(--ink-soft);}
+  .bench-row .bh{display:flex; justify-content:space-between; gap:8px; align-items:baseline;}
+  .bench-row .bh b{display:inline; margin:0; font-size:13px; color:var(--ink);}
+  .bench-row .bg{font-family:var(--font-num); font-weight:800; font-size:14px; white-space:nowrap;}
+  .bench-row .bg.good{color:var(--good);} .bench-row .bg.mid{color:var(--warn);} .bench-row .bg.bad{color:var(--crit);}
+  .bench-row .bd.up{color:var(--good); font-weight:700;} .bench-row .bd.down{color:var(--crit); font-weight:700;}
   .rb-info{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:10px;}
   .rb-info h3{margin:0; font-size:16px; font-weight:800;}
   .rb-info .rb-sub{margin:-6px 0 0; font-size:12px; color:var(--ink-soft);}
@@ -1764,7 +1777,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v120</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v121</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1781,7 +1794,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v120</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v121</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2152,6 +2165,16 @@
       <button type="button" class="btn primary" id="btnAdmXls" style="width:100%">엑셀 파일로 저장</button>
       <button type="button" class="btn line sm" id="btnAdmXlsClr" style="width:100%;margin-top:6px">보관한 수정 기록 비우기</button>
     </div>
+    <div class="adm-xls" id="admBench" hidden>
+      <b>🎯 정확도 채점</b>
+      <p id="admBenchInfo">원장님이 고친 최종 점을 정답으로 보고, 자동 인식이 얼마나 맞았는지 항목별로 점수를 내요.</p>
+      <div class="bench-tabs" role="tablist">
+        <button type="button" class="bench-tab" id="btnBenchSaved" aria-pressed="true">저장 당시</button>
+        <button type="button" class="bench-tab" id="btnBenchNow" aria-pressed="false">현재 버전</button>
+      </div>
+      <div class="bench-out" id="benchOut"></div>
+      <button type="button" class="btn primary" id="btnBenchRun" style="width:100%;margin-top:8px">현재 버전으로 다시 채점</button>
+    </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnAdmClose">닫기</button><button type="button" class="yes ok" id="btnAdmGo">확인</button></div>
   </div>
 </div>
@@ -2358,6 +2381,7 @@
   };
 
   // ROM 측정용 고정밀 인식: heavy 모델(처음 한 번 약 30MB 내려받아 저장) → 실패 시 기존 인식
+  window.__poseHeavy = imageHeavy;   // v121 정확도 채점 전 정밀 모델 확인
   window.__detectPoseHQ = async function(src){
     try{
       const heavy = await imageHeavy();
@@ -2517,7 +2541,9 @@
   var saveOverlay = $("saveOverlay"), saveOverlayImg = $("saveOverlayImg"), btnCloseOverlay = $("btnCloseOverlay");
   btnCloseOverlay.addEventListener("click", function(){ saveOverlay.hidden = true; saveOverlayImg.src = ""; });
 
+  var BENCH = { on: false };   // v121 정확도 채점 중에는 안내 문구를 띄우지 않음
   function toast(msg){
+    if(BENCH.on) return;
     toastEl.textContent = msg;
     toastEl.classList.add("show");
     clearTimeout(toast._t);
@@ -3442,6 +3468,7 @@
 
     s.autoPos = {}; Object.keys(s.points).forEach(function(k){ s.autoPos[k] = { x: s.points[k].x, y: s.points[k].y }; });
     if(s.segMask) bodyRefine(s, s.segMask);
+    if(BENCH.on) return;   // v121 정확도 채점: 점만 계산하고 화면은 그대로
     drawCanvas();
     updateMarkingHint();
     if(missing.length){
@@ -4129,7 +4156,7 @@
 
   function drawCanvas(){
     var s = cur();
-    if(!s.img) return;
+    if(!s.img || BENCH.on) return;   // v121 정확도 채점 중에는 화면에 그리지 않음
     fitCanvas();
     var rect = stage.getBoundingClientRect();
     var dpr = window.devicePixelRatio || 1;
@@ -6460,7 +6487,7 @@
     $("romBusy").textContent = window.__romModelReady ? "관절 위치 정밀 인식 중…" : "정밀 인식 준비 중… (처음 한 번 약 30MB)";
     $("romBusy").hidden = false; $("romQ").hidden = true;
     ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = true; });
-    romDetectAll().then(function(res){
+    return romDetectAll().then(function(res){   // v121 정확도 채점이 끝날 때를 알 수 있게 Promise 반환
       res = romMerge(res);
       if(res && res.L){ res.L = romPickSide(res.L); res.q = Math.max(res.q || 0, romQual(res.L, rom.side)); }
       window.__romModelReady = true;
@@ -8780,7 +8807,7 @@
     $("admCode").hidden = ADM.on;
     $("admDesc").textContent = ADM.on ? "관리자 모드를 사용 중이에요. 측정 화면에서 점의 좌표가 보여요." : "관리자 코드를 입력하면 측정 화면에서 찍은 점의 좌표(사진 픽셀 기준)가 보여요.";
     $("btnAdmGo").textContent = ADM.on ? "관리자 모드 끄기" : "확인";
-    $("admXls").hidden = !ADM.on; if(ADM.on) admxInfo();
+    $("admXls").hidden = !ADM.on; $("admBench").hidden = !ADM.on; if(ADM.on) admxInfo();
     $("admSheet").hidden = false;
     if(!ADM.on) setTimeout(function(){ try{ $("admCode").focus(); }catch(e){} }, 50);
   }
@@ -8815,11 +8842,24 @@
     if(!ADM.on || romS.autoSnap || !romS.pts || romS.editId) return;
     romS.autoSnap = { pts: romS.pts.map(function(q){ return { x: q.x, y: q.y }; }), ref: romS.refCustom ? JSON.parse(JSON.stringify(romS.refCustom)) : null, val: romAngle() };
   }
-  function admxStore(id, data, fresh){
-    // 이전 회차 수정처럼 다시 저장할 때는 처음 보관한 '수정 전'을 유지
-    return rawGet("blobs", id).then(function(old){
-      var o = old && old.v; if(o && o.before && !fresh) data.before = o.before;
+  // v121 자동 인식에 넣은 사진 그대로(다시 압축하지 않음) → 정확도 채점 때 같은 사진으로 다시 인식
+  function admxSrc(url){
+    url = url || "";
+    var ok = function(u){ return u && u.length < 8e6 ? u : null; };   // 너무 큰 원본(약 6MB 이상)은 보관하지 않음
+    if(/^data:image\//.test(url)) return Promise.resolve(ok(url));
+    if(!/^blob:/.test(url)) return Promise.resolve(null);
+    return fetch(url).then(function(r){ return r.blob(); }).then(function(b){
+      return new Promise(function(res){ var fr = new FileReader(); fr.onload = function(){ res(ok(fr.result)); }; fr.onerror = function(){ res(null); }; fr.readAsDataURL(b); });
+    }).catch(function(){ return null; });
+  }
+  function admxStore(id, data, fresh, inpP){
+    // 이전 회차 수정처럼 다시 저장할 때는 처음 보관한 '수정 전'(과 그때 인식에 쓴 사진)을 유지
+    return Promise.all([rawGet("blobs", id), inpP || null]).then(function(rs){
+      var old = rs[0], o = old && old.v;
+      if(rs[1] && rs[1].src) data.inp = rs[1];
+      if(o && o.before && !fresh){ data.before = o.before; if(o.inp) data.inp = o.inp; else delete data.inp; }
       if(!data.before) data.before = Object.assign({ same: true }, data.after);
+      if(!data.ver) data.ver = benchVer();   // v121 어느 버전에서 저장했는지
       return rawPut0("blobs", { id: id, v: data });
     }).catch(function(e){ console.warn("[admx]", e); });
   }
@@ -8836,7 +8876,9 @@
       romS.sel = sel;
       var names = romPts().map(function(n){ return ROM_PTNAME[n] || n; });
       admxStore(ADMX + "roms:" + rec.id, { kind: "rom", joint: rec.joint, side: rec.side, move: rec.move, at: rec.at, member: state.member ? state.member.name : "",
-        w: Math.round(romS.w), h: Math.round(romS.h), names: names, before: before, after: after, savedAt: Date.now() }, !!before && !romS.editId);
+        w: Math.round(romS.w), h: Math.round(romS.h), names: names, before: before, after: after, savedAt: Date.now() }, !!before && !romS.editId,
+        romS.editId ? null : admxSrc(romS.img && romS.img.src).then(function(src){ return { src: src, roll: romS.roll == null ? null : romS.roll,
+          liveL: romS.liveL ? romS.liveL.map(function(p){ return { x: Math.round(p.x * 10) / 10, y: Math.round(p.y * 10) / 10, v: Math.round(p.v * 1000) / 1000 }; }) : null }; }));
     }catch(e){ console.warn("[admx rom]", e); }
   }
   function admxSaveBody(rec){
@@ -8853,7 +8895,9 @@
           try{ before = { img: shot(), pts: pts() }; } finally { Object.keys(bak).forEach(function(k){ s.points[k].x = bak[k].x; s.points[k].y = bak[k].y; }); }
         }
         admxStore(ADMX + "records:" + rec.id + ":" + m, { kind: "body", mode: m, at: rec.at, member: state.member ? state.member.name : "",
-          w: Math.round(s.w), h: Math.round(s.h), before: before, after: after, savedAt: Date.now() }, !!before && !state.editingOld);
+          w: Math.round(s.w), h: Math.round(s.h), before: before, after: after, savedAt: Date.now() }, !!before && !state.editingOld,
+          state.editingOld ? null : admxSrc(s.imgUrl).then(function(src){ return { src: src, rot: s.rot || 0, rotPivot: s.rotPivot ? { x: s.rotPivot.x, y: s.rotPivot.y } : null,
+            captureRoll: s.captureRoll == null ? null : s.captureRoll }; }));
       }catch(e){ console.warn("[admx body]", e); }
     });
   }
@@ -8868,6 +8912,7 @@
       $("admXlsInfo").textContent = L.length ? "보관된 기록: 체형분석 " + nb + "장 · ROM " + nr + "건 (이 기기). 관리자 모드에서 측정을 저장할 때마다 자동으로 쌓여요."
         : "아직 보관된 기록이 없어요. 관리자 모드를 켠 채로 측정을 저장하면 자동 인식 점(수정 전)과 최종 점(수정 후)이 사진·좌표와 함께 쌓여요.";
       $("btnAdmXls").disabled = !L.length; $("btnAdmXlsClr").disabled = !L.length;
+      benchRender(L);
     });
   }
   var excelP = null;
@@ -8952,6 +8997,7 @@
             ws.addImage(id, { tl: { col: v[2] + 0.03, row: rn - 1 + 0.02 }, ext: { width: Math.round(v[1].w * k), height: Math.round(v[1].h * k) }, editAs: "oneCell" });
           });
         });
+        try{ benchSheet(wb, L, font); }catch(e){ console.warn("[bench xlsx]", e); }
         return wb.xlsx.writeBuffer();
       }).then(function(buf){
         var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
@@ -8968,6 +9014,241 @@
     idbKeys("blobs").then(function(keys){ return Promise.all(keys.filter(function(k){ return String(k).indexOf(ADMX) === 0; }).map(function(k){ return rawDel0("blobs", k); })); })
       .then(function(){ toast("보관한 수정 기록을 비웠어요."); admxInfo(); });
   });
+  /* ===================== v121 관리자: 정확도 채점 =====================
+     보관한 측정 수정 기록의 최종 점(원장님이 고친 점)을 정답으로 보고 자동 인식을 채점.
+     · 저장 당시: 그때의 자동 인식 점(수정 전) ↔ 최종 점
+     · 현재 버전: 측정 기록에 저장된 사진으로 지금 버전의 자동 인식(실제 측정과 같은 코드)을 다시 돌려 최종 점과 비교
+     점 오차 = 사진 높이 대비 % · 각도 오차 = |자동 각도 − 최종 각도| · 결과는 이 기기에 보관해 다음 버전과 비교 */
+  var BENCH_LS = "ayo_bench", benchTab = "saved";
+  function benchVer(){ var n = $("view-rom") && $("view-rom").querySelector(".rom-note"), m = /v\d+/.exec(n ? n.textContent : ""); return m ? m[0] : "?"; }
+  function benchAvg(a){ return a.length ? a.reduce(function(t, v){ return t + v; }, 0) / a.length : null; }
+  function benchRuns(){ try{ var o = JSON.parse(lsGet(BENCH_LS) || "[]"); return Array.isArray(o) ? o : []; }catch(e){ return []; } }
+  function benchItem(x){
+    if(x.kind === "body") return { key: "body|" + x.mode, label: "체형분석 " + (x.mode === "front" ? "정면" : "측면"), ord: [0, x.mode === "front" ? 0 : 1, 0, 0] };
+    var J = ROM_ALL.find(function(j){ return j.k === x.joint; }), mv = J ? J.moves.find(function(m){ return m.k === x.move; }) : null;
+    var ji = ADMX_ORDER.indexOf(x.joint), mi = J ? J.moves.findIndex(function(m){ return m.k === x.move; }) : 99;
+    return { key: x.joint + "|" + x.move + "|" + (x.side || "C"), label: (J ? J.n : x.joint) + " " + (mv ? mv.n : x.move) + (x.side === "L" ? "(좌측)" : x.side === "R" ? "(우측)" : ""),
+      ord: [1, ji < 0 ? 99 : ji, mi < 0 ? 99 : mi, x.side === "R" ? 1 : 0] };
+  }
+  // 한 건 채점 · auto = { pts, val } (수정 기록과 같은 좌표) · 없으면 인식 실패
+  function benchCase(x, auto){
+    var it = benchItem(x), c = { id: x.id, key: it.key, label: it.label, ord: it.ord, pt: null, ang: null, pe: {}, fail: !auto };
+    if(!auto) return c;
+    var A = x.after || {}, H = x.h || 1, sum = 0, n = 0;
+    var add = function(name, a, b){
+      if(!a) return;
+      if(!b){ c.pe[name] = null; return; }
+      var e = Math.round(Math.hypot(a.x - b.x, a.y - b.y) / H * 1000) / 10; c.pe[name] = e; sum += e; n++;
+    };
+    if(x.kind === "body") Object.keys(A.pts || {}).forEach(function(k){ add(A.pts[k].label || k, A.pts[k], (auto.pts || {})[k]); });
+    else (A.pts || []).forEach(function(a, i){ add((x.names || [])[i] || "점" + (i + 1), a, (auto.pts || [])[i]); });
+    c.pt = n ? Math.round(sum / n * 10) / 10 : null;
+    if(x.kind === "rom" && auto.val != null && A.val != null) c.ang = Math.abs(auto.val - A.val);
+    if(auto.lost) c.lost = true;   // 일부 점을 못 찾음 / ROM 자동 인식 실패(기본 위치에서 시작)
+    return c;
+  }
+  function benchSavedCases(L){
+    return L.filter(function(x){ return x.after && x.after.pts; }).map(function(x){ var B = x.before || x.after; return benchCase(x, { pts: B.pts, val: B.val }); });
+  }
+  function benchAgg(C){
+    var G = {};
+    C.forEach(function(c){
+      var g = G[c.key] || (G[c.key] = { key: c.key, label: c.label, ord: c.ord, n: 0, fail: 0, ang: [], pt: [], pe: {} });
+      g.n++;
+      if(c.fail || c.lost) g.fail++;
+      if(c.fail) return;
+      if(c.ang != null) g.ang.push(c.ang);
+      if(c.pt != null) g.pt.push(c.pt);
+      Object.keys(c.pe).forEach(function(k){ if(c.pe[k] != null) (g.pe[k] = g.pe[k] || []).push(c.pe[k]); });
+    });
+    return Object.keys(G).map(function(k){
+      var g = G[k], worst = null;
+      Object.keys(g.pe).forEach(function(nm){ var v = benchAvg(g.pe[nm]); if(!worst || v > worst.v) worst = { n: nm, v: v }; });
+      return { key: g.key, label: g.label, ord: g.ord, n: g.n, fail: g.fail, angM: benchAvg(g.ang), angX: g.ang.length ? Math.max.apply(null, g.ang) : null,
+        a5: g.ang.length ? g.ang.filter(function(v){ return v <= 5; }).length / g.ang.length : null, ptM: benchAvg(g.pt), worst: worst };
+    }).sort(function(a, b){
+      // ROM 먼저, 오차 큰 항목부터
+      if(a.ord[0] !== b.ord[0]) return b.ord[0] - a.ord[0];
+      var va = a.angM != null ? a.angM : a.ptM, vb = b.angM != null ? b.angM : b.ptM;
+      if(va == null || vb == null) return va == null ? 1 : -1;
+      return vb - va;
+    });
+  }
+  function benchTotal(C){
+    var isBody = function(c){ return c.key.indexOf("body|") === 0; };
+    var ok = C.filter(function(c){ return !c.fail; }), ang = ok.filter(function(c){ return c.ang != null; }).map(function(c){ return c.ang; });
+    return { n: C.length, nRom: C.filter(function(c){ return !isBody(c); }).length, nBody: C.filter(isBody).length,
+      fail: C.filter(function(c){ return c.fail || c.lost; }).length, angM: benchAvg(ang), a5: ang.length ? ang.filter(function(v){ return v <= 5; }).length / ang.length : null,
+      ptM: benchAvg(ok.filter(isBody).map(function(c){ return c.pt; }).filter(function(v){ return v != null; })) };
+  }
+  function benchGrade(r){
+    if(r.angM != null) return r.angM <= 3 ? "good" : r.angM <= 6 ? "mid" : "bad";
+    if(r.ptM != null) return r.ptM <= 1.5 ? "good" : r.ptM <= 3 ? "mid" : "bad";
+    return "bad";
+  }
+  // 지난 채점과 비교: 두 채점에 모두 들어 있는 기록끼리만 평균을 내서 차이 계산
+  function benchDelta(cur, prev){
+    if(!prev) return {};
+    var ids = {}, pid = {}; prev.cases.forEach(function(c){ pid[c.id] = 1; }); cur.cases.forEach(function(c){ if(pid[c.id]) ids[c.id] = 1; });
+    var A = benchAgg(cur.cases.filter(function(c){ return ids[c.id]; })), B = benchAgg(prev.cases.filter(function(c){ return ids[c.id]; })), D = {};
+    A.forEach(function(a){
+      var b = B.find(function(r){ return r.key === a.key; }); if(!b) return;
+      if(a.angM != null && b.angM != null) D[a.key] = { d: a.angM - b.angM, u: "°" };
+      else if(a.ptM != null && b.ptM != null) D[a.key] = { d: a.ptM - b.ptM, u: "%" };
+    });
+    return D;
+  }
+  function benchRowHtml(r, d, prevVer){
+    var f1 = function(v){ return (Math.round(v * 10) / 10).toFixed(1); };
+    var main = r.angM != null ? f1(r.angM) + "°" : r.ptM != null ? f1(r.ptM) + "%" : "–", L = [];
+    if(r.angM != null) L.push("각도 오차 평균 " + f1(r.angM) + "° · 최대 " + r.angX + "° · 5° 이내 " + Math.round(r.a5 * 100) + "%");
+    if(r.ptM != null) L.push("점 오차 평균 " + f1(r.ptM) + "%" + (r.worst ? " · 가장 큰 오차: " + esc(r.worst.n) + " " + f1(r.worst.v) + "%" : ""));
+    if(r.fail) L.push("자동 인식 실패·일부 점 못 찾음 " + r.fail + "건");
+    if(d && Math.abs(d.d) >= 0.05) L.push('<span class="bd ' + (d.d < 0 ? "up" : "down") + '">' + esc(prevVer) + " 채점보다 " + f1(Math.abs(d.d)) + d.u + (d.d < 0 ? " 좋아짐 ▲" : " 나빠짐 ▼") + "</span>");
+    else if(d) L.push(esc(prevVer) + " 채점과 같음");
+    return '<div class="bench-row"><div class="bh"><b>' + esc(r.label) + " · " + r.n + '건</b><span class="bg ' + benchGrade(r) + '">' + main + "</span></div>" + L.join("<br>") + "</div>";
+  }
+  function benchSumHtml(t, head){
+    var p = [];
+    if(t.nRom) p.push("ROM " + t.nRom + "건 · 각도 오차 평균 <strong>" + (t.angM == null ? "–" : t.angM.toFixed(1) + "°") + "</strong>" + (t.a5 == null ? "" : " · 5° 이내 <strong>" + Math.round(t.a5 * 100) + "%</strong>"));
+    if(t.nBody) p.push("체형분석 " + t.nBody + "장 · 점 오차 평균 <strong>" + (t.ptM == null ? "–" : t.ptM.toFixed(1) + "%") + "</strong>");
+    return '<div class="bench-sum">' + head + "<br>" + p.join("<br>") + "</div>";
+  }
+  function benchRender(L){
+    var box = $("benchOut"); if(!box) return;
+    $("btnBenchSaved").setAttribute("aria-pressed", String(benchTab === "saved")); $("btnBenchNow").setAttribute("aria-pressed", String(benchTab === "now"));
+    var nOk = (L || []).filter(function(x){ return x.after && x.after.pts; }).length;
+    $("btnBenchRun").disabled = !nOk;
+    if(!nOk){ box.innerHTML = '<div class="bench-sum">아직 채점할 기록이 없어요. 관리자 모드를 켠 채로 측정을 저장하고, 틀린 점은 고친 뒤 저장해 주세요.</div>'; return; }
+    if(benchTab === "saved"){
+      var C = benchSavedCases(L);
+      box.innerHTML = benchSumHtml(benchTotal(C), "<strong>저장 당시</strong> 자동 인식 ↔ 원장님 최종 점 (점 오차는 사진 높이 대비 %)") + benchAgg(C).map(function(r){ return benchRowHtml(r); }).join("");
+      return;
+    }
+    var R = benchRuns(), run = R[0];
+    if(!run){ box.innerHTML = '<div class="bench-sum">아직 다시 채점한 적이 없어요. 아래 [현재 버전으로 다시 채점]을 눌러 주세요. 기록 수에 따라 몇 분 걸릴 수 있어요.</div>'; return; }
+    var prev = R.find(function(r){ return r.ver !== run.ver; }) || R[1] || null, D = benchDelta(run, prev);
+    var pv = prev ? prev.ver + (prev.ver === run.ver ? "(" + fmtDate(prev.at).slice(5, 16) + ")" : "") : "";
+    box.innerHTML = benchSumHtml(benchTotal(run.cases), "<strong>" + esc(run.ver) + "</strong> 다시 채점 · " + fmtDate(run.at).slice(0, 16) + (prev ? " · " + esc(pv) + " 채점과 비교" : "")) +
+      benchAgg(run.cases).map(function(r){ return benchRowHtml(r, D[r.key], pv); }).join("");
+  }
+  function benchImg(url){ return new Promise(function(res){ var im = new Image(); im.onload = function(){ res(im); }; im.onerror = function(){ res(null); }; im.src = url; }); }
+  function benchWait(p, ms){ return Promise.race([Promise.resolve(p).catch(function(){}), new Promise(function(r){ setTimeout(r, ms); })]); }
+  // ROM: 측정 기록 사진으로 자동 인식 다시 실행 (romS를 잠시 바꿨다가 그대로 되돌림)
+  // 사진 우선순위: 보관한 인식 입력 사진(v121~, 실제 측정과 같은 사진) → 측정 기록에 저장된 사진(압축본)
+  function benchRom(x, recId){
+    var I = x.inp && x.inp.src ? x.inp : null;
+    return (I ? Promise.resolve({ img: I.src, roll: I.roll }) : rawGet("roms", recId).then(function(r){ return r ? dbFull("roms", r) : null; })).then(function(r){
+      if(!r || !r.img) return { nophoto: true };
+      return benchImg(r.img).then(function(im){
+        if(!im) return { nophoto: true };
+        var lk = im.naturalWidth / (x.w || im.naturalWidth);
+        var save = { S: Object.assign({}, romS), joint: rom.joint, side: rom.side };
+        rom.joint = x.joint; if(x.side === "L" || x.side === "R") rom.side = x.side;
+        Object.assign(romS, { mv: x.move, img: im, w: im.naturalWidth, h: im.naturalHeight, pts: null, trunk: null, q: 0, L: null, roll: r.roll == null ? null : r.roll, footOff: null,
+          liveL: I && I.liveL ? I.liveL.map(function(p){ return { x: p.x * lk, y: p.y * lk, v: p.v }; }) : null, refCustom: null, sel: null, edit: null, drag: -1, editId: null, editRec: null, manualEdit: false, recImg: null, cut: null, mask: null, maskP: null, autoSnap: null,
+          sideSwap: false, ref: "pt3", hdir: 1 });
+        return Promise.resolve(romAuto()).then(function(){ return benchWait(romS.maskP, 20000); }).then(function(){
+          var k = (x.w || romS.w) / romS.w;
+          return romS.pts ? { pts: romS.pts.map(function(q){ return { x: q.x * k, y: q.y * k }; }), val: romAngle(), lost: !romS.autoPts } : null;
+        }).catch(function(e){ console.warn("[bench rom]", e); return null; }).then(function(o){
+          Object.keys(romS).forEach(function(kk){ delete romS[kk]; }); Object.assign(romS, save.S); rom.joint = save.joint; rom.side = save.side;
+          return o;
+        });
+      });
+    });
+  }
+  // 체형분석: 측정 기록 사진으로 자동 인식 + 윤곽 보정 다시 실행 (state.byMode를 잠시 바꿨다가 되돌림)
+  function benchBody(x, recId){
+    var I = x.inp && x.inp.src ? x.inp : null;
+    return (I ? Promise.resolve({ photos: (function(o){ o[x.mode] = { img: I.src, rot: I.rot, rotPivot: I.rotPivot, captureRoll: I.captureRoll }; return o; })({}) })
+      : rawGet("records", recId).then(function(r){ return r ? dbFull("records", r) : null; })).then(function(r){
+      var p = r && r.photos && r.photos[x.mode];
+      if(!p || !p.img) return { nophoto: true };
+      return benchImg(p.img).then(function(im){
+        if(!im) return { nophoto: true };
+        var m = x.mode, keepS = state.byMode[m], keepMode = state.mode, seg0 = window.__segmentPerson, segP = null;
+        var s = { img: im, imgUrl: null, w: im.naturalWidth, h: im.naturalHeight, points: {}, history: [], view: { scale: 1, cx: im.naturalWidth / 2, cy: im.naturalHeight / 2 },
+          centerX: undefined, faceSign: -1, rot: p.rot || 0, rotPivot: p.rotPivot ? Object.assign({}, p.rotPivot) : null, personBox: null, captureRoll: p.captureRoll, grid: null, cutout: null };
+        if(seg0) window.__segmentPerson = function(img){ return (segP = seg0(img)); };
+        state.byMode[m] = s; state.mode = m;
+        return Promise.resolve(autoDetectAndFill(s, im)).then(function(){ return new Promise(function(r2){ setTimeout(r2, 120); }); })
+          .then(function(){ return benchWait(segP, 20000); }).then(function(){ return new Promise(function(r2){ setTimeout(r2, 0); }); }).then(function(){
+            if(!s.autoPos || !Object.keys(s.autoPos).length) return null;
+            var k = (x.w || s.w) / s.w, o = {};
+            Object.keys(s.autoPos).forEach(function(key){ o[key] = { x: s.autoPos[key].x * k, y: s.autoPos[key].y * k }; });
+            return { pts: o, lost: Object.keys(x.after.pts || {}).some(function(key){ return !o[key]; }) };
+          }).catch(function(e){ console.warn("[bench body]", e); return null; }).then(function(o){
+            if(seg0) window.__segmentPerson = seg0;
+            state.byMode[m] = keepS; state.mode = keepMode;
+            s.img = null; s.cutout = null; s.segMask = null;
+            return o;
+          });
+      });
+    });
+  }
+  function benchRun(){
+    if(state.stream || romCam.on){ toast("카메라를 끈 뒤 채점해 주세요."); return; }
+    if(!$("romSheet").hidden){ toast("ROM 측정 화면을 닫은 뒤 채점해 주세요."); return; }
+    var btn = $("btnBenchRun"), keepTxt = btn.textContent, nophoto = 0;
+    btn.disabled = true; $("btnBenchSaved").disabled = true; $("btnBenchNow").disabled = true; btn.textContent = "정밀 인식 모델 준비 중… (처음 한 번 약 30MB)";
+    // 정밀(heavy) 모델을 못 받으면 다른 모델로 인식돼 점수가 달라지므로 채점하지 않음
+    Promise.resolve(window.__poseHeavy ? window.__poseHeavy() : null).then(function(hm){
+      if(!hm){ toast("정밀 인식 모델을 내려받지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요."); return []; }
+      return admxAll();
+    }).then(function(L){
+      if(!L.length) return;
+      L = L.filter(function(x){ return x.after && x.after.pts; }).sort(function(a, b){ return a.at - b.at; });
+      var C = [], i = 0;
+      var next = function(){
+        if(i >= L.length) return Promise.resolve();
+        var x = L[i++], parts = String(x.id).split(":");   // admx:roms:<기록id> · admx:records:<기록id>:<front|side>
+        btn.textContent = "채점 중… " + i + " / " + L.length + (i === 1 ? " (처음엔 인식 모델 준비로 오래 걸려요)" : "");
+        BENCH.on = true;
+        var job = x.kind === "body" ? benchBody(x, parts[2]) : benchRom(x, parts[2]);
+        return job.catch(function(){ return null; }).then(function(a){
+          BENCH.on = false;
+          if(a && a.nophoto){ nophoto++; return next(); }
+          C.push(benchCase(x, a));
+          return next();
+        });
+      };
+      return next().then(function(){
+        if(!C.length){ toast("측정 사진이 남아 있는 기록이 없어 채점하지 못했어요."); return; }
+        var R = benchRuns(); R.unshift({ ver: benchVer(), at: Date.now(), cases: C }); R = R.slice(0, 6);
+        lsSet(BENCH_LS, JSON.stringify(R));
+        benchTab = "now"; benchRender(L);
+        var t = benchTotal(C);
+        toast("채점 완료 · " + C.length + "건" + (t.angM != null ? " · ROM 각도 오차 평균 " + t.angM.toFixed(1) + "°" : "") + (nophoto ? " · 사진 없는 기록 " + nophoto + "건 제외" : ""));
+      });
+    }).catch(function(e){ console.warn("[bench]", e); BENCH.on = false; toast("채점 중 문제가 생겼어요."); }).then(function(){
+      BENCH.on = false;
+      btn.textContent = keepTxt; btn.disabled = false; $("btnBenchSaved").disabled = false; $("btnBenchNow").disabled = false;
+      try{ syncBgToggle(); }catch(e){}
+      if(cur().img) requestDraw();
+    });
+  }
+  $("btnBenchRun").addEventListener("click", benchRun);
+  $("btnBenchSaved").addEventListener("click", function(){ benchTab = "saved"; admxAll().then(benchRender); });
+  $("btnBenchNow").addEventListener("click", function(){ benchTab = "now"; admxAll().then(benchRender); });
+  // 엑셀 '정확도 채점' 시트: 저장 당시 + 가장 최근 다시 채점
+  function benchSheet(wb, L, font){
+    var run = benchRuns()[0], S = benchAgg(benchSavedCases(L)), N = run ? benchAgg(run.cases) : [], nv = run ? run.ver : "현재 버전";
+    var ws = wb.addWorksheet("정확도 채점", { views: [{ state: "frozen", ySplit: 1 }] });
+    ws.columns = [{ header: "항목", width: 26 }, { header: "건수", width: 7 },
+      { header: "저장 당시\n각도 오차 평균(°)", width: 14 }, { header: "저장 당시\n5° 이내", width: 11 }, { header: "저장 당시\n점 오차 평균(%)", width: 14 },
+      { header: nv + "\n각도 오차 평균(°)", width: 14 }, { header: nv + "\n최대(°)", width: 10 }, { header: nv + "\n5° 이내", width: 11 }, { header: nv + "\n점 오차 평균(%)", width: 14 },
+      { header: nv + "\n가장 큰 오차 점", width: 22 }, { header: nv + "\n인식 실패", width: 10 }];
+    var r1 = function(v){ return v == null ? "–" : Math.round(v * 10) / 10; }, pc = function(v){ return v == null ? "–" : Math.round(v * 100) + "%"; };
+    var keys = []; S.concat(N).forEach(function(r){ if(keys.indexOf(r.key) < 0) keys.push(r.key); });
+    keys.forEach(function(k){
+      var a = S.find(function(r){ return r.key === k; }) || {}, b = N.find(function(r){ return r.key === k; }) || {};
+      ws.addRow([a.label || b.label, a.n || b.n, r1(a.angM), pc(a.a5), r1(a.ptM), r1(b.angM), b.angX == null ? "–" : b.angX, pc(b.a5), r1(b.ptM),
+        b.worst ? b.worst.n + " " + r1(b.worst.v) + "%" : "–", b.n ? b.fail : "–"]);
+    });
+    ws.eachRow(function(row, rn){ row.eachCell({ includeEmpty: true }, function(c){ c.font = rn === 1 ? Object.assign({ bold: true }, font) : font; c.alignment = { vertical: "middle", horizontal: "center", wrapText: true }; }); });
+    ws.getRow(1).height = 34;
+  }
   $("btnAdmMin").addEventListener("click", function(){ var p = $("admPanel"); p.classList.toggle("min"); this.textContent = p.classList.contains("min") ? "펼치기" : "접기"; });
   // 지금 보이는 측정 화면의 점 목록 (사진 픽셀 좌표)
   function admData(){

@@ -680,6 +680,13 @@
   .mini-list > :first-child{border-top:none!important;}
   .more-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px;}
   .more-grid button{display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer;}
+  .more-list{margin-bottom:12px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); overflow:hidden;}
+  .more-list button{display:flex; align-items:center; gap:12px; width:100%; padding:13px 14px; border:none; border-top:1px solid var(--line); background:transparent; color:var(--ink); font-family:inherit; font-size:14px; font-weight:700; text-align:left; cursor:pointer;}
+  .more-list button:first-child{border-top:none;}
+  .more-list button[hidden]{display:none!important;}
+  .more-list svg{flex:0 0 auto; color:var(--ink-soft);}
+  .more-list .ml-t{flex:1;}
+  .more-list .ml-c{color:var(--ink-soft); font-size:18px; line-height:1;}
   .use-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px;}
   .use-grid div{background:var(--surface-2); border-radius:12px; padding:10px 12px;}
   .use-grid span{display:block; font-size:12px; color:var(--ink-soft); font-weight:700;}
@@ -1586,7 +1593,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v109</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v110</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1603,7 +1610,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v109</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v110</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1632,7 +1639,7 @@
           <b>📱 휴대폰을 바꾸거나 앱을 다시 설치할 때</b>
           <ol>
             <li>이전 폰에서 <b>지금 백업하기</b> → Google Drive 또는 카톡 나와의 채팅에 저장</li>
-            <li>새 폰에서 <b>백업 불러오기</b> (더보기 → 백업·복원에서도 가능)</li>
+            <li>새 폰에서 <b>백업 불러오기</b> (더보기 → 내 데이터 내보내기 · 불러오기에서도 가능)</li>
             <li>PRO 이용 중이었다면 <b>이용권 이전 요청</b> 메일로 새 기기용 코드를 받으세요</li>
           </ol>
         </div>
@@ -1937,7 +1944,7 @@
       <b>📱 휴대폰을 바꾸거나 앱을 다시 설치할 때</b>
       <ol>
         <li>이전 폰에서 <b>지금 백업하기</b> → <b>Google Drive</b> 또는 <b>카톡 나와의 채팅</b>에 저장</li>
-        <li>새 폰에 아요바디요 설치 → <b>더보기 → 백업·복원 → 백업 불러오기</b></li>
+        <li>새 폰에 아요바디요 설치 → <b>더보기 → 내 데이터 내보내기 · 불러오기 → 파일 불러오기</b></li>
         <li>PRO 이용 중이었다면 불러온 뒤 나오는 <b>이용권 이전 요청</b> 메일을 보내주세요. 남은 기간 그대로 새 기기용 코드를 보내드려요.</li>
       </ol>
     </div>
@@ -1946,17 +1953,19 @@
 </div>
 <div class="confirm-overlay" id="moreSheet" hidden role="dialog" aria-modal="true">
   <div class="confirm-box mb-pick">
-    <h3>전체 메뉴</h3>
+    <h3 id="moreTitle">전체 메뉴</h3>
     <div class="more-grid">
       <button type="button" data-go="exercise"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/></svg><span>운동관리</span></button>
       <button type="button" data-go="consult"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10.5H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>상담일지</span></button>
       <button type="button" data-go="sales"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg><span>매출관리</span></button>
       <button type="button" data-go="report"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/></svg><span>종합 리포트</span></button>
-      <button type="button" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span></button>
     </div>
-    <button type="button" class="btn line" id="btnMoreBk" style="width:100%;margin-top:10px">💾 내 데이터 내보내기 · 불러오기</button>
-    <button type="button" class="btn line" id="btnMoreAcc" style="width:100%;margin-top:8px">👤 계정 · 서버 저장</button>
-    <button type="button" class="btn line" id="btnMoreAdm" style="width:100%;margin-top:8px">🔧 관리자 모드</button>
+    <div class="more-list">
+      <button type="button" data-go="settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span class="ml-t">설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span><span class="ml-c" aria-hidden="true">›</span></button>
+      <button type="button" id="btnMoreAcc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span class="ml-t">계정 · 서버 저장</span><span class="ml-c" aria-hidden="true">›</span></button>
+      <button type="button" id="btnMoreBk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span class="ml-t">내 데이터 내보내기 · 불러오기</span><span class="ml-c" aria-hidden="true">›</span></button>
+      <button type="button" id="btnMoreAdm" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg><span class="ml-t" id="btnMoreAdmT">관리자 모드</span><span class="ml-c" aria-hidden="true">›</span></button>
+    </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnMoreClose">닫기</button></div>
   </div>
 </div>
@@ -8475,7 +8484,8 @@
     $("admChip").hidden = !ADM.on;
     if(typeof proRefresh === "function" && admSync._was !== undefined && admSync._was !== ADM.on){ try{ proRefresh(); }catch(e){} }
     admSync._was = ADM.on;
-    $("btnMoreAdm").textContent = ADM.on ? "🔧 관리자 모드 (사용 중)" : "🔧 관리자 모드";
+    $("btnMoreAdmT").textContent = ADM.on ? "관리자 모드 (사용 중)" : "관리자 모드";
+    $("btnMoreAdm").hidden = !ADM.on;   // v110: 일반 사용자에게는 숨김 (켜는 방법: '전체 메뉴' 제목 5번 탭)
     if(!ADM.on) $("admPanel").hidden = true;
     if(typeof requestDraw === "function") requestDraw();
     if(romS && romS.img && !$("romSheet").hidden) romDraw();
@@ -8503,6 +8513,9 @@
     });
   }
   $("btnMoreAdm").addEventListener("click", function(){ $("moreSheet").hidden = true; admOpen(); });
+  (function(){ var n = 0, t0 = 0;   // v110: '전체 메뉴' 제목을 3초 안에 5번 탭 → 관리자 코드 입력
+    $("moreTitle").addEventListener("click", function(){ var now = Date.now(); if(now - t0 > 3000){ n = 0; t0 = now; } if(++n >= 5){ n = 0; $("moreSheet").hidden = true; admOpen(); } });
+  })();
   $("btnAdmClose").addEventListener("click", function(){ $("admSheet").hidden = true; });
   $("btnAdmGo").addEventListener("click", admTry);
   $("admCode").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); admTry(); } });

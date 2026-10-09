@@ -10,7 +10,7 @@
   :root{ --bg:#F3F4F7; --surface:#FFFFFF; --ink:#131B2E; --ink-soft:#5B6478; --gold:#A8844F; --line:#DDE1E9; }
   @media (prefers-color-scheme: dark){ :root{ --bg:#0D1220; --surface:#141B2D; --ink:#E8ECF4; --ink-soft:#98A2B8; --gold:#D2B07A; --line:#262F47; color-scheme:dark; } }
   *{box-sizing:border-box;}
-  body{margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; padding:28px 16px 48px; line-height:1.75;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; padding:28px 16px 48px; line-height:1.75; word-break:keep-all; overflow-wrap:break-word;}
   .wrap{max-width:680px; margin:0 auto;}
   header{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
   header img{width:48px; height:48px; border-radius:50%;}

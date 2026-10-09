@@ -1593,7 +1593,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v110</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v111</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1610,7 +1610,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v110</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v111</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1798,11 +1798,11 @@
 </div>
 <div class="confirm-overlay" id="accSheet" hidden role="dialog" aria-modal="true" aria-labelledby="accTitle">
   <div class="confirm-box">
-    <h3 id="accTitle">계정 · 서버 저장</h3>
+    <h3 id="accTitle">계정</h3>
     <p class="sub" id="accEmail"></p>
     <div class="acc-stat" id="accStat"></div>
     <button type="button" class="btn primary" id="btnAccSync" style="width:100%">지금 동기화</button>
-    <button type="button" class="btn line" id="btnAccOut" style="width:100%;margin-top:8px">로그아웃</button>
+    <button type="button" class="btn line" id="btnAccOut" style="width:100%">로그아웃</button>
     <button type="button" class="btn line acc-danger" id="btnAccDel" style="width:100%;margin-top:8px">계정 삭제</button>
     <div class="acc-ask" id="accAsk" hidden><div id="accAskTxt"></div><div class="row"><button type="button" class="btn line" id="btnAccAskNo">취소</button><button type="button" class="btn primary" id="btnAccAskYes">확인</button></div></div>
     <div class="confirm-btns"><button type="button" class="no" id="btnAccClose">닫기</button></div>
@@ -1962,7 +1962,8 @@
     </div>
     <div class="more-list">
       <button type="button" data-go="settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span class="ml-t">설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span><span class="ml-c" aria-hidden="true">›</span></button>
-      <button type="button" id="btnMoreAcc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span class="ml-t">계정 · 서버 저장</span><span class="ml-c" aria-hidden="true">›</span></button>
+      <button type="button" id="btnMoreAcc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span class="ml-t">계정</span><span class="ml-c" aria-hidden="true">›</span></button>
+      <button type="button" id="btnMoreSrv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.7 4.7 0 0 0 7 18.5z"/><path d="M12 15.5v-5M9.8 12.6L12 10.4l2.2 2.2"/></svg><span class="ml-t">서버 저장</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreBk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span class="ml-t">내 데이터 내보내기 · 불러오기</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreAdm" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg><span class="ml-t" id="btnMoreAdmT">관리자 모드</span><span class="ml-c" aria-hidden="true">›</span></button>
     </div>
@@ -9634,7 +9635,13 @@
   }
   $("btnAccAskNo").addEventListener("click", function(){ $("accAsk").hidden = true; accAsk._fn = null; });
   $("btnAccAskYes").addEventListener("click", function(){ var f = accAsk._fn; $("accAsk").hidden = true; accAsk._fn = null; if(f) f(); });
-  function accOpen(){ $("accAsk").hidden = true; accRender(); $("accSheet").hidden = false; }
+  function accOpen(mode){   // v111: 계정(로그인 정보·로그아웃·삭제) / 서버 저장(동기화 상태) 메뉴 분리
+    var srv = mode === "srv";
+    $("accTitle").textContent = srv ? "서버 저장" : "계정";
+    $("accStat").hidden = $("btnAccSync").hidden = !srv;
+    $("btnAccOut").hidden = $("btnAccDel").hidden = srv;
+    $("accAsk").hidden = true; accRender(); $("accSheet").hidden = false;
+  }
   $("btnAccClose").addEventListener("click", function(){ $("accSheet").hidden = true; });
   $("accSheet").addEventListener("click", function(e){ if(e.target === $("accSheet")) $("accSheet").hidden = true; });
   $("btnAccSync").addEventListener("click", function(){ syncNow().then(function(){ toast(ACC.state === "ok" ? "서버와 동기화했어요." : "지금은 동기화할 수 없어요. 연결을 확인해 주세요."); }); });
@@ -9667,7 +9674,8 @@
       }, function(){ busyBtn("btnAccDel", false); toast("계정 삭제에 실패했어요."); });
     });
   });
-  $("btnMoreAcc").addEventListener("click", function(){ $("moreSheet").hidden = true; accOpen(); });
+  $("btnMoreAcc").addEventListener("click", function(){ $("moreSheet").hidden = true; accOpen("acc"); });
+  $("btnMoreSrv").addEventListener("click", function(){ $("moreSheet").hidden = true; accOpen("srv"); });
 
   /* ===== v103 화면 맨 위에서 당겨 새로고침해도 보던 메뉴 그대로 (최신 내용만 다시 불러옴) ===== */
   function viewSave(){ try{ sessionStorage.setItem("ayo_view", JSON.stringify({ v: state.view, j: rom.joint, s: rom.side })); }catch(e){} }

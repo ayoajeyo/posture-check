@@ -1196,6 +1196,30 @@
   header.top .ttl{flex:1 1 auto;}
   header.top h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   @media (min-width:900px){ .msr-head{position:static; margin:0; padding:0;} }
+
+  /* ===================== v115 ROM 몸 그림으로 부위 선택 ===================== */
+  .rom-body{display:flex; align-items:stretch; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:14px 12px 10px 16px; box-shadow:var(--shadow);}
+  .rb-info{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:10px;}
+  .rb-info h3{margin:0; font-size:16px; font-weight:800;}
+  .rb-info .rb-sub{margin:-6px 0 0; font-size:12px; color:var(--ink-soft);}
+  .rb-sel{display:flex; flex-direction:column; gap:2px; padding:10px 12px; border-radius:12px; background:var(--accent-soft);}
+  .rb-sel span{font-size:11.5px; font-weight:700; color:var(--accent-ink);}
+  .rb-sel b{font-size:18px; font-weight:800; color:var(--ink);}
+  .rb-sel em{font-style:normal; font-size:12px; color:var(--ink-soft);}
+  .rb-legend{display:flex; flex-direction:column; gap:6px; margin-top:auto; font-size:11.5px; color:var(--ink-soft);}
+  .rb-legend i{display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:6px; vertical-align:-2px; box-sizing:border-box;}
+  .rb-fig{position:relative; flex:0 0 180px; width:180px; height:340px;}
+  .rb-fig svg{position:absolute; left:0; top:0;}
+  .rb-dot{position:absolute; width:28px; height:28px; margin:0; padding:0; border-radius:50%; border:3px solid #8A97A5; background:var(--surface); cursor:pointer; box-sizing:border-box; transition:transform .12s;}
+  .rb-dot.part{border-color:var(--blue); background:linear-gradient(90deg, var(--blue) 50%, var(--surface) 50%);}
+  .rb-dot.done{border-color:var(--blue); background:var(--blue);}
+  .rb-dot.sel{transform:scale(1.2); box-shadow:0 0 0 5px rgba(11,122,107,.25); border-color:var(--ink);}
+  .rb-dot:active{transform:scale(1.1);}
+  .rb-lr{position:absolute; bottom:0; font-size:11px; font-weight:700; color:var(--ink-soft);}
+  /* 기존 부위 탭·좌우 버튼은 몸 그림이 대신 (좌우 비교 버튼은 유지) */
+  #romJoints, #romSide{display:none!important;}
+  .rom-siderow{justify-content:flex-end;}
+  @media (max-width:360px){ .rb-fig{flex-basis:150px; width:150px; transform:scale(.84); transform-origin:top right; height:290px;} }
 </style>
 
 </head>
@@ -1668,6 +1692,18 @@
       <button type="button" class="btn primary sm" id="btnRomNextRound">다음 회차 측정</button>
     </div>
     <div class="rom-rounds" id="romRounds" role="group" aria-label="회차 선택" hidden></div>
+    <div class="rom-body" id="romBody">
+      <div class="rb-info">
+        <div><h3>부위를 누르세요</h3></div>
+        <p class="rb-sub" id="rbProg"></p>
+        <div class="rb-sel"><span>선택한 부위</span><b id="rbSelName">어깨 · 우측</b><em id="rbSelMeta"></em></div>
+        <div class="rb-legend"><span><i style="background:var(--blue)"></i>완료</span><span><i style="background:linear-gradient(90deg,var(--blue) 50%,var(--surface) 50%); border:2px solid var(--blue)"></i>일부 측정</span><span><i style="border:2px solid #8A97A5"></i>미측정</span></div>
+      </div>
+      <div class="rb-fig" id="rbFig">
+        <svg width="180" height="330" viewBox="0 0 180 330" fill="none" aria-hidden="true"><g stroke="#B8C2CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="90" cy="28" r="18"/><path d="M90 46V51"/><path d="M59 72C66 60 114 60 121 72"/><path d="M59 72L48 131L41 182M121 72L132 131L139 182"/><path d="M64 80L70 150L72 174M116 80L110 150L108 174M72 174H108"/><path d="M72 174L74 246L75 305M108 174L106 246L105 305"/></g></svg>
+        <span class="rb-lr" style="left:22px">우측</span><span class="rb-lr" style="right:22px">좌측</span>
+      </div>
+    </div>
     <nav class="tabs rom-joints" id="romJoints" role="tablist"></nav>
     <div class="rom-siderow">
     <div class="rom-side" id="romSide" role="group" aria-label="측정 방향">
@@ -1678,7 +1714,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v114</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v115</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1695,7 +1731,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v114</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v115</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -6106,6 +6142,7 @@
       $("romGrid").querySelectorAll("[data-mv]").forEach(function(b){ b.addEventListener("click", function(){ openRomSheet(b.getAttribute("data-mv")); }); });
       $("romGrid").querySelectorAll("[data-lrs]").forEach(function(b){ b.addEventListener("click", function(){ rom.side = b.getAttribute("data-lrs"); renderRom(); }); });
       $("romGrid").querySelectorAll("[data-cmp]").forEach(function(b){ b.addEventListener("click", function(){ openRomCompare(b.getAttribute("data-cmp")); }); });
+      romBodyRender();
       $("romSum").innerHTML = '<div><span>' + J.n + (J.single ? '' : ' · ' + (rom.side === "R" ? "우측" : "좌측")) + ' 측정</span><b>' + done + ' / ' + J.moves.length + '</b></div>' +
         '<div><span>평균 가동 범위 (정상 대비)</span><b>' + (cnt ? Math.round(sumPct / cnt) + "%" : "–") + '</b></div>' +
         '<div><span>측정 포인트</span><b style="font-size:14px;font-family:inherit">' + ROM_PTNAME[J.pts[2]] + ' – ' + ROM_PTNAME[J.pts[0]] + ' – ' + ROM_PTNAME[J.pts[1]] + '</b></div>' +
@@ -6114,6 +6151,36 @@
     });
   }
   $("romSide").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ rom.side = b.getAttribute("data-side"); renderRom(); }); });
+  /* v115 몸 그림 부위 선택: 정면에서 본 모습이라 회원의 우측 = 화면 왼쪽 */
+  var RB_POS = { neck:{C:[90,57]}, trunk:{C:[90,148]}, shoulder:{R:[59,72], L:[121,72]}, elbow:{R:[48,131], L:[132,131]}, hip:{R:[72,174], L:[108,174]}, knee:{R:[74,246], L:[106,246]}, ankle:{R:[75,305], L:[105,305]} };
+  function romBodyCount(J, sd){
+    var done = 0;
+    J.moves.forEach(function(mv){ var side = J.single ? (mv.lr ? rom.side : "C") : sd; if(romCurRec(J.k, side, mv.k)) done++; });
+    return done;
+  }
+  function romBodyRender(){
+    var fig = $("rbFig"); if(!fig) return;
+    fig.querySelectorAll(".rb-dot").forEach(function(d){ d.remove(); });
+    var totDone = 0, tot = 0, J0 = romJoint();
+    ROM_JOINTS.forEach(function(J){
+      var pos = RB_POS[J.k]; if(!pos) return;
+      Object.keys(pos).forEach(function(sd){
+        var n = romBodyCount(J, sd), all = J.moves.length; totDone += n; tot += all;
+        var sel = J.k === J0.k && (J.single || sd === rom.side);
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "rb-dot" + (n >= all ? " done" : n ? " part" : "") + (sel ? " sel" : "");
+        b.style.left = (pos[sd][0] - 14) + "px"; b.style.top = (pos[sd][1] - 14) + "px";
+        var nm = J.n + (J.single ? "" : (sd === "R" ? " · 우측" : " · 좌측"));
+        b.setAttribute("aria-label", nm + " · " + n + "/" + all + " 측정" + (sel ? " · 선택됨" : ""));
+        b.setAttribute("aria-pressed", String(sel));
+        b.addEventListener("click", function(){ rom.joint = J.k; if(!J.single) rom.side = sd; renderRom(); });
+        fig.appendChild(b);
+      });
+    });
+    $("rbProg").textContent = "이번 회차 " + totDone + " / " + tot + "개 측정";
+    $("rbSelName").textContent = J0.n + (J0.single ? "" : (rom.side === "R" ? " · 우측" : " · 좌측"));
+    $("rbSelMeta").textContent = romBodyCount(J0, rom.side) + " / " + J0.moves.length + " 측정 · 아래에서 동작을 골라 측정";
+  }
   $("btnRomPick").addEventListener("click", function(){ $("btnMbPick").click(); });
   var _setMemberRom = setMember;
   setMember = function(m){ _setMemberRom(m); if(state.view === "rom") renderRom(); };

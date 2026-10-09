@@ -1593,7 +1593,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v111</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v112</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1610,7 +1610,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v111</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v112</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -4755,7 +4755,7 @@
     var c = document.createElement("canvas"); c.width = W; c.height = H;
     var g = c.getContext("2d"); g.imageSmoothingQuality = "high";
     g.drawImage(src, cr.x, cr.y, cr.w, cr.h, 0, 0, W, H);
-    return c.toDataURL("image/jpeg", 0.8);
+    return c.toDataURL("image/jpeg", 0.72);
   }
   function slim(list){
     return (list || []).map(function(x){ return { key:x.key, name:x.name, title:x.title, value:x.value, num:parseFloat(x.value) || 0, foot:x.foot, cls:x.grade.cls }; });
@@ -5320,7 +5320,7 @@
 
   /* ===================== v50 측정 저장(차수) · 이전 기록 불러와 수정 · 리포트 PRO ===================== */
   state.savedSig = null; state.sessRound = 1; state.pendingSave = false;
-  var PHOTO_MAX = 1600;
+  var PHOTO_MAX = 1280;   // v112 저장용 사진 압축 강화 (1600 → 1280, 화질 0.88 → 0.8) · 측정용 작업 사진은 그대로
 
   // 현재 측정 상태 지문 (사진·점·기울기·기준선·키) → 저장 후 바뀌었는지 판단
   function sessSig(){
@@ -5361,7 +5361,7 @@
   setInterval(function(){ if(state.view === "analyze" || state.view === "report") updateSessBar(); }, 800);
   (function(){ var bb = $("btnSessSaveBot"); if(bb) bb.addEventListener("click", function(){ $("btnSessSave").click(); setTimeout(updateSessBar, 300); }); })();
 
-  // 사진 + 기준점 묶음 (긴 변 1600px로 줄이고 좌표도 같은 비율로)
+  // 사진 + 기준점 묶음 (긴 변 PHOTO_MAX px로 줄이고 좌표도 같은 비율로)
   function packMode(m){
     var s = state.byMode[m]; if(!s.img) return null;
     var k = Math.min(1, PHOTO_MAX / Math.max(s.w, s.h));
@@ -5370,7 +5370,7 @@
     var g = c.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(s.img, 0, 0, cw, ch);
     var sc = function(p){ return p ? Object.assign({}, p, { x: p.x * k, y: p.y * k }) : null; };
     var pts = {}; Object.keys(s.points).forEach(function(key){ pts[key] = sc(s.points[key]); });
-    return { img: c.toDataURL("image/jpeg", 0.88), w: cw, h: ch, points: pts,
+    return { img: c.toDataURL("image/jpeg", 0.8), w: cw, h: ch, points: pts,
       centerX: isFinite(s.centerX) ? s.centerX * k : null, faceSign: s.faceSign, rot: s.rot || 0,
       rotPivot: sc(s.rotPivot), grid: s.grid ? { floorY: s.grid.floorY * k, cell: s.grid.cell * k } : null, captureRoll: s.captureRoll == null ? null : s.captureRoll };
   }
@@ -6589,7 +6589,7 @@
     var mv = romMove(), val = romAngle();
     var rec = { id: uid(), memberId: state.member ? state.member.id : null, at: Date.now(), joint: rom.joint, side: romSd(romJoint(), mv), move: mv.k,
       value: val, normal: mv.normal, pct: mv.normal ? Math.round(val / mv.normal * 100) : null, ref: romKind(), pts: romS.pts.map(function(q){ return { x: Math.round(q.x), y: Math.round(q.y) }; }),
-      thumb: romResultCanvas(480).toDataURL("image/jpeg", 0.78) };
+      thumb: romResultCanvas(400).toDataURL("image/jpeg", 0.72) };   // v112 480·0.78 → 400·0.72 (서버 기록 행에 들어감)
     var ri = romS.recImg || romImgData();
     rec.img = ri.url; rec.imgK = ri.k; rec.roll = romS.roll; rec.footOff = romS.footOff;
     var editing = !!romS.editId;
@@ -6808,10 +6808,10 @@
   $("btnRomGrid").addEventListener("click", function(){ romS.gridOn = romGridPref = !romS.gridOn; romSyncGridBtn(); romDraw(); });
   // 기록용 원본 사진 (회차 사진 보기·수정에 사용)
   function romImgData(){
-    var k = Math.min(1, 1280 / Math.max(romS.w, romS.h)), c = document.createElement("canvas");
+    var k = Math.min(1, 1080 / Math.max(romS.w, romS.h)), c = document.createElement("canvas");   // v112 1280 → 1080
     c.width = Math.round(romS.w * k); c.height = Math.round(romS.h * k);
     c.getContext("2d").drawImage(romS.img, 0, 0, c.width, c.height);
-    return { url: c.toDataURL("image/jpeg", 0.86), k: k };
+    return { url: c.toDataURL("image/jpeg", 0.8), k: k };
   }
   function romFind(id){ return rom.all.find(function(r){ return r.id === id; }) || rom.sessionAll.find(function(r){ return r.id === id; }); }
   // 지난 회차 열기: 그때 사진 + 측정점 그대로 → 보기·수정

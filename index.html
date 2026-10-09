@@ -1220,6 +1220,26 @@
   #romJoints, #romSide{display:none!important;}
   .rom-siderow{justify-content:flex-end;}
   @media (max-width:360px){ .rb-fig{flex-basis:150px; width:150px; transform:scale(.84); transform-origin:top right; height:290px;} }
+
+  /* ===================== v116 홈 개편 · 리포트 이미지 밝은 디자인 ===================== */
+  .home-start{display:flex; flex-direction:column; gap:12px;}
+  .home-start[hidden]{display:none!important;}
+  .hs-head{display:flex; align-items:baseline; gap:8px;} .hs-head h2{margin:0; flex:1; font-size:17px; font-weight:800;} .hs-head span{font-size:13px; color:var(--ink-soft);}
+  .hs-bar{height:6px; border-radius:3px; background:var(--surface-2); overflow:hidden;} .hs-bar i{display:block; height:100%; background:var(--blue); border-radius:3px;}
+  .hs-row{display:flex; align-items:center; gap:12px; min-height:44px;}
+  .hs-row .ck{width:24px; height:24px; border-radius:50%; flex:0 0 auto; box-sizing:border-box; border:2px solid #A9B4BF; display:flex; align-items:center; justify-content:center; color:#fff;}
+  .hs-row.done .ck{background:var(--blue); border-color:var(--blue);}
+  .hs-row:not(.done) .ck svg{visibility:hidden;}
+  .hs-row .tx{flex:1; font-size:15px; font-weight:600;}
+  .hs-row.done .tx{color:var(--ink-soft); text-decoration:line-through; font-weight:500;}
+  .hs-row.done .btn{display:none;}
+  .hs-row .btn{flex:0 0 auto!important; width:auto!important; min-width:68px;}
+  .home-quick{display:flex; flex-direction:column; gap:10px;}
+  .home-quick h2{margin:0; font-size:17px; font-weight:800;}
+  .hq-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
+  .hq-grid button{font-family:inherit; border:1px solid var(--line); background:var(--surface); border-radius:16px; padding:16px 6px 14px; display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--ink); font-size:14px; font-weight:800; cursor:pointer; box-shadow:var(--shadow);}
+  .hq-grid button span{width:46px; height:46px; border-radius:14px; background:var(--accent-soft); color:var(--blue); display:flex; align-items:center; justify-content:center;}
+  .hq-grid button:active{transform:translateY(1px);}
 </style>
 
 </head>
@@ -1582,13 +1602,28 @@
 
 
   <section class="view" id="view-dash" hidden>
+    <section class="card home-start" id="homeStart" hidden>
+      <div class="hs-head"><h2>처음 시작하기</h2><span id="hsCount">0 / 3 완료</span></div>
+      <div class="hs-bar"><i id="hsBar" style="width:0%"></i></div>
+      <div class="hs-row" id="hsMember"><span class="ck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="tx">첫 회원 등록하기</span><button type="button" class="btn primary sm" id="btnHsMember">등록</button></div>
+      <div class="hs-row" id="hsMeasure"><span class="ck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="tx">첫 측정 해보기</span><button type="button" class="btn primary sm" id="btnHsMeasure">측정</button></div>
+      <div class="hs-row" id="hsReport"><span class="ck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="tx">리포트 확인하기</span><button type="button" class="btn line sm" id="btnHsReport">보기</button></div>
+    </section>
+    <section class="home-quick">
+      <h2>바로 측정</h2>
+      <div class="hq-grid">
+        <button type="button" data-goview="analyze"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg></span>체형분석</button>
+        <button type="button" data-goview="rom"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M4 20L16 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/><circle cx="16" cy="6" r="1.6"/></svg></span>ROM</button>
+        <button type="button" data-goview="scol"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c-2.5 2.5 2.5 4.5 0 7s2.5 4.5 0 7-0 4"/><path d="M8.5 5.5h3M12.5 9h3M8.5 12.5h3M12.5 16h3M9.5 19.5h3"/></svg></span>측만증</button>
+      </div>
+    </section>
+    <section class="card ds-card"><h2>재측정 필요 회원</h2><p class="sub">마지막 측정 후 30일이 지난 회원이에요.</p><div id="dsDue"></div></section>
     <div class="ds-kpis" id="dsKpis"></div>
     <div class="ds-grid">
       <section class="card ds-card"><h2>회원 현황</h2><p class="sub">최근 측정일 기준으로 회원 상태를 나눠요.</p><div id="dsStatus"></div></section>
       <section class="card ds-card"><h2>측정 추이 <small>최근 6개월</small></h2><p class="sub" id="dsTrendSub"></p><div id="dsTrend"></div></section>
     </div>
     <div class="ds-grid three">
-      <section class="card ds-card"><h2>재측정 필요 회원</h2><p class="sub">마지막 측정 후 30일이 지난 회원이에요.</p><div id="dsDue"></div></section>
       <section class="card ds-card"><h2>회원 연령대</h2><p class="sub" id="dsAgeSub">회원 정보의 출생연도로 계산해요.</p><div id="dsAge"></div></section>
       <section class="card ds-card"><h2>개선 필요 부위 TOP 5</h2><p class="sub">회원별 최근 측정에서 주의·개선 필요로 나온 부위예요.</p><div id="dsTop"></div></section>
     </div>
@@ -1714,7 +1749,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v115</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v116</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1731,7 +1766,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v115</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v116</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -4577,27 +4612,27 @@
     H += ROMH;
     var c = document.createElement("canvas"); c.width = W; c.height = H;
     var g = c.getContext("2d"), F = "'IBM Plex Sans KR', 'IBM Plex Sans', sans-serif", M = "'IBM Plex Mono', monospace";
-    g.fillStyle = "#0D1528"; g.fillRect(0, 0, W, H);
+    g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, H);
     g.textBaseline = "alphabetic"; g.textAlign = "left";
-    g.fillStyle = "#D2B07A"; g.font = "700 22px " + F; g.fillText(brandLabel("POSTURE CHECK PRO", "체형 분석 리포트"), PAD, 62); drawBrandLogo(g, W - PAD, 18, 260, 64);
-    g.fillStyle = "#E9EEF8"; g.font = "800 50px " + F; g.fillText("체형 분석 결과", PAD, 120);
+    g.fillStyle = "#0B7A6B"; g.font = "700 22px " + F; g.fillText(brandLabel("POSTURE CHECK PRO", "체형 분석 리포트"), PAD, 62); drawBrandLogo(g, W - PAD, 18, 260, 64);
+    g.fillStyle = "#17212B"; g.font = "800 50px " + F; g.fillText("체형 분석 결과", PAD, 120);
     var pt = $("ptField").value.trim();
-    g.fillStyle = "#97A3BC"; g.font = "500 26px " + M; g.textAlign = "right";
+    g.fillStyle = "#5B6875"; g.font = "500 26px " + M; g.textAlign = "right";
     g.fillText(nowText() + (pt ? "  ·  " + pt : ""), W - PAD, 120); g.textAlign = "left";
     // 보드
     var by = HEAD;
-    g.fillStyle = "#141E35"; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.fill();
-    g.strokeStyle = "rgba(255,255,255,.07)"; g.lineWidth = 2; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.stroke();
+    g.fillStyle = "#FFFFFF"; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.fill();
+    g.strokeStyle = "#DDE3E9"; g.lineWidth = 2; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.stroke();
     ["front", "side"].forEach(function(m, i){
       var list = m === "front" ? r.f : r.sd;
       var x0 = PAD + 24 + i * (COLW + 40);
-      if(i){ g.fillStyle = "rgba(255,255,255,.08)"; g.fillRect(x0 - 32, by + 30, 2, BOARD - 60); }
-      g.fillStyle = "#FFFFFF"; g.font = "800 42px " + F; g.fillText(m === "front" ? "정면" : "측면", x0, by + 70);
-      g.fillStyle = "#97A3BC"; g.font = "600 24px " + F; g.fillText(m === "front" ? "좌우 높낮이" : "플럼라인", x0 + 96, by + 70);
+      if(i){ g.fillStyle = "#DDE3E9"; g.fillRect(x0 - 32, by + 30, 2, BOARD - 60); }
+      g.fillStyle = "#17212B"; g.font = "800 42px " + F; g.fillText(m === "front" ? "정면" : "측면", x0, by + 70);
+      g.fillStyle = "#5B6875"; g.font = "600 24px " + F; g.fillText(m === "front" ? "좌우 높낮이" : "플럼라인", x0 + 96, by + 70);
       var iy = by + 100, ix = x0 + CHIPW + 24;
       if(!list){
-        g.strokeStyle = "#3A4766"; g.lineWidth = 3; g.setLineDash([12, 10]); rr(g, x0, iy, COLW - 48, IMGH, 20); g.stroke(); g.setLineDash([]);
-        g.fillStyle = "#97A3BC"; g.font = "600 30px " + F; g.textAlign = "center"; g.fillText("측정하지 않음", x0 + (COLW - 48)/2, iy + IMGH/2); g.textAlign = "left";
+        g.strokeStyle = "#C5CED8"; g.lineWidth = 3; g.setLineDash([12, 10]); rr(g, x0, iy, COLW - 48, IMGH, 20); g.stroke(); g.setLineDash([]);
+        g.fillStyle = "#5B6875"; g.font = "600 30px " + F; g.textAlign = "center"; g.fillText("측정하지 않음", x0 + (COLW - 48)/2, iy + IMGH/2); g.textAlign = "left";
         return;
       }
       var src = withMode(m, function(){ return buildAnnotated({ footer:false, labels:false }); });
@@ -4609,46 +4644,46 @@
       list.forEach(function(x, k){
         var cy = iy + k * (ch + gap), gc = gradeColor(x.grade.cls), d = dirInfo(x.foot);
         g.save(); rr(g, x0, cy, CHIPW, ch, 18); g.clip();
-        g.fillStyle = "#1E2A47"; g.fillRect(x0, cy, CHIPW, ch);
+        g.fillStyle = "#F1F4F7"; g.fillRect(x0, cy, CHIPW, ch);
         g.fillStyle = gc; g.fillRect(x0, cy, 8, ch); g.restore();
-        g.fillStyle = "#C9D3E6"; g.font = "700 23px " + F; g.fillText(x.title, x0 + 26, cy + 38);
+        g.fillStyle = "#3D4A57"; g.font = "700 23px " + F; g.fillText(x.title, x0 + 26, cy + 38);
         // 판정 배지
         var gl = gradeShort(x.grade.cls); g.font = "800 19px " + F; var gw = g.measureText(gl).width + 18;
         g.save(); g.globalAlpha = .18; g.fillStyle = gc; rr(g, x0 + CHIPW - 14 - gw, cy + 15, gw, 30, 8); g.fill(); g.restore();
         g.fillStyle = gc; g.textAlign = "center"; g.fillText(gl, x0 + CHIPW - 14 - gw / 2, cy + 37); g.textAlign = "left";
-        g.fillStyle = "#FFFFFF"; g.font = "700 46px " + M; g.fillText(x.value, x0 + 24, cy + 92);
+        g.fillStyle = "#17212B"; g.font = "700 46px " + M; g.fillText(x.value, x0 + 24, cy + 92);
         // 방향 알약
         g.font = "700 21px " + F; var tw = g.measureText(d.tx).width, pw = tw + 58;
-        g.fillStyle = "rgba(255,255,255,.09)"; rr(g, x0 + 22, cy + 104, pw, 30, 15); g.fill();
+        g.fillStyle = "rgba(23,33,43,.06)"; rr(g, x0 + 22, cy + 104, pw, 30, 15); g.fill();
         g.fillStyle = gc; g.font = "700 15px " + F; g.fillText(d.ic, x0 + 34, cy + 125);
-        g.fillStyle = "#EEF2FA"; g.font = "700 21px " + F; g.fillText(d.tx, x0 + 58, cy + 126);
+        g.fillStyle = "#17212B"; g.font = "700 21px " + F; g.fillText(d.tx, x0 + 58, cy + 126);
       });
     });
     // 하단: 점수 + 요약
     var y2 = HEAD + BOARD + 30, SW = 560;
-    g.fillStyle = "#141E35"; rr(g, PAD, y2, SW, BOT, 24); g.fill(); rr(g, PAD + SW + 30, y2, W - PAD*2 - SW - 30, BOT, 24); g.fill();
-    g.fillStyle = "#97A3BC"; g.font = "700 26px " + F; g.fillText("종합 점수", PAD + 36, y2 + 56);
-    g.fillStyle = "#E9EEF8"; g.font = "700 120px " + M; var sv = r.score === null ? "–" : String(r.score);
+    g.fillStyle = "#FFFFFF"; rr(g, PAD, y2, SW, BOT, 24); g.fill(); rr(g, PAD + SW + 30, y2, W - PAD*2 - SW - 30, BOT, 24); g.fill();
+    g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("종합 점수", PAD + 36, y2 + 56);
+    g.fillStyle = "#17212B"; g.font = "700 120px " + M; var sv = r.score === null ? "–" : String(r.score);
     g.fillText(sv, PAD + 32, y2 + 180); var sw = g.measureText(sv).width;
-    g.fillStyle = "#97A3BC"; g.font = "500 40px " + F; g.fillText("/100", PAD + 44 + sw, y2 + 180);
+    g.fillStyle = "#5B6875"; g.font = "500 40px " + F; g.fillText("/100", PAD + 44 + sw, y2 + 180);
     var n = r.score === null ? 0 : Math.round(r.score / 10) / 2;
     for(var k = 0; k < 5; k++) drawStar(g, PAD + 62 + k * 66, y2 + 240, 28, Math.max(0, Math.min(1, n - k)));
-    if(r.score !== null){ var bnd = scoreBand(r.score); g.fillStyle = bnd.cls === "st-good" ? "#4CC38A" : bnd.cls === "st-warn" ? "#F0B44C" : "#F07A72"; g.font = "800 28px " + F; g.fillText(bnd.label, PAD + 36, y2 + 304); }
+    if(r.score !== null){ var bnd = scoreBand(r.score); g.fillStyle = bnd.cls === "st-good" ? "#16794A" : bnd.cls === "st-warn" ? "#A35A00" : "#C03A2B"; g.font = "800 28px " + F; g.fillText(bnd.label, PAD + 36, y2 + 304); }
     var sx = PAD + SW + 30 + 40;
-    g.fillStyle = "#97A3BC"; g.font = "700 26px " + F; g.fillText("주요 분석 항목", sx, y2 + 56);
+    g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("주요 분석 항목", sx, y2 + 56);
     var cw = (W - PAD - 40 - sx) / 4;
     r.groups.forEach(function(gr, k){
       var x = sx + k * cw;
-      g.fillStyle = "#E9EEF8"; g.font = "700 30px " + F; g.fillText(gr.name, x, y2 + 140);
-      g.fillStyle = gr.st.cls === "st-good" ? "#4CC38A" : gr.st.cls === "st-warn" ? "#F0B44C" : gr.st.cls === "st-crit" ? "#F07A72" : "#5F6B86";
+      g.fillStyle = "#17212B"; g.font = "700 30px " + F; g.fillText(gr.name, x, y2 + 140);
+      g.fillStyle = gr.st.cls === "st-good" ? "#16794A" : gr.st.cls === "st-warn" ? "#A35A00" : gr.st.cls === "st-crit" ? "#C03A2B" : "#7A8794";
       g.font = "800 40px " + F; g.fillText(gr.st.label, x, y2 + 200);
-      g.fillStyle = "#C3CCDD"; var dfs = 23; g.font = "600 23px " + F; while(dfs > 16 && g.measureText(gr.detail).width > cw - 20){ dfs--; g.font = "600 " + dfs + "px " + F; } g.fillText(gr.detail.replace(/ ↑\)/, " 높음)"), x, y2 + 246);
+      g.fillStyle = "#3D4A57"; var dfs = 23; g.font = "600 23px " + F; while(dfs > 16 && g.measureText(gr.detail).width > cw - 20){ dfs--; g.font = "600 " + dfs + "px " + F; } g.fillText(gr.detail.replace(/ ↑\)/, " 높음)"), x, y2 + 246);
     });
     if(PH) drawRepPair(g, PAD, y2 + BOT + 30, W - PAD * 2, F);
     if(ROMH - PH) drawRepRom(g, PAD, y2 + BOT + 30 + PH, W - PAD * 2, F, M);
-    g.fillStyle = "#5F6B86"; g.font = "500 21px " + F;
+    g.fillStyle = "#7A8794"; g.font = "500 21px " + F;
     g.fillText("촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며 진단을 대신하지 않습니다.", PAD, H - 32);
-    g.textAlign = "right"; g.fillStyle = "#D2B07A"; g.font = "700 20px " + F; g.fillText(brandFoot(), W - PAD, H - 32);
+    g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandFoot(), W - PAD, H - 32);
     return c;
   }
   $("btnSaveReport").addEventListener("click", function(){
@@ -4695,7 +4730,7 @@
     syncCurBar();
     $("msrTabs").querySelectorAll("[data-mv]").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-mv") === v ? "true" : "false"); });
     var nm = $("navMeasure"); if(nm){ if(isMsr) nm.setAttribute("aria-current", "page"); else nm.removeAttribute("aria-current"); }
-    if(v === "report"){ renderReport(); syncRepLock(); }
+    if(v === "report"){ renderReport(); syncRepLock(); lsSet("ayo_seen_report", "1"); }
     else if(v === "members"){ mbShowList(); syncMbLock(); }
     else if(v === "dash") renderDash();
     else if(v === "exercise") renderExercise();
@@ -4722,6 +4757,9 @@
   }
   $("btnMoreTheme").addEventListener("click", function(){ lsSet("ayo_ui", lsGet("ayo_ui") === "dark" ? "" : "dark"); applyUiTheme(); });
   applyUiTheme();
+  $("btnHsMember").addEventListener("click", function(){ showView("members"); setTimeout(function(){ var b = $("btnMbAdd"); if(b) b.click(); }, 50); });
+  $("btnHsMeasure").addEventListener("click", function(){ $("navMeasure").click(); });
+  $("btnHsReport").addEventListener("click", function(){ showView("report"); });
   function syncCurBar(){
     var m = state.member, bar = $("curBar"); if(!bar) return;
     bar.classList.toggle("on", !!m);
@@ -5204,16 +5242,16 @@
       var H = 210 + blocks.reduce(function(a, b){ return a + b.h; }, 0) + 70 + (brandContact() ? 34 : 0);
       var c = document.createElement("canvas"); c.width = W; c.height = H;
       var g = c.getContext("2d");
-      g.fillStyle = "#0D1528"; g.fillRect(0, 0, W, H);
-      g.fillStyle = "#D2B07A"; g.font = "700 20px " + F; g.fillText(brandLabel("전후 비교", "전후 비교"), PAD, 58); drawBrandLogo(g, W - PAD, 14, 200, 52);
-      g.fillStyle = "#E9EEF8"; g.font = "800 44px " + F; g.fillText(m.name + (m.no ? "  " : ""), PAD, 112);
-      if(m.no){ var nw = g.measureText(m.name + "  ").width; g.fillStyle = "#97A3BC"; g.font = "500 24px " + F; g.fillText("No." + m.no, PAD + nw, 112); }
-      g.fillStyle = "#97A3BC"; g.font = "500 22px " + F;
+      g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, H);
+      g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandLabel("전후 비교", "전후 비교"), PAD, 58); drawBrandLogo(g, W - PAD, 14, 200, 52);
+      g.fillStyle = "#17212B"; g.font = "800 44px " + F; g.fillText(m.name + (m.no ? "  " : ""), PAD, 112);
+      if(m.no){ var nw = g.measureText(m.name + "  ").width; g.fillStyle = "#5B6875"; g.font = "500 24px " + F; g.fillText("No." + m.no, PAD + nw, 112); }
+      g.fillStyle = "#5B6875"; g.font = "500 22px " + F;
       g.fillText("이전 " + fmtDate(A.at).slice(0, 10) + "  " + (A.score != null ? A.score + "점" : "–") + "   →   이후 " + fmtDate(B.at).slice(0, 10) + "  " + (B.score != null ? B.score + "점" : "–"), PAD, 160);
       if(A.score != null && B.score != null){
         var ds = B.score - A.score;
         g.textAlign = "right"; g.font = "800 40px " + M;
-        g.fillStyle = ds > 0 ? "#4CC38A" : ds < 0 ? "#F07A72" : "#97A3BC";
+        g.fillStyle = ds > 0 ? "#16794A" : ds < 0 ? "#C03A2B" : "#5B6875";
         g.fillText(ds > 0 ? "▲ " + ds + "점" : ds < 0 ? "▼ " + Math.abs(ds) + "점" : "변화 없음", W - PAD, 118); g.textAlign = "left";
       }
       var y = 210;
@@ -5242,7 +5280,7 @@
           g.fillStyle = "#131B2E"; g.font = "700 22px " + F; g.fillText((a || b).title, cols[0], yy);
           g.font = "600 22px " + M; g.textAlign = "right";
           g.fillText(a ? a.value : "–", cols[1] + 90, yy); g.fillText(b ? b.value : "–", cols[2] + 90, yy);
-          var unit = v[2] === "f" ? "°" : "cm", txt = "–", col = "#97A3BC";
+          var unit = v[2] === "f" ? "°" : "cm", txt = "–", col = "#5B6875";
           if(a && b){
             var dd = Math.round((b.num - a.num) * 10) / 10;
             if(Math.abs(dd) < 0.05){ txt = "변화 없음"; }
@@ -5252,10 +5290,10 @@
         });
         y += bk.h;
       });
-      g.fillStyle = "#5F6B86"; g.font = "500 18px " + F;
+      g.fillStyle = "#7A8794"; g.font = "500 18px " + F;
       g.fillText("촬영 조건에 따라 달라질 수 있는 참고값입니다. 같은 장소·거리·복장으로 촬영해 비교하세요.", PAD, H - 30 - (brandContact() ? 34 : 0));
-      if(brandContact()){ g.fillStyle = "#C9D3E6"; g.font = "600 18px " + F; g.fillText(brandContact(), PAD, H - 30); }
-      g.textAlign = "right"; g.fillStyle = "#D2B07A"; g.font = "700 18px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 30); g.textAlign = "left";
+      if(brandContact()){ g.fillStyle = "#3D4A57"; g.font = "600 18px " + F; g.fillText(brandContact(), PAD, H - 30); }
+      g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 18px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 30); g.textAlign = "left";
       var tag = (m.name + (m.no ? "_" + m.no : "")).replace(/[^a-zA-Z0-9가-힣_-]/g, "");
       deliverCanvas(c, "AYO_compare_" + tag + "_" + fmtDate(B.at).slice(0, 10).replace(/\./g, "") + ".jpg");
     });
@@ -5407,6 +5445,13 @@
         { k:"이번 달 재측정 회원", v:Object.keys(reThis).length, u:"명", d:deltaTxt(Object.keys(reThis).length, Object.keys(rePrev).length, "명") },
         { k:"이번 달 평균 점수", v:avg(recThis) == null ? "–" : avg(recThis), u:avg(recThis) == null ? "" : "점", d:deltaTxt(avg(recThis), avg(recPrev), "점") }
       ];
+      (function(){
+        var hasM = members.length > 0, hasR = records.length > 0 || lsGet("ayo_rom_any") === "1", seen = lsGet("ayo_seen_report") === "1";
+        var n = (hasM ? 1 : 0) + (hasR ? 1 : 0) + (seen ? 1 : 0);
+        $("hsMember").classList.toggle("done", hasM); $("hsMeasure").classList.toggle("done", hasR); $("hsReport").classList.toggle("done", seen);
+        $("hsCount").textContent = n + " / 3 완료"; $("hsBar").style.width = Math.round(n / 3 * 100) + "%";
+        $("homeStart").hidden = n >= 3;
+      })();
       $("dsKpis").innerHTML = K.map(function(x){ return '<div class="kpi"><div class="k">' + x.k + '</div><div class="v">' + x.v + '<small>' + x.u + '</small></div><div class="d">' + x.d + '</div></div>'; }).join("");
 
       // 회원 현황
@@ -5420,8 +5465,8 @@
       });
       var tot = members.length || 1;
       var cats = [
-        { k:"fresh", n:"신규 회원", e:"등록 30일 이내", c:"#2F6BFF" },
-        { k:"active", n:"관리 중", e:"최근 30일 안에 측정", c:"#4CC38A" },
+        { k:"fresh", n:"신규 회원", e:"등록 30일 이내", c:"#3B82C4" },
+        { k:"active", n:"관리 중", e:"최근 30일 안에 측정", c:"#0B7A6B" },
         { k:"due", n:"재측정 필요", e:"30~60일 미측정", c:"#F0B44C" },
         { k:"dormant", n:"휴면", e:"60일 이상 미측정", c:"#7D879C" },
         { k:"none", n:"측정 기록 없음", e:"등록 30일 경과", c:"#4A5570" }
@@ -6143,6 +6188,7 @@
       $("romGrid").querySelectorAll("[data-lrs]").forEach(function(b){ b.addEventListener("click", function(){ rom.side = b.getAttribute("data-lrs"); renderRom(); }); });
       $("romGrid").querySelectorAll("[data-cmp]").forEach(function(b){ b.addEventListener("click", function(){ openRomCompare(b.getAttribute("data-cmp")); }); });
       romBodyRender();
+      if(done > 0) lsSet("ayo_rom_any", "1");
       $("romSum").innerHTML = '<div><span>' + J.n + (J.single ? '' : ' · ' + (rom.side === "R" ? "우측" : "좌측")) + ' 측정</span><b>' + done + ' / ' + J.moves.length + '</b></div>' +
         '<div><span>평균 가동 범위 (정상 대비)</span><b>' + (cnt ? Math.round(sumPct / cnt) + "%" : "–") + '</b></div>' +
         '<div><span>측정 포인트</span><b style="font-size:14px;font-family:inherit">' + ROM_PTNAME[J.pts[2]] + ' – ' + ROM_PTNAME[J.pts[0]] + ' – ' + ROM_PTNAME[J.pts[1]] + '</b></div>' +
@@ -6735,15 +6781,15 @@
     var k = Math.min(1, (maxW || 1200) / romS.w), W = Math.round(romS.w * k), H = Math.round(romS.h * k), HEAD = Math.round(150 * Math.max(0.6, W / 1200));
     var c = document.createElement("canvas"); c.width = W; c.height = H + HEAD;
     var g = c.getContext("2d"), F = "'IBM Plex Sans KR', sans-serif", s2 = HEAD / 150;
-    g.fillStyle = "#0D1528"; g.fillRect(0, 0, W, H + HEAD);
+    g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, H + HEAD);
     g.save(); g.translate(0, HEAD); g.scale(k, k); g.beginPath(); g.rect(0, 0, romS.w, romS.h); g.clip(); romPaint(g, 1.6 / k * (W / 1200), true); g.restore();
-    g.fillStyle = "#D2B07A"; g.font = "700 " + Math.round(18 * s2) + "px " + F;
+    g.fillStyle = "#0B7A6B"; g.font = "700 " + Math.round(18 * s2) + "px " + F;
     g.fillText(brandLabel(J.k === "scol" ? "척추 측만 검사" : "ROM 관절가동범위", J.k === "scol" ? "척추 측만 검사" : "ROM 관절가동범위") + (state.member ? "  ·  " + state.member.name : ""), 24 * s2, 38 * s2);
-    g.fillStyle = "#E9EEF8"; g.font = "800 " + Math.round(36 * s2) + "px " + F;
+    g.fillStyle = "#17212B"; g.font = "800 " + Math.round(36 * s2) + "px " + F;
     g.fillText((J.k === "scol" ? mv.n : J.n + " " + mv.n + (romSideTxt(mv) ? " (" + romSideTxt(mv) + ")" : "")) + "  " + val + "°", 24 * s2, 88 * s2);
-    g.fillStyle = jd.cls === "good" ? "#4CC38A" : jd.cls === "warn" ? "#F0B44C" : "#F07A72"; g.font = "700 " + Math.round(20 * s2) + "px " + F;
+    g.fillStyle = jd.cls === "good" ? "#16794A" : jd.cls === "warn" ? "#A35A00" : "#C03A2B"; g.font = "700 " + Math.round(20 * s2) + "px " + F;
     g.fillText((mv.grade ? "기준 5° 미만 정상" : "정상 " + mv.normal + "°") + " · " + jd.txt + (romKind() === "tilt" && romS.pts ? " · " + scolTilt(romS.pts).hi : ""), 24 * s2, 126 * s2);
-    g.textAlign = "right"; g.fillStyle = "#97A3BC"; g.font = "500 " + Math.round(15 * s2) + "px " + F;
+    g.textAlign = "right"; g.fillStyle = "#5B6875"; g.font = "500 " + Math.round(15 * s2) + "px " + F;
     g.fillText(fmtDate(Date.now()), W - 24 * s2, 38 * s2); g.textAlign = "left";
     return c;
   }
@@ -7133,13 +7179,13 @@
   function drawRepPair(g, x, y, w, F){
     if(!repPair.cvA || !repPair.cvB) return 0;
     var gap = 24, iw = (w - 72 - gap) / 2, sc = Math.min(iw / repPair.cvA.width, iw / repPair.cvB.width), ih = Math.max(repPair.cvA.height, repPair.cvB.height) * sc, H = 110 + ih + 60;
-    g.fillStyle = "#141E35"; rr(g, x, y, w, H, 24); g.fill();
-    g.fillStyle = "#97A3BC"; g.font = "700 26px " + F; g.fillText("전후 비교 · " + repPair.title, x + 36, y + 56);
-    g.fillStyle = repPair.d === 0 ? "#E9EEF8" : repPair.better ? "#4CC38A" : "#F07A72"; g.font = "800 28px " + F; g.textAlign = "right"; g.fillText(repPair.delta, x + w - 36, y + 56); g.textAlign = "left";
+    g.fillStyle = "#FFFFFF"; rr(g, x, y, w, H, 24); g.fill();
+    g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("전후 비교 · " + repPair.title, x + 36, y + 56);
+    g.fillStyle = repPair.d === 0 ? "#17212B" : repPair.better ? "#16794A" : "#C03A2B"; g.font = "800 28px " + F; g.textAlign = "right"; g.fillText(repPair.delta, x + w - 36, y + 56); g.textAlign = "left";
     [[repPair.cvA, repPair.labA], [repPair.cvB, repPair.labB]].forEach(function(p, i){
       var ix = x + 36 + i * (iw + gap), dw = p[0].width * sc, dh = p[0].height * sc;
       g.drawImage(p[0], ix + (iw - dw) / 2, y + 86, dw, dh);
-      g.fillStyle = "#E9EEF8"; g.font = "700 24px " + F; g.fillText((i ? "후 · " : "전 · ") + p[1], ix, y + 86 + ih + 40);
+      g.fillStyle = "#17212B"; g.font = "700 24px " + F; g.fillText((i ? "후 · " : "전 · ") + p[1], ix, y + 86 + ih + 40);
     });
     return H;
   }
@@ -7518,30 +7564,30 @@
   function drawRepRom(g, x, y, w, F, M){
     var rows = romLRRows(), sc = scolRows(); if(!rows.length && !sc.length) return 0;
     var RH = 54, H = 130 + (rows.length + sc.length + (sc.length ? 1 : 0)) * RH + 20;
-    g.fillStyle = "#141E35"; rr(g, x, y, w, H, 24); g.fill();
-    g.fillStyle = "#97A3BC"; g.font = "700 26px " + F; g.fillText("ROM 관절가동범위 · 좌우 비교", x + 36, y + 56);
+    g.fillStyle = "#FFFFFF"; rr(g, x, y, w, H, 24); g.fill();
+    g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("ROM 관절가동범위 · 좌우 비교", x + 36, y + 56);
     var cols = [x + 36, x + w * 0.36, x + w * 0.52, x + w * 0.68, x + w * 0.80];
-    g.font = "600 21px " + F; g.fillStyle = "#6E7A94";
+    g.font = "600 21px " + F; g.fillStyle = "#5B6875";
     ["부위 · 동작", "좌측", "우측", "정상", "좌우"].forEach(function(t, i){ g.fillText(t, cols[i], y + 104); });
-    var col = function(cls){ return cls === "good" ? "#4CC38A" : cls === "warn" ? "#F0B44C" : cls === "crit" ? "#F07A72" : "#E9EEF8"; };
+    var col = function(cls){ return cls === "good" ? "#16794A" : cls === "warn" ? "#A35A00" : cls === "crit" ? "#C03A2B" : "#17212B"; };
     rows.forEach(function(r, k){
       var yy = y + 130 + k * RH + 34;
-      if(k % 2 === 0){ g.fillStyle = "rgba(255,255,255,.03)"; g.fillRect(x + 20, yy - 36, w - 40, RH); }
-      g.fillStyle = "#E9EEF8"; g.font = "700 25px " + F; g.fillText(r.J.n + " " + r.mv.n, cols[0], yy);
-      if(r.single){ var jd2 = romJudge(r.mv, r.C); g.fillStyle = col(jd2.cls); g.font = "700 27px " + M; g.fillText(r.C + "°", cols[1], yy); g.fillStyle = "#97A3BC"; g.font = "500 21px " + F; g.fillText("좌우 공통", cols[2], yy); }
+      if(k % 2 === 0){ g.fillStyle = "rgba(23,33,43,.03)"; g.fillRect(x + 20, yy - 36, w - 40, RH); }
+      g.fillStyle = "#17212B"; g.font = "700 25px " + F; g.fillText(r.J.n + " " + r.mv.n, cols[0], yy);
+      if(r.single){ var jd2 = romJudge(r.mv, r.C); g.fillStyle = col(jd2.cls); g.font = "700 27px " + M; g.fillText(r.C + "°", cols[1], yy); g.fillStyle = "#5B6875"; g.font = "500 21px " + F; g.fillText("좌우 공통", cols[2], yy); }
       else [r.L, r.R].forEach(function(v, i){
-        if(v == null){ g.fillStyle = "#5F6B86"; g.font = "600 26px " + M; g.fillText("–", cols[1 + i], yy); return; }
+        if(v == null){ g.fillStyle = "#7A8794"; g.font = "600 26px " + M; g.fillText("–", cols[1 + i], yy); return; }
         var jd = romJudge(r.mv, v); g.fillStyle = col(jd.cls); g.font = "700 27px " + M; g.fillText(v + "°", cols[1 + i], yy);
       });
-      g.fillStyle = "#97A3BC"; g.font = "500 24px " + M; g.fillText((r.mv.normal ? "0–" + r.mv.normal : "0") + "°", cols[3], yy);
+      g.fillStyle = "#5B6875"; g.font = "500 24px " + M; g.fillText((r.mv.normal ? "0–" + r.mv.normal : "0") + "°", cols[3], yy);
       g.fillStyle = col(r.cls); g.font = "700 24px " + F; g.fillText(r.lab + (r.diff != null ? " " + r.diff + "°" : ""), cols[4], yy);
     });
     if(sc.length){
       var yb = y + 130 + rows.length * RH + 34;
-      g.fillStyle = "#97A3BC"; g.font = "700 23px " + F; g.fillText("척추 측만 검사", cols[0], yb);
+      g.fillStyle = "#5B6875"; g.font = "700 23px " + F; g.fillText("척추 측만 검사", cols[0], yb);
       sc.forEach(function(r, k){
         var yy = yb + (k + 1) * RH;
-        g.fillStyle = "#E9EEF8"; g.font = "700 25px " + F; g.fillText(r.mv.n, cols[0], yy);
+        g.fillStyle = "#17212B"; g.font = "700 25px " + F; g.fillText(r.mv.n, cols[0], yy);
         g.fillStyle = col(r.jd.cls); g.font = "700 27px " + M; g.fillText(r.v + "°", cols[2], yy);
         g.font = "700 22px " + F; g.fillText(r.jd.txt, cols[3], yy);
       });
@@ -7570,13 +7616,13 @@
     var X = function(i){ return H.length === 1 ? (L + W - R) / 2 : L + (W - L - R) * i / (H.length - 1); };
     var Y = function(v){ return T + (1 - v / maxV) * (Ht - T - B); };
     var g = "";
-    [0, Math.round(maxV / 2), Math.round(maxV)].forEach(function(v){ g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="rgba(151,163,188,.16)"/><text x="' + (L - 6) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" fill="#97A3BC">' + v + '</text>'; });
-    if(mv.normal) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(mv.normal) + '" y2="' + Y(mv.normal) + '" stroke="#4CC38A" stroke-width="1.5" stroke-dasharray="6 5"/><text x="' + (W - R) + '" y="' + (Y(mv.normal) - 6) + '" text-anchor="end" font-size="11" fill="#4CC38A">정상 ' + mv.normal + '°</text>';
-    g += '<polyline fill="none" stroke="#2F6BFF" stroke-width="2.5" stroke-linejoin="round" points="' + H.map(function(r, i){ return X(i) + "," + Y(r.value); }).join(" ") + '"/>';
+    [0, Math.round(maxV / 2), Math.round(maxV)].forEach(function(v){ g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="rgba(151,163,188,.16)"/><text x="' + (L - 6) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" style="fill:var(--ink-soft)">' + v + '</text>'; });
+    if(mv.normal) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(mv.normal) + '" y2="' + Y(mv.normal) + '" stroke="#16794A" stroke-width="1.5" stroke-dasharray="6 5"/><text x="' + (W - R) + '" y="' + (Y(mv.normal) - 6) + '" text-anchor="end" font-size="11" fill="#16794A">정상 ' + mv.normal + '°</text>';
+    g += '<polyline fill="none" stroke="#0B7A6B" stroke-width="2.5" stroke-linejoin="round" points="' + H.map(function(r, i){ return X(i) + "," + Y(r.value); }).join(" ") + '"/>';
     H.forEach(function(r, i){
-      g += '<circle cx="' + X(i) + '" cy="' + Y(r.value) + '" r="5" fill="#2F6BFF" stroke="#0D1528" stroke-width="2"><title>' + (i + 1) + '차 ' + fmtDate(r.at).slice(0, 10) + ' ' + r.value + '°</title></circle>' +
-        '<text x="' + X(i) + '" y="' + (Y(r.value) - 10) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#E9EEF8">' + r.value + '°</text>' +
-        '<text x="' + X(i) + '" y="' + (Ht - 10) + '" text-anchor="middle" font-size="11" fill="#97A3BC">' + (i + 1) + '차</text>';
+      g += '<circle cx="' + X(i) + '" cy="' + Y(r.value) + '" r="5" fill="#0B7A6B" style="stroke:var(--surface)" stroke-width="2"><title>' + (i + 1) + '차 ' + fmtDate(r.at).slice(0, 10) + ' ' + r.value + '°</title></circle>' +
+        '<text x="' + X(i) + '" y="' + (Y(r.value) - 10) + '" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ink)">' + r.value + '°</text>' +
+        '<text x="' + X(i) + '" y="' + (Ht - 10) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + (i + 1) + '차</text>';
     });
     return '<svg viewBox="0 0 ' + W + ' ' + Ht + '" width="100%" role="img" aria-label="회차별 각도 변화">' + g + '</svg>';
   }
@@ -8885,19 +8931,19 @@
       var H = 260 + blocks.reduce(function(a, b){ return a + 110 + b.lines.length * 38; }, 0) + 90 + (brandContact() ? 34 : 0);
       c.width = W; c.height = H; g = c.getContext("2d");
       g.fillStyle = "#EEF3FA"; g.fillRect(0, 0, W, H);
-      g.fillStyle = "#0F1A33"; g.fillRect(0, 0, W, 210);
-      g.fillStyle = "#7FA2FF"; g.font = "700 24px " + F; g.fillText(brandLabel("운동 카드", "운동 카드"), PAD, 64); drawBrandLogo(g, W - PAD, 92, 220, 80);
+      g.fillStyle = "#0B7A6B"; g.fillRect(0, 0, W, 210);
+      g.fillStyle = "#CDEDE7"; g.font = "700 24px " + F; g.fillText(brandLabel("운동 카드", "운동 카드"), PAD, 64); drawBrandLogo(g, W - PAD, 92, 220, 80);
       g.fillStyle = "#FFFFFF"; g.font = "800 52px " + F; g.fillText(m.name + " 님", PAD, 128);
-      g.fillStyle = "#C7D2E6"; g.font = "500 26px " + F; g.fillText(title.length > 34 ? title.slice(0, 33) + "…" : title, PAD, 176);
+      g.fillStyle = "#E3F3F0"; g.font = "500 26px " + F; g.fillText(title.length > 34 ? title.slice(0, 33) + "…" : title, PAD, 176);
       g.textAlign = "right"; g.fillText(fmtDate(Date.now()).slice(0, 10), W - PAD, 64); g.textAlign = "left";
       var y = 250;
       blocks.forEach(function(b, i){
         var h = 90 + b.lines.length * 38;
         g.fillStyle = "#FFFFFF"; rr(g, PAD, y, W - PAD * 2, h, 22); g.fill();
-        g.fillStyle = "#2F6BFF"; g.beginPath(); g.arc(PAD + 50, y + 50, 26, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#0B7A6B"; g.beginPath(); g.arc(PAD + 50, y + 50, 26, 0, Math.PI * 2); g.fill();
         g.fillStyle = "#FFFFFF"; g.font = "800 28px " + F; g.textAlign = "center"; g.fillText(String(i + 1), PAD + 50, y + 60); g.textAlign = "left";
         g.fillStyle = "#0F1A33"; g.font = "800 32px " + F; g.fillText(b.e.name, PAD + 96, y + 52);
-        g.fillStyle = "#2F6BFF"; g.font = "700 26px " + F; g.textAlign = "right"; g.fillText(b.e.dose, W - PAD - 28, y + 52); g.textAlign = "left";
+        g.fillStyle = "#0B7A6B"; g.font = "700 26px " + F; g.textAlign = "right"; g.fillText(b.e.dose, W - PAD - 28, y + 52); g.textAlign = "left";
         g.fillStyle = "#4A5A7A"; g.font = "500 26px " + F;
         b.lines.forEach(function(l, k){ g.fillText(l, PAD + 96, y + 96 + k * 38); });
         y += h + 20;
@@ -8905,7 +8951,7 @@
       g.fillStyle = "#6A7488"; g.font = "500 21px " + F;
       g.fillText("통증이 있거나 불편하면 중단하고 담당 강사와 상의하세요.", PAD, H - 36 - (brandContact() ? 34 : 0));
       if(brandContact()){ g.fillStyle = "#0F1A33"; g.font = "700 22px " + F; g.fillText(brandContact(), PAD, H - 36); }
-      g.textAlign = "right"; g.fillStyle = "#2F6BFF"; g.font = "700 21px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 36);
+      g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 21px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 36);
       deliverCanvas(c, "AYO_exercise_" + m.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" + toDateInput(Date.now()).replace(/-/g, "") + ".jpg");
     });
   });

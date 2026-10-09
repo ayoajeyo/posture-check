@@ -5067,11 +5067,11 @@
       var rs = res[1].filter(function(r){ return r.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
       var box = $("mbRecords");
       dbAll("roms").then(function(RL){
-      var S = mbBuildSessions(rs, RL.filter(function(x){ return x.memberId === m.id; }));
+      var S = mbBuildSessions(rs, RL.filter(function(x){ return x.memberId === m.id; })), PR = poseRounds(rs);
       if(!S.length){ box.innerHTML = '<p class="mb-empty">아직 측정 기록이 없어요. <b>측정하기</b>를 눌러 시작하세요.</p>'; }
       else box.innerHTML = S.map(function(ss, si){
         var r = ss.rec, nR = ss.roms.filter(function(x){ return x.joint !== "scol"; }).length, nS = ss.roms.length - nR;
-        var views = [r && r.f ? "정면" : "", r && r.sd ? "측면" : "", nR ? "ROM " + nR : "", nS ? "측만증 " + nS : ""].filter(Boolean).join(" · ");
+        var pr = r ? PR[r.id] : null, views = [pr && pr.f ? "정면 " + pr.f + "차" : "", pr && pr.s ? "측면 " + pr.s + "차" : "", nR ? "ROM " + nR : "", nS ? "측만증 " + nS : ""].filter(Boolean).join(" · ");
         var th = r && r.thumbs ? [r.thumbs.front, r.thumbs.side].filter(Boolean) : [];
         if(th.length < 2) ss.roms.slice(-2 + th.length).forEach(function(x){ if(x.thumb) th.push(x.thumb); });
         return '<div class="rec" data-key="' + esc(ss.key) + '" data-round="' + (S.length - si) + '"><input type="checkbox" aria-label="비교 선택"' + (r ? ' data-id="' + esc(r.id) + '"' : ' disabled') + '>' +
@@ -5530,13 +5530,28 @@
   function hasPhotos(){ return !!(state.byMode.front.img || state.byMode.side.img); }
   function isDirty(){ return hasPhotos() && sessSig() !== state.savedSig; }
 
+  // v114 체형분석 회차는 정면·측면을 따로 셈 (정면 1차와 측면 1차는 별개)
+  function poseRounds(rs){   // rs: 한 회원의 체형분석 기록 → { 기록id: { f: 정면 n차|null, s: 측면 n차|null }, _next: 다음 회차 }
+    var o = {}, nf = 0, ns = 0;
+    rs.slice().sort(function(a, b){ return a.at - b.at; }).forEach(function(r){ o[r.id] = { f: r.f ? ++nf : null, s: r.sd ? ++ns : null }; });
+    o._next = { f: nf + 1, s: ns + 1 };
+    return o;
+  }
+  function sessRndTxt(sep){   // 지금 측정의 정면·측면 회차 문구 (사진 있는 쪽만, 없으면 지금 보는 쪽)
+    var R = state.rnd || { f: 1, s: 1 }, ms = ["front", "side"].filter(function(m){ return state.byMode[m].img; });
+    if(!ms.length) ms = [state.mode];
+    return ms.map(function(m){ return (m === "front" ? "정면 " + R.f : "측면 " + R.s) + "차"; }).join(sep || " · ");
+  }
   function refreshRound(){
-    if(!state.member){ state.sessRound = 1; updateSessBar(); return Promise.resolve(); }
+    if(!state.member){ state.sessRound = 1; state.rnd = null; updateSessBar(); return Promise.resolve(); }
     var mid = state.member.id;
     return dbAll("records").then(function(all){
       var rs = all.filter(function(r){ return r.memberId === mid; }).sort(function(a, b){ return a.at - b.at; });
       var i = state.sessionId ? rs.findIndex(function(r){ return r.id === state.sessionId; }) : -1;
       state.sessRound = i >= 0 ? i + 1 : rs.length + 1; state.sessCount = rs.length;
+      var PR = poseRounds(rs), cr = i >= 0 ? rs[i] : null, cp = cr ? PR[cr.id] : null;
+      var before = function(k){ return rs.slice(0, i).filter(function(r){ return k === "f" ? r.f : r.sd; }).length + 1; };   // 저장된 회차에 없던 쪽을 새로 찍을 때
+      state.rnd = cr ? { f: cp.f || before("f"), s: cp.s || before("s") } : PR._next;
       updateSessBar();
     });
   }
@@ -5546,12 +5561,13 @@
     bar.hidden = !show;
     var saved = !!state.sessionId, dirty = isDirty(), n = state.sessRound || 1;
     bar.classList.toggle("dirty", dirty); bar.classList.toggle("saved", saved && !dirty);
-    $("sessRound").textContent = state.member ? n + "차" : "미지정";
-    $("sessTitle").textContent = state.member ? state.member.name + " · " + n + "차 측정" + (state.editingOld ? " (이전 기록 수정)" : "") : "회원을 선택하면 차수가 매겨져요";
+    var RR = state.rnd || { f: 1, s: 1 };
+    $("sessRound").textContent = state.member ? (state.mode === "side" ? "측면 " + RR.s : "정면 " + RR.f) + "차" : "미지정";
+    $("sessTitle").textContent = state.member ? state.member.name + " · " + sessRndTxt() + " 측정" + (state.editingOld ? " (이전 기록 수정)" : "") : "회원을 선택하면 차수가 매겨져요";
     $("sessState").textContent = !hasPhotos() ? "사진 없음" : dirty ? (saved ? "수정한 내용이 아직 저장되지 않았어요" : "저장 안 됨 · [측정 저장]을 눌러 기록하세요") : "✓ 저장됨";
-    var lbl = saved ? (dirty ? "수정 내용 저장" : "저장됨") : (state.member ? n + "차 측정 저장" : "측정 저장");
+    var lbl = saved ? (dirty ? "수정 내용 저장" : "저장됨") : (state.member ? sessRndTxt("·") + " 저장" : "측정 저장");
     $("btnSessSave").textContent = lbl; $("btnSessSave").disabled = saved && !dirty;
-    $("btnSessNext").textContent = !saved ? "처음부터 다시" : state.member ? ((state.sessCount || 0) + 1) + "차 측정 시작" : "새 측정 시작";
+    $("btnSessNext").textContent = !saved ? "처음부터 다시" : "새 측정 시작";
     var bb = $("btnSessSaveBot"); if(bb){ bb.textContent = (saved && !dirty) ? "✓ 저장됨" : lbl; bb.disabled = saved && !dirty; bb.hidden = !hasPhotos() || !!$("markControls").hidden; }
     var rb = $("btnRepSess"); if(rb){ rb.textContent = lbl; rb.disabled = saved && !dirty; rb.hidden = !hasPhotos(); }
   }
@@ -5593,8 +5609,8 @@
       return refreshRound();
     }).then(function(){
       var el = $("repSaved"); el.hidden = false;
-      el.textContent = "✓ " + state.member.name + " 회원 " + state.sessRound + "차 측정 기록에 저장됨 (" + fmtDate(rec.at) + ")";
-      toast(state.member.name + " 회원 " + state.sessRound + "차 측정을 " + (first ? "저장했어요." : "수정 저장했어요."));
+      el.textContent = "✓ " + state.member.name + " 회원 " + sessRndTxt() + " 기록에 저장됨 (" + fmtDate(rec.at) + ")";
+      toast(state.member.name + " 회원 " + sessRndTxt() + " 측정을 " + (first ? "저장했어요." : "수정 저장했어요."));
       updateSessBar();
     }).catch(function(e){ console.warn(e); toast("저장하지 못했어요. 저장 공간을 확인해주세요."); });
   }
@@ -5609,7 +5625,7 @@
     if(!confirmDiscard()) return;
     clearAllModes(); state.sessionId = null; state.savedSig = null; state.editingOld = false; $("repSaved").hidden = true;
     showView("analyze"); if(state.mode !== "front") selectMode("front"); else resetToIdle();
-    refreshRound().then(function(){ toast(state.member ? state.member.name + " 회원 " + state.sessRound + "차 측정을 시작해요." : "새 측정을 시작해요."); });
+    refreshRound().then(function(){ toast(state.member ? state.member.name + " 회원 · 정면 " + state.rnd.f + "차 · 측면 " + state.rnd.s + "차 측정을 시작해요." : "새 측정을 시작해요."); });
   });
   // 다른 회원 측정 / 새 측정 시작 전 저장 여부 확인
   ["btnNewPatient", "btnMbMeasure"].forEach(function(id){
@@ -9179,12 +9195,13 @@
     var ord = J ? ROM_ALL.indexOf(J) * 20 + (mv ? J.moves.indexOf(mv) * 2 : 19) + (x.side === "R" ? 1 : 0) : 999;
     return { J: J, mv: mv, sd: sd, name: name, jd: jd, ord: ord, scol: !!(J && J.k === "scol") };
   }
-  var mbSessCur = null;   // { m, key, edit, round }
+  var mbSessCur = null, mbSessPR = {};   // { m, key, edit, round } · v114 정면·측면 회차
   function mbSessOpen(m, key, edit, round){
     mbSessCur = { m: m, key: key, edit: !!edit, round: round };
     Promise.all([dbAll("records"), dbAll("roms")]).then(function(res){
       var rs = res[0].filter(function(r){ return r.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
       var S = mbBuildSessions(rs, res[1].filter(function(r){ return r.memberId === m.id; }));
+      mbSessPR = poseRounds(rs);
       var idx = S.findIndex(function(x){ return x.key === key; });
       if(idx < 0){ $("mbSess").hidden = true; mbSessCur = null; return; }
       mbSessRender(m, S[idx], S.length - idx, !!edit);
@@ -9198,7 +9215,7 @@
     if(r){
       if(r.thumbs && (r.thumbs.front || r.thumbs.side)) h += '<div class="ss-pics">' + [["front", "정면", r.f], ["side", "측면", r.sd]].map(function(v){
         var t = r.thumbs && r.thumbs[v[0]];
-        return '<figure>' + (t ? '<img src="' + t + '" alt="">' : '<div class="ss-nopic">측정 없음</div>') + '<figcaption>' + v[1] + '</figcaption></figure>';
+        return '<figure>' + (t ? '<img src="' + t + '" alt="">' : '<div class="ss-nopic">측정 없음</div>') + '<figcaption>' + v[1] + (v[2] && mbSessPR[r.id] ? " " + mbSessPR[r.id][v[0] === "front" ? "f" : "s"] + "차" : "") + '</figcaption></figure>';
       }).join("") + '</div>';
       [["정면 · 좌우 기울기", r.f], ["측면 · 앞뒤 정렬", r.sd]].forEach(function(v){
         if(!v[1] || !v[1].length) return;

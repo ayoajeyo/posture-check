@@ -1586,7 +1586,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v108</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v109</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1603,7 +1603,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v108</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v109</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -5806,7 +5806,14 @@
     if(name === "vup" || name === "shperp") dir = { x:0, y:-1 };
     if(name === "hz") dir = { x: D.x >= V.x ? 1 : -1, y: 0 };
     if(name === "vdown") dir = { x:0, y:1 };
-    if(name === "hzside") dir = { x: rom.side === "R" ? 1 : -1, y: 0 };   // v103: 좌측 측정 = 화면 왼쪽, 우측 측정 = 화면 오른쪽
+    if(name === "hzside"){   // v103: 좌측 측정 = 화면 왼쪽, 우측 측정 = 화면 오른쪽
+      var sgs = rom.side === "R" ? 1 : -1;
+      if(L && romJoint().k === "hip"){   // v109: 누운 고관절 굴곡 — 기준선은 발 쪽(어깨 반대쪽). 머리가 반대로 누워도 뒤집히지 않게
+        var shs = [L[11], L[12]].filter(ok);
+        if(shs.length){ var sxs = avg(shs).x; if(Math.abs(V.x - sxs) > Math.max(W, H) * 0.05) sgs = V.x >= sxs ? 1 : -1; }
+      }
+      dir = { x: sgs, y: 0 };
+    }
     if(name === "hzfwd"){   // 몸 정면(얼굴이 향한 쪽) 가로선
       var sg = D.x >= V.x ? 1 : -1;
       if(L && L[0] && L[7] && L[8]){ var exm = (L[7].x + L[8].x) / 2, fdx = L[0].x - exm, ew0 = Math.abs(L[7].x - L[8].x); if(Math.abs(fdx) > ew0 * 0.6) sg = fdx > 0 ? 1 : -1; }

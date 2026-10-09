@@ -1174,6 +1174,28 @@
   .msr-tabs button{font-family:inherit; height:40px; border:none; border-radius:10px; background:transparent; color:var(--ink-soft); font-size:14.5px; font-weight:600; cursor:pointer;}
   .msr-tabs button[aria-selected="true"]{background:var(--blue); color:#fff; font-weight:800;}
   @media (min-width:900px){ .msr-tabs{display:none!important;} }
+
+  /* ===================== v114 현재 회원 바 고정 · 반복 카드/배너 정리 ===================== */
+  .msr-head{position:sticky; top:0; z-index:30; display:flex; flex-direction:column; gap:8px; margin:-6px -16px 0; padding:6px 16px 8px; background:var(--bg);}
+  .msr-head[hidden]{display:none!important;}
+  .cur-bar{display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:8px 8px 8px 10px; cursor:pointer; text-align:left; font-family:inherit; color:var(--ink); width:100%;}
+  .cur-bar .mb-avatar{width:36px; height:36px;}
+  .cur-bar.on{border-color:var(--blue);}
+  .cur-bar.on .mb-avatar{background:var(--blue); color:#fff;}
+  .cur-bar .cb-txt{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;}
+  .cur-bar .cb-txt b{font-size:15px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .cur-bar .cb-txt em{font-style:normal; font-size:12px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .cur-bar .cb-go{flex:0 0 auto; font-size:13px; font-weight:800; color:var(--blue); padding:8px 10px; border-radius:10px; background:var(--accent-soft);}
+  .cur-bar:not(.on) .cb-go{background:var(--blue); color:#fff;}
+  /* 화면마다 반복되던 회원 카드는 숨김 (기능은 상단 회원 바가 대신) */
+  #memberBar, #romMember, #scolMember, #repMember{display:none!important;}
+  /* 체험 안내는 홈에서만 */
+  body:not([data-view="dash"]) #trialBar{display:none!important;}
+  /* 제목 줄바꿈 방지 */
+  header.top .brand{flex-wrap:nowrap;}
+  header.top .ttl{flex:1 1 auto;}
+  header.top h1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  @media (min-width:900px){ .msr-head{position:static; margin:0; padding:0;} }
 </style>
 
 </head>
@@ -1232,10 +1254,17 @@
     <div class="bk-txt"><b id="bkBanTitle">백업할 시간이에요</b><em id="bkBanSub"></em></div>
     <div class="bk-acts"><button type="button" class="btn primary sm" id="btnBkNow">지금 백업</button><button type="button" class="btn line sm" id="btnBkLater">내일 다시</button></div>
   </div>
+  <div class="msr-head" id="msrHead">
   <div class="msr-tabs" id="msrTabs" role="tablist" aria-label="측정 종류">
     <button type="button" role="tab" data-mv="analyze" aria-selected="true">체형</button>
     <button type="button" role="tab" data-mv="rom" aria-selected="false">ROM</button>
     <button type="button" role="tab" data-mv="scol" aria-selected="false">측만증</button>
+  </div>
+  <button type="button" class="cur-bar" id="curBar" aria-label="측정할 회원 선택">
+    <span class="mb-avatar" id="cbAv">?</span>
+    <span class="cb-txt"><b id="cbName">회원을 선택하세요</b><em id="cbMeta">선택하면 측정 결과가 회원 기록에 저장돼요</em></span>
+    <span class="cb-go" id="cbGo">회원 선택</span>
+  </button>
   </div>
   <section class="view" id="view-analyze">
   <nav class="tabs" role="tablist">
@@ -1649,7 +1678,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v113</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v114</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1666,7 +1695,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v113</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v114</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -4617,7 +4646,7 @@
     $("view-settings").hidden = (v !== "settings");
     $("view-rom").hidden = (v !== "rom");
     $("view-scol").hidden = (v !== "scol");
-    $("pageTitle").textContent = v === "report" ? "체형 분석 결과" : v === "members" ? "회원관리" : v === "dash" ? "운영 현황" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : v === "settings" ? "설정" : v === "rom" ? "ROM 관절가동범위" : v === "scol" ? "척추 측만 검사" : "체형 분석";
+    $("pageTitle").textContent = v === "report" ? "리포트" : v === "members" ? "회원" : v === "dash" ? "홈" : MSR_VIEWS.indexOf(v) >= 0 ? "측정" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : v === "settings" ? "설정" : v === "rom" ? "ROM 관절가동범위" : v === "scol" ? "척추 측만 검사" : "체형 분석";
     $("btnGs").hidden = ["rom", "scol", "report"].indexOf(v) >= 0;
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
@@ -4625,6 +4654,9 @@
     var isMsr = MSR_VIEWS.indexOf(v) >= 0;
     if(isMsr){ lastMsr = v; lsSet("ayo_last_msr", v); }
     $("msrTabs").hidden = !isMsr;
+    $("msrHead").hidden = !(isMsr || v === "report");
+    document.body.setAttribute("data-view", v);
+    syncCurBar();
     $("msrTabs").querySelectorAll("[data-mv]").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-mv") === v ? "true" : "false"); });
     var nm = $("navMeasure"); if(nm){ if(isMsr) nm.setAttribute("aria-current", "page"); else nm.removeAttribute("aria-current"); }
     if(v === "report"){ renderReport(); syncRepLock(); }
@@ -4654,6 +4686,19 @@
   }
   $("btnMoreTheme").addEventListener("click", function(){ lsSet("ayo_ui", lsGet("ayo_ui") === "dark" ? "" : "dark"); applyUiTheme(); });
   applyUiTheme();
+  function syncCurBar(){
+    var m = state.member, bar = $("curBar"); if(!bar) return;
+    bar.classList.toggle("on", !!m);
+    $("cbAv").textContent = m ? initial(m.name) : "?";
+    $("cbName").textContent = m ? m.name : "회원을 선택하세요";
+    $("cbMeta").textContent = m ? (memberMeta(m) || "회원") + " · 결과가 기록에 저장돼요" : (state.view === "report" ? "선택한 회원의 결과로 리포트를 만들어요" : "선택하면 측정 결과가 회원 기록에 저장돼요");
+    $("cbGo").textContent = m ? "변경" : "회원 선택";
+  }
+  $("curBar").addEventListener("click", function(){
+    var id = { analyze:"btnMbPick", rom:"btnRomPick", scol:"btnScolPick", report:"btnRepPick" }[state.view] || "btnMbPick";
+    $(id).click();
+  });
+  document.body.setAttribute("data-view", state.view);
   $("navMeasure").addEventListener("click", function(){ showView(MSR_VIEWS.indexOf(lastMsr) >= 0 ? lastMsr : "analyze"); });
   $("msrTabs").querySelectorAll("[data-mv]").forEach(function(b){ b.addEventListener("click", function(){ showView(b.getAttribute("data-mv")); }); });
   $("btnGoReport").addEventListener("click", function(){ showView("report"); });
@@ -4807,6 +4852,7 @@
     $("mbCurName").textContent = m ? m.name : "회원 선택 안 함";
     $("mbCurMeta").textContent = m ? ((memberMeta(m) || "회원") + " · 측정 후 [측정 저장]으로 기록") : "회원을 선택하고 측정 후 [측정 저장]을 누르면 기록에 남아요";
     $("btnMbPick").textContent = m ? "변경" : "회원 선택";
+    if(typeof syncCurBar === "function") syncCurBar();
     $("ptField").value = m ? (m.name + (m.no ? " · " + m.no : "")) : "";
     $("htField").value = (m && m.height) ? m.height : "";
     $("htField").dispatchEvent(new Event("input"));

@@ -2650,8 +2650,7 @@
   var segEma = null, segImg = null;
 
   function syncSilhouettes(){
-    var showF = (state.mode === "front") && !livePerson;
-    var showS = (state.mode === "side") && !livePerson;
+    var showF = state.mode === "front", showS = state.mode === "side";   // v113 사람을 인식해도 고정 가이드 실루엣을 그대로 유지
     // SVG 요소는 .hidden 속성이 동작하지 않으므로 hidden 어트리뷰트를 직접 토글
     if(showF) silhouetteFront.removeAttribute("hidden"); else silhouetteFront.setAttribute("hidden", "");
     if(showS) silhouetteSide.removeAttribute("hidden"); else silhouetteSide.setAttribute("hidden", "");
@@ -2667,7 +2666,7 @@
     if(liveRunning) return;
     liveRunning = true; liveMiss = 0; segEma = null;
     segCtx.clearRect(0, 0, segCanvas.width, segCanvas.height);
-    segCanvas.hidden = false;
+    segCanvas.hidden = true;   // v113 실시간 인물 윤곽(계속 바뀌는 선)은 그리지 않음 · 인식은 안내 문구용으로만
     if(!liveLm && window.__liveLandmarker){
       window.__liveLandmarker().then(function(lm){
         liveLm = lm;
@@ -2720,7 +2719,7 @@
         }
         if(arr){
           liveMiss = 0;
-          renderSeg(arr, mask.width || w, mask.height || h);
+          // v113 윤곽 그리기 생략 (renderSeg) — 사람 인식 여부만 사용
           setLivePerson(true);
         } else if(++liveMiss >= 4){
           segCtx.clearRect(0, 0, segCanvas.width, segCanvas.height);
@@ -7804,7 +7803,7 @@
       var pr = romVideo.play(); if(pr && pr.catch) pr.catch(function(){});
       romCam.on = true; romCam.buf = []; romCam.seen = 0;
       romUiLive(true); $("romBusy").hidden = true;
-      romGhostPrep(); $("btnRomOutline").hidden = !romFirstRec();
+      romGhostPrep(); romGdPrep(); $("btnRomOutline").hidden = false; romOutlineBtn();
       var kd = romCamKind(st.getVideoTracks()[0]);
       if(romCam.facing === "environment" && kd === "user") toast("후면 카메라를 찾지 못했어요. 🔄 전환 버튼을 눌러 주세요.");
       romLm(); cancelAnimationFrame(romCam.raf); romLoop();
@@ -8017,12 +8016,20 @@
       im.onload = function(){
         if(romCam.ghostId !== id) return;
         var gh = { w: im.naturalWidth, h: im.naturalHeight, rec: full, cv: null };
-        romCam.ghost = gh;
+        romCam.ghost = gh; romOutlineBtn();
         var done = function(m){ if(romCam.ghostId !== id) return; var r = romGhostCanvas(im, m, full.pts, full.imgK || 1); gh.cv = r.cv; gh.mode = r.mode; };
         (window.__segmentPerson ? window.__segmentPerson(im) : Promise.resolve(null)).then(done, function(){ done(null); });
       };
       im.src = full.img;
     });
+  }
+  // v113 촬영 화면 뒤에 측정가이드 예시 사진을 흐리게 (1차 기록이 있으면 1차 실루엣이 우선)
+  function romGdPrep(){
+    romCam.gd = null;
+    var J = romJoint(), mv = romMove(); if(!mv || !ROM_GD[J.k + "|" + mv.k]) return;
+    var sd = romSd(J, mv), src = "guide/rom/" + J.k + "_" + sd + "_" + mv.k + ".jpg", im = new Image();
+    im.onload = function(){ if(romCam.gd && romCam.gd.src === src) romCam.gd.ok = true; };
+    romCam.gd = { src: src, im: im, ok: false }; im.src = src;
   }
   function romFit(a, vw, vh, s){ var w = vw * s, h = w / a; if(h > vh * s){ h = vh * s; w = h * a; } return { x: (vw - w) / 2, y: (vh - h) / 2, w: w, h: h }; }
   function romGuideDraw(g, vw, vh){
@@ -8042,6 +8049,13 @@
       tag.textContent = "1차 기록(" + fmtDate(gh.rec.at).slice(0, 10) + ") " + (gh.mode === "sil" ? "실루엣·측정선" : "측정선") + "에 맞춰 촬영하세요";
       return;
     }
+    var gd = romCam.gd;
+    if(gd && gd.ok){
+      var rg = romFit(gd.im.naturalWidth / gd.im.naturalHeight, vw, vh, 1);
+      g.save(); g.globalAlpha = 0.35; g.drawImage(gd.im, rg.x, rg.y, rg.w, rg.h); g.restore();
+      tag.hidden = false; tag.className = "rom-gtag"; tag.textContent = "측정가이드 사진 자세·위치에 맞춰 촬영하세요";
+      return;
+    }
     var o = null;   // v107 기본 자세 테두리는 사용하지 않음 (재촬영 때 1차 기록 실루엣만)
     if(!o){ tag.hidden = true; return; }
     var b = romFit(o.a, vw, vh, 0.94);
@@ -8053,7 +8067,7 @@
     g.restore();
     tag.hidden = false; tag.className = "rom-gtag"; tag.textContent = "기본 자세 테두리에 몸을 맞춰 촬영하세요";
   }
-  function romOutlineBtn(){ var b = $("btnRomOutline"); b.setAttribute("aria-pressed", String(romGuideOn)); b.textContent = romGuideOn ? "1차 실루엣 켬" : "1차 실루엣 끔"; }
+  function romOutlineBtn(){ var b = $("btnRomOutline"); b.setAttribute("aria-pressed", String(romGuideOn)); var nm = romCam.ghost ? "실루엣" : "가이드"; b.textContent = nm + (romGuideOn ? " 켬" : " 끔"); }
   $("btnRomOutline").addEventListener("click", function(){ romGuideOn = !romGuideOn; lsSet("ayo_rom_outline", romGuideOn ? "1" : "0"); romOutlineBtn(); });
   romOutlineBtn();
   function romSnap(){

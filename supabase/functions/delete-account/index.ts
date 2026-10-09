@@ -17,17 +17,21 @@ Deno.serve(async (req) => {
     // 사진 폴더 비우기: photos/{uid}/ 와 photos/{uid}/blobs/ (1000개씩)
     for (const dir of [uid + "/blobs", uid]) {
       for (let guard = 0; guard < 200; guard++) {
-        const { data: files } = await admin.storage.from("photos").list(dir, { limit: 1000 });
+        const { data: files, error: le } = await admin.storage.from("photos").list(dir, { limit: 1000 });
+        if (le) return json(req, { error: "사진 목록을 확인하지 못했어요. 잠시 뒤 다시 시도해 주세요." }, 500);
         const real = (files || []).filter((f) => f.id);   // 폴더 항목(id 없음)은 제외
         if (!real.length) break;
-        await admin.storage.from("photos").remove(real.map((f) => dir + "/" + f.name));
+        // 사진 삭제가 실패하면 계정을 지우지 않음 → 주인 없는 사진이 남지 않게(다시 시도 가능)
+        const { error: re } = await admin.storage.from("photos").remove(real.map((f) => dir + "/" + f.name));
+        if (re) return json(req, { error: "사진을 삭제하지 못했어요. 잠시 뒤 다시 시도해 주세요." }, 500);
         if (real.length < 1000) break;
       }
     }
     const del = await admin.auth.admin.deleteUser(uid);
-    if (del.error) return json(req, { error: "계정 삭제 실패", detail: del.error.message }, 500);
+    if (del.error){ console.error("[delete-account]", del.error); return json(req, { error: "계정 삭제 실패" }, 500); }
     return json(req, { ok: true });
   } catch (e) {
-    return json(req, { error: "서버 오류", detail: String(e) }, 500);
+    console.error("[delete-account]", e);
+    return json(req, { error: "서버 오류" }, 500);
   }
 });

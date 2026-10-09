@@ -106,6 +106,7 @@
     padding-inline:16px;
     padding-block:24px 48px;
     -webkit-font-smoothing:antialiased;
+    word-break:keep-all; overflow-wrap:break-word;
   }
   .mono{font-family:var(--font-num); font-variant-numeric:tabular-nums;}
   .wrap{max-width:560px; margin:0 auto; display:flex; flex-direction:column; gap:18px;}
@@ -1763,7 +1764,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v118</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v119</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1780,7 +1781,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v118</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v119</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -9129,7 +9130,15 @@
   // 운동 카드 이미지
   function wrapText(g, text, maxW){
     var out = [], line = "";
-    String(text).split("").forEach(function(ch){ var t = line + ch; if(g.measureText(t).width > maxW && line){ out.push(line); line = ch; } else line = t; });
+    // 띄어쓰기 단위로 줄바꿈 (한 단어가 한 줄보다 길 때만 글자 단위로 자름)
+    String(text).split(/\s+/).forEach(function(w){
+      if(!w) return;
+      var t = line ? line + " " + w : w;
+      if(g.measureText(t).width <= maxW){ line = t; return; }
+      if(line) out.push(line);
+      line = "";
+      w.split("").forEach(function(ch){ var t2 = line + ch; if(g.measureText(t2).width > maxW && line){ out.push(line); line = ch; } else line = t2; });
+    });
     if(line) out.push(line); return out;
   }
   $("btnExCard").addEventListener("click", function(){

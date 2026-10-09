@@ -1586,7 +1586,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v107</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v108</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1603,7 +1603,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v107</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v108</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1713,11 +1713,12 @@
       <button type="button" class="btn primary au-btn" id="auLGo">로그인</button>
       <button type="button" class="au-link" id="auResend" hidden>인증 메일 다시 보내기</button>
       <div class="au-links"><button type="button" data-au="signup">이메일로 회원가입</button><button type="button" data-au="reset">비밀번호 찾기</button></div>
-      <div id="auSocial" hidden>
-        <div class="au-or">간편 로그인</div>
-        <button type="button" class="au-sb google" data-prov="google" hidden><i style="color:#4285F4">G</i>Google로 계속하기</button>
+      <div id="auSocial" data-social hidden>
+        <div class="au-or">간편 로그인 · 회원가입</div>
         <button type="button" class="au-sb kakao" data-prov="kakao" hidden><i>K</i>카카오로 계속하기</button>
         <button type="button" class="au-sb naver" data-prov="naver" hidden><i>N</i>네이버로 계속하기</button>
+        <button type="button" class="au-sb google" data-prov="google" hidden><i style="color:#4285F4">G</i>Google로 계속하기</button>
+        <p class="au-fine" style="text-align:center">처음이면 자동으로 회원가입돼요.</p>
       </div>
     </div>
 
@@ -1734,6 +1735,13 @@
       </div>
       <p class="adm-msg" id="auSMsg"></p>
       <button type="button" class="btn primary au-btn" id="auSGo">가입하기</button>
+      <div id="auSocial2" data-social hidden>
+        <div class="au-or">간편 회원가입</div>
+        <button type="button" class="au-sb kakao" data-prov="kakao" hidden><i>K</i>카카오로 가입하기</button>
+        <button type="button" class="au-sb naver" data-prov="naver" hidden><i>N</i>네이버로 가입하기</button>
+        <button type="button" class="au-sb google" data-prov="google" hidden><i style="color:#4285F4">G</i>Google로 가입하기</button>
+        <p class="au-fine" style="text-align:center">처음 이용하면 자동으로 가입되고, 다음 화면에서 약관 동의를 받아요.</p>
+      </div>
       <div class="au-links"><button type="button" data-au="login">로그인으로 돌아가기</button></div>
     </div>
 
@@ -9424,7 +9432,7 @@
   $("auRetry").addEventListener("click", function(){ authBoot(); });
 
   // 간편 로그인
-  document.querySelectorAll("#auSocial [data-prov]").forEach(function(b){
+  document.querySelectorAll("[data-social] [data-prov]").forEach(function(b){
     b.addEventListener("click", function(){
       var p = b.getAttribute("data-prov"), c = sbClient();
       if(!c){ auShow("offline"); return; }
@@ -9440,12 +9448,15 @@
   });
   function loadProviders(){
     fetch(SB_URL + "/auth/v1/settings", { headers: { apikey: SB_KEY } }).then(function(r){ return r.json(); }).then(function(s){
-      var ext = (s && s.external) || {}, any = false;
-      document.querySelectorAll("#auSocial [data-prov]").forEach(function(b){
-        var p = b.getAttribute("data-prov"), on = p === "naver" ? !!NAVER_CLIENT_ID : !!ext[p];
-        b.hidden = !on; if(on) any = true;
+      var ext = (s && s.external) || {};
+      document.querySelectorAll("[data-social]").forEach(function(box){
+        var any = false;
+        box.querySelectorAll("[data-prov]").forEach(function(b){
+          var p = b.getAttribute("data-prov"), on = p === "naver" ? !!NAVER_CLIENT_ID : !!ext[p];
+          b.hidden = !on; if(on) any = true;
+        });
+        box.hidden = !any;
       });
-      $("auSocial").hidden = !any;
     }).catch(function(){});
   }
   function naverFinish(code, st){

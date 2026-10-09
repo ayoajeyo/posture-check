@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0A1121">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="AYO체형분석">
@@ -18,6 +18,7 @@
   @media (display-mode: standalone){ .install-btn{display:none!important;} }
 </style>
 <title>아요바디요</title>
+<script>try{if(localStorage.getItem("ayo_ui")==="dark")document.documentElement.setAttribute("data-ui","dark");}catch(e){}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Serif+KR:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
   /* 레이아웃: 좁은 한 줄 컬럼(최대 560px) — 상단 마스트헤드(브랜드) → 탭 → 촬영 카드 → 결과 카드.
@@ -1123,6 +1124,56 @@
   .pro-code p{margin:0; font-size:12.5px; line-height:1.55; color:var(--ink-soft);}
   @media (max-width:420px){ .pro-box .price-grid{gap:6px;} .pro-box #proList{margin:8px 0; font-size:13px;} .pro-box h3{font-size:18px;} }
   .pro-link{display:block; margin:10px auto 0; background:none; border:0; color:var(--ink-soft); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:inherit;}
+
+  /* ===================== v113 밝은 클리닉 테마 (기본) · 하단 메뉴 5개 · 측정 탭 =====================
+     html[data-ui="dark"] 이면 기존 다크 네이비 유지 (더보기 › 화면 테마) */
+  :root:root:root:not([data-ui="dark"]){
+    --bg:#F4F6F8; --surface:#FFFFFF; --surface-2:#EEF1F4; --ink:#17212B; --ink-soft:#5B6875;
+    --navy:#0B7A6B; --navy-ink:#FFFFFF; --gold:#8A5A00; --gold-soft:#FFF4D6;
+    --accent:#0B7A6B; --accent-ink:#075A4F; --accent-soft:#E3F3F0; --line:#DDE3E9;
+    --good:#16794A; --good-soft:#E3F4EA; --warn:#A35A00; --warn-soft:#FDF0DC; --crit:#C03A2B; --crit-soft:#FBE7E4;
+    --blue:#0B7A6B; --blue-soft:rgba(11,122,107,.12); --side:#FFFFFF;
+    --shadow:0 1px 2px rgba(23,33,43,.05), 0 8px 24px -14px rgba(23,33,43,.18);
+    color-scheme:light;
+  }
+  html:not([data-ui="dark"]) body{background:var(--bg); color:var(--ink);}
+  html:not([data-ui="dark"]) button.btn.primary{box-shadow:0 8px 18px -12px rgba(11,122,107,.7);}
+  html:not([data-ui="dark"]) .bottom-nav{background:rgba(255,255,255,.97); border-top:1px solid var(--line);}
+  html:not([data-ui="dark"]) .bottom-nav .nav-item[aria-current="page"]{color:var(--blue); font-weight:800;}
+  html:not([data-ui="dark"]) .side .nav-item:hover{background:var(--surface-2);}
+  html:not([data-ui="dark"]) .nav-sep, html:not([data-ui="dark"]) .side-foot, html:not([data-ui="dark"]) .st-none{color:var(--ink-soft);}
+  html:not([data-ui="dark"]) .chip, html:not([data-ui="dark"]) .ss-chip{background:var(--surface-2); color:var(--ink); border-color:var(--line); box-shadow:none;}
+  html:not([data-ui="dark"]) .chip .h, html:not([data-ui="dark"]) .ss-chip span{color:var(--ink-soft);}
+  html:not([data-ui="dark"]) .chip .f, html:not([data-ui="dark"]) .ss-chip em{color:var(--ink); background:rgba(23,33,43,.06);}
+  html:not([data-ui="dark"]) .pro-mail-link, html:not([data-ui="dark"]) .price-grid .best em{color:var(--accent-ink);}
+  html:not([data-ui="dark"]) .side .nav-item em.pro-tag{background:var(--gold-soft); color:var(--gold);}
+
+  /* 밝은 테마: 파랑·보라 그라데이션을 청록 계열로 정리 */
+  html:not([data-ui="dark"]) .trial-bar{background:var(--accent-soft); border:1px solid rgba(11,122,107,.22);}
+  html:not([data-ui="dark"]) .trial-bar b u{color:var(--accent-ink);}
+  html:not([data-ui="dark"]) .trial-bar.last{background:var(--warn-soft); border-color:rgba(163,90,0,.35);}
+  html:not([data-ui="dark"]) .trial-bar.last b u{color:var(--warn);}
+  html:not([data-ui="dark"]) .bk-banner{background:var(--warn-soft); border-color:rgba(163,90,0,.3);}
+  html:not([data-ui="dark"]) .pro-chip{background:#FFF4D6; color:#6B4500; border-color:#F1D48A; box-shadow:none;}
+  html:not([data-ui="dark"]) .pro-chip::after{display:none;}
+  html:not([data-ui="dark"]) .pro-chip .pc-i{color:#8A5A00; filter:none;}
+  html:not([data-ui="dark"]) .pro-chip .pc-k{text-shadow:none;}
+  html:not([data-ui="dark"]) .pro-chip .pc-d{background:#8A5A00;}
+  html:not([data-ui="dark"]) .pt-guide-btn{background:var(--accent-soft); color:var(--accent-ink);}
+  html:not([data-ui="dark"]) nav.tabs button[aria-selected="true"]{background:var(--accent-soft); color:var(--accent-ink);}
+  html:not([data-ui="dark"]) .pro-badge, html:not([data-ui="dark"]) .price-grid .best i, html:not([data-ui="dark"]) .rom-all-cmp i{background:var(--blue);}
+  html:not([data-ui="dark"]) .set-lock, html:not([data-ui="dark"]) .rep-lock, html:not([data-ui="dark"]) .pro-ask{background:var(--accent-soft); border-color:rgba(11,122,107,.25);}
+  html:not([data-ui="dark"]) .price-grid .best{background:var(--accent-soft); border-color:var(--blue);}
+  html:not([data-ui="dark"]) .rom-all-cmp{background:var(--surface); border-color:var(--line);}
+  html:not([data-ui="dark"]) .rom-shot-btn{background:var(--blue); box-shadow:0 10px 22px -12px rgba(11,122,107,.8);}
+  /* 하단 메뉴 5개 */
+  .bottom-nav .nav-item{min-height:56px; font-size:11.5px;}
+  /* 측정 하위 탭 (체형 · ROM · 측만증) — 폰에서만 */
+  .msr-tabs{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:4px; gap:4px;}
+  .msr-tabs[hidden]{display:none!important;}
+  .msr-tabs button{font-family:inherit; height:40px; border:none; border-radius:10px; background:transparent; color:var(--ink-soft); font-size:14.5px; font-weight:600; cursor:pointer;}
+  .msr-tabs button[aria-selected="true"]{background:var(--blue); color:#fff; font-weight:800;}
+  @media (min-width:900px){ .msr-tabs{display:none!important;} }
 </style>
 
 </head>
@@ -1180,6 +1231,11 @@
     <span class="bk-ic" aria-hidden="true">💾</span>
     <div class="bk-txt"><b id="bkBanTitle">백업할 시간이에요</b><em id="bkBanSub"></em></div>
     <div class="bk-acts"><button type="button" class="btn primary sm" id="btnBkNow">지금 백업</button><button type="button" class="btn line sm" id="btnBkLater">내일 다시</button></div>
+  </div>
+  <div class="msr-tabs" id="msrTabs" role="tablist" aria-label="측정 종류">
+    <button type="button" role="tab" data-mv="analyze" aria-selected="true">체형</button>
+    <button type="button" role="tab" data-mv="rom" aria-selected="false">ROM</button>
+    <button type="button" role="tab" data-mv="scol" aria-selected="false">측만증</button>
   </div>
   <section class="view" id="view-analyze">
   <nav class="tabs" role="tablist">
@@ -1593,7 +1649,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v112</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v113</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1610,7 +1666,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v112</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v113</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -1694,12 +1750,10 @@
   </main>
 
   <nav class="bottom-nav" aria-label="하단 메뉴">
-    <button type="button" class="nav-item" data-view="dash"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>현황</span></button>
-    <button type="button" class="nav-item" data-view="analyze" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>체형분석</span></button>
-    <button type="button" class="nav-item" data-view="rom"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M4 20L16 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/><circle cx="16" cy="6" r="1.6"/></svg><span>ROM</span></button>
-    <button type="button" class="nav-item" data-view="scol"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c-2.5 2.5 2.5 4.5 0 7s2.5 4.5 0 7-0 4"/><path d="M8.5 5.5h3M12.5 9h3M8.5 12.5h3M12.5 16h3M9.5 19.5h3"/></svg><span>측만증</span></button>
-    <button type="button" class="nav-item" data-view="report"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>리포트</span></button>
+    <button type="button" class="nav-item" data-view="dash"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg><span>홈</span></button>
+    <button type="button" class="nav-item" id="navMeasure" data-measure aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>측정</span></button>
     <button type="button" class="nav-item" data-view="members"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원</span></button>
+    <button type="button" class="nav-item" data-view="report"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>리포트</span></button>
     <button type="button" class="nav-item" id="btnMore"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18.5" cy="12" r="1.6"/></svg><span>더보기</span></button>
   </nav>
 </div>
@@ -1962,6 +2016,7 @@
     </div>
     <div class="more-list">
       <button type="button" data-go="settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span class="ml-t">설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span><span class="ml-c" aria-hidden="true">›</span></button>
+      <button type="button" id="btnMoreTheme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg><span id="themeLbl">화면 테마 · 밝게</span></button>
       <button type="button" id="btnMoreAcc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span class="ml-t">계정</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreSrv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.7 4.7 0 0 0 7 18.5z"/><path d="M12 15.5v-5M9.8 12.6L12 10.4l2.2 2.2"/></svg><span class="ml-t">서버 저장</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreBk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span class="ml-t">내 데이터 내보내기 · 불러오기</span><span class="ml-c" aria-hidden="true">›</span></button>
@@ -4542,6 +4597,7 @@
 
   /* ---- 화면 전환 (사이드바 / 하단 탭) ---- */
   state.view = "analyze";
+  var MSR_VIEWS = ["analyze", "rom", "scol"], lastMsr = (function(){ try { return localStorage.getItem("ayo_last_msr") || "analyze"; } catch(e){ return "analyze"; } })();
   function showView(v){
     // 종합 리포트는 PRO 전용: 무료 사용자는 화면 전환 없이 안내 팝업만
     if(v !== state.preview) state.preview = null;
@@ -4566,6 +4622,11 @@
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
+    var isMsr = MSR_VIEWS.indexOf(v) >= 0;
+    if(isMsr){ lastMsr = v; lsSet("ayo_last_msr", v); }
+    $("msrTabs").hidden = !isMsr;
+    $("msrTabs").querySelectorAll("[data-mv]").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-mv") === v ? "true" : "false"); });
+    var nm = $("navMeasure"); if(nm){ if(isMsr) nm.setAttribute("aria-current", "page"); else nm.removeAttribute("aria-current"); }
     if(v === "report"){ renderReport(); syncRepLock(); }
     else if(v === "members"){ mbShowList(); syncMbLock(); }
     else if(v === "dash") renderDash();
@@ -4585,6 +4646,16 @@
     b.addEventListener("click", function(){ toast(b.getAttribute("data-soon") + " 메뉴는 준비 중이에요."); });
   });
   $("btnMore").addEventListener("click", function(){ $("moreSheet").hidden = false; });
+  function applyUiTheme(){
+    var dark = lsGet("ayo_ui") === "dark";
+    if(dark) document.documentElement.setAttribute("data-ui", "dark"); else document.documentElement.removeAttribute("data-ui");
+    $("themeLbl").textContent = "화면 테마 · " + (dark ? "어둡게" : "밝게");
+    var mt = document.querySelector('meta[name="theme-color"]'); if(mt) mt.setAttribute("content", dark ? "#0A1121" : "#FFFFFF");
+  }
+  $("btnMoreTheme").addEventListener("click", function(){ lsSet("ayo_ui", lsGet("ayo_ui") === "dark" ? "" : "dark"); applyUiTheme(); });
+  applyUiTheme();
+  $("navMeasure").addEventListener("click", function(){ showView(MSR_VIEWS.indexOf(lastMsr) >= 0 ? lastMsr : "analyze"); });
+  $("msrTabs").querySelectorAll("[data-mv]").forEach(function(b){ b.addEventListener("click", function(){ showView(b.getAttribute("data-mv")); }); });
   $("btnGoReport").addEventListener("click", function(){ showView("report"); });
   document.querySelectorAll("[data-goview]").forEach(function(b){
     b.addEventListener("click", function(){ showView(b.getAttribute("data-goview")); });
@@ -5021,15 +5092,15 @@
     });
     [0, 25, 50, 75, 100].forEach(function(v){
       g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="rgba(151,163,188,.18)"/>' +
-           '<text x="' + (L - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" fill="#97A3BC">' + v + '</text>';
+           '<text x="' + (L - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" style="fill:var(--ink-soft)">' + v + '</text>';
     });
-    g += '<polyline fill="none" stroke="#2F6BFF" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="' + pts.map(function(p, i){ return X(i) + "," + Y(p.score); }).join(" ") + '"/>';
+    g += '<polyline fill="none" style="stroke:var(--blue)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="' + pts.map(function(p, i){ return X(i) + "," + Y(p.score); }).join(" ") + '"/>';
     var step = Math.ceil(pts.length / 6);
     pts.forEach(function(p, i){
       var lastPt = i === pts.length - 1;
-      g += '<circle cx="' + X(i) + '" cy="' + Y(p.score) + '" r="' + (lastPt ? 6 : 4.5) + '" fill="' + (lastPt ? "#2F6BFF" : "#0F1A33") + '" stroke="#2F6BFF" stroke-width="2.5"><title>' + fmtDate(p.at) + " · " + p.score + '점</title></circle>' +
-           '<text x="' + X(i) + '" y="' + (Y(p.score) - 11) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#E9EEF8">' + p.score + '</text>';
-      if(i % step === 0 || lastPt) g += '<text x="' + X(i) + '" y="' + (H - 14) + '" text-anchor="middle" font-size="11" fill="#97A3BC">' + fmtDate(p.at).slice(5, 10) + '</text>';
+      g += '<circle cx="' + X(i) + '" cy="' + Y(p.score) + '" r="' + (lastPt ? 6 : 4.5) + '" fill="' + (lastPt ? "#0B7A6B" : "#FFFFFF") + '" style="stroke:var(--blue)" stroke-width="2.5"><title>' + fmtDate(p.at) + " · " + p.score + '점</title></circle>' +
+           '<text x="' + X(i) + '" y="' + (Y(p.score) - 11) + '" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ink)">' + p.score + '</text>';
+      if(i % step === 0 || lastPt) g += '<text x="' + X(i) + '" y="' + (H - 14) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + fmtDate(p.at).slice(5, 10) + '</text>';
     });
     box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="종합 점수 변화">' + g + '</svg>' +
       '<div class="trend-legend"><span><i style="background:rgba(76,195,138,.35)"></i>75점 이상 양호</span><span><i style="background:rgba(240,180,76,.35)"></i>60~74 주의</span><span><i style="background:rgba(240,122,114,.35)"></i>60 미만 개선 필요</span></div>';
@@ -5224,14 +5295,14 @@
     var Y = function(v){ return T + (1 - v / nice) * (H - T - B); }, g = '';
     [0, nice / 2, nice].forEach(function(v){
       g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="rgba(151,163,188,.16)"/>' +
-           '<text x="' + (L - 6) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" fill="#97A3BC">' + v + '</text>';
+           '<text x="' + (L - 6) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" style="fill:var(--ink-soft)">' + v + '</text>';
     });
     rows.forEach(function(r, i){
       var x = L + step * i + (step - bw) / 2, y = Y(r.value), h = Y(0) - y;
-      if(h > 0) g += '<path d="M' + x + ' ' + Y(0) + 'V' + (y + 4) + 'q0 -4 4 -4h' + (bw - 8) + 'q4 0 4 4V' + Y(0) + 'Z" fill="' + (r.hi ? "#2F6BFF" : "rgba(47,107,255,.45)") + '"><title>' + r.title + '</title></path>';
+      if(h > 0) g += '<path d="M' + x + ' ' + Y(0) + 'V' + (y + 4) + 'q0 -4 4 -4h' + (bw - 8) + 'q4 0 4 4V' + Y(0) + 'Z" fill="' + (r.hi ? "#0B7A6B" : "rgba(11,122,107,.40)") + '"><title>' + r.title + '</title></path>';
       g += '<rect x="' + (L + step * i) + '" y="' + T + '" width="' + step + '" height="' + (H - T - B) + '" fill="transparent"><title>' + r.title + '</title></rect>';
-      if(r.value > 0 && (opt.labelAll || r.hi)) g += '<text x="' + (x + bw / 2) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#E9EEF8">' + r.value + (opt.unit || "") + '</text>';
-      g += '<text x="' + (x + bw / 2) + '" y="' + (H - 10) + '" text-anchor="middle" font-size="11" fill="#97A3BC">' + r.label + '</text>';
+      if(r.value > 0 && (opt.labelAll || r.hi)) g += '<text x="' + (x + bw / 2) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ink)">' + r.value + (opt.unit || "") + '</text>';
+      g += '<text x="' + (x + bw / 2) + '" y="' + (H - 10) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + r.label + '</text>';
     });
     return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + opt.aria + '">' + g + '</svg>';
   }

@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     const tk = await fetch("https://nid.naver.com/oauth2.0/token?" + new URLSearchParams({
       grant_type: "authorization_code", client_id: id, client_secret: secret, code, state,
     })).then((r) => r.json());
-    if (!tk.access_token) return json(req, { error: "네이버 인증에 실패했어요", detail: tk.error_description }, 401);
+    if (!tk.access_token) return json(req, { error: "네이버 인증에 실패했어요" }, 401);
 
     const me = await fetch("https://openapi.naver.com/v1/nid/me", {
       headers: { Authorization: "Bearer " + tk.access_token },
@@ -35,16 +35,23 @@ Deno.serve(async (req) => {
     }).catch(() => null);
 
     const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email });
-    if (error || !data?.properties?.hashed_token) return json(req, { error: "로그인 토큰을 만들지 못했어요", detail: error?.message }, 500);
+    if (error || !data?.properties?.hashed_token){ console.error("[naver-auth] link", error); return json(req, { error: "로그인 토큰을 만들지 못했어요" }, 500); }
     // 보안: 같은 이메일로 '인증 안 된' 이메일 가입이 먼저 있었다면(남이 미리 만들어 둔 계정일 수 있음)
     // 그 비밀번호는 무효로 바꾸고 네이버로 확인된 본인 계정으로 확정
     const u = data.user;
+    // 보안: 이 계정에 이미 다른 네이버 계정이 연결돼 있으면 거절 (네이버 이메일을 바꿔 남의 계정에 들어오는 것 방지)
+    // 처음 연결할 때 네이버 고유번호를 app_metadata(본인이 바꿀 수 없는 값)에 기록
+    const linked = u && u.app_metadata && u.app_metadata.naver_id;
+    if (linked && linked !== p.id) return json(req, { error: "이 이메일 계정에는 다른 네이버 계정이 연결돼 있어요. 이메일로 로그인해 주세요." }, 403);
     if (u && !u.email_confirmed_at) {
       const rnd = crypto.randomUUID() + crypto.randomUUID();
-      await admin.auth.admin.updateUserById(u.id, { password: rnd, email_confirm: true });
+      await admin.auth.admin.updateUserById(u.id, { password: rnd, email_confirm: true, app_metadata: { naver_id: p.id } });
+    } else if (u && !linked) {
+      await admin.auth.admin.updateUserById(u.id, { app_metadata: { naver_id: p.id } });
     }
     return json(req, { token_hash: data.properties.hashed_token, email });
   } catch (e) {
-    return json(req, { error: "서버 오류", detail: String(e) }, 500);
+    console.error("[naver-auth]", e);
+    return json(req, { error: "서버 오류" }, 500);
   }
 });

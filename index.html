@@ -1204,18 +1204,29 @@
   .rb-info .rb-sub{margin:-6px 0 0; font-size:12px; color:var(--ink-soft);}
   .rb-sel{display:flex; flex-direction:column; gap:2px; padding:10px 12px; border-radius:12px; background:var(--accent-soft);}
   .rb-sel span{font-size:11.5px; font-weight:700; color:var(--accent-ink);}
-  .rb-sel b{font-size:18px; font-weight:800; color:var(--ink);}
-  .rb-sel em{font-style:normal; font-size:12px; color:var(--ink-soft);}
+  .rb-sel b{font-size:17px; font-weight:800; color:var(--ink); word-break:keep-all;}
+  .rb-sel em{font-style:normal; font-size:12px; color:var(--ink-soft); word-break:keep-all;}
   .rb-legend{display:flex; flex-direction:column; gap:6px; margin-top:auto; font-size:11.5px; color:var(--ink-soft);}
   .rb-legend i{display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:6px; vertical-align:-2px; box-sizing:border-box;}
   .rb-fig{position:relative; flex:0 0 180px; width:180px; height:340px;}
   .rb-fig svg{position:absolute; left:0; top:0;}
-  .rb-dot{position:absolute; width:28px; height:28px; margin:0; padding:0; border-radius:50%; border:3px solid #8A97A5; background:var(--surface); cursor:pointer; box-sizing:border-box; transition:transform .12s;}
+  /* v117 몸 그림 디자인: 부드러운 실루엣 + 은은한 뼈대선 + 입체감 있는 관절 점 */
+  .rb-svg .rb-g1{stop-color:var(--accent-soft);} .rb-svg .rb-g2{stop-color:var(--surface-2);}
+  .rb-svg .rb-skin{fill:url(#rbSkin); stroke:var(--line); stroke-width:1.4;}
+  .rb-svg .rb-shadow{fill:var(--ink); opacity:.07;}
+  .rb-svg .rb-bone{stroke:var(--ink-soft); stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1 4; opacity:.45;}
+  .rb-dot{position:absolute; width:28px; height:28px; margin:0; padding:0; border-radius:50%; border:2.5px solid #9AA6B4; background:var(--surface); cursor:pointer; box-sizing:border-box; box-shadow:0 2px 5px rgba(23,34,61,.16); transition:transform .15s, box-shadow .15s;}
+  .rb-dot::after{content:""; position:absolute; inset:7px; border-radius:50%; background:#C3CBD5;}
   .rb-dot.part{border-color:var(--blue); background:linear-gradient(90deg, var(--blue) 50%, var(--surface) 50%);}
-  .rb-dot.done{border-color:var(--blue); background:var(--blue);}
-  .rb-dot.sel{transform:scale(1.2); box-shadow:0 0 0 5px rgba(11,122,107,.25); border-color:var(--ink);}
-  .rb-dot:active{transform:scale(1.1);}
-  .rb-lr{position:absolute; bottom:0; font-size:11px; font-weight:700; color:var(--ink-soft);}
+  .rb-dot.part::after, .rb-dot.done::after{display:none;}
+  .rb-dot.done{border-color:var(--blue); background:var(--blue); box-shadow:0 2px 6px rgba(23,34,61,.25);}
+  .rb-dot.done::before{content:""; position:absolute; left:8px; top:5px; width:6px; height:10px; border:solid #fff; border-width:0 2.5px 2.5px 0; transform:rotate(45deg);}
+  .rb-dot.sel{transform:scale(1.18); border-color:var(--ink); border-width:3px; box-shadow:0 0 0 6px color-mix(in srgb, var(--blue) 22%, transparent), 0 3px 8px rgba(23,34,61,.25); animation:rbPulse 1.8s ease-out infinite;}
+  .rb-dot.sel::after{background:var(--ink);}
+  .rb-dot:active{transform:scale(1.08);}
+  @keyframes rbPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--blue) 40%, transparent), 0 3px 8px rgba(23,34,61,.25);} 70%{box-shadow:0 0 0 10px color-mix(in srgb, var(--blue) 0%, transparent), 0 3px 8px rgba(23,34,61,.25);} 100%{box-shadow:0 0 0 0 transparent, 0 3px 8px rgba(23,34,61,.25);}}
+  @media (prefers-reduced-motion:reduce){ .rb-dot.sel{animation:none;} }
+  .rb-lr{position:absolute; bottom:0; font-size:11px; font-weight:800; color:var(--ink-soft); background:var(--surface-2); border:1px solid var(--line); border-radius:999px; padding:2px 8px;}
   /* 기존 부위 탭·좌우 버튼은 몸 그림이 대신 (좌우 비교 버튼은 유지) */
   #romJoints, #romSide{display:none!important;}
   .rom-siderow{justify-content:flex-end;}
@@ -1732,10 +1743,10 @@
         <div><h3>부위를 누르세요</h3></div>
         <p class="rb-sub" id="rbProg"></p>
         <div class="rb-sel"><span>선택한 부위</span><b id="rbSelName">어깨 · 우측</b><em id="rbSelMeta"></em></div>
-        <div class="rb-legend"><span><i style="background:var(--blue)"></i>완료</span><span><i style="background:linear-gradient(90deg,var(--blue) 50%,var(--surface) 50%); border:2px solid var(--blue)"></i>일부 측정</span><span><i style="border:2px solid #8A97A5"></i>미측정</span></div>
+        <div class="rb-legend"><span><i style="background:var(--blue)"></i>완료</span><span><i style="background:linear-gradient(90deg,var(--blue) 50%,var(--surface) 50%); border:2px solid var(--blue)"></i>일부 측정</span><span><i style="border:2px solid #9AA6B4; background:radial-gradient(circle, #C3CBD5 35%, var(--surface) 38%)"></i>미측정</span></div>
       </div>
       <div class="rb-fig" id="rbFig">
-        <svg width="180" height="330" viewBox="0 0 180 330" fill="none" aria-hidden="true"><g stroke="#B8C2CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="90" cy="28" r="18"/><path d="M90 46V51"/><path d="M59 72C66 60 114 60 121 72"/><path d="M59 72L48 131L41 182M121 72L132 131L139 182"/><path d="M64 80L70 150L72 174M116 80L110 150L108 174M72 174H108"/><path d="M72 174L74 246L75 305M108 174L106 246L105 305"/></g></svg>
+        <svg class="rb-svg" width="180" height="330" viewBox="0 0 180 330" fill="none" aria-hidden="true"><defs><linearGradient id="rbSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="rb-g1"/><stop offset="1" class="rb-g2"/></linearGradient></defs><ellipse class="rb-shadow" cx="90" cy="322" rx="34" ry="5"/><path class="rb-skin" d="M83 44C80.5 45.7 84.2 51.5 82 54C79.8 56.5 74 57.5 70 59C66 60.5 61.5 60.8 58 63C54.5 65.2 51.2 67.8 49 72C46.8 76.2 46.2 82 45 88C43.8 94 43 100.8 42 108C41 115.2 40.2 123.7 39 131C37.8 138.3 36.3 144.5 35 152C33.7 159.5 32 169.7 31 176C30 182.3 29 185.8 29 190C29 194.2 29.7 198.5 31 201C32.3 203.5 35.2 205.3 37 205C38.8 204.7 40.8 202.2 42 199C43.2 195.8 43.3 190.2 44 186C44.7 181.8 44.8 179.7 46 174C47.2 168.3 49.3 159.2 51 152C52.7 144.8 54.7 138 56 131C57.3 124 58 115.8 59 110C60 104.2 61.3 94 62 96C62.7 98 62.5 113.7 63 122C63.5 130.3 65.2 138.7 65 146C64.8 153.3 62.7 158.7 62 166C61.3 173.3 60.8 181 61 190C61.2 199 62.2 210.7 63 220C63.8 229.3 65.7 238 66 246C66.3 254 64.7 259.7 65 268C65.3 276.3 67.8 289.2 68 296C68.2 302.8 65.7 305.5 66 309C66.3 312.5 67.3 315.5 70 317C72.7 318.5 79.7 319.8 82 318C84.3 316.2 83.8 309.7 84 306C84.2 302.3 83.2 302.3 83 296C82.8 289.7 82.8 276.3 83 268C83.2 259.7 83.5 254 84 246C84.5 238 85.3 228.3 86 220C86.7 211.7 87.3 200.7 88 196C88.7 191.3 89.3 192 90 192C90.7 192 91.3 191.3 92 196C92.7 200.7 93.3 211.7 94 220C94.7 228.3 95.5 238 96 246C96.5 254 96.8 259.7 97 268C97.2 276.3 97.2 289.7 97 296C96.8 302.3 95.8 302.3 96 306C96.2 309.7 95.7 316.2 98 318C100.3 319.8 107.3 318.5 110 317C112.7 315.5 113.7 312.5 114 309C114.3 305.5 111.8 302.8 112 296C112.2 289.2 114.7 276.3 115 268C115.3 259.7 113.7 254 114 246C114.3 238 116.2 229.3 117 220C117.8 210.7 118.8 199 119 190C119.2 181 118.7 173.3 118 166C117.3 158.7 115.2 153.3 115 146C114.8 138.7 116.5 130.3 117 122C117.5 113.7 117.3 98 118 96C118.7 94 120 104.2 121 110C122 115.8 122.7 124 124 131C125.3 138 127.3 144.8 129 152C130.7 159.2 132.8 168.3 134 174C135.2 179.7 135.3 181.8 136 186C136.7 190.2 136.8 195.8 138 199C139.2 202.2 141.2 204.7 143 205C144.8 205.3 147.7 203.5 149 201C150.3 198.5 151 194.2 151 190C151 185.8 150 182.3 149 176C148 169.7 146.3 159.5 145 152C143.7 144.5 142.2 138.3 141 131C139.8 123.7 139 115.2 138 108C137 100.8 136.2 94 135 88C133.8 82 133.2 76.2 131 72C128.8 67.8 125.5 65.2 122 63C118.5 60.8 114 60.5 110 59C106 57.5 100.2 56.5 98 54C95.8 51.5 99.5 45.7 97 44C94.5 42.3 85.5 42.3 83 44Z"/><ellipse class="rb-skin" cx="90" cy="27" rx="15.5" ry="18.5"/><g class="rb-bone"><path d="M59 72H121M90 57V174M72 174H108"/><path d="M59 72L48 131L41 182M121 72L132 131L139 182"/><path d="M72 174L74 246L75 305M108 174L106 246L105 305"/></g></svg>
         <span class="rb-lr" style="left:22px">우측</span><span class="rb-lr" style="right:22px">좌측</span>
       </div>
     </div>
@@ -1749,7 +1760,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v116</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v117</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1766,7 +1777,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v116</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v117</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>

@@ -961,6 +961,12 @@
   .rom-lvl.good{background:rgba(46,150,98,.9);} .rom-lvl.warn{background:rgba(196,132,30,.92);} .rom-lvl.bad{background:rgba(196,72,64,.92);}
   .rom-pts.good{background:rgba(46,150,98,.9);} .rom-pts.warn{background:rgba(196,132,30,.92);} .rom-pts.bad{background:rgba(13,21,40,.85);}
   .rom-cambtns .rom-snap{flex:1.6; font-size:16px;}
+  /* v122 셀카 타이머 */
+  .cd-num{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:6; pointer-events:none;
+    font-family:var(--font-num); font-weight:800; font-size:min(34vw, 150px); color:#fff; text-shadow:0 4px 24px rgba(0,0,0,.55);}
+  .cd-num span{animation:cdPop .9s ease-out both;}
+  @keyframes cdPop{0%{transform:scale(1.5); opacity:0;} 25%{transform:scale(1); opacity:1;} 100%{transform:scale(.92); opacity:.85;}}
+  .btn.timer-on{border-color:var(--gold); color:var(--gold);}
   .rom-nudge{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:8px 0 0; background:var(--surface-2); border-radius:12px; padding:6px 8px;}
   .rom-nudge .nsel{font-size:12.5px; color:var(--ink-soft); margin-right:auto; padding-left:4px;} .rom-nudge .nsel b{color:var(--ink);}
   .rom-nudge button{font-family:inherit; min-width:44px; height:40px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:10px; font-size:15px; cursor:pointer; touch-action:manipulation;}
@@ -1450,6 +1456,7 @@
       <button class="btn ghost icon" id="btnSwitchCam" title="카메라 전환" hidden>
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
       </button>
+      <button class="btn line" id="btnTimer" hidden>⏱ 5초</button>
       <button class="btn primary" id="btnShoot">촬영</button>
     </div>
     <div class="stage-controls" id="markControls" hidden>
@@ -1777,7 +1784,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v121</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v122</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1794,7 +1801,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 정면(또는 뒤)에서 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v121</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v122</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2148,7 +2155,7 @@
       <button type="button" id="btnMoreAcc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span class="ml-t">계정</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreSrv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.7 4.7 0 0 0 7 18.5z"/><path d="M12 15.5v-5M9.8 12.6L12 10.4l2.2 2.2"/></svg><span class="ml-t">서버 저장</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreBk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span class="ml-t">내 데이터 내보내기 · 불러오기</span><span class="ml-c" aria-hidden="true">›</span></button>
-      <button type="button" id="btnMoreAdm" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg><span class="ml-t" id="btnMoreAdmT">관리자 모드</span><span class="ml-c" aria-hidden="true">›</span></button>
+      <button type="button" id="btnMoreAdm"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg><span class="ml-t" id="btnMoreAdmT">관리자 모드</span><span class="ml-c" aria-hidden="true">›</span></button>
     </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnMoreClose">닫기</button></div>
   </div>
@@ -2235,6 +2242,7 @@
       <button type="button" class="btn line sm" id="btnRomCamCancel">취소</button>
       <button type="button" class="btn primary rom-snap" id="btnRomSnap">● 촬영</button>
       <button type="button" class="btn line sm" id="btnRomFlip">🔄 전환</button>
+      <button type="button" class="btn line sm" id="btnRomTimer" hidden>⏱ 5초</button>
       <button type="button" class="btn line sm" id="btnRomOutline" aria-pressed="true">테두리</button>
     </div>
     <div class="rom-btns" id="romBtns1">
@@ -2550,6 +2558,61 @@
     toast._t = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200);
   }
 
+  /* v122 셔터 소리 (소리 파일 없이 Web Audio로 '찰칵') · 셀카 타이머 카운트다운 */
+  var SND = { ctx: null };
+  function sndCtx(){
+    try{
+      if(!SND.ctx){ var AC = window.AudioContext || window.webkitAudioContext; if(!AC) return null; SND.ctx = new AC(); }
+      if(SND.ctx.state === "suspended") SND.ctx.resume();
+      return SND.ctx;
+    }catch(e){ return null; }
+  }
+  function playShutter(){
+    var ac = sndCtx(); if(!ac) return;
+    try{
+      var t = ac.currentTime, sr = ac.sampleRate;
+      [0, 0.075].forEach(function(dt, k){   // 셔터막 두 번 (찰-칵)
+        var n = Math.round(sr * 0.06), buf = ac.createBuffer(1, n, sr), d = buf.getChannelData(0);
+        for(var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+        var src = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain();
+        src.buffer = buf; bp.type = "bandpass"; bp.frequency.value = k ? 2600 : 3800; bp.Q.value = 0.9;
+        g.gain.setValueAtTime(k ? 0.55 : 0.8, t + dt);
+        src.connect(bp); bp.connect(g); g.connect(ac.destination); src.start(t + dt);
+      });
+    }catch(e){}
+  }
+  function playBeep(hi){
+    var ac = sndCtx(); if(!ac) return;
+    try{
+      var t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain();
+      o.type = "sine"; o.frequency.value = hi ? 1320 : 880;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 0.17);
+    }catch(e){}
+  }
+  // 셀카 타이머: 0 = 끔 · 3/5/10초 (기기에 기억)
+  var SELFIE_T = (function(){ var v = +(localStorage.getItem("ayo_selfie_timer") || 5); return [0, 3, 5, 10].indexOf(v) >= 0 ? v : 5; })();
+  function timerNext(){ var L = [0, 3, 5, 10]; SELFIE_T = L[(L.indexOf(SELFIE_T) + 1) % L.length]; try{ localStorage.setItem("ayo_selfie_timer", String(SELFIE_T)); }catch(e){} }
+  function timerBtnSync(btn, selfie){
+    if(!btn) return;
+    btn.hidden = !selfie;
+    btn.textContent = "⏱ " + (SELFIE_T ? SELFIE_T + "초" : "끔");
+    btn.classList.toggle("timer-on", !!SELFIE_T);
+  }
+  // host 위에 큰 숫자로 n초 카운트다운 → done(). 반환값 = 취소 함수
+  function countdown(host, n, done){
+    var el = document.createElement("div"), left = n, tm = null, over = false;
+    el.className = "cd-num"; host.appendChild(el);
+    var stop = function(){ over = true; clearTimeout(tm); if(el.parentNode) el.parentNode.removeChild(el); };
+    var tick = function(){
+      if(over) return;
+      if(left <= 0){ stop(); done(); return; }
+      el.innerHTML = "<span>" + left + "</span>"; playBeep(left === 1);
+      left--; tm = setTimeout(tick, 1000);
+    };
+    tick();
+    return stop;
+  }
   var ADM = { on: false };   // v99 관리자 모드 (아래에서 저장값으로 복원)
   try{ ADM.on = localStorage.getItem("ayo_admin") === "1"; }catch(e){}
   function cur(){ return state.byMode[state.mode]; }
@@ -2863,6 +2926,7 @@
     legendCard.hidden = true;
     resultCard.hidden = true;
     btnSwitchCam.hidden = false;
+    timerBtnSync($("btnTimer"), state.facingMode === "user");
     state.phase = "live";
     startLive();
     var pr = video.play && video.play();
@@ -2871,7 +2935,7 @@
   function goIdleFromLive(){
     video.hidden = true; guideOverlay.hidden = true; hintChip.hidden = true;
     emptyCam.hidden = false; camControls.hidden = false; shootControls.hidden = true;
-    btnSwitchCam.hidden = true;
+    btnSwitchCam.hidden = true; $("btnTimer").hidden = true; shootCdStop();
     state.phase = "idle";
   }
 
@@ -2906,6 +2970,7 @@
 
   btnStartCam.addEventListener("click", startCamera);
   btnSwitchCam.addEventListener("click", function(){
+    shootCdStop();
     state.facingMode = state.facingMode === "environment" ? "user" : "environment";
     startCamera();
   });
@@ -2974,11 +3039,27 @@
     return Promise.race([shot, timeout]);
   }
 
-  var shooting = false;
+  var shooting = false, shootCd = null;
+  function shootCdStop(){ if(shootCd){ shootCd(); shootCd = null; btnShoot.textContent = "촬영"; } }
   btnShoot.addEventListener("click", function(){
+    if(shooting) return;
+    if(shootCd){ shootCdStop(); toast("타이머를 취소했어요."); return; }   // 카운트다운 중 다시 누르면 취소
+    if(!video.videoWidth){ toast("카메라를 준비 중이에요, 잠시 후 다시 시도하세요."); return; }
+    if(state.facingMode === "user" && SELFIE_T){
+      sndCtx();   // 소리 재생 허용(사용자 터치 시점)
+      btnShoot.textContent = "타이머 취소";
+      shootCd = countdown(stage, SELFIE_T, function(){ shootCd = null; btnShoot.textContent = "촬영"; if(state.phase === "live") doShoot(); });
+      return;
+    }
+    doShoot();
+  });
+  btnTimerEl().addEventListener("click", function(){ timerNext(); timerBtnSync(btnTimerEl(), state.facingMode === "user"); timerBtnSync($("btnRomTimer"), romCam.facing === "user"); });
+  function btnTimerEl(){ return $("btnTimer"); }
+  function doShoot(){
     if(shooting) return;
     var vw = video.videoWidth, vh = video.videoHeight;
     if(!vw){ toast("카메라를 준비 중이에요, 잠시 후 다시 시도하세요."); return; }
+    playShutter();
     shooting = true;
     var label = btnShoot.textContent;
     btnShoot.textContent = "촬영 중…"; btnShoot.disabled = true;
@@ -2998,7 +3079,7 @@
       shooting = false; btnShoot.textContent = label; btnShoot.disabled = false;
       pauseCamera();
     });
-  });
+  }
 
   btnUpload.addEventListener("click", function(){ fileInput.click(); });
   fileInput.addEventListener("change", function(e){
@@ -3029,6 +3110,7 @@
     s.rot = 0; s.rotPivot = null; s.personBox = null;
     if(state.rotMode) setRotMode(false);
     s.captureRoll = state.pendingRoll; state.pendingRoll = null;
+    s.framed = !!state.framedNext; s.autoLevel = state.framedNext ? state.framedNext.rot : 0; state.framedNext = null;   // v122 정렬된 사진인지
     var img = new Image();
     img.onload = function(){
       releaseImage(s);
@@ -3048,6 +3130,44 @@
       autoDetectAndFill(s, img);
     };
     img.src = dataUrl;
+  }
+
+  /* v122 정렬: 비스듬하거나 삐뚤게 찍어도 결과가 화면 가운데에 좌우 대칭으로 나오도록
+     ① 촬영 순간 폰 기울기(가늠자 센서)만큼 사진을 바로 세우고(수평) — 몸의 기울기 자체는 측정값이라 건드리지 않음
+     ② 기준 세로선(정면: 두 발목 가운데 · 측면: 복사뼈)이 사진 정가운데 오게 좌우 폭을 같게 맞춘 뒤
+     ③ 그 사진으로 자동 인식을 한 번 더 → 점·격자·결과·리포트가 모두 같은 정렬 기준 */
+  var FRAME_BG = "#E6E8EC";
+  function reframeShot(s, img, lm){
+    s.framed = true;
+    var W = s.w, H = s.h, roll = s.captureRoll;
+    var a = (isFinite(roll) && roll !== null && Math.abs(roll) >= 0.3 && Math.abs(roll) <= 15) ? -roll : 0;
+    var P = function(i){ var q = lm[i]; return q ? { x: q.x * W, y: q.y * H, v: q.visibility == null ? 1 : q.visibility } : null; };
+    var la = P(27), ra = P(28); if(!la || !ra) return false;
+    var piv = cfg().type === "chain" ? (la.v >= ra.v ? la : ra) : { x: (la.x + ra.x) / 2, y: (la.y + ra.y) / 2 };
+    var r = a * Math.PI / 180, cs = Math.cos(r), sn = Math.sin(r);
+    var rx = function(q){ var dx = q.x - piv.x, dy = q.y - piv.y; return piv.x + dx * cs - dy * sn; };
+    // 몸이 차지하는 좌우 폭(기준선에서 가장 먼 관절 + 여유)
+    var ext = 0;
+    lm.forEach(function(q, i){ if(!q || (q.visibility != null && q.visibility < 0.3)) return; ext = Math.max(ext, Math.abs(rx(P(i)) - piv.x)); });
+    var top = Math.min.apply(null, lm.filter(Boolean).map(function(q){ return q.y * H; })), bot = Math.max(la.y, ra.y);
+    ext = ext * 1.2 + Math.max(0, bot - top) * 0.08;
+    var half = Math.min(piv.x, W - piv.x);
+    if(half < ext) half = Math.min(W, ext);   // 사람이 가장자리에 붙어 있으면 반대쪽에 여백을 붙여서라도 대칭
+    var NW = Math.round(half * 2);
+    if(!a && Math.abs(piv.x - W / 2) < W * 0.015) return false;   // 이미 수평·가운데면 그대로
+    if(NW < 50) return false;
+    var c = document.createElement("canvas"); c.width = NW; c.height = H;
+    var g = c.getContext("2d"); g.imageSmoothingQuality = "high";
+    g.fillStyle = FRAME_BG; g.fillRect(0, 0, NW, H);
+    g.translate(NW / 2 - piv.x, 0);
+    g.translate(piv.x, piv.y); g.rotate(r); g.translate(-piv.x, -piv.y);
+    g.drawImage(img, 0, 0, W, H);
+    state.framedNext = { rot: a }; state.pendingRoll = null;
+    canvasToUrl(c).then(function(url){
+      if(cur() !== s || s.img !== img){ state.framedNext = null; return; }
+      loadImageIntoMode(url, NW, H);
+    });
+    return true;
   }
 
   /* ---------- auto pose detection (best-effort; falls back to manual) ---------- */
@@ -3387,6 +3507,7 @@
     if(cur() !== s || s.img !== img) return; // user moved on (retook photo / switched tab) while detecting
     if(!lm){ applyGrid(s, img, null); toast("자동 인식을 하지 못했어요. 점을 직접 짚어주세요."); return; }
     if(!plausiblePose(lm)){ applyGrid(s, img, null); toast("자동 인식 결과가 정확하지 않아 적용하지 않았어요. 점을 직접 짚어주세요."); return; }
+    if(!BENCH.on && !s.framed && reframeShot(s, img, lm)) return;   // v122 수평·가운데로 맞춘 사진으로 다시 인식
     applyGrid(s, img, lm);
 
 
@@ -3474,7 +3595,8 @@
     if(missing.length){
       toast("일부 지점(" + missing.join(", ") + ")은 자동 인식하지 못했어요. 직접 짚어주세요.");
     } else {
-      toast(c.type === "chain" ? "자동 인식 완료! 점을 드래그하면 위치를 미세 조정할 수 있어요." : "자동 인식 완료! 점과 빨간 기준선(↔ 손잡이)을 끌어 조정할 수 있어요.");
+      if(s.autoLevel) toast("기울기 " + Math.abs(s.autoLevel).toFixed(1) + "° 바로 세우고 가운데 정렬 · 자동 인식 완료!");
+      else toast(c.type === "chain" ? "자동 인식 완료! 점을 드래그하면 위치를 미세 조정할 수 있어요." : "자동 인식 완료! 점과 빨간 기준선(↔ 손잡이)을 끌어 조정할 수 있어요.");
     }
   }
 
@@ -5705,7 +5827,7 @@
         s.points = pts;
         s.centerX = p.centerX == null ? undefined : p.centerX; s.faceSign = p.faceSign == null ? -1 : p.faceSign;
         s.rot = p.rot || 0; s.rotPivot = p.rotPivot ? Object.assign({}, p.rotPivot) : null;
-        s.grid = p.grid ? Object.assign({}, p.grid) : null; s.captureRoll = p.captureRoll;
+        s.grid = p.grid ? Object.assign({}, p.grid) : null; s.captureRoll = p.captureRoll; s.framed = true;
         s.view = { scale: 1, cx: s.w / 2, cy: s.h / 2 };
         if(window.createImageBitmap) createImageBitmap(img).then(function(bmp){ if(s.img === img){ s.bmp = bmp; requestDraw(); } else { try{ bmp.close(); }catch(e){} } }).catch(function(){});
         try{ withMode(m, function(){ applyGrid(s, img, null); }); }catch(e){}
@@ -7778,6 +7900,7 @@
     romVideo.srcObject = null;
   }
   function romCamStop(){
+    if(typeof romCdStop === "function") romCdStop();
     romCam.on = false; cancelAnimationFrame(romCam.raf); romCam.ghostId = null; romCam.ghost = null; $("romGTag").hidden = true;
     romStopTracks(); romOrientStop(); romUiLive(false);
   }
@@ -7870,7 +7993,7 @@
       var pr = romVideo.play(); if(pr && pr.catch) pr.catch(function(){});
       romCam.on = true; romCam.buf = []; romCam.seen = 0;
       romUiLive(true); $("romBusy").hidden = true;
-      romGhostPrep(); romGdPrep(); $("btnRomOutline").hidden = false; romOutlineBtn();
+      romGhostPrep(); romGdPrep(); $("btnRomOutline").hidden = false; romOutlineBtn(); timerBtnSync($("btnRomTimer"), romCam.facing === "user");
       var kd = romCamKind(st.getVideoTracks()[0]);
       if(romCam.facing === "environment" && kd === "user") toast("후면 카메라를 찾지 못했어요. 🔄 전환 버튼을 눌러 주세요.");
       romLm(); cancelAnimationFrame(romCam.raf); romLoop();
@@ -8143,6 +8266,7 @@
     var c = document.createElement("canvas"); c.width = Math.round(vw * k); c.height = Math.round(vh * k);
     c.getContext("2d").drawImage(romVideo, 0, 0, c.width, c.height);
     var live = romSmooth(), roll = romCam.roll;
+    playShutter();
     romCamStop();
     var im = new Image();
     im.onload = function(){
@@ -8199,9 +8323,21 @@
     });
     return { L: L, q: Math.max(res.q, romQual(L, side)) };
   }
-  $("btnRomSnap").addEventListener("click", romSnap);
+  var romCd = null;
+  function romCdStop(){ if(romCd){ romCd(); romCd = null; $("btnRomSnap").textContent = "● 촬영"; } }
+  $("btnRomSnap").addEventListener("click", function(){
+    if(romCd){ romCdStop(); toast("타이머를 취소했어요."); return; }
+    if(romCam.on && romCam.facing === "user" && SELFIE_T){
+      sndCtx();
+      $("btnRomSnap").textContent = "타이머 취소";
+      romCd = countdown($("romStage"), SELFIE_T, function(){ romCd = null; $("btnRomSnap").textContent = "● 촬영"; if(romCam.on) romSnap(); });
+      return;
+    }
+    romSnap();
+  });
+  $("btnRomTimer").addEventListener("click", function(){ timerNext(); timerBtnSync($("btnRomTimer"), romCam.facing === "user"); timerBtnSync($("btnTimer"), state.facingMode === "user"); });
   $("btnRomCamCancel").addEventListener("click", romCamStop);
-  $("btnRomFlip").addEventListener("click", function(){ romCam.facing = romCam.facing === "environment" ? "user" : "environment"; romCamStart(); });
+  $("btnRomFlip").addEventListener("click", function(){ romCdStop(); romCam.facing = romCam.facing === "environment" ? "user" : "environment"; romCamStart(); });
   $("btnRomClose").addEventListener("click", romCamStop);
   ["romShotIn", "romFileIn"].forEach(function(id){ $(id).addEventListener("change", function(){ romS.liveL = null; romS.roll = null; }); });
   document.addEventListener("visibilitychange", function(){ if(document.hidden && romCam.on) romCamStop(); });
@@ -8797,7 +8933,7 @@
     if(typeof proRefresh === "function" && admSync._was !== undefined && admSync._was !== ADM.on){ try{ proRefresh(); }catch(e){} }
     admSync._was = ADM.on;
     $("btnMoreAdmT").textContent = ADM.on ? "관리자 모드 (사용 중)" : "관리자 모드";
-    $("btnMoreAdm").hidden = !ADM.on;   // v110: 일반 사용자에게는 숨김 (켜는 방법: '전체 메뉴' 제목 5번 탭)
+    $("btnMoreAdm").hidden = false;   // v122: 더보기 메뉴에 항상 표시 (v110~v121은 숨김)
     if(!ADM.on) $("admPanel").hidden = true;
     if(typeof requestDraw === "function") requestDraw();
     if(romS && romS.img && !$("romSheet").hidden) romDraw();

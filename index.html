@@ -219,7 +219,13 @@
   .view-seg button{font-family:inherit; font-size:12px; font-weight:700; line-height:1; color:#fff; background:transparent; border:0; border-radius:100px; padding:7px 0; width:46px; text-align:center; white-space:nowrap; cursor:pointer; opacity:.85;}
   .view-seg button[aria-pressed="true"]{background:#fff; color:#131B2E; opacity:1;}
   .view-seg button.wait:not([aria-pressed="true"]){opacity:.5;}
-  .view-seg.rom-seg{left:auto; top:auto; right:10px; bottom:10px; z-index:3;}
+  /* v142 원본·측정·격자 메뉴를 사진 위쪽 칸으로 (사진을 가리지 않게) + 관리자 저장 버튼 */
+  .pv-bar{display:flex; align-items:center; gap:8px; margin:0 0 8px;}
+  .pv-bar[hidden]{display:none!important;}
+  .pv-bar .view-seg, .pv-bar .view-seg.rom-seg{position:static; left:auto; top:auto; right:auto; bottom:auto; z-index:auto; backdrop-filter:none; background:#131B2E;}
+  .pv-bar .pv-save{margin-left:auto; font-family:inherit; font-size:13px; font-weight:800; color:#fff; background:#E0574D; border:0; border-radius:100px; padding:8px 18px; cursor:pointer; white-space:nowrap;}
+  .pv-bar .pv-save[hidden]{display:none!important;}
+  .pv-bar .pv-save:active{transform:scale(.97);}
   #btnMbPick, #btnRepPick, #btnRomPick, #btnScolPick{min-width:84px; white-space:nowrap; text-align:center;}
   #btnSessSave, #btnSessNext{min-width:108px; text-align:center;}
   .rc-lr button{min-width:52px; text-align:center;}
@@ -1422,6 +1428,12 @@
     <div class="cap-head"><h2 id="capture-title">1. 정면 사진 촬영</h2><button type="button" class="pt-guide-btn" id="btnPtGuide">📍 측정가이드</button></div>
     <p class="sub" id="capture-sub">정면을 보고 편안히 선 자세에서, 카메라를 배꼽 높이에 두고 수평(가늠자 초록)으로 맞춰 촬영하세요.</p>
 
+    <div class="pv-bar" id="bodyPvBar" hidden>
+      <div class="view-seg" id="btnBgToggle" role="group" aria-label="결과 사진 보기" hidden>
+        <button type="button" data-bv="raw">원본</button><button type="button" data-bv="meas">측정</button><button type="button" data-bv="grid">격자</button>
+      </div>
+      <button type="button" class="pv-save" id="btnBodyPvSave" hidden>저장</button>
+    </div>
     <div class="stage" id="stage">
       <video id="video" autoplay playsinline muted hidden></video>
       <canvas id="segCanvas" class="seg" hidden></canvas>
@@ -1465,9 +1477,6 @@
       </div>
       <div class="hint-chip" id="hintChip" hidden><span id="hintChipText">머리부터 발끝까지 흰 윤곽선 안에 맞추세요</span></div>
       <div class="hint-chip level-chip" id="levelChip" hidden><span id="levelChipText">수평 확인 중…</span></div>
-      <div class="view-seg" id="btnBgToggle" role="group" aria-label="결과 사진 보기" hidden>
-        <button type="button" data-bv="raw">원본</button><button type="button" data-bv="meas">측정</button><button type="button" data-bv="grid">격자</button>
-      </div>
       <div class="zoom-controls" id="zoomControls" hidden>
         <button type="button" id="btnZoomIn" title="확대">+</button>
         <button type="button" id="btnZoomOut" title="축소">−</button>
@@ -1847,7 +1856,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v141</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v142</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1864,7 +1873,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v141</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v142</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2270,6 +2279,12 @@
     <p class="rom-guide" id="romGuide"></p>
     <button type="button" class="rom-gd-btn" id="btnRomGuide">📍 측정가이드 · 예시 사진으로 점 위치 확인</button>
     <div class="rom-ref"><span>기준선</span><button type="button" id="romRefV" aria-pressed="true">수직 (서서·앉아서)</button><button type="button" id="romRefH" aria-pressed="false">수평 (누워서·엎드려)</button><button type="button" id="romRefFlip" class="flip" hidden>↔ 방향</button></div>
+    <div class="pv-bar" id="romPvBar" hidden>
+      <div class="view-seg rom-seg" id="btnRomGrid" role="group" aria-label="결과 사진 보기" hidden>
+        <button type="button" data-rv="raw">원본</button><button type="button" data-rv="meas">측정</button><button type="button" data-rv="grid">격자</button>
+      </div>
+      <button type="button" class="pv-save" id="btnRomPvSave" hidden>저장</button>
+    </div>
     <div class="rom-stage" id="romStage">
       <canvas id="romCv"></canvas>
       <video id="romVideo" playsinline muted autoplay hidden></video>
@@ -2279,9 +2294,6 @@
       <div class="rom-gtag" id="romGTag" hidden></div>
       <div class="rom-empty" id="romEmpty"><b>아래 [촬영하기]를 눌러 촬영하세요</b><span id="romEmptyTip"></span></div>
       <div class="rom-busy" id="romBusy" hidden>관절 위치 인식 중…</div>
-      <div class="view-seg rom-seg" id="btnRomGrid" role="group" aria-label="결과 사진 보기" hidden>
-        <button type="button" data-rv="raw">원본</button><button type="button" data-rv="meas">측정</button><button type="button" data-rv="grid">격자</button>
-      </div>
       <div class="rom-zoom" id="romZoom" hidden><button type="button" id="btnRomZIn" title="확대">+</button><span id="romZoomVal">100%</span><button type="button" id="btnRomZOut" title="축소">−</button><button type="button" id="btnRomZFit" title="전체 보기">⤢</button></div>
     </div>
     <div class="rot-bar rom-rot locked" id="romRot" hidden>
@@ -3034,7 +3046,7 @@
     markControls.hidden = true;
     stepTrack.hidden = true;
     markingHint.hidden = true;
-    zoomControls.hidden = true; btnBgToggle.hidden = true; $("rotBar").hidden = true; if(state.rotMode) setRotMode(false);
+    zoomControls.hidden = true; btnBgToggle.hidden = true; $("rotBar").hidden = true; if(state.rotMode) setRotMode(false); pvBarSync();
     legendCard.hidden = true;
     resultCard.hidden = true;
     btnSwitchCam.hidden = false;
@@ -3790,6 +3802,7 @@
   function syncBgToggle(){
     var s = cur();
     btnBgToggle.hidden = !(s && s.img);
+    pvBarSync();
     var gridOk = !!(s && s.grid && s.cutout);
     Array.prototype.forEach.call(btnBgToggle.querySelectorAll("[data-bv]"), function(b){
       var v = b.getAttribute("data-bv");
@@ -3797,6 +3810,33 @@
       b.classList.toggle("wait", v === "grid" && !gridOk);
     });
   }
+  // v142 메뉴 칸: 원본·측정·격자가 보일 때만 칸을 보이고, 관리자 모드면 [저장] 버튼
+  function pvBarSync(){
+    var bb = $("bodyPvBar"), rb = $("romPvBar"), adm = typeof ADM !== "undefined" && ADM && ADM.on;
+    if(bb){ bb.hidden = btnBgToggle.hidden; $("btnBodyPvSave").hidden = !adm; }
+    if(rb){ var rg = $("btnRomGrid"); rb.hidden = !rg || rg.hidden; $("btnRomPvSave").hidden = !adm; }
+  }
+  var PV_NAME = { raw: "원본", meas: "측정", grid: "격자" };
+  function pvFileName(kind, v){
+    var nm = state.member ? state.member.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" : "";
+    return "AYO_" + kind + "_" + PV_NAME[v] + "_" + nm + fileTag() + ".jpg";
+  }
+  $("btnBodyPvSave").addEventListener("click", function(){
+    var s = cur(); if(!s || !s.img){ toast("저장할 사진이 없어요."); return; }
+    var v = state.bgView || "meas", out;
+    if(v === "grid" && !(s.grid && s.cutout)){ toast("격자 배경을 만드는 중이에요. 잠시 후 다시 눌러 주세요."); return; }
+    try{
+      if(v === "raw"){
+        var src = s.bmp || s.img; out = document.createElement("canvas"); out.width = s.w; out.height = s.h;
+        out.getContext("2d").drawImage(src, 0, 0, s.w, s.h);
+      } else {
+        var sv = state.gridBg; state.gridBg = (v === "grid");
+        try{ out = buildAnnotated({ footer: false }); } finally { state.gridBg = sv; }
+      }
+    }catch(e){ console.warn("[pvsave]", e); toast("사진을 만들지 못했어요."); return; }
+    deliverCanvas(out, pvFileName(state.mode === "side" ? "측면" : "정면", v));
+    toast(PV_NAME[v] + " 사진을 저장해요");
+  });
   btnBgToggle.addEventListener("click", function(e){
     var b = e.target.closest("[data-bv]"); if(!b) return;
     var v = b.getAttribute("data-bv"), s = cur();
@@ -3925,7 +3965,7 @@
     levelChip.hidden = true;
     emptyCam.hidden = false; camControls.hidden = false; shootControls.hidden = true; markControls.hidden = true;
     stepTrack.hidden = true; markingHint.hidden = true; legendCard.hidden = true; resultCard.hidden = true;
-    zoomControls.hidden = true; btnBgToggle.hidden = true; $("rotBar").hidden = true; if(state.rotMode) setRotMode(false);
+    zoomControls.hidden = true; btnBgToggle.hidden = true; $("rotBar").hidden = true; if(state.rotMode) setRotMode(false); pvBarSync();
     state.phase = "idle";
   }
 
@@ -6954,7 +6994,7 @@
   }
   function openRomSheet(mk){
     if(romCam.on) romCamStop();
-    $("btnRomSwap").hidden = true; romS.editId = null; romS.editRec = null; romS.manualEdit = false; $("romManual").hidden = true; romS.recImg = null; romS.cut = null; romS.mask = null; romS.maskP = null; $("btnRomApply").textContent = "결과 저장"; $("btnRomGrid").hidden = true;
+    $("btnRomSwap").hidden = true; romS.editId = null; romS.editRec = null; romS.manualEdit = false; $("romManual").hidden = true; romS.recImg = null; romS.cut = null; romS.mask = null; romS.maskP = null; $("btnRomApply").textContent = "결과 저장"; $("btnRomGrid").hidden = true; pvBarSync();
     romS.ant = null; romS.touched = false; romS.confirmRaw = false;
     romS.footOff = null; romS.autoSnap = null; romS.mv = mk; romS.img = null; romS.pts = null; romS.trunk = null; romS.q = 0; romS.roll = null; romS.liveL = null; romS.refCustom = null; romS.sel = null; romS.edit = null;
     var J = romJoint(), mv = romMove();
@@ -7880,6 +7920,7 @@
   }
   function romSyncGridBtn(){
     var b = $("btnRomGrid"); b.hidden = !romS.img || !!romS.manualEdit;
+    pvBarSync();
     var cur = romS.view || (romS.gridOn ? "grid" : "meas");
     Array.prototype.forEach.call(b.querySelectorAll("[data-rv]"), function(x){ x.setAttribute("aria-pressed", String(x.getAttribute("data-rv") === cur)); });
   }
@@ -7915,6 +7956,24 @@
     romRomView(v);
     if(v === "grid" && !romS.cut && !romS.cutDone){ if(!romS.maskP) romS.maskP = romMakeCut(); toast("격자 배경을 만드는 중이에요. 잠시 후 자동으로 바뀌어요."); }
     romDraw();
+  });
+  $("btnRomPvSave").addEventListener("click", function(){
+    if(!romS.img){ toast("저장할 사진이 없어요."); return; }
+    var v = romS.view || (romS.gridOn ? "grid" : "meas"), out;
+    if(v !== "raw" && !romS.pts){ toast("측정점이 아직 없어요."); return; }
+    if(v === "grid" && !romS.cut){ if(!romS.maskP && !romS.cutDone) romS.maskP = romMakeCut(); toast("격자 배경을 만드는 중이에요. 잠시 후 다시 눌러 주세요."); return; }
+    try{
+      if(v === "raw"){
+        out = document.createElement("canvas"); out.width = romS.w; out.height = romS.h;
+        out.getContext("2d").drawImage(romS.img, 0, 0, romS.w, romS.h);
+      } else {
+        var sg = romS.gridOn, sv = romS.view; romS.gridOn = (v === "grid"); romS.view = v;
+        try{ out = romResultCanvas(Math.max(1200, romS.w)); } finally { romS.gridOn = sg; romS.view = sv; }
+      }
+    }catch(e){ console.warn("[pvsave rom]", e); toast("사진을 만들지 못했어요."); return; }
+    var J = romJoint(), mv = romMove();
+    deliverCanvas(out, pvFileName(J.k === "scol" ? "측만증_" + mv.k : "ROM_" + rom.joint + "_" + mv.k, v));
+    toast(PV_NAME[v] + " 사진을 저장해요");
   });
   // 기록용 원본 사진 (회차 사진 보기·수정에 사용)
   function romImgData(){
@@ -9670,6 +9729,7 @@
   var ADM_HASH = "662f5bbd3664bd4b2da29497ddc292a201b958b60dc6b8ff830e2f6baf267d2e";
   function admSync(){
     $("admChip").hidden = !ADM.on;
+    try{ pvBarSync(); }catch(e){}
     if(typeof proRefresh === "function" && admSync._was !== undefined && admSync._was !== ADM.on){ try{ proRefresh(); }catch(e){} }
     admSync._was = ADM.on;
     $("btnMoreAdmT").textContent = ADM.on ? "관리자 모드 (사용 중)" : "관리자 모드";

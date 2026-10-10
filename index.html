@@ -1223,10 +1223,10 @@
   html:not([data-ui="dark"]) .rom-shot-btn{background:var(--blue); box-shadow:0 10px 22px -12px rgba(11,122,107,.8);}
   /* 하단 메뉴 5개 */
   .bottom-nav .nav-item{min-height:56px; font-size:11.5px;}
-  /* 측정 하위 탭 (체형 · ROM · 측만증) — 폰에서만 */
-  .msr-tabs{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:4px; gap:4px;}
+  /* 측정 하위 탭 (체형 · ROM · 척추 균형) — 폰에서만 */
+  .msr-tabs{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:4px; gap:4px;}
   .msr-tabs[hidden]{display:none!important;}
-  .msr-tabs button{font-family:inherit; height:40px; border:none; border-radius:10px; background:transparent; color:var(--ink-soft); font-size:14.5px; font-weight:600; cursor:pointer;}
+  .msr-tabs button{font-family:inherit; height:40px; border:none; border-radius:10px; background:transparent; color:var(--ink-soft); font-size:14px; font-weight:600; white-space:nowrap; padding:0 2px; cursor:pointer;}
   .msr-tabs button[aria-selected="true"]{background:var(--blue); color:#fff; font-weight:800;}
   @media (min-width:900px){ .msr-tabs{display:none!important;} }
 
@@ -1338,14 +1338,14 @@
   <aside class="side" aria-label="주 메뉴">
     <div class="side-brand">
       <img id="sideLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAl9ElEQVR42u2dd3RVRdeHZ067vacTEgi9hN4JvSMdBJSmFAUbqK8UG1jB91XsDRUURAGVDkHAUKRIb6GGEnravbm9nDLz/TGQL4YgkCpkfmu5lmuRe8+5c56z9549e89AjDGgoiqqGDoEVBQgKgoQFQWIigJERUUBoqIAUVGAqChAVFQUICoKEBUFiIoCREVFAaKiAFFRgKgoQFRUFCAqChAVBYiKAkRFAaKiogBRUYCoKEBUFCAqKgoQFQWIigJERQGioqIAUVGAqChAVBQgKioKEBUFiIoCREUBoqIAUVFRgKgoQFQUICoKEBUVBYiKAkR1P4i7v24XIYwQKoH3hoEMU54vj6Io+Y9JKvf7KbJghT3uCSFULs8MYwwhpBaozJ83xgyEf2z9a8PmHWE2syQpRXsKEMJAMNS3V8cWTRNlReFYtmwND2JZBgAwf+HyS1euqwSeYZjsnNw2rRoN7NuV3B61QKX14mIAMrNyRo6blpK8VRdmlWS5aADJshwRbv1l4YdtWzeRZYXjyoghwqvT5X7mxXeW/Jos8BzCOJTrGjS874dzpsfGRkEKUBkYf1lWRo6fujZ5W1iYRZZkcK8DjgHDMj5fQKUSli2cm1QmDGEMEFJYlj2aembCM68fST0dFRkWCARlRZk14+lnJ44AAGAA7kfHdp/FQCRwCYbEkeOmrt2wNdxWRDvEskwwKKpUwi+L5rZtVboMIYQhBBDCX1b8PmXabK/Xb7WYsu25URFhX3z0evfObRBCEML7NDC6zyJ/hmEQQmqV8ON37/Xp2TE7J5fnihLGKQpSq4WQKD486oUduw9yHCvLSikFPQwDIYAz3/nssYkvS7JiNhmvZWS3bNZg4+pvu3duI8sKwzD3b1h9X87CSt4OLZxbGvEQCXqycxyTpry5Zv2WiHCbrCi5Tvf4xwa///ZUtVpQFIUt2yieAlQYQ8lbw8OKy1DJxkMYY4QQy7L7DqZOeOb102npkRE2t9sLIXxn5uSJ44aVYx6BAlQoQ9vCwyxFZygkqoQSYygvpln48+qXXvmfKEpmkyEr2xEXFz3v4zfatW16w689ENmg+zuRWOK+rPgMEa8ky8rLsz769OvFJqNe4PnMrJyundvM+2RWpZjIskwcUIDuM19GPnX1WtaTz83ctGVXZHiYKEkut/eZJx+dPet5jmMfgKDnQQPoX+LLMMYIYZZlduw6+MRzMy9euhYebnW5PLzAv//2f0Y/2h9jjDF+AIKeBxCgvzM0bW3yljK2Q3nh8Nfzl7086yOMsdGoz8qy16he5ZvP3mjRNFFR7u+5+oMPUN5TDIXEEeOnrl1fPDt0LwwRrxQMiS+98r9vvv/VYjZyLJuVbe/Tu9OXH74eEW4t+xU3CtB948sIHBcuXpnwzMw/dx2IiggLhkJen//FZx9/45WnIYR5q6cUoPuNofFT1yaX4rwsL6bZlLJr0vNvZmTmhNssjly3Xqf58L3pQwf1xBhjDBgGggdaD2A9UJ4vGzl+6pr1pTIvywt6Pv5i0cx3PuM4Vq/TZmY7EuvV+PazNxvUr6UoCsOw8AGH5wEF6O/x0LS164sbU6vVwtIf/p8hEvR4vf7np89ZtGS1zWIGEObYc4cO7PHJ+69YzMYHLNNTEQHK78tGjZ+2JnlrmM0iF4sh1dIfPkhq3USSZJ7nTp258MSzM/ceOBYZYfP7gyFRfPnFJ6a/OB7kKxmjAFGGCtqhnxe8375ts1VrUyZPm+1wOG1Ws93htFrNn77/St9eHe/rqgwK0D8yFBRHTSgeQwzjDwatZlNS6ybrft+OMdbrtJnZ9hZNE+d9+kbtmlUfvBQzBagAQ6FRE6YXhyGGYWRZ9vkDRoMeQmB3uEY/0v/D96bpddoKSw+oIF0ZJcUQhJBUtEmS9Nq0SZOfGgUelKqMIqtC/PIbdYxq1aJv3+vbq2OOPZcrUh0jxlhRFAAwBqBp43oAALJGASqwKsqPz6uFXfTtnL69i87QDUsE4COP/2fL9j0sy5ZIoyMF6D5iSLXomzn9imGHEMI6nebKlYwfl6wFAGBQoVXhOlNvzu1DoydMX72+KPEQx3EOh7N922Y/fveezWoG92Ez1/0K0I1rkeHGuLyGPo+hURNmrFm/5Z4YYlnW6XK3bdV46Q9zLWbjv6RPucBDLMtbqqC98Xk5xtETpq++a4YYhvH5Aw3r11q19DOL2ViO8y9StI8BYGDhuzIoCGGMIYClXXxdpgAFAkGOY1mOAxhIkgQAUKmE+4ghCKAkyxtWzmvWuF55VfkghDAGBVZLfP6Az+dHGKsEQa/T8jxXACZwy0fuJ4AQwgwDL1y8MnjEFJ7nBJ4HAHi8vujI8BVLPlWrhPJyBPkZWrN+i9VqVhTl9qEPGwqJVeNjd25eTNZKy/ie8y+V2B3OfQdSDxw+furMhROnzoZCksViZBkmOyc3JIrxlWPi42JqVq/StFHdJo3qkkCNkMSWtMksi905EEYMYJev3nz46CmrxURedJZlT525sH3Hvm6d25IWqnKc2y/8ZvaIsVM3puwyGfWFtqhijF1ur9fprlOrGssyEMIydvx5a7Q7dh34cenarX/uvXY9OySKkiSPHT1o/OjBNWtUYVn28pXry5Zv+OSrxdt27BMEgWWYSjERSa2bDh/Sq2un1izDlPiCXalbIAwAwFiS5U69Hjtx+pxOo0EYAwBYhnE4XcMG95r/xdvlm8wlV3e7vW26jrh0+ZperyuQ2sEYCwLfukWjFk0Thw3pVblSVFmaTHxztnHw8InZH3yzKWWXKEo6nYbneVmWP5/72sMDexT4yMHDJ0Y/MSMzy65WCYFgyB8IcCzXplXjqVPGdu7QEpRo9rzUHxtSFAjhzt2Hjh1P06jVsqIghBBCsqLotJo/tv519VomwzAIlVssT+yQ0aif/+XblWIiJUkuAAcDoSwrVeMrNW1cz+Xy5Nhzy4weYjAAAO++P6/HgAnrN27XajUWi0mlElwuzzszpzw8sIckywghUiGJEJIkuUmjuj8v+J9KJYREURB4i9mk12t3/nVwwPBnJ0+d7fX5yU++PwAiv3/Jr+tl+W8PBmMs8Hxmln3l2j+ImyvHSRnDMLKitGia2KlDS5/Pn9+fQgCCIVHg+a/mLxv06HODR0x5Y/YXgUBQlpXSzkETO+Fye4aOfmHWu5+zLGs2GRFCAGCn09OnV8cJjw2RZYVjWdLyQZbqeJ6TJDmxXs05bz7v9fkhhIqiIISMBp1er/3qu6W9B028dPl6STFUui6MmPqMzJw2XR71+vwsy+a/HJkVN2lYZ/Oa78q960VREIRgy/a9fR9+ymjU592h1+cf2LfLq1MnLl66FgAw6pF+1apWLhvPBSHMdbqHjJyyc/fB8HCrLCt5o6coKGXdgsR6NW4XF5MCgYeGTNq+c79Rr1NussLznCPXVT0hbvXSz+PjYorvy0oXIDLXnTd/2XNTZ4dZzfItcxwGQn8gmLzi69YtGpV7LR+ZLX713dI353yZNyyyrNSrU51lmeMnzzpdnqjIsLq1qqnVQrWEuInjhiVUiS2N6RjxR7KsDBk5ZWPKrvAwiyTJNzOZjNPlGdi364/fvvcPj58AtDFl1+BHJxsMf4vqeJ7LzXU3alB7/fKv9DptMWPq0n1gJOz/ddUmlcCjwkhlGCYkSkt+Tb7hLcpVZBhHDe9rMur9/oAsy7IsY4z2Hjj6564DJqNhytOjGiXWzsqxV0+Ij44MIzvSlYYjQwgzDPP6258mb9qRn568dNTwIb0IZLcdeZbFGHdq36JRg9p+fyA/Z5IkWyzGfQdTZ8z8iGEYVDwLUooAKQqCEB44fGL3nkNqjbrQX6sgpNNpNmzaYXc4WYYp37Q4aePS6bRjRw0yGvTRURFmszE6KqJRYu0qcZWenThi5LC+UZFh4WHWhom1RgzrGxFhI4+qhMcNIZZlUrbt+WzeTxF/pwdCGAqJcZWjk1o3hfAOOwMrCPEc91DPDsGQyPzdxkiSHGazfL945aaUXSzDKErR34FSdGHEJT39wtupJ8643b5LV64LAn/r5TiWtec6v/7kjdGP9Ps3NHGS+eCcud8cST2dne0gVGXnOBRFycp25DqcgGFAMMhotWE2c3RU+JABPaa/MJ4kh0pq0i6KUte+444eP6PTavJbuLv0X/lj8P2HUnv0nyAIQoGRJ+Fd88b1f181j2XZIt98aSUSMcYsy7jcntXrt/z644cLf1p1cuF5tVp1a6oXYcxx3C/LN4x+pB/7LyjOIndutZiWLVlribBhjERRhgBwPIcU5dXpT/Xu3u7XVRsNOl37pGYsy4SHWSGEGIMSCYRITnXFms37D6XaLAWjRgigoqAWzRLJuDF3Mf+tV7t6XFzMxYvXVKq/MYQQMuh1ew4cTdm+t3vnNkWuyi2tB0bC/t9WbTLotS2bNejaqfXtejQRQjqt9q99R44dP1NKIcU9TukhxnjY4F4DB/UwGfUqQahZPT6pTZOWzRKHDurVo2vbo8fPHD959lTaBUeuq2p8bEKVWDKPLsGk1IIfV/JcIVEjwlgQ+MS6NQlMd/TICCGNRl23VrWQKBZ6hwihpb8l/38A+O+xQMS6/rB4FWnybd+2WZW4SlnZdp4v1IsxTpd/2fINifVqlnt1AEmcWMzGJ8YOHf/0axBCgIHb7c1xOE+npa9c+4fd4QQIAUleuvA3oFFHRUfUqBY/580X2rRsVMxZMfl46om0g4eP63SaAu8SuTGjQV8lLuYup37EStWumaAom24FDiGk1ah37znscntMRkPR0uulAhAZiOMnz545m77gq3cghDaruWun1t98/6vVUogXUxDSadWr12+d9sJ4vU77LyiygRhjslVUeJgl7fxFjLBGo8IYyIrSo2vbWS8/c/xk2vkLl+PjKsVEhYuSVCK1QeR5p2zb6/H6C816yLIcFREWHm69S5NB/iShSmyhi3dkieba9azU42ltWzdBCLPsPd9/qbgwYkXmL1reMLFWQpVYsno6qF83nucKNTAYY7Vaffbcxc1bdue5v/L1YhDCJg3rPjVheGREWJOGdRs2qK3TaRvUr9WrW7vHRw4MBkNHjp2xO1zRUeF9enUc1K9bnVoJxV+kJHOlfQeOsSyDb6mVhRDKCrJaTTqt5q6TTxAAEB0VfruRZyATDInHT50DAOAiVedypUEPy7KBYGjV2pR3Zk7G+MYW7K1bNKxTK+FMWrpGoyps5QsDCJf+ljygTxemvGv8IIQYY6vFFGazuNwejVolShJS0OWr19MvXtn6594ce67i8gCB/3r+0rjKMQlVYju1b/nYiAGVY6MBKKIdInt9SJJ89vwloTBHDyEgvhVCSE4OucvMltVqEgQe336x6EL6lSKPVckDRPxX8sbtCkJ9enWEELIsoyiKSiX07t7+yLHTOq0GgUK8mF6n2bZj/7kLl6tVrVzuzVbEmxw4dPzy5Wu5TrcsyTzPK06FY9mQKLVv22zEsD6bt+y+dOU6z/E8x61J3hoTHT5+zBCEiuXIHLmubLuD47jC7AXECOt1WoLb3Ye9Oq1G4HlFURgGFvhaDADDMJlZ9jz7V/4AEUv+3cLlD/Vor9NqyPyQjOmAPl0+/Wpx4R4KA57jchzO5as2vTRl7B3nqKVuhACAEI5+tL/D6dbrNGq1WhIljmcVBVWNj33lpSccuS6EUGxMVK/u7QpYkSJbbgihI9fl8wVYtvCcKgZYo1GDGwXld/k7gEoQeJ6TZRkA5pYuEsww0OX25AuZyhUgYjnSL17ddzD1rVefzXPVDMNgjBPr1WzSqO5f+47oddpbp+sIY41atXzN5slPjRIEvnxPHyHPz+P1ZWRkR0eFKwqSJJnjWJfbm5VtH/7Yfw4cOi7Jstlk6Nu708MDujdtXD88zFL82D8QDEmSXGjGlXBToFz1blwYy7G3xRoDCMCNZHeR7r2kAcKYAWDhz6sT4is1aVQ3/xupIMSxbL+HOm3fuZ/RQ1QYfBqN+viJtD93HejSsZWCyrPhnKCw/vftF85dtOe6ZFlmWRYjBCEjyZIoyon1atgdzusZ2fO/XTJ/wS+2CFv/3p3ee+vFYjb6YIzv1Gp279+M7/CPDFnDLtIbW5IAYQBYhpUV5edf1k0cN0yWFUVR2JtbLWGEZaD06pr0zn+/lmT5Vn98c6KhLPktuUvHVuU7kydX79CueUZmjj8QDIVEny/A8axGrVarhJHD+015etTR1NOr1qWo1aowmyUjM+fs+Utujy/MZiHH8xRNLMNAyPwDO/fUxUYiJVmRFUUpnA4IMMZ6rRYUlaCSBAgpCsuyW7btCYnSsxNHMAzzt426WAAAqJYQ16dXx5+WrTWbDLeu4SGEdDrt5i27r2dkR0eFl1dCCGMMIAyFxGOpZ0RR0mk1Oq0mFBLNJmN4mCXcZjGZ9FNf+yD94lWrxTR+zJBmTeoVyAIU+dIGvVal4mVZud0LFggE7yVvjAGAoZAkSTKEhYZOECmIJJaKlsLlSvytXbxsLULoo88XhkSpwONHCHEcl53tYBimULuKMVbx/PWM7FXrUiaOG0a8XrkAxEB4/OTZBT+u1KhVHMdCCHmec3u8F9KvyIry45I1IBgCAs8K/G+rNvbomtSpfYue3dpVio4oMvTkU1aLyaDX59hzGYa7NeCFDPT4/ADc28qDz+8nG6sVkhoAAAMQXzkaFLVHmyvJQWeYjMycbX/ua9Oy8YlT5xQF3WIRIQQgMsIWGW51uX0cx9wKPcJYJfC/rtw44fGHy3Ftlfycju2aX7maGQyFZEkOiSKAkOc5AEFS26YTxw7b+dehNeu3eH3+tRu2Llv+u1arnjt76thRg4qWgyAAmUzGqEjb9czsW+NojAHLsg6HC99dEihvsuZwuERRLDQwRxjzHFenVkJRY+iSA4hYi2XLN6hUqp/m//ef/3ji5DcW/rTKYjEVsjiPkE6rOXD4+IGDx1s0SyyNVqa7zETs2H1Ao1ZFRtiiIsNESdLrtBq1KiSKVeNjJ40frihK5dioVs0bJNarGVc5+npG9l/7jlSKjihOBE0KYGrXTNi7/xgk+Z6/M82xrN3h9Pr8Br3u7kwdBgBkZOZIsnLrH5PjY8PCLA3q1wI3ly/LDSBSDrbw59WkWE6UpEK9DxmjQf26LV669nZOl2GYYCC09LfkFs0Sy37zi7x8zGfzfk47m261mE6ePs9xrFolQAYihPcdSN2wecep0+cxBhaLcfyYwWNHDapft0b9ujXy25IizUIwAKBNy0Y//LSysK/AHMfaHc7MTLtBr7ubVCIZvPRLVzHGt/4tA6EnEGzbuklxws2SeblJ8eG+A6nn0y+PHN4XQshzHFuYeJ5jWTapTZOa1eODwVChN03KFNdv3J7rdN8upVbaGaDsnFydVhNXOYZhWUmS/P5Adk5uRmZOdo7j1Jnz5y9crlmjCsexV65mvDbzwzpN+yZ1G/nVd0s9Ht8/V5re4WFABgDQsX2LMJtFkuUCY4Mx4FjW7fGePX8JAIDvoo+FeLq0sxcZhsGFGVpFVgb27QKKsf5YkkH0d4t+a1S/dvWEuH9IyJKaBK1G3bNbuw8+/V6rUd+65owxVqlU6ZeuJW/889GhD5VxKE1m0Xv2Halbu1owGCJ1WD6fX5RklUqQJbll8waTxg83GvR/bN29cl2Kx+0LhkIut/fNOV9mZObMevnpvGauewaIgQihuNjoju1aLF+1yWw2FnDxxOkcPHKiZ7ckfOc3ATAMI0nSqTMXVLeshUEIA6FQQkLl/r07EwdSbgCREj63x7tm3ZbXpk/CGNzhkZNljb5dvvx2yW3Bx5hj2WXLkx8d+lBZLooRSx4IBP/38fzTaek2q1kQeINey7KswaDnAyGMkcfj+/iLRXv2H7VZzfXr1nj+6dFkecHvDwRDYpGDifxh78RxQ1etSyk85uX53XsO380jxxhByJy7cCX90lWVSiiwgM2xrCPXNXHGMJPJUJxNQksAIILLmuStTrene5e2EN5hWY5ES00a1mmYWOvgkZMFyn7ze7Fde44cP3m2Xp3qZba2Smpi1iRvzbE7rRaTPxD0+QN2h/NmhIIVBW3bvBOwDGBZhuN+/mX98lWbRgzv27l9y4aJtbRaTXFDSZZBCLVt1WRg3y7Llv9us5rzZw4xRlqN+tDRU+mXrlW5U1cXWRXY9dchp8tToLqIvPDNGtcbP2ZIMce2BAAir8LCn1bVqlG1anzs3byChLm+vTru3nvEoNMWaoU4ls1xOX9Z8Xu9OtXLLAwi9awI4Yd6tJdkORgM5didgWBIkiS/PwghFAR+UL+ug/t327v/2OffLHE4nJevZrwy6yMAQYN6tT7+34wWzRrgYuOOMX7r1ee279jv8foFgc97wTBZcrbnrtuw7eknHvnnYSER1fpNf3Icm7/W5+YZQuyH703XaFQKQsWpnyluVwbx9ydPn2/advCjw/t+9/lbd0M0+Zu0cxfb9xiNCpsggJstLFXiK+3YuEir1ZRBVpo0FmZk5TRrNzQYCplNBrPJKPCcTqfV6zSBYCgYFPv07NCzW9L+Q8cVRVGrVE0b142JjrA7nCdPnz94+GSXji1bt2hUfHtJkhdrN2wdPuY/BoMOQpDngBgG+gPB+nVqbFn/PSlzKHRUyHMhI1xgVBkIcxzOLz98fezoQcXf4bq4FojEywsWrQi6vZUrRYG76BYAN0rHcY1q8a1bNNyYsstk0N8aDGGMNRrV6bT0P7bt6dOzQ5lsAYMBgJ98+WNGZrbBoM/Msmdm2iEDSZKNYVkIwL6Dx16a8R4IibzJoNGou3du8/wzY1o2S6waH9u7e/u8X1d8o64oSp+eHefOmTZ56myjUc+xN7q3EMI6rfbgkRPL12weNqjn7RqhyHP5ZsEvLrcnr7uDZRlFQTm5rrdff65E6AEAsLNmzSqO+SHFGy+9+n5Altu1ado+qfld1sQoCJHWpHXJ2zRaTeEFlwwMhkKyrAzu3x0XteLpniSKUm6uS6fVhoWZTSajRi3wPMdzHMdzHMtijGNjIp8cPzypfcv0i1fcHu/RIyfnL/xt/qIVB4+csFnMlWOjSmr3HYZhFEVp3qR+5dio5I1/BkOiRn2jOZPUKh0+euqRhx/SqFW32mZCxvGTZ1+Y8V+1WoUwJokVrz8gK8oH7740edIo4sVKYNJaZBeGEEIIcxw7+okZK9dshhD26t5+yffvS5J8c7OI26bUbuzYDWHqibSufcZxPPsPCUNFUbas/75+3RqyLBdjc+c7prIUlmU3pewa/8zrVotJp9VYLCaB51iWdXu8165n165ZtVGD2o+PHKhWC1evZZ06c8Hj9Rn0uitXM85duJx6Io1l2SXfvx9ms5SgtyV3tWvP4Remzzl09JTBoFOrBOJqc3Pdgwd0XzhvNgBAlpW8bQUUBZHN1HoPmrj/UKrBoAcAh0TJ7fYm1qvxwbtTOyQ1L8FtCIobA338xaJX3/qELK0rivLzgvfJFkZ3qX0HjvUc+KRarfqHrLTH62vXpunqpZ+TCLc0IiGMAcY4GAqNeWLGryt+N5mNGCFydZL5JIupOq3GZjWnnU0PiVJ0VHiHpOazZ00xm43kS0qprZYw5PMHPvv6p+8W/nbp8nVB4DVqlUol5Drdj40YMHf2tAJVZoFA8InnZq1al2I06LxefzAkxkRHjB05cPJTowwGXcme7FEUF0Ye9pmz6a+99emcud+qBCEkSrIkh0LiijWb7bkuloEhUVKpBJUgFPrxy1cyTp25sHbD1tfe+iQr24EREiVJEmXphmRJliVJliVZFCWOZU+ePnfw8Im6tatFhNtKZ29CTOg8mnpaUAkcywIIGIYBEEiSLMuyKMkulyfH4RRUQkS41e5wXsvI2rfn0DcLl2/ZvicjKye+cozZZCidiSGDEFIJQlLrJsMG96ocG+X1+bNzch25LgDgzp37N27dbTQayNWzchzrNmwb99RrGzdu5wQBAlivTvWnJgyfO3tqn14dVSpBKelQsigWiJiBkeOm7fjrYEKV2PzfIElyrtPNcZzX63v3jeeHDeqZn3fyQVGUBj7y7PkLVxiW0WrU2htNKuDv208BDDBGGCGkIAQBuHw1s06tqhtWzGMYpqT6iAsEc98vXrlm/VbIQI1aJQg8wNjrC5CXW1FQZIS1e+e2vbq38/kDa5O3bfxjpyhJ2TmO69ezM7PtAIDP5742ZED3Ulr9JbuP5Y3k6bQL+w6kHkk9ffHStfMXLjucLpvVrNfrfD6/1+uPigyrX7dG3drVWjZr0KB+LeKtSuno8aK7MJ8/oFapCnWloij5/AGNWqVWqwodC7fbywu8WqUiP+f2odKNgVMURUFIlhWjQVc6E3gEABgw/Nk161LMVjMEQKXiBUEQBF6rURPuq1aJbdOi0fGTZ9POXaxRvUqDejWfmzSS4OX2+A4fPRUbE5FQtXKpphsKYJQnvz/o8wcUReF5zmQ0FDhws1RPra+gG43fan72Hzo+YPgzwaCIEEIYYXyjIBQhBAFACPvcHoCQoNeJokjWy5o2qtutc5tunVsntW56T7XuJXLPNzffLKQtP/825BCW7uS16ADh25xVgDFJqPxTqJLvond4MXC+/0AphT8YAwBST6StWPNHZpY9MzvH7wsEQ2IoJHp9AXJBnucaN6jzxOMPx1aKWrUuZf6i5S6XJ9fpDoZEjLHJqH9s5MDXp00itYtl/ALgfONTeqNELdAdLNC4p15btnxDXFw0z3Fmk8Fg0KkEQaUSSHmyyWiYOG6ozx/8Y+tfYTazoqAOSc2qV4vHCF3PyNmz/4gkKyOH9+Uq3rmFFR0g0nmdlW3v1m/8zVXrG04s/6uMEAqGRNHjA4rCGnQqldCoQZ1HhvRu1bxBw8TaZey//lXiKrj5wRgzDMyxO9VqITLc5vX5ZYwR/ttyBNlop1un1r26t7uQfnX1+hS3x7f/YOqunftVGnVkZFiDejVffO7xDknNMAYltVEQBeg+scAQAgAQRkP6d7905bosK5Ikk4NgyD9jjI0GXaf2LYcM6J5+6drVa5k1qsdHRthq1agKMBZl+dq1rNQTaQiTIrIKZ84rugsjaaonn5s175slEdHhPM+pVIJWQxb/bxCmKKhSTIRKJaRs2yvLcniYJSY6YsSwvkmtGletEmu1mCryAFILBBVFkWVZrdewLCuKkihKTpcHAIARvpmFQieOnwmLsDVpWDvX6bmQfiUz075v+16g1dhsluiosOoJcRPHDeveJYk4RApQhQqAGIfDdfV6VuVKUaIokaJjMplSaQSWY3VajcGga9uy8WvTJ5mM+nMXLm/bsU+WlUrREVFR4Rq1yuFwnjx93mjUV8xzL+ksDEMIDx45sXP3IY/X5/H6srNzyQaWsZUi7Q6Xzx9ACmrVomFUZNi8Bb9cz8i2mI08z7Vr07RV84Z6vdZk0EdE2PQ6LfcPm2BQgB5sgPoNffqPrX9ZLCYA8m0noiBJksgWEQpCxD7ZrGa7wyn6/CAkAo3aYDbarOa42Gi9Xjt0UM8xj/b/l5yiSl1YGYksLdWtUy1l2x4IgaIgUviH80lBKBgMxVeO+fKj15s1rn/5asaZs+kMAyPCbdGRYWaz0WDQyZLCcWzefn4UoIolnuN8bg/Hc7IkAwhI9Y9KECxmU0SEtWa1KrVrVX14YI/4yjFOl8dqMdasXoVhYK0aVQWBJ99Qfme/Uhf2L3BhdodzbfJWu8OFMLKYTaFQyO32xUSHk3laTo7D6fLYrOZgSPz+xxWXrlz3+wOCIFSKjoiPiyFGR6tRGw36GtXixo0ZXCWuUsVxZBXehWHMQrjvQOrXC37hWJZUp0iS7HC6ZVl2u73+QFAMifjm+Tccy7Zq3tBk1J89f8nj8fn9wUYNajduWKdWjSqxlaIsZpPJqAdlfh4vBaj8LDAAAACbzXzq9Pm89ivIQJ7jIIQsyxr0OkWjDoVEUZIABu/OmvzMxJEQAFGSEMLqCuu6qAvLH0czDDNszAvLV2+2mE2SJJEySDIyAs+Hh1sT4mMbN6rT/6HOrZo3BABcvHQNY2x3OO0OJ8uydWolREWGgZv7wtAguqKFQQBj3CGpReqJs1qNWqtVazRqo0Fns1pioiNiK0XGVoqqGl9Jo1ZdvZb1waff/75px+m0dEmWA8GQoih+f7BOrYSdmxcbDboK+DZSC3RDkiStXJty5Nhpr8/ndvtcbo/X5w8GRX8gkJOTK0qyKEr+QAApiOd5tVog570xEOp02qlTxo4dPQiUREshtUD35UQMABgIhM6cTV/3+7a0sxdJcMTkOweZ7LdvMhrIKQhkM16GgV6v/6P/Tn94YM9y31qfAlR+RhhCAIDRqHvlpSebNq43bMyLBr0WYwABgAzECCsIkbrRAruIkFOnIWTyKpQpQBU5lMYY4+SNf5I2jGBQlBVFDIkcx+pu2a6QNDlkZtonPPZwv96dQCmcnEpjoPtSwWDI5fZm5ziCoZDT6Tmdlr51x95tf+7L7544jg0EQv5A8Knxw99/9yXi1GDFXIunAN2NXnnz448+W2g2G8kKWa7TXa1a3KwZTw0Z0ON2rSnUhVXcKT1ZSCX/LyuywPM2ixkDwLFsrsvNMsy4MUNmzpgUHmZFCMGKVj9GAbpTQE0MCrwZ6wgQgrUbtiqKbHc4WzZv8MrUJzu3bwlu1sLSEaMA3VYEkR8Wr9yybU+nDi3HjR48bHAvjmPJnnCUHhoD3dGdYQjh5i27PR5f/z6dSRxdLjvnU4AeEIPEMCyEdCQoQPcikiSk6FCAqEpF1J1TUYCoKEBUFCAqChAVFQWIigJERQGiogBRUVGAqChAVBQgKgoQFRUFiIoCREUBoqIAUVFRgKgoQFQUICoKEBUFiIqKAkRFAaKiAFFRgKioKEBUFCAqChAVBYiKigJERQGiogBRUYCoqChAVBQgKgoQFQWIigJERUUBoqIAUVGAqChAVFQUICoKENV9of8D1dgLKWAlr7EAAAAASUVORK5CYII=" alt="" width="40" height="40">
-      <div><b id="sideName">아요바디요</b><span id="sideSub">체형·ROM·측만 측정</span></div>
+      <div><b id="sideName">아요바디요</b><span id="sideSub">체형·ROM·척추 균형 측정</span></div>
     </div>
     <nav class="side-menu">
       <button type="button" class="nav-item" data-view="dash"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>현황</span></button>
       <button type="button" class="nav-item" data-view="analyze" aria-current="page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>체형분석</span></button>
       <button type="button" class="nav-item" data-view="rom"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M4 20L16 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/><circle cx="16" cy="6" r="1.6"/></svg><span>ROM 측정</span></button>
       <button type="button" class="nav-item" data-view="fhp"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="6" r="3"/><path d="M13 9.5c-1.5 1.3-2.6 3-3 5"/><path d="M6 20c.8-3.2 2.4-5.4 4-5.5h3c1.6 0 2.6 2.2 3 5.5"/><path d="M4 14.5h8" stroke-dasharray="2 2"/></svg><span>거북목 (CVA)</span></button>
-      <button type="button" class="nav-item" data-view="scol"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c-2.5 2.5 2.5 4.5 0 7s2.5 4.5 0 7v4"/><path d="M8.5 5.5h3M12.5 9h3M8.5 12.5h3M12.5 16h3M9.5 19.5h3"/></svg><span>측만증 검사</span></button>
+      <button type="button" class="nav-item" data-view="scol"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c-2.5 2.5 2.5 4.5 0 7s2.5 4.5 0 7v4"/><path d="M8.5 5.5h3M12.5 9h3M8.5 12.5h3M12.5 16h3M9.5 19.5h3"/></svg><span>척추 균형 체크</span></button>
         <button type="button" class="nav-item" data-view="report"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>종합 리포트</span></button>
       <button type="button" class="nav-item" data-view="members"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원관리</span></button>
       <button type="button" class="nav-item" data-view="exercise"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/></svg><span>운동관리</span></button>
@@ -1394,7 +1394,7 @@
     <button type="button" role="tab" data-mv="analyze" aria-selected="true">체형</button>
     <button type="button" role="tab" data-mv="rom" aria-selected="false">ROM</button>
     <button type="button" role="tab" data-mv="fhp" aria-selected="false">거북목</button>
-    <button type="button" role="tab" data-mv="scol" aria-selected="false">측만증</button>
+    <button type="button" role="tab" data-mv="scol" aria-selected="false">척추 균형</button>
   </div>
   <button type="button" class="cur-bar" id="curBar" aria-label="측정할 회원 선택">
     <span class="mb-avatar" id="cbAv">?</span>
@@ -1609,11 +1609,11 @@
     <div class="rep-lock" id="repLock" hidden><div><b>🔒 종합 리포트는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 리포트 저장·공유는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnRepPro">PRO 알아보기</button></div>
     <div class="member-bar rom-mb" id="repMember">
       <div class="mb-avatar" id="repMbAv">?</div>
-      <div class="mb-txt"><b id="repMbName">회원 선택 안 함</b><em id="repMbMeta">회원을 선택하면 그 회원의 체형·ROM·측만증 결과로 리포트가 만들어져요</em></div>
+      <div class="mb-txt"><b id="repMbName">회원 선택 안 함</b><em id="repMbMeta">회원을 선택하면 그 회원의 체형·ROM·척추 균형 결과로 리포트가 만들어져요</em></div>
       <button type="button" class="btn line sm" id="btnRepPick">회원 선택</button>
     </div>
     <div class="rep-rounds" id="repRoundWrap" hidden>
-      <p class="rep-rounds-h"><b>회차 선택</b><span id="repRoundSub">회차를 누르면 그 회차의 체형·ROM·측만증 결과로 리포트를 보여줘요</span></p>
+      <p class="rep-rounds-h"><b>회차 선택</b><span id="repRoundSub">회차를 누르면 그 회차의 체형·ROM·척추 균형 결과로 리포트를 보여줘요</span></p>
       <div class="rep-rounds-list" id="repRounds"></div>
     </div>
     <div class="rep-head" id="repHead" hidden>
@@ -1654,12 +1654,12 @@
         </div>
       </div>
       <div class="rep-col" id="rep-scol">
-        <h3>측만증 · 거북목 <small>척추 측만 · 두개척추각</small></h3>
+        <h3>척추 균형 · 거북목 <small>척추 균형 · 두개척추각</small></h3>
         <p class="sub" id="repScolSum" hidden></p>
         <div class="rep-rom-wrap" id="repScolBody"></div>
         <div class="rep-empty" id="repEmpty-scol">
-          <p>측만증·거북목 측정이 아직 없어요</p>
-          <button type="button" class="btn primary" data-goview="scol">측만증 측정하기</button>
+          <p>척추 균형·거북목 측정이 아직 없어요</p>
+          <button type="button" class="btn primary" data-goview="scol">척추 균형 측정하기</button>
         </div>
       </div>
     </div>
@@ -1679,7 +1679,7 @@
     </div>
 
     <section class="card rep-pair" id="repPair" hidden>
-      <h2>ROM·측만증 전후 비교 <small>회차 선택</small></h2>
+      <h2>ROM·척추 균형 전후 비교 <small>회차 선택</small></h2>
       <div class="rp-sel">
         <select id="rpItem" aria-label="항목"></select>
         <div class="rp-ab"><label>전<select id="rpA"></select></label><label>후<select id="rpB"></select></label></div>
@@ -1724,7 +1724,7 @@
         <button type="button" data-goview="analyze"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg></span>체형분석</button>
         <button type="button" data-goview="rom"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M4 20L16 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/><circle cx="16" cy="6" r="1.6"/></svg></span>ROM</button>
         <button type="button" data-goview="fhp"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="6" r="3"/><path d="M13 9.5c-1.5 1.3-2.6 3-3 5"/><path d="M6 20c.8-3.2 2.4-5.4 4-5.5h3c1.6 0 2.6 2.2 3 5.5"/><path d="M4 14.5h8" stroke-dasharray="2 2"/></svg></span>거북목</button>
-        <button type="button" data-goview="scol"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c-2.5 2.5 2.5 4.5 0 7s2.5 4.5 0 7v4"/><path d="M8.5 5.5h3M12.5 9h3M8.5 12.5h3M12.5 16h3M9.5 19.5h3"/></svg></span>측만증</button>
+        <button type="button" data-goview="scol"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c-2.5 2.5 2.5 4.5 0 7s2.5 4.5 0 7v4"/><path d="M8.5 5.5h3M12.5 9h3M8.5 12.5h3M12.5 16h3M9.5 19.5h3"/></svg></span>척추 균형</button>
       </div>
     </section>
     <section class="card ds-card"><h2>재측정 필요 회원</h2><p class="sub">마지막 측정 후 30일이 지난 회원이에요.</p><div id="dsDue"></div></section>
@@ -1859,7 +1859,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v152</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v153</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1875,7 +1875,7 @@
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
     <div class="scol-info">
-      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v152</span>
+      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v153</span>
     </div>
   </section>
   <section class="view" id="view-scol" hidden>
@@ -1892,8 +1892,8 @@
     <div class="rom-rounds" id="scolRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
-      <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v152</span>
+      <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v153</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2017,7 +2017,7 @@
       <input type="password" class="adm-in au-in" id="auSPw2" autocomplete="new-password" placeholder="비밀번호 확인">
       <div class="au-agree" data-agree>
         <label class="all"><input type="checkbox" data-all><b>모두 동의</b></label>
-        <label><input type="checkbox" data-req>[필수] 이용약관 · 개인정보 수집·이용 동의 <a href="privacy.html" target="_blank" rel="noopener">보기</a></label>
+        <label><input type="checkbox" data-req>[필수] 이용약관 · 개인정보 수집·이용 동의 <a href="terms.html" target="_blank" rel="noopener">약관</a> · <a href="privacy.html" target="_blank" rel="noopener">개인정보</a></label>
         <label><input type="checkbox" data-req>[필수] 민감정보(회원의 신체 측정값 · 체형 사진) 처리 동의</label>
         <p class="au-fine">측정한 회원(고객)의 체형·관절 측정값과 측정 사진을 계정 서버에 저장해 다른 기기에서도 불러올 수 있게 해요. 계정을 삭제하면 함께 삭제돼요.</p>
       </div>
@@ -2061,7 +2061,7 @@
       <p class="sub" id="auCWho"></p>
       <div class="au-agree" data-agree>
         <label class="all"><input type="checkbox" data-all><b>모두 동의</b></label>
-        <label><input type="checkbox" data-req>[필수] 이용약관 · 개인정보 수집·이용 동의 <a href="privacy.html" target="_blank" rel="noopener">보기</a></label>
+        <label><input type="checkbox" data-req>[필수] 이용약관 · 개인정보 수집·이용 동의 <a href="terms.html" target="_blank" rel="noopener">약관</a> · <a href="privacy.html" target="_blank" rel="noopener">개인정보</a></label>
         <label><input type="checkbox" data-req>[필수] 민감정보(회원의 신체 측정값 · 체형 사진) 처리 동의</label>
         <p class="au-fine">측정한 회원(고객)의 체형·관절 측정값과 측정 사진을 계정 서버에 저장해 다른 기기에서도 불러올 수 있게 해요. 계정을 삭제하면 함께 삭제돼요.</p>
       </div>
@@ -2669,8 +2669,8 @@
   };
 
   var THRESH = {
-    h: [ {max:1.5, cls:"g-good", label:"정상 범위"}, {max:3.0, cls:"g-warn", label:"경도 비대칭"}, {max:999, cls:"g-crit", label:"중등도 이상"} ],
-    plumb: [ {max:2.0, cls:"g-good", label:"정상 정렬"}, {max:4.0, cls:"g-warn", label:"경도 편위"}, {max:999, cls:"g-crit", label:"뚜렷한 편위"} ]
+    h: [ {max:1.5, cls:"g-good", label:"정상 범위"}, {max:3.0, cls:"g-warn", label:"약간 비대칭"}, {max:999, cls:"g-crit", label:"비대칭 큼"} ],
+    plumb: [ {max:2.0, cls:"g-good", label:"정상 정렬"}, {max:4.0, cls:"g-warn", label:"약간 벗어남"}, {max:999, cls:"g-crit", label:"많이 벗어남"} ]
   };
   var GRADE_META = {
     "g-good": {sw:"var(--good)"}, "g-warn": {sw:"var(--warn)"}, "g-crit": {sw:"var(--crit)"}
@@ -4766,13 +4766,13 @@
     var table, labels, ranges;
     if(c.type === "chain"){
       table = THRESH.plumb;
-      labels = ["정상 정렬","경도 편위","뚜렷한 편위"];
+      labels = ["정상 정렬","약간 벗어남","많이 벗어남"];
       var Hh = patientHeight() || DEFAULT_HEIGHT, unit = Hh * EAR_ANKLE_RATIO / 100;
       ranges = ["0–" + (2*unit).toFixed(1) + "cm", (2*unit).toFixed(1) + "–" + (4*unit).toFixed(1) + "cm", (4*unit).toFixed(1) + "cm+"];
       legendSub.textContent = "외측복사뼈(발목)를 지나는 수직 기준선(플럼라인)에서 귀·어깨·고관절·무릎이 앞뒤로 벗어난 거리(cm)입니다. 키 " + Hh + "cm 기준으로 환산하며(키 입력 칸), 판정은 키 대비 비율(2%·4%)로 합니다. 스크리닝 참고값입니다.";
     } else {
       table = THRESH.h;
-      labels = ["정상 범위","경도 비대칭","중등도 이상"];
+      labels = ["정상 범위","약간 비대칭","비대칭 큼"];
       ranges = ["0–1.5°","1.5–3.0°","3.0°+"];
       legendSub.textContent = "각도는 촬영 조건(카메라 수평, 서 있는 자세, 거리)에 따라 달라질 수 있는 스크리닝 참고값입니다.";
     }
@@ -5168,7 +5168,7 @@
     var m = state.member;
     $("repMbAv").textContent = m ? initial(m.name) : "?";
     $("repMbName").textContent = m ? m.name : "회원 선택 안 함";
-    $("repMbMeta").textContent = m ? (memberMeta(m) || "회원") + " · 이 회원의 결과로 리포트를 만들어요" : "회원을 선택하면 그 회원의 체형·ROM·측만증 결과로 리포트가 만들어져요";
+    $("repMbMeta").textContent = m ? (memberMeta(m) || "회원") + " · 이 회원의 결과로 리포트를 만들어요" : "회원을 선택하면 그 회원의 체형·ROM·척추 균형 결과로 리포트가 만들어져요";
     $("btnRepPick").textContent = m ? "변경" : "회원 선택";
     $("repMember").classList.toggle("on", !!m);
   }
@@ -5336,7 +5336,7 @@
     $("view-rom").hidden = (v !== "rom");
     $("view-scol").hidden = (v !== "scol");
     $("view-fhp").hidden = (v !== "fhp");
-    $("pageTitle").textContent = v === "report" ? "리포트" : v === "members" ? "회원" : v === "dash" ? "홈" : MSR_VIEWS.indexOf(v) >= 0 ? "측정" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : v === "settings" ? "설정" : v === "rom" ? "ROM 관절가동범위" : v === "scol" ? "척추 측만 검사" : "체형 분석";
+    $("pageTitle").textContent = v === "report" ? "리포트" : v === "members" ? "회원" : v === "dash" ? "홈" : MSR_VIEWS.indexOf(v) >= 0 ? "측정" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : v === "settings" ? "설정" : v === "rom" ? "ROM 관절가동범위" : v === "scol" ? "척추 균형 체크" : "체형 분석";
     $("btnGs").hidden = ["rom", "scol", "fhp", "report"].indexOf(v) >= 0;
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
@@ -5715,7 +5715,7 @@
       if(!S.length){ box.innerHTML = '<p class="mb-empty">아직 측정 기록이 없어요. <b>측정하기</b>를 눌러 시작하세요.</p>'; }
       else box.innerHTML = S.map(function(ss, si){
         var r = ss.rec, nS = ss.roms.filter(function(x){ return x.joint === "scol"; }).length, nF = ss.roms.filter(function(x){ return x.joint === "fhp"; }).length, nR = ss.roms.length - nS - nF;
-        var pr = r ? PR[r.id] : null, views = [pr && pr.f ? "정면 " + pr.f + "번째" : "", pr && pr.s ? "측면 " + pr.s + "번째" : "", nR ? "ROM " + nR + "항목" : "", nS ? "측만증" : "", nF ? "거북목" : ""].filter(Boolean).join(" · ");
+        var pr = r ? PR[r.id] : null, views = [pr && pr.f ? "정면 " + pr.f + "번째" : "", pr && pr.s ? "측면 " + pr.s + "번째" : "", nR ? "ROM " + nR + "항목" : "", nS ? "척추 균형" : "", nF ? "거북목" : ""].filter(Boolean).join(" · ");
         var th = r && r.thumbs ? [r.thumbs.front, r.thumbs.side].filter(Boolean) : [];
         if(th.length < 2) ss.roms.slice(-2 + th.length).forEach(function(x){ if(x.thumb) th.push(x.thumb); });
         return '<div class="rec" data-key="' + esc(ss.key) + '" data-round="' + (S.length - si) + '"><input type="checkbox" aria-label="비교 선택" data-id="' + esc(ss.key) + '">' +
@@ -5735,7 +5735,7 @@
         [".th", ".info", ".score"].forEach(function(sel){ var el = row.querySelector(sel); if(el){ el.style.cursor = "pointer"; el.title = "이 회차 전체 보기"; el.addEventListener("click", function(){ mbSessOpen(m, key, false, round); }); } });
         row.querySelector(".x").addEventListener("click", function(){
           var ss = S.find(function(x){ return x.key === key; }); if(!ss) return;
-          if(!window.confirm(round + "차 측정(" + ss.day + ")의 체형분석·ROM·측만증·거북목 기록을 모두 삭제할까요?")) return;
+          if(!window.confirm(round + "차 측정(" + ss.day + ")의 체형분석·ROM·척추 균형·거북목 기록을 모두 삭제할까요?")) return;
           var jobs = ss.roms.map(function(x){ return dbDel("roms", x.id); });
           if(ss.rec) jobs.push(dbDel("records", ss.rec.id).then(function(){ if(state.sessionId === ss.rec.id) state.sessionId = null; }));
           Promise.all(jobs).then(function(){ mbOpenDetail(m.id); });
@@ -5773,13 +5773,13 @@
   });
 
   /* ---- 전후 비교 ---- */
-  // v135 변화 판정: 체형·측만증은 0에 가까울수록, ROM은 정상 범위까지 커질수록 개선 (1 개선 / -1 악화 / 0 같음)
+  // v135 변화 판정: 체형·척추 균형은 0에 가까울수록, ROM은 정상 범위까지 커질수록 개선 (1 개선 / -1 악화 / 0 같음)
   function cmpBetter(a, b, it){ return trendOf(it && it.mv || null, a, b).t; }   // v149 공통 판정
   function cmpDelta(a, b, unit){   // → { txt, cls }
     if(!a || !b || a.num == null || b.num == null) return { txt: "–", cls: "up-same" };
     var d = Math.round((b.num - a.num) * 10) / 10;
     if(Math.abs(d) < 0.05) return { txt: "변화 없음", cls: "up-same" };
-    var tr = trendOf(a.mv || null, a.num, b.num), bt = tr.t, whole = a.ord != null;   // ROM·측만증은 정수 각도
+    var tr = trendOf(a.mv || null, a.num, b.num), bt = tr.t, whole = a.ord != null;   // ROM·척추 균형은 정수 각도
     return { txt: (d > 0 ? "▲" : "▼") + (whole ? Math.abs(d).toFixed(0) : Math.abs(d).toFixed(1)) + unit + " " + tr.lab, cls: bt > 0 ? "up-good" : bt < 0 ? "up-bad" : "up-same" };
   }
   function cmpKeys(A, B){
@@ -5795,7 +5795,7 @@
         return '<tr><td>' + esc(nm) + '</td><td>' + (a ? esc(a.value) : "–") + '</td><td>' + (b ? esc(b.value) : "–") + '</td><td class="' + dl.cls + '">' + dl.txt + '</td></tr>';
       }).join("") + '</tbody></table>';
   }
-  // 회차의 ROM·측만증 기록 → 비교 행 (같은 항목은 가장 최근 값)
+  // 회차의 ROM·척추 균형 기록 → 비교 행 (같은 항목은 가장 최근 값)
   function cmpRomList(ss, want){   // want: "rom" · "scol" · "fhp"
     var map = {};
     (ss.roms || []).forEach(function(x){
@@ -5812,7 +5812,7 @@
       ["정면 · 좌우 기울기", "°", A.f, B.f, "front", "부위"],
       ["측면 · 앞뒤 정렬", "cm", A.sd, B.sd, "side", "부위"],
       ["ROM · 관절가동범위", "°", cmpRomList(SA, "rom"), cmpRomList(SB, "rom"), null, "항목"],
-      ["측만증 · 척추 측만 검사", "°", cmpRomList(SA, "scol"), cmpRomList(SB, "scol"), null, "항목"],
+      ["척추 균형 · 등 높이 차이(ATR)", "°", cmpRomList(SA, "scol"), cmpRomList(SB, "scol"), null, "항목"],
       ["거북목 · 두개척추각", "°", cmpRomList(SA, "fhp"), cmpRomList(SB, "fhp"), null, "항목"]
     ].filter(function(v){ return (v[2] && v[2].length) || (v[3] && v[3].length); });
   }
@@ -5837,7 +5837,7 @@
       }
       h += cmpTable(v[2], v[3], v[1], v[5]);
     });
-    h += '<p class="mb-note" style="margin-top:10px">정상 범위에 가까워지면 <b class="up-good">개선</b>, 멀어지면 <b class="up-bad">악화</b>로 표시해요(체형·측만증은 0°, ROM은 정상 각도, 신전은 0°(과신전 10° 이내 정상), 거북목은 55° 기준). 스크리닝 참고값이에요. 같은 장소·거리·복장으로 찍어야 비교가 정확해요.</p>';
+    h += '<p class="mb-note" style="margin-top:10px">정상 범위에 가까워지면 <b class="up-good">개선</b>, 멀어지면 <b class="up-bad">악화</b>로 표시해요(체형·척추 균형은 0°, ROM은 정상 각도, 신전은 0°(과신전 10° 이내 정상), 거북목은 55° 기준). 스크리닝 참고값이에요. 같은 장소·거리·복장으로 찍어야 비교가 정확해요.</p>';
     h += '<div class="cmp-actions"><button type="button" class="btn primary" id="btnCmpSave">비교 이미지 저장·공유</button></div>';
     cmpPair = [A, B, secs];
     var c = $("mbCompare"); c.innerHTML = h; c.hidden = false;
@@ -6257,7 +6257,7 @@
     var rb = $("btnRepSess"); if(rb){ rb.textContent = lbl; rb.disabled = saved && !dirty; rb.hidden = !hasPhotos(); }
     bodySyncRound();
   }
-  /* v130 체형분석도 ROM·측만증처럼 회차 바 + 회차 선택 (정면·측면은 회차를 따로 셈) */
+  /* v130 체형분석도 ROM·척추 균형처럼 회차 바 + 회차 선택 (정면·측면은 회차를 따로 셈) */
   function bodySyncRound(){
     var bar = $("bodyRoundBar"), box = $("bodyRounds"); if(!bar) return;
     if(!state.member){ bar.hidden = true; box.hidden = true; return; }
@@ -6455,7 +6455,7 @@
     $("btnSaveReport").textContent = pro ? "리포트 이미지 저장" : "🔒 리포트 이미지 저장 (PRO)";
   }
   $("btnRepPro").addEventListener("click", function(){ openProGate("report"); });
-  /* v135 리포트 회차 선택: 회원 기록의 1차·2차… 중 하나를 골라 그 회차의 체형·ROM·측만증으로 리포트 */
+  /* v135 리포트 회차 선택: 회원 기록의 1차·2차… 중 하나를 골라 그 회차의 체형·ROM·척추 균형으로 리포트 */
   var repSel = null, repSessCur = null, repRoundSeq = 0;   // repSel { mid, key } · repSessCur = 지금 보고 있는 회차
   function repRomSrc(){
     if(!repSessCur || !state.member || repSessCur.mid !== state.member.id) return rom;
@@ -6484,7 +6484,7 @@
       box.innerHTML = S.slice().reverse().map(function(ss){
         var r = ss.rec, nS = ss.roms.filter(function(x){ return x.joint === "scol"; }).length, nF = ss.roms.filter(function(x){ return x.joint === "fhp"; }).length, nR = ss.roms.length - nS - nF;
         var sub = ss.day.slice(5).replace("-", ".") + (r && r.score != null ? " · " + r.score + "점" : "");
-        var kinds = [r ? "체형" : "", nR ? "ROM" : "", nS ? "측만" : "", nF ? "거북목" : ""].filter(Boolean).join("·");
+        var kinds = [r ? "체형" : "", nR ? "ROM" : "", nS ? "척추 균형" : "", nF ? "거북목" : ""].filter(Boolean).join("·");
         return '<button type="button" data-rk="' + esc(ss.key) + '" aria-pressed="' + String(!!act && act.key === ss.key) + '"><b>' + ss.round + '차</b><em>' + esc(sub) + '</em><small>' + esc(kinds || "기록 없음") + '</small></button>';
       }).join("");
       box.querySelectorAll("[data-rk]").forEach(function(b){ b.addEventListener("click", function(){
@@ -6584,7 +6584,7 @@
   }
   function gsGo(id){
     $("gsOverlay").hidden = true;
-    // v75: 리포트·ROM·측만증·체형분석 화면에서 검색하면 그 화면에서 바로 그 회원을 조회
+    // v75: 리포트·ROM·척추 균형·체형분석 화면에서 검색하면 그 화면에서 바로 그 회원을 조회
     if(["report", "rom", "scol", "fhp", "analyze"].indexOf(state.view) >= 0){
       loadAll().then(function(res){
         var m = res[0].find(function(x){ return x.id === id; }); if(!m) return;
@@ -6670,7 +6670,7 @@
   // MediaPipe 인덱스 [좌측, 우측] (사람 기준)
   var ROM_LM = { shoulder:[11,12], elbow:[13,14], wrist:[15,16], hip:[23,24], knee:[25,26], ankle:[27,28] };
   var ROM_PTNAME = { trunk:"몸통 중심선", floor:"바닥 기준선", vup:"세로 기준선(화면 위)", shoulder:"어깨 관절", elbow:"팔꿈치 관절", wrist:"손목(전완 끝)", hip:"고관절", knee:"무릎 관절", ankle:"발목(거퇴관절)" };
-  /* v68: 목·허리·발목 추가 + 측만증(별도 탭) */
+  /* v68: 목·허리·발목 추가 + 척추 균형(별도 탭) */
   /* v69: 목·허리·발목 측정점 변경 (모든 동작 동일한 3점·2선)
        목  : 몸통 중심(A) – C7 극돌기(V) – 정수리(D)          → 몸통선 연장 ↔ C7–정수리 (바르게 서면 0°)
        허리: 무릎 관절(A) – 고관절(V) – C7-T1(D)              → 넙다리 연장 ↔ 고관절–C7 (바르게 서면 0°)
@@ -6693,8 +6693,8 @@
   ]});
   // v70 메뉴 순서: 목 · 허리 · 어깨 · 무릎 · 고관절 · 발목 · 팔꿈치
   (function(){ var ord = ["neck", "trunk", "shoulder", "knee", "hip", "ankle", "elbow"]; ROM_JOINTS.sort(function(a, b){ return ord.indexOf(a.k) - ord.indexOf(b.k); }); })();
-  var SCOL_JOINT = { k:"scol", n:"측만증", single:true, kind:"tilt", pts:["scL","scR"], moves:[
-    { k:"atr", n:"측만증 측정", normal:0, grade:"atr", guide:"<b>뒤(등 쪽)에서 등 높이로</b> 촬영 (좌·우는 등 뒤에서 본 기준) · 무릎을 펴고 양팔을 모아 <b>허리를 앞으로 숙인</b> 자세 · <b>좌측 허리(등)의 가장 높은 곳</b>과 <b>우측 허리(등)의 가장 높은 곳</b> 두 점을 이은 선 ↔ <b>바닥 수평선</b> 각도 · 수평계를 초록으로 맞춰 촬영" }
+  var SCOL_JOINT = { k:"scol", n:"척추 균형", single:true, kind:"tilt", pts:["scL","scR"], moves:[
+    { k:"atr", n:"척추 균형 측정", normal:0, grade:"atr", guide:"<b>뒤(등 쪽)에서 등 높이로</b> 촬영 (좌·우는 등 뒤에서 본 기준) · 무릎을 펴고 양팔을 모아 <b>허리를 앞으로 숙인</b> 자세 · <b>좌측 허리(등)의 가장 높은 곳</b>과 <b>우측 허리(등)의 가장 높은 곳</b> 두 점을 이은 선 ↔ <b>바닥 수평선</b> 각도 · 수평계를 초록으로 맞춰 촬영" }
   ]};
   /* v147 거북목: 두개척추각(CVA) = C7 극돌기 → 귀 이주 선 ↔ C7을 지나는 수평선 */
   var FHP_JOINT = { k:"fhp", n:"거북목", single:true, kind:"cva", pts:["c7","tragus"], moves:[
@@ -6908,7 +6908,7 @@
   function romKey(j, side, m){ return j + "|" + side + "|" + m; }
   /* v149 변화 판정 통일 (모든 화면 공통): '정상에서 벗어난 정도'가 줄면 개선, 늘면 악화, 둘 다 정상이면 정상 범위 유지
      · 일반 ROM: 정상 각도까지 부족한 만큼(정상 이상은 0) · 신전(정상 0°): 덜 펴진 각도 + 과신전은 10°를 넘는 만큼
-     · 거북목(CVA): 55°까지 부족한 만큼 · 측만증·체형(mv 없음): 0에서 벗어난 만큼 */
+     · 거북목(CVA): 55°까지 부족한 만큼 · 척추 균형·체형(mv 없음): 0에서 벗어난 만큼 */
   function trendBad(mv, v){
     if(v == null || !isFinite(v)) return null;
     if(!mv) return Math.abs(v);
@@ -6958,7 +6958,7 @@
     });
   }
   // v88 회차: 기록의 round (예전 기록은 측정 날짜 순서)
-  /* v148 회차 묶음: 거북목(fhp)은 거북목 촬영만으로 회차를 셈 · 나머지(ROM·측만증)는 함께 */
+  /* v148 회차 묶음: 거북목(fhp)은 거북목 촬영만으로 회차를 셈 · 나머지(ROM·척추 균형)는 함께 */
   function romGrpOf(jk){ return jk === "fhp" ? "fhp" : "main"; }
   function romGrpNow(){ return (state.view === "fhp" || (typeof rom !== "undefined" && rom.joint === "fhp")) ? "fhp" : "main"; }
   function romRoundOf(r){
@@ -7309,7 +7309,7 @@
     romS.vz = 1; romS.roll0 = romS.roll || 0; romS.L = null; romS.cutDone = false;
     romS.recImg = null; romS.manualEdit = false; $("romManual").hidden = true; romRomView(romGridPref); romS.maskP = romJoint().k === "scol" ? romMakeCut() : null;   // ROM은 관절 인식이 끝난 뒤 배경 분리 (속도)
     romCv.hidden = false; $("romEmpty").hidden = true;
-    if(romJoint().k === "scol"){   // v68 측만증: 등 윤곽 / 콥 각도 선
+    if(romJoint().k === "scol"){   // v68 척추 균형: 등 윤곽 / 콥 각도 선
       romS.sel = null; romS.trunk = null; romS.pts = romJoint().k === "scol" && mv.k === "cobb" ? null : romS.pts;
       $("romBusy").hidden = true; scolAuto(); return;
     }
@@ -7717,7 +7717,7 @@
     g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, H + HEAD);
     g.save(); g.translate(0, HEAD); g.scale(k, k); g.beginPath(); g.rect(0, 0, romS.w, romS.h); g.clip(); romPaint(g, 1.6 / k * (W / 1200), true); g.restore();
     g.fillStyle = "#0B7A6B"; g.font = "700 " + Math.round(18 * s2) + "px " + F;
-    g.fillText(brandLabel(J.k === "scol" ? "척추 측만 검사" : J.k === "fhp" ? "거북목 (CVA)" : "ROM 관절가동범위", J.k === "scol" ? "척추 측만 검사" : J.k === "fhp" ? "거북목 (CVA)" : "ROM 관절가동범위") + (state.member ? "  ·  " + state.member.name : ""), 24 * s2, 38 * s2);
+    g.fillText(brandLabel(J.k === "scol" ? "척추 균형 체크" : J.k === "fhp" ? "거북목 (CVA)" : "ROM 관절가동범위", J.k === "scol" ? "척추 균형 체크" : J.k === "fhp" ? "거북목 (CVA)" : "ROM 관절가동범위") + (state.member ? "  ·  " + state.member.name : ""), 24 * s2, 38 * s2);
     g.fillStyle = "#17212B"; g.font = "800 " + Math.round(36 * s2) + "px " + F;
     g.fillText((J.k === "scol" || J.k === "fhp" ? (J.k === "fhp" ? "거북목 · " : "") + mv.n : J.n + " " + mv.n + (romSideTxt(mv) ? " (" + romSideTxt(mv) + ")" : "")) + "  " + val + "°", 24 * s2, 88 * s2);
     g.fillStyle = jd.cls === "good" ? "#16794A" : jd.cls === "warn" ? "#A35A00" : "#C03A2B"; g.font = "700 " + Math.round(20 * s2) + "px " + F;
@@ -7778,7 +7778,7 @@
       .catch(function(){ toast("저장하지 못했어요."); });
   });
 
-  /* ===================== v74 ROM·측만증: 격자 배경 / 회차 사진 보기·수정 ===================== */
+  /* ===================== v74 ROM·척추 균형: 격자 배경 / 회차 사진 보기·수정 ===================== */
   var romGridPref = "grid";   // v135 결과 사진 보기: raw 원본 / meas 측정 / grid 격자 (원본은 기억하지 않음)
   function romRomView(v){ romS.view = v; romS.gridOn = (v === "grid"); if(v !== "raw") romGridPref = v; romSyncGridBtn(); }
   function romRotA(){ var r = romS.roll || 0; r = Math.max(-25, Math.min(25, r)); return r ? -r * Math.PI / 180 : 0; }   // 사진을 실제 수평(+사람 회전)에 맞춰 돌려 보여줌
@@ -7800,7 +7800,7 @@
     g.drawImage(romS.img, 0, 0, W, H);   // 인물 분리 전: 반투명 격자 대신 원본 그대로 (분리되면 흰 격자 배경)
   }
   function romDrawBase(g, u){ if(romS.gridOn) romGridBg(g, u); romDrawImg(g); }
-  // 인물 분리(격자 배경용) — 측만증 자동 인식에도 같은 결과를 사용
+  // 인물 분리(격자 배경용) — 척추 균형 자동 인식에도 같은 결과를 사용
   // v84: 인물 분리 결과로 사람 사진만 남긴 캔버스 만들기 — 몸이 지워지지 않게
   function romCutBuild(img, m, L){
     var W = img.naturalWidth || img.width, H = img.naturalHeight || img.height, mw = m.w, mh = m.h, n = mw * mh, i, x, y, k;
@@ -8074,7 +8074,7 @@
   $("btnRomZOut").addEventListener("click", function(){ romZoomAt((romS.vz || 1) / 1.5, { x: romS.w / 2, y: romS.h / 2 }); });
   $("btnRomZFit").addEventListener("click", function(){ romS.vz = 1; romDraw(); });
   romCv.addEventListener("wheel", function(e){ if(!romS.img) return; e.preventDefault(); romZoomAt((romS.vz || 1) * (e.deltaY < 0 ? 1.15 : 1 / 1.15), romScr(e)); }, { passive: false });
-  // 9. 사람 회전 (측만증·ROM): 사진을 돌려 수평을 맞추면 측정 기준(수평·수직)도 함께 맞춰짐
+  // 9. 사람 회전 (척추 균형·ROM): 사진을 돌려 수평을 맞추면 측정 기준(수평·수직)도 함께 맞춰짐
   function romRotSync(){
     var bar = $("romRot"); if(!bar) return;
     if(bar._img !== romS.img){ bar._img = romS.img; rotLock(bar, true); }   // 새 사진은 잠금부터
@@ -8118,7 +8118,7 @@
       }
     }catch(e){ console.warn("[pvsave rom]", e); toast("사진을 만들지 못했어요."); return; }
     var J = romJoint(), mv = romMove();
-    deliverCanvas(out, pvFileName(J.k === "scol" ? "측만증_" + mv.k : "ROM_" + rom.joint + "_" + mv.k, v));
+    deliverCanvas(out, pvFileName(J.k === "scol" ? "척추 균형_" + mv.k : "ROM_" + rom.joint + "_" + mv.k, v));
     toast(PV_NAME[v] + " 사진을 저장해요");
   });
   // 기록용 원본 사진 (회차 사진 보기·수정에 사용)
@@ -8191,7 +8191,7 @@
     });
   });
 
-  /* ===================== v74 리포트: ROM·측만증 전후 사진 비교 ===================== */
+  /* ===================== v74 리포트: ROM·척추 균형 전후 사진 비교 ===================== */
   var repPair = { key: null, a: null, b: null, cvA: null, cvB: null, mid: null };
   // v150 리포트 전후 비교 사진은 '지금 회원'의 것일 때만 사용 (회원을 바꿨는데 이전 회원 사진이 이미지에 들어가지 않게)
   function repPairOk(){ return !!(repPair.cvA && repPair.cvB && repPair.mid === (state.member ? state.member.id : null)); }
@@ -8288,12 +8288,12 @@
     return H;
   }
 
-  /* ===================== v68 측만증 탭 ===================== */
+  /* ===================== v68 척추 균형 탭 ===================== */
   function scolJudge(mv, v){
     if(v == null) return { cls:"", txt:"미측정", pct:0 };
-    if(mv.grade === "cva") return v >= 55 ? { cls:"good", txt:"정상 범위 (55° 이상)", pct:100 } : v >= 50 ? { cls:"warn", txt:"경계 (50–55°) · 연구에 따라 정상 또는 거북목", pct:70 } : v >= 45 ? { cls:"crit", txt:"거북목 범위 (50° 미만)", pct:45 } : { cls:"crit", txt:"심한 전방머리자세 (45° 미만) · 전문가 상담 권장", pct:25 };
-    if(mv.grade === "atr") return v < 5 ? { cls:"good", txt:"정상 범위 (5° 미만)", pct:100 } : v < 7 ? { cls:"warn", txt:"관찰 필요 (5–7°) · 정기 재측정 권장", pct:60 } : { cls:"crit", txt:"7° 이상 · 전문가 상담 권장", pct:30 };
-    return v < 10 ? { cls:"good", txt:"정상 범위 (10° 미만)", pct:100 } : v < 25 ? { cls:"warn", txt:"경도 범위 (10–25°)", pct:60 } : v < 40 ? { cls:"crit", txt:"중등도 범위 (25–40°) · 전문가 상담 권장", pct:35 } : { cls:"crit", txt:"40° 이상 · 전문가 상담 권장", pct:15 };
+    if(mv.grade === "cva") return v >= 55 ? { cls:"good", txt:"정상 범위 (55° 이상)", pct:100 } : v >= 50 ? { cls:"warn", txt:"경계 (50–55°) · 목이 조금 앞으로 나와 있어요", pct:70 } : v >= 45 ? { cls:"crit", txt:"목이 앞으로 많이 나와 있어요 (50° 미만)", pct:45 } : { cls:"crit", txt:"목이 앞으로 매우 많이 나와 있어요 (45° 미만) · 전문가와 상담해 보세요", pct:25 };
+    if(mv.grade === "atr") return v < 5 ? { cls:"good", txt:"정상 범위 (5° 미만)", pct:100 } : v < 7 ? { cls:"warn", txt:"관찰 필요 (5–7°) · 정기 재측정 권장", pct:60 } : { cls:"crit", txt:"7° 이상 · 전문가와 상담해 보세요", pct:30 };
+    return v < 10 ? { cls:"good", txt:"정상 범위 (10° 미만)", pct:100 } : v < 25 ? { cls:"warn", txt:"기울기 약간 (10–25°)", pct:60 } : v < 40 ? { cls:"crit", txt:"기울기 큼 (25–40°) · 전문가와 상담해 보세요", pct:35 } : { cls:"crit", txt:"40° 이상 · 전문가와 상담해 보세요", pct:15 };
   }
   var scolPrevJoint = null;
   function openScolSheet(mk){
@@ -8341,7 +8341,7 @@
       H.map(function(r, i){ var jd = scolJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
         return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요. 개선·악화는 촬영 자세·각도에 따라 달라질 수 있는 참고값이에요.</p>';
     if(prev && prev.thumb && last.thumb) body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(prev.id) + '"><img src="' + safeSrc(prev.thumb) + '" alt=""><figcaption>이전 ' + romRoundOf(prev) + '차 · ' + prev.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + safeSrc(last.thumb) + '" alt=""><figcaption>최근 ' + romRoundOf(last) + '차 · ' + last.value + '°</figcaption></figure></div>';
-    $("romCmpTitle").textContent = "측만증 측정 · 이전 회차 비교";
+    $("romCmpTitle").textContent = "척추 균형 측정 · 이전 회차 비교";
     $("romCmpBody").innerHTML = body; $("romCmp").hidden = false;
   }
   $("btnScolPick").addEventListener("click", function(){ $("btnMbPick").click(); });
@@ -8480,7 +8480,7 @@
       finish(xa, xb, function(X){ var xi = Math.max(0, Math.min(m.w - 1, Math.round(X / sx))); var a = []; for(var j = -2; j <= 2; j++){ var t = tops[Math.max(0, Math.min(m.w - 1, xi + j))]; if(t >= 0) a.push(t); } a.sort(function(p, q){ return p - q; }); return (a.length ? a[Math.floor(a.length / 2)] : m.h * 0.45) * sy; }, "mask");
     }).catch(fallback);
   }
-  // 측만증: 두 점을 이은 선 ↔ 바닥 수평선(폰 기울기 보정)
+  // 척추 균형: 두 점을 이은 선 ↔ 바닥 수평선(폰 기울기 보정)
   function scolTilt(P){
     var r = (romS.roll || 0) * Math.PI / 180, hx = Math.cos(r), hy = Math.sin(r);   // 화면 속 실제 수평 방향
     var dx = P[1].x - P[0].x, dy = P[1].y - P[0].y, L = Math.hypot(dx, dy) || 1;
@@ -8601,7 +8601,7 @@
     g.fillStyle = "rgba(13,21,40,.9)"; rr(g, lx - lw / 2, ly - 19 * u, lw, 38 * u, 10 * u); g.fill();
     g.fillStyle = "#fff"; g.fillText(txt, lx, ly + 1 * u); g.textAlign = "left"; g.textBaseline = "alphabetic";
   }
-  // 리포트용 측만 결과
+  // 리포트용 척추 균형 결과
   function scolRows(src){
     src = src || rom;
     return SCOL_JOINT.moves.map(function(mv){ return [SCOL_JOINT, mv]; }).concat(FHP_JOINT.moves.map(function(mv){ return [FHP_JOINT, mv]; })).map(function(jm){   // v147 거북목도 함께
@@ -8678,12 +8678,12 @@
     if(!$("rep-rom")) return Promise.resolve();
     return romLoad().then(function(){
       var RS = repRomSrc(), rows = romLRRows(RS), sc = scolRows(RS);
-      // 측만증 칸
+      // 척추 균형 칸
       $("repEmpty-scol").hidden = !!sc.length; $("repScolSum").hidden = !sc.length;
       var scId = function(mv){ var H = RS.all.filter(function(x){ return x.joint === "scol" && x.move === mv.k; }); return H.length ? H[H.length - 1].id : ""; };
       var xb = function(id){ return id ? '<button aria-label="이 기록 삭제" type="button" class="rp-x" data-rdel="' + id + '" title="이 기록 삭제">✕</button>' : ''; };
       $("repScolBody").innerHTML = sc.length ? '<table class="rep-rom-tbl sc"><thead><tr><th>항목</th><th>각도</th><th>판정</th><th>측정일</th></tr></thead><tbody>' + sc.map(function(r){ return '<tr><td>' + r.mv.n + '</td><td class="num ' + r.jd.cls + '">' + r.v + '°' + xb(scId(r.mv)) + '</td><td class="lrj ' + r.jd.cls + '">' + r.jd.txt + '</td><td>' + fmtDate(r.at).slice(0, 10) + '</td></tr>'; }).join("") + '</tbody></table>' : '';
-      if(sc.length) $("repScolSum").textContent = [sc.some(function(r){ return r.mv.grade !== "cva"; }) ? "측만증 기준: 5° 미만 정상 · 5–7° 관찰 · 7° 이상 전문가 상담 권장" : "", sc.some(function(r){ return r.mv.grade === "cva"; }) ? "거북목(CVA) 기준: 55° 이상 정상 · 50° 미만 거북목 · 45° 미만 심함" : ""].filter(Boolean).join(" / ");
+      if(sc.length) $("repScolSum").textContent = [sc.some(function(r){ return r.mv.grade !== "cva"; }) ? "척추 균형 기준: 5° 미만 정상 · 5–7° 관찰 · 7° 이상 전문가와 상담 권장" : "", sc.some(function(r){ return r.mv.grade === "cva"; }) ? "거북목(CVA) 기준: 55° 이상 정상 · 50° 미만 거북목 · 45° 미만 심함" : ""].filter(Boolean).join(" / ");
       // ROM 칸
       $("repEmpty-rom").hidden = !!rows.length; $("repRomSum").hidden = !rows.length;
       var low = 0, nBig = 0;
@@ -8700,7 +8700,7 @@
       } else $("repRomBody").innerHTML = "";
       [$("repRomBody"), $("repScolBody")].forEach(function(bx){ bx.querySelectorAll("[data-rdel]").forEach(function(b){ b.onclick = function(){ repDelRom(b.getAttribute("data-rdel")); }; }); });
       ["front", "side"].forEach(function(md){ var b = $("repDel-" + md); if(b) b.hidden = !state.byMode[md].img || !!state.preview; });
-      // 주요 분석 항목에 ROM · 측만증 추가
+      // 주요 분석 항목에 ROM · 척추 균형 추가
       var sg = $("sumGrid");
       if(sg){
         sg.querySelectorAll(".sum-x").forEach(function(e){ e.remove(); });
@@ -8708,9 +8708,9 @@
           (low || nBig) ? { cls: low ? "st-warn" : "st-warn", label: low ? "가동범위 감소" : "좌우 차이", d: rows.length + "항목 측정 · 70% 미만 " + low + " · 좌우 차이 큼 " + nBig } :
           { cls: "st-good", label: "양호", d: rows.length + "항목 측정 · 정상 범위" };
         var worst = null; sc.forEach(function(r){ if(r.mv.grade === "cva") return; if(!worst || r.v > worst.v) worst = r; });
-        var scSt = !worst ? { cls: "st-none", label: "미측정", d: "측만증 메뉴에서 측정" } :
+        var scSt = !worst ? { cls: "st-none", label: "미측정", d: "척추 균형 메뉴에서 측정" } :
           { cls: worst.jd.cls === "good" ? "st-good" : worst.jd.cls === "warn" ? "st-warn" : "st-crit", label: worst.jd.txt.split(" (")[0].split(" ·")[0], d: worst.v + "° · " + fmtDate(worst.at).slice(0, 10) };
-        [["ROM 가동범위", romSt], ["척추 측만", scSt]].forEach(function(it){
+        [["ROM 가동범위", romSt], ["척추 균형", scSt]].forEach(function(it){
           var d = document.createElement("div"); d.className = "sum-item sum-x";
           d.innerHTML = '<div class="k">' + it[0] + '</div><div class="v ' + it[1].cls + '">' + it[1].label + '</div><div class="d">' + it[1].d + '</div>';
           sg.appendChild(d);
@@ -8773,7 +8773,7 @@
     });
     if(sc.length){
       var yb = y + 130 + rows.length * RH + 34;
-      g.fillStyle = "#5B6875"; g.font = "700 23px " + F; g.fillText(sc.some(function(r){ return r.mv.grade === "cva"; }) ? (sc.some(function(r){ return r.mv.grade !== "cva"; }) ? "척추 측만 · 거북목" : "거북목 (CVA)") : "척추 측만 검사", cols[0], yb);
+      g.fillStyle = "#5B6875"; g.font = "700 23px " + F; g.fillText(sc.some(function(r){ return r.mv.grade === "cva"; }) ? (sc.some(function(r){ return r.mv.grade !== "cva"; }) ? "척추 균형 · 거북목" : "거북목 (CVA)") : "척추 균형 체크", cols[0], yb);
       sc.forEach(function(r, k){
         var yy = yb + (k + 1) * RH;
         g.fillStyle = "#17212B"; g.font = "700 25px " + F; g.fillText(r.mv.n, cols[0], yy);
@@ -9100,7 +9100,7 @@
       var vis = function(sd){ var ix = romNeedIdx(sd); return ix.reduce(function(t, i){ return t + (S[i] ? S[i].v : 0); }, 0) / Math.max(1, ix.length); };
       if(vis(rom.side === "R" ? "L" : "R") > vis(rom.side) + 0.15) S = romSwapLR(S);
     }
-    if(J.k === "scol"){   // 측만증: 관절 대신 수평 안내
+    if(J.k === "scol"){   // 척추 균형: 관절 대신 수평 안내
       var cob = romMove().k === "cobb";
       chip.className = "rom-pts " + (cob || ls.cls === "good" ? "good" : "warn");
       chip.textContent = cob ? "X-ray 사진이 화면에 반듯하게 꽉 차게 촬영하세요" : ls.cls === "good" ? "✓ 수평 OK · 숙인 등 전체가 보이게 촬영하세요" : "수평계를 초록으로 맞춰 주세요 (기울기가 결과에 바로 영향을 줘요)";
@@ -9767,7 +9767,7 @@
       $("topEyebrow").textContent = b.name || "아요바디요";
     } else {
       $("sideName").textContent = "아요바디요";
-      $("sideSub").innerHTML = "체형·ROM·측만 측정" + (isPro() ? " <i>PRO</i>" : "");
+      $("sideSub").innerHTML = "체형·ROM·척추 균형 측정" + (isPro() ? " <i>PRO</i>" : "");
       if(logo){ logo.src = DEF_LOGO_SRC; logo.style.background = ""; }
       $("topEyebrow").textContent = "아요바디요";
     }
@@ -9850,16 +9850,16 @@
   var proPrevView = "dash";
   var proKind = "settings";
   var PRO_COPY = {
-    trial: { d: '설치 후 <b>7일 무료 체험</b> 동안 PRO 기능을 모두 쓸 수 있어요. 체험이 끝나도 <b>체형분석·ROM·측만증 측정과 결과 저장은 무료</b>로 계속 쓸 수 있고, 아래 기능은 PRO에서 이어서 쓸 수 있어요.',
-      l: ["회원 관리 · 회원별 회차 기록 (체형·ROM·측만증)", "종합 리포트 이미지 저장·카톡 공유", "ROM·측만증 회차별 비교 · 좌우 비교 분석", "센터명·로고·연락처가 들어간 결과 이미지"] },
+    trial: { d: '설치 후 <b>7일 무료 체험</b> 동안 PRO 기능을 모두 쓸 수 있어요. 체험이 끝나도 <b>체형분석·ROM·척추 균형 측정과 결과 저장은 무료</b>로 계속 쓸 수 있고, 아래 기능은 PRO에서 이어서 쓸 수 있어요.',
+      l: ["회원 관리 · 회원별 회차 기록 (체형·ROM·척추 균형)", "종합 리포트 이미지 저장·카톡 공유", "ROM·척추 균형 회차별 비교 · 좌우 비교 분석", "센터명·로고·연락처가 들어간 결과 이미지"] },
     settings: { d: '설정 메뉴는 <b>아요바디요 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.',
       l: ["센터명·로고를 리포트·운동 카드·비교 이미지에 표시", "연락처·안내 문구를 결과 이미지 하단에 표시", "앱 상단을 센터 브랜드로 변경", "자주 쓰는 결제 항목·금액 기본값 저장"] },
     rom: { d: 'ROM <b>회차별 비교·좌우 비교 분석</b>은 <b>아요바디요 PRO</b> 플랜 전용 기능이에요. ROM 측정과 결과 저장은 무료로 계속 쓸 수 있어요.',
       l: ["관절·항목별 좌측·우측 비교 분석 (차이·부족한 쪽 표시)", "관절·항목별 1차~최근 회차 각도 변화 그래프", "지난 회차 대비 개선·감소 표시", "관절 전체 회차 비교표 (최근 5회)", "1차와 최근 측정 사진 나란히 비교"] },
-    scol: { d: '측만증 <b>이전 회차 비교</b>는 <b>아요바디요 PRO</b> 플랜 전용 기능이에요. 측만증 측정과 결과 저장은 무료로 계속 쓸 수 있어요.',
+    scol: { d: '척추 균형 <b>이전 회차 비교</b>는 <b>아요바디요 PRO</b> 플랜 전용 기능이에요. 척추 균형 측정과 결과 저장은 무료로 계속 쓸 수 있어요.',
       l: ["이전 회차 대비 각도 변화(개선·증가) 표시", "1차~최근 회차 변화 그래프", "회차별 측정값·판정 표", "이전·최근 측정 사진 나란히 비교"] },
     members: { d: '회원 관리는 <b>아요바디요 PRO</b> 플랜 전용 기능이에요. 회원별로 측정 기록을 모아 관리해 보세요.',
-      l: ["회원 등록·검색과 회원번호 자동 배정", "회원별 체형·ROM·측만증 측정 기록 저장", "회원 상세에서 회차별 변화 확인", "측정 결과를 회원 이름으로 저장·공유"] },
+      l: ["회원 등록·검색과 회원번호 자동 배정", "회원별 체형·ROM·척추 균형 측정 기록 저장", "회원 상세에서 회차별 변화 확인", "측정 결과를 회원 이름으로 저장·공유"] },
     report: { d: '종합 리포트는 <b>아요바디요 PRO</b> 플랜 전용 기능이에요. 정면·측면 결과를 한 장으로 정리해 회원에게 전달해 보세요.',
       l: ["정면 + 측면 종합 점수(100점)와 항목별 상태", "리포트 이미지 저장·카톡 공유", "센터 로고·연락처가 들어간 리포트", "PRO 이용 중에는 설정 메뉴도 함께 사용"] }
   };
@@ -10174,7 +10174,7 @@
     return excelP;
   }
   /* v143 엑셀 마지막 열: 같은 회원·같은 항목의 1차 촬영 실루엣 (2차 촬영 때 화면에 보여주는 실루엣과 같은 모양)
-     체형 = 같은 방향(정면/측면) 1차 · ROM·측만증 = 같은 관절·동작·좌우 1차 · 회원 미지정 기록은 그 기록 자신 */
+     체형 = 같은 방향(정면/측면) 1차 · ROM·척추 균형 = 같은 관절·동작·좌우 1차 · 회원 미지정 기록은 그 기록 자신 */
   var admxSilCache = {}, admxSilQ = Promise.resolve();
   function admxFirstRec(x){
     if(!x.mid) return Promise.resolve(x.rec0 || null);
@@ -10560,7 +10560,7 @@
     if(!$("romSheet").hidden && romS.img && romS.pts){
       var J = romJoint(), mv = romMove(), nm = romPts(), val = null;
       try{ val = romAngle(); }catch(e){}
-      return { screen: J.k === "scol" ? "측만증" : "ROM", title: (J.n || "") + (mv && mv.n && J.k !== "scol" ? " " + mv.n : "") + (rom.side && rom.side !== "C" && J.k !== "scol" ? " (" + (rom.side === "R" ? "우측" : "좌측") + ")" : ""),
+      return { screen: J.k === "scol" ? "척추 균형" : "ROM", title: (J.n || "") + (mv && mv.n && J.k !== "scol" ? " " + mv.n : "") + (rom.side && rom.side !== "C" && J.k !== "scol" ? " (" + (rom.side === "R" ? "우측" : "좌측") + ")" : ""),
         image: { w: romS.w, h: romS.h }, rotate: romS.roll || 0, value: val == null ? null : val + "°",
         points: romS.pts.map(function(p, i){ var k = nm && nm[i]; return { name: (i + 1) + " " + ((k && ROM_PTNAME[k]) || k || "점"), x: r2(p.x), y: r2(p.y) }; }) };
     }
@@ -10956,10 +10956,10 @@
     resetToIdle();
   })();
 
-  /* ===================== v83 회원 회차 = 체형분석 + ROM + 측만증 한 페이지 (보기·수정·삭제) ===================== */
+  /* ===================== v83 회원 회차 = 체형분석 + ROM + 척추 균형 한 페이지 (보기·수정·삭제) ===================== */
   function mbDay(t){ return fmtDate(t).slice(0, 10); }
   /* v149 회원 기록의 'N차' = 방문 회차 (같은 날 측정 = 한 번의 방문, 방문 순서대로 1차·2차…)
-     · 체형분석 기록은 측정한 날의 방문에 · ROM·측만증·거북목은 그 기록의 회차가 처음 측정된 날의 방문에 붙음
+     · 체형분석 기록은 측정한 날의 방문에 · ROM·척추 균형·거북목은 그 기록의 회차가 처음 측정된 날의 방문에 붙음
        (지난 회차에 나중에 추가로 잰 항목도 원래 방문에 남음) · 회차 번호가 없는 예전 기록은 측정한 날 */
   function mbBuildSessions(rs, roms){
     var S = [], byDay = {};
@@ -10982,7 +10982,7 @@
   function mbRomInfo(x){
     var J = ROM_ALL.find(function(j){ return j.k === x.joint; }), mv = J ? J.moves.find(function(m){ return m.k === x.move; }) : null;
     var sd = x.side === "L" ? "좌측" : x.side === "R" ? "우측" : "";
-    var name = !J ? x.joint + " " + x.move : (J.k === "scol" ? (mv ? mv.n : "측만증") : J.n + " " + (mv ? mv.n : "(삭제된 항목)"));
+    var name = !J ? x.joint + " " + x.move : (J.k === "scol" ? (mv ? mv.n : "척추 균형") : J.n + " " + (mv ? mv.n : "(삭제된 항목)"));
     var jd = mv ? (J.k === "scol" ? scolJudge(mv, x.value) : romJudge(mv, x.value)) : { cls: "", txt: "" };
     var ord = J ? ROM_ALL.indexOf(J) * 20 + (mv ? J.moves.indexOf(mv) * 2 : 19) + (x.side === "R" ? 1 : 0) : 999;
     var cat = J && J.k === "scol" ? "scol" : J && J.k === "fhp" ? "fhp" : "rom";
@@ -11021,9 +11021,9 @@
       else h += '<div class="ss-acts"><button type="button" class="btn line sm" id="ssPosEdit">사진 보기·점 수정</button><button type="button" class="btn line sm ss-del" id="ssPosDel">체형분석 기록 삭제</button></div>';
     } else h += '<p class="ss-empty">이 회차에는 체형분석 기록이 없어요.</p>';
     h += '</div>';
-    // ROM · 측만증
+    // ROM · 척추 균형
     var items = ss.roms.map(function(x){ return { x: x, i: mbRomInfo(x) }; }).sort(function(a, b){ return a.i.ord - b.i.ord || a.x.at - b.x.at; });
-    [["ROM", "관절가동범위", items.filter(function(o){ return o.i.cat === "rom"; })], ["측만증", "척추 측만 검사", items.filter(function(o){ return o.i.cat === "scol"; })], ["거북목", "두개척추각(CVA)", items.filter(function(o){ return o.i.cat === "fhp"; })]].forEach(function(sec){
+    [["ROM", "관절가동범위", items.filter(function(o){ return o.i.cat === "rom"; })], ["척추 균형", "등 높이 차이(ATR)", items.filter(function(o){ return o.i.cat === "scol"; })], ["거북목", "두개척추각(CVA)", items.filter(function(o){ return o.i.cat === "fhp"; })]].forEach(function(sec){
       h += '<div class="ss-sec"><div class="ss-h"><b>' + sec[0] + '</b><span>' + sec[1] + '</span></div>';
       if(!sec[2].length){ h += '<p class="ss-empty">이 회차에는 ' + sec[0] + ' 기록이 없어요.</p></div>'; return; }
       h += '<div class="ss-list">' + sec[2].map(function(o){
@@ -11036,7 +11036,7 @@
       }).join("") + '</div></div>';
     });
     $("mbSessTitle").textContent = m.name + " · " + round + "차 측정";
-    $("mbSessSub").textContent = ss.day + (edit ? " · 수정 중" : "") + " · 체형분석 " + (r ? "✓" : "–") + " · ROM " + items.filter(function(o){ return !o.i.scol; }).length + " · 측만증 " + items.filter(function(o){ return o.i.scol; }).length;
+    $("mbSessSub").textContent = ss.day + (edit ? " · 수정 중" : "") + " · 체형분석 " + (r ? "✓" : "–") + " · ROM " + items.filter(function(o){ return !o.i.scol; }).length + " · 척추 균형 " + items.filter(function(o){ return o.i.scol; }).length;
     $("mbSessBody").innerHTML = h;
     $("mbSessFoot").innerHTML = edit
       ? '<button type="button" class="btn primary" id="ssSave">수정 내용 저장</button><button type="button" class="btn line" id="ssCancel">취소</button><button type="button" class="btn line ss-del" id="ssDelAll">회차 전체 삭제</button>'
@@ -11059,7 +11059,7 @@
       Promise.all(jobs).then(function(){ romCache.all = null; romRenderCache = {}; bkTouch("roms"); toast(jobs.length ? jobs.length + "개 값을 저장했어요." : "바뀐 값이 없어요."); reopen(false); }).catch(function(){ toast("저장하지 못했어요."); });
     };
     if($("ssDelAll")) $("ssDelAll").onclick = function(){
-      if(!window.confirm(round + "차 측정(" + ss.day + ")의 체형분석·ROM·측만증·거북목 기록을 모두 삭제할까요? 되돌릴 수 없어요.")) return;
+      if(!window.confirm(round + "차 측정(" + ss.day + ")의 체형분석·ROM·척추 균형·거북목 기록을 모두 삭제할까요? 되돌릴 수 없어요.")) return;
       var jobs = all.map(function(x){ return dbDel("roms", x.id); });
       if(r) jobs.push(dbDel("records", r.id).then(function(){ if(state.sessionId === r.id) state.sessionId = null; }));
       Promise.all(jobs).then(function(){ toast("회차 기록을 삭제했어요."); $("mbSess").hidden = true; mbSessCur = null; mbOpenDetail(m.id); });

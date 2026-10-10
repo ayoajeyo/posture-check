@@ -206,6 +206,12 @@
   .rom-side button{min-width:76px;}
   .rot-bar{margin-top:8px; background:var(--surface-2); border-radius:10px; padding:6px 9px; display:flex; flex-direction:column; gap:4px;}
   .rot-bar[hidden]{display:none!important;}
+  /* v137 수평 보정 잠금: '수평 보정' 버튼을 눌러야 조정 도구가 나타남 (실수로 돌아가는 것 방지) */
+  .rot-bar.locked .adj{display:none!important;}
+  .rot-bar button.lock{margin-right:auto; white-space:nowrap; font-size:12px; font-weight:700; border-color:var(--accent, #0B7A6B); color:var(--accent, #0B7A6B); padding:4px 10px;}
+  .rot-bar button.lock::before{content:"🔒 ";}
+  .rot-bar:not(.locked) button.lock{background:var(--accent, #0B7A6B); color:#fff;}
+  .rot-bar:not(.locked) button.lock::before{content:"✓ ";}
   .rot-bar .row{display:flex; align-items:center; gap:6px; min-width:0;}
   .rot-bar .ttl{font-size:12px; font-weight:700; flex:1;}
   .rot-bar .val{font-family:var(--font-num); font-size:12.5px; font-weight:600; min-width:44px; text-align:right;}
@@ -1459,15 +1465,15 @@
       </div>
     </div>
 
-    <div class="rot-bar" id="rotBar" hidden>
+    <div class="rot-bar locked" id="rotBar" hidden>
       <div class="row">
-        <span class="ttl" style="white-space:nowrap;">수평 보정</span>
-        <button type="button" class="mode" id="btnRotMode">사람 회전</button>
+        <button type="button" class="lock" id="btnRotLock" aria-pressed="false">수평 보정</button>
+        <button type="button" class="mode adj" id="btnRotMode">사람 회전</button>
         <span class="val" id="rotVal">0.0°</span>
-        <button type="button" class="auto" id="btnRotAuto" hidden>자동</button>
-        <button type="button" id="btnRotReset">0°</button>
+        <button type="button" class="auto adj" id="btnRotAuto" hidden>자동</button>
+        <button type="button" class="adj" id="btnRotReset">0°</button>
       </div>
-      <div class="row">
+      <div class="row adj">
         <button type="button" class="icon" id="btnRotMinus" title="반시계 0.5°">⟲</button>
         <input type="range" id="rotRange" min="-15" max="15" step="0.1" value="0" aria-label="사진 회전 각도">
         <button type="button" class="icon" id="btnRotPlus" title="시계 0.5°">⟳</button>
@@ -1817,7 +1823,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v136</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v137</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1834,7 +1840,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v136</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v137</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2252,14 +2258,14 @@
       <button type="button" class="rom-gridbtn" id="btnRomGrid" hidden>원본 사진 보기</button>
       <div class="rom-zoom" id="romZoom" hidden><button type="button" id="btnRomZIn" title="확대">+</button><span id="romZoomVal">100%</span><button type="button" id="btnRomZOut" title="축소">−</button><button type="button" id="btnRomZFit" title="전체 보기">⤢</button></div>
     </div>
-    <div class="rot-bar rom-rot" id="romRot" hidden>
+    <div class="rot-bar rom-rot locked" id="romRot" hidden>
       <div class="row">
-        <span class="ttl">사람 회전</span>
-        <button type="button" class="icon" id="btnRomRotM" title="반시계 0.5°">⟲</button>
-        <input type="range" id="romRotRange" min="-15" max="15" step="0.1" value="0" aria-label="사람 회전 각도">
-        <button type="button" class="icon" id="btnRomRotP" title="시계 0.5°">⟳</button>
+        <button type="button" class="lock" id="btnRomRotLock" aria-pressed="false">수평 보정</button>
+        <button type="button" class="icon adj" id="btnRomRotM" title="반시계 0.5°">⟲</button>
+        <input type="range" class="adj" id="romRotRange" min="-15" max="15" step="0.1" value="0" aria-label="사람 회전 각도">
+        <button type="button" class="icon adj" id="btnRomRotP" title="시계 0.5°">⟳</button>
         <span class="val" id="romRotVal">0.0°</span>
-        <button type="button" id="btnRomRot0">0°</button>
+        <button type="button" class="adj" id="btnRomRot0">0°</button>
       </div>
     </div>
     <div class="rom-live" id="romLive" hidden>
@@ -3503,9 +3509,15 @@
     g.drawImage(src, 0, 0, s.w, s.h);
     g.restore();
   }
+  function rotLock(bar, on){
+    bar.classList.toggle("locked", !!on);
+    var b = bar.querySelector("button.lock"); if(!b) return;
+    b.setAttribute("aria-pressed", String(!on)); b.textContent = on ? "수평 보정" : "보정 완료";
+  }
   function syncRotBar(){
     var s = cur(), bar = $("rotBar");
     if(!bar) return;
+    if(bar._img !== (s && s.img)){ bar._img = s && s.img; rotLock(bar, true); if(state.rotMode) setRotMode(false); }   // 새 사진은 잠금부터
     bar.hidden = !(s && s.img) || cfg().type === "chain";   // 측면은 수평 보정 불필요 → 숨김
     if(bar.hidden){ if(state.rotMode) setRotMode(false); return; }
     var r = s.rot || 0;
@@ -7635,6 +7647,7 @@
   // 9. 사람 회전 (측만증·ROM): 사진을 돌려 수평을 맞추면 측정 기준(수평·수직)도 함께 맞춰짐
   function romRotSync(){
     var bar = $("romRot"); if(!bar) return;
+    if(bar._img !== romS.img){ bar._img = romS.img; rotLock(bar, true); }   // 새 사진은 잠금부터
     bar.hidden = !romS.img || !romS.pts || romCv.hidden;
     var v = Math.round(((romS.roll0 || 0) - (romS.roll || 0)) * 10) / 10;
     $("romRotRange").value = v; $("romRotVal").textContent = (v > 0 ? "+" : "") + v.toFixed(1) + "°";
@@ -7645,6 +7658,11 @@
     romDraw(); romRotSync();
   }
   $("romRotRange").addEventListener("input", function(){ romRotSet(+this.value); });
+  $("btnRomRotLock").addEventListener("click", function(){
+    var bar = $("romRot"), open = bar.classList.contains("locked");
+    rotLock(bar, !open);
+    if(open) toast("수평 보정을 조정할 수 있어요. 다 되면 '보정 완료'를 누르세요.");
+  });
   $("btnRomRotM").addEventListener("click", function(){ romRotSet(+$("romRotRange").value - 0.5); });
   $("btnRomRotP").addEventListener("click", function(){ romRotSet(+$("romRotRange").value + 0.5); });
   $("btnRomRot0").addEventListener("click", function(){ romRotSet(0); });
@@ -10299,6 +10317,12 @@
     $("btnRotPlus").addEventListener("click", function(){ var s = cur(); setRotation(s, (s.rot || 0) + 0.5); });
     $("btnRotReset").addEventListener("click", function(){ setRotation(cur(), 0); });
     $("btnRotMode").addEventListener("click", function(){ setRotMode(!state.rotMode); });
+    $("btnRotLock").addEventListener("click", function(){
+      var bar = $("rotBar"), open = bar.classList.contains("locked");
+      rotLock(bar, !open);
+      if(open) toast("수평 보정을 조정할 수 있어요. 다 되면 '보정 완료'를 누르세요.");
+      else if(state.rotMode) setRotMode(false);
+    });
     $("btnRotAuto").addEventListener("click", function(){ var s = cur(); if(isFinite(s.captureRoll)) setRotation(s, -s.captureRoll); });
     renderLegend();
     resetToIdle();

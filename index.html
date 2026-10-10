@@ -1807,7 +1807,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v130</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v131</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1824,7 +1824,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v130</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v131</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -4046,7 +4046,7 @@
       var nx = Math.max(0, Math.min(s.w, gesture.startPt.x + dxImg * DRAG_GAIN));
       var ny = Math.max(0, Math.min(s.h, gesture.startPt.y + dyImg * DRAG_GAIN));
       s.points[dragKey].x = nx; s.points[dragKey].y = ny;
-      loupe = { x: nx, y: ny, clientX: e.clientX };
+      loupe = { x: nx, y: ny, clientX: e.clientX, clientY: e.clientY };
       requestDraw();
       return;
     }
@@ -4429,10 +4429,11 @@
 
     // 점을 끄는 동안 손가락에 가려진 부분을 확대해서 보여주는 돋보기
     if(loupe){
-      var R = Math.min(96, rect.width * 0.3) * dpr, margin = 8 * dpr;   // 돋보기 크게(지름 약 190px)
-      var fingerLeft = (loupe.clientX - rect.left) < rect.width / 2;
-      var lcx = fingerLeft ? canvas.width - R - margin : R + margin;
-      var lcy = R + margin + 40 * dpr;   // 좌측 위 '원본 사진 보기' 버튼 아래로
+      var R = Math.min(64, rect.width * 0.2) * dpr, margin = 8 * dpr;   // v131 돋보기 2/3 크기(지름 약 128px) · 우측 상단
+      var fx = loupe.clientX - rect.left, fy = (loupe.clientY == null ? rect.height : loupe.clientY - rect.top);
+      var hideRight = fx > rect.width - (R / dpr) * 2 - 30 && fy < (R / dpr) * 2 + 60;   // 손가락이 우측 상단 돋보기 자리를 가리면 좌측 상단으로
+      var lcx = hideRight ? R + margin : canvas.width - R - margin;
+      var lcy = R + margin + (hideRight ? 40 * dpr : 0);   // 좌측일 땐 '원본 사진 보기' 버튼 아래로
       var L = scale * 3;
       ctx.save();
       ctx.beginPath(); ctx.arc(lcx, lcy, R, 0, Math.PI*2); ctx.closePath();
@@ -6901,6 +6902,7 @@
   function romHyperSign(){
     var mv = romMove(), J = romJoint();
     if(!mv || mv.k !== "ext" || mv.normal !== 0 || romKind() !== "ext" || !romS.ant || !romS.pts || romS.pts.length < 3) return 1;
+    if(J.k === "knee") return 1;   // v131 무릎 신전은 좌·우 모두 양수로
     var V = romS.pts[0], D = romS.pts[1], A = romS.pts[2];
     var ux = V.x - A.x, uy = V.y - A.y, ul = Math.hypot(ux, uy); if(!ul) return 1; ux /= ul; uy /= ul;
     var wx = D.x - V.x, wy = D.y - V.y, t = wx * ux + wy * uy, ex = wx - t * ux, ey = wy - t * uy;
@@ -6941,7 +6943,7 @@
     romS.bs = sc; romS.scale = sc * z;
     var g = romCtx; g.setTransform(dpr * sc, 0, 0, dpr * sc, 0, 0);
     romPaint(g, 1 / (sc * z));
-    if(z === 1 && romS.drag >= 0 && romS.dragAt) romLoupe(g, 1 / sc);
+    if((romS.drag >= 0 && romS.dragAt) || (romS.edit && romS.edit.h && romS.edit.h.t === "ref")) romLoupe(g, 1 / sc, z);   // v131 확대한 상태에서도 돋보기 표시
     romSyncView(); if(typeof romRotSync === "function") romRotSync();
     var mv = romMove(), val = romAngle(), jd = romJudge(mv, val);
     $("romVal").textContent = val == null ? "–" : val + "°";
@@ -7049,17 +7051,21 @@
     g.textAlign = "left"; g.textBaseline = "alphabetic";
   }
   // 손가락에 가려지지 않게 드래그 중인 점 주변을 확대해서 보여줌
-  function romLoupe(g, u){
-    var p = romS.pts[romS.drag], Z = 2.6, Rl = 62 * u;
-    var cx = p.x < romS.w / 2 ? romS.w - Rl - 10 * u : Rl + 10 * u, cy = Rl + 10 * u;
-    if(Math.hypot(cx - p.x, cy - p.y) < Rl * 1.6) cy = romS.h - Rl - 10 * u;
+  function romLoupe(g, u, z){
+    z = z || 1;
+    var isRef = romS.drag < 0, p = isRef ? (typeof romRefEnd === "function" ? romRefEnd() : null) : romS.pts[romS.drag]; if(!p) return;   // v131 기준선 끝점을 옮길 때도
+    var Z = 2.6 * z, Rl = 41 * u;   // v131 돋보기 2/3 크기 · 지금 확대 배율에 맞춰 더 크게 확대
+    // 화면에 보이는 점 위치(확대 상태 반영)
+    var sp = z > 1 ? { x: (p.x - romS.vx) * z + romS.w / 2, y: (p.y - romS.vy) * z + romS.h / 2 } : p;
+    var cx = romS.w - Rl - 10 * u, cy = Rl + 54 * u;   // 우측 상단 (확대 버튼 아래)
+    if(Math.hypot(cx - sp.x, cy - sp.y) < Rl * 1.8){ cx = Rl + 10 * u; cy = Rl + 54 * u; }   // 점이 우측 상단에 있으면 좌측 상단
     g.save(); g.beginPath(); g.arc(cx, cy, Rl, 0, Math.PI * 2); g.closePath(); g.clip();
     g.fillStyle = "#000"; g.fillRect(cx - Rl, cy - Rl, Rl * 2, Rl * 2);
     g.translate(cx, cy); g.scale(Z, Z); g.translate(-p.x, -p.y);
     g.drawImage(romS.img, 0, 0, romS.w, romS.h);
     g.restore();
     g.strokeStyle = "#fff"; g.lineWidth = 3 * u; g.beginPath(); g.arc(cx, cy, Rl, 0, Math.PI * 2); g.stroke();
-    g.strokeStyle = ROM_COL[romS.drag]; g.lineWidth = 2 * u;
+    g.strokeStyle = isRef ? "#4FD1E8" : ROM_COL[romS.drag]; g.lineWidth = 2 * u;
     g.beginPath(); g.moveTo(cx - 14 * u, cy); g.lineTo(cx + 14 * u, cy); g.moveTo(cx, cy - 14 * u); g.lineTo(cx, cy + 14 * u); g.stroke();
   }
   function romEvtPt(e){

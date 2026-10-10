@@ -1859,7 +1859,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v148</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v149</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1875,7 +1875,7 @@
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
     <div class="scol-info">
-      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v148</span>
+      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v149</span>
     </div>
   </section>
   <section class="view" id="view-scol" hidden>
@@ -1893,7 +1893,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v148</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v149</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -5689,8 +5689,8 @@
       S.forEach(function(ss, si){ ss.round = S.length - si; }); mbSessions = S;
       if(!S.length){ box.innerHTML = '<p class="mb-empty">아직 측정 기록이 없어요. <b>측정하기</b>를 눌러 시작하세요.</p>'; }
       else box.innerHTML = S.map(function(ss, si){
-        var r = ss.rec, nR = ss.roms.filter(function(x){ return x.joint !== "scol"; }).length, nS = ss.roms.length - nR;
-        var pr = r ? PR[r.id] : null, views = [pr && pr.f ? "정면 " + pr.f + "차" : "", pr && pr.s ? "측면 " + pr.s + "차" : "", nR ? "ROM " + nR : "", nS ? "측만증 " + nS : ""].filter(Boolean).join(" · ");
+        var r = ss.rec, nS = ss.roms.filter(function(x){ return x.joint === "scol"; }).length, nF = ss.roms.filter(function(x){ return x.joint === "fhp"; }).length, nR = ss.roms.length - nS - nF;
+        var pr = r ? PR[r.id] : null, views = [pr && pr.f ? "정면 " + pr.f + "번째" : "", pr && pr.s ? "측면 " + pr.s + "번째" : "", nR ? "ROM " + nR + "항목" : "", nS ? "측만증" : "", nF ? "거북목" : ""].filter(Boolean).join(" · ");
         var th = r && r.thumbs ? [r.thumbs.front, r.thumbs.side].filter(Boolean) : [];
         if(th.length < 2) ss.roms.slice(-2 + th.length).forEach(function(x){ if(x.thumb) th.push(x.thumb); });
         return '<div class="rec" data-key="' + esc(ss.key) + '" data-round="' + (S.length - si) + '"><input type="checkbox" aria-label="비교 선택" data-id="' + esc(ss.key) + '">' +
@@ -5710,7 +5710,7 @@
         [".th", ".info", ".score"].forEach(function(sel){ var el = row.querySelector(sel); if(el){ el.style.cursor = "pointer"; el.title = "이 회차 전체 보기"; el.addEventListener("click", function(){ mbSessOpen(m, key, false, round); }); } });
         row.querySelector(".x").addEventListener("click", function(){
           var ss = S.find(function(x){ return x.key === key; }); if(!ss) return;
-          if(!window.confirm(round + "차 측정(" + ss.day + ")의 체형분석·ROM·측만증 기록을 모두 삭제할까요?")) return;
+          if(!window.confirm(round + "차 측정(" + ss.day + ")의 체형분석·ROM·측만증·거북목 기록을 모두 삭제할까요?")) return;
           var jobs = ss.roms.map(function(x){ return dbDel("roms", x.id); });
           if(ss.rec) jobs.push(dbDel("records", ss.rec.id).then(function(){ if(state.sessionId === ss.rec.id) state.sessionId = null; }));
           Promise.all(jobs).then(function(){ mbOpenDetail(m.id); });
@@ -5749,16 +5749,13 @@
 
   /* ---- 전후 비교 ---- */
   // v135 변화 판정: 체형·측만증은 0에 가까울수록, ROM은 정상 범위까지 커질수록 개선 (1 개선 / -1 악화 / 0 같음)
-  function cmpBetter(a, b, it){
-    if(it && it.normal){ var n = it.normal, ca = Math.min(a, n), cb = Math.min(b, n); return cb > ca ? 1 : cb < ca ? -1 : 0; }
-    return Math.abs(b) < Math.abs(a) ? 1 : Math.abs(b) > Math.abs(a) ? -1 : 0;
-  }
+  function cmpBetter(a, b, it){ return trendOf(it && it.mv || null, a, b).t; }   // v149 공통 판정
   function cmpDelta(a, b, unit){   // → { txt, cls }
     if(!a || !b || a.num == null || b.num == null) return { txt: "–", cls: "up-same" };
     var d = Math.round((b.num - a.num) * 10) / 10;
     if(Math.abs(d) < 0.05) return { txt: "변화 없음", cls: "up-same" };
-    var bt = cmpBetter(a.num, b.num, a), whole = a.ord != null;   // ROM·측만증은 정수 각도
-    return { txt: (d > 0 ? "▲" : "▼") + (whole ? Math.abs(d).toFixed(0) : Math.abs(d).toFixed(1)) + unit + (bt > 0 ? " 개선" : ""), cls: bt > 0 ? "up-good" : bt < 0 ? "up-bad" : "up-same" };
+    var tr = trendOf(a.mv || null, a.num, b.num), bt = tr.t, whole = a.ord != null;   // ROM·측만증은 정수 각도
+    return { txt: (d > 0 ? "▲" : "▼") + (whole ? Math.abs(d).toFixed(0) : Math.abs(d).toFixed(1)) + unit + " " + tr.lab, cls: bt > 0 ? "up-good" : bt < 0 ? "up-bad" : "up-same" };
   }
   function cmpKeys(A, B){
     var keys = [], ord = {};
@@ -5774,13 +5771,13 @@
       }).join("") + '</tbody></table>';
   }
   // 회차의 ROM·측만증 기록 → 비교 행 (같은 항목은 가장 최근 값)
-  function cmpRomList(ss, scol){
+  function cmpRomList(ss, want){   // want: "rom" · "scol" · "fhp"
     var map = {};
     (ss.roms || []).forEach(function(x){
-      var i = mbRomInfo(x); if(i.scol !== scol) return;
+      var i = mbRomInfo(x); if(i.cat !== want) return;
       var k = x.joint + "|" + x.side + "|" + x.move;
       if(map[k] && map[k].at > x.at) return;
-      map[k] = { key: k, title: i.name + (i.sd ? " (" + i.sd + ")" : ""), value: x.value + "°", num: x.value, normal: !scol && i.mv ? i.mv.normal : null, ord: i.ord, at: x.at };
+      map[k] = { key: k, title: i.name + (i.sd ? " (" + i.sd + ")" : ""), value: x.value + "°", num: x.value, mv: i.mv || null, ord: i.ord, at: x.at };
     });
     return Object.keys(map).map(function(k){ return map[k]; });
   }
@@ -5789,8 +5786,9 @@
     return [
       ["정면 · 좌우 기울기", "°", A.f, B.f, "front", "부위"],
       ["측면 · 앞뒤 정렬", "cm", A.sd, B.sd, "side", "부위"],
-      ["ROM · 관절가동범위", "°", cmpRomList(SA, false), cmpRomList(SB, false), null, "항목"],
-      ["측만증 · 척추 측만 검사", "°", cmpRomList(SA, true), cmpRomList(SB, true), null, "항목"]
+      ["ROM · 관절가동범위", "°", cmpRomList(SA, "rom"), cmpRomList(SB, "rom"), null, "항목"],
+      ["측만증 · 척추 측만 검사", "°", cmpRomList(SA, "scol"), cmpRomList(SB, "scol"), null, "항목"],
+      ["거북목 · 두개척추각", "°", cmpRomList(SA, "fhp"), cmpRomList(SB, "fhp"), null, "항목"]
     ].filter(function(v){ return (v[2] && v[2].length) || (v[3] && v[3].length); });
   }
   $("btnMbCompare").addEventListener("click", function(){
@@ -5814,7 +5812,7 @@
       }
       h += cmpTable(v[2], v[3], v[1], v[5]);
     });
-    h += '<p class="mb-note" style="margin-top:10px">체형·측만증은 수치가 0에 가까워질수록, ROM은 정상 범위까지 각도가 커질수록 <b class="up-good">개선</b>으로 표시해요. 같은 장소·거리·복장으로 찍어야 비교가 정확해요.</p>';
+    h += '<p class="mb-note" style="margin-top:10px">정상 범위에 가까워지면 <b class="up-good">개선</b>, 멀어지면 <b class="up-bad">악화</b>로 표시해요(체형·측만증은 0°, ROM은 정상 각도, 신전은 0°(과신전 10° 이내 정상), 거북목은 55° 기준). 스크리닝 참고값이에요. 같은 장소·거리·복장으로 찍어야 비교가 정확해요.</p>';
     h += '<div class="cmp-actions"><button type="button" class="btn primary" id="btnCmpSave">비교 이미지 저장·공유</button></div>';
     cmpPair = [A, B, secs];
     var c = $("mbCompare"); c.innerHTML = h; c.hidden = false;
@@ -6417,9 +6415,9 @@
       repSessCur = act ? { mid: mid, key: act.key, roms: act.roms } : null;
       $("repRoundSub").textContent = act ? act.round + "차 측정 (" + act.day + ") 결과를 보고 있어요 · 다른 회차를 누르면 바뀌어요" : "지금 측정 중인 결과를 보고 있어요 · 회차를 누르면 저장된 기록으로 바뀌어요";
       box.innerHTML = S.slice().reverse().map(function(ss){
-        var r = ss.rec, nR = ss.roms.filter(function(x){ return x.joint !== "scol"; }).length, nS = ss.roms.length - nR;
+        var r = ss.rec, nS = ss.roms.filter(function(x){ return x.joint === "scol"; }).length, nF = ss.roms.filter(function(x){ return x.joint === "fhp"; }).length, nR = ss.roms.length - nS - nF;
         var sub = ss.day.slice(5).replace("-", ".") + (r && r.score != null ? " · " + r.score + "점" : "");
-        var kinds = [r ? "체형" : "", nR ? "ROM" : "", nS ? "측만" : ""].filter(Boolean).join("·");
+        var kinds = [r ? "체형" : "", nR ? "ROM" : "", nS ? "측만" : "", nF ? "거북목" : ""].filter(Boolean).join("·");
         return '<button type="button" data-rk="' + esc(ss.key) + '" aria-pressed="' + String(!!act && act.key === ss.key) + '"><b>' + ss.round + '차</b><em>' + esc(sub) + '</em><small>' + esc(kinds || "기록 없음") + '</small></button>';
       }).join("");
       box.querySelectorAll("[data-rk]").forEach(function(b){ b.addEventListener("click", function(){
@@ -6838,6 +6836,25 @@
   var rom = { joint: "neck", side: "R", latest: {}, session: {}, sessionAll: [], all: [] };
   function romJoint(){ return ROM_ALL.find(function(j){ return j.k === rom.joint; }) || ROM_JOINTS[0]; }
   function romKey(j, side, m){ return j + "|" + side + "|" + m; }
+  /* v149 변화 판정 통일 (모든 화면 공통): '정상에서 벗어난 정도'가 줄면 개선, 늘면 악화, 둘 다 정상이면 정상 범위 유지
+     · 일반 ROM: 정상 각도까지 부족한 만큼(정상 이상은 0) · 신전(정상 0°): 덜 펴진 각도 + 과신전은 10°를 넘는 만큼
+     · 거북목(CVA): 55°까지 부족한 만큼 · 측만증·체형(mv 없음): 0에서 벗어난 만큼 */
+  function trendBad(mv, v){
+    if(v == null || !isFinite(v)) return null;
+    if(!mv) return Math.abs(v);
+    if(mv.grade === "cva") return Math.max(0, (mv.normal || 55) - v);
+    if(mv.grade) return Math.abs(v);
+    if(mv.normal === 0) return v > 0 ? v : Math.max(0, -v - 10);
+    if(mv.normal > 0) return Math.max(0, mv.normal - v);
+    return Math.abs(v);
+  }
+  // → { t: 1 개선 / -1 악화 / 0 같음, ok: 둘 다 정상 범위, lab: "개선"·"악화"·"정상 범위 유지"·"변화 없음" }
+  function trendOf(mv, a, b){
+    var ba = trendBad(mv, a), bb = trendBad(mv, b);
+    if(ba == null || bb == null) return { t: 0, ok: false, lab: "–" };
+    var e = 1e-6, t = bb < ba - e ? 1 : bb > ba + e ? -1 : 0, ok = ba <= e && bb <= e;
+    return { t: t, ok: ok, lab: t > 0 ? "개선" : t < 0 ? "악화" : (a !== b && ok ? "정상 범위 유지" : "변화 없음") };
+  }
   function romJudge(mv, val){
     if(mv.grade) return scolJudge(mv, val);
     if(val == null) return { cls:"", txt:"미측정", pct:0 };
@@ -8166,15 +8183,15 @@
     var opt = function(sel){ return L.map(function(r, i){ return '<option value="' + i + '"' + (i === sel ? " selected" : "") + '>' + romRoundOf(r) + '차 · ' + fmtDate(r.at).slice(0, 10) + ' · ' + r.value + '°</option>'; }).join(""); };
     $("rpA").innerHTML = opt(repPair.a); $("rpB").innerHTML = opt(repPair.b);
     var ra = L[repPair.a], rb = L[repPair.b], d = rb.value - ra.value, mv = grp.mv;
-    var better = mv.grade ? d < 0 : (mv.normal === 0 ? d < 0 : d > 0);
-    $("rpDelta").className = "rp-delta " + (d === 0 ? "" : better ? "up" : "down");
-    $("rpDelta").textContent = d === 0 ? "변화 없음" : (d > 0 ? "+" : "") + d + "° " + (better ? "(개선)" : mv.grade ? "(증가)" : "(감소)");
-    $("rpCapA").textContent = (repPair.a + 1) + "차 · " + fmtDate(ra.at).slice(0, 10) + " · " + ra.value + "°";
-    $("rpCapB").textContent = (repPair.b + 1) + "차 · " + fmtDate(rb.at).slice(0, 10) + " · " + rb.value + "°";
+    var tr = trendOf(mv, ra.value, rb.value), better = tr.t > 0;   // v149 공통 판정
+    $("rpDelta").className = "rp-delta " + (tr.t > 0 ? "up" : tr.t < 0 ? "down" : "");
+    $("rpDelta").textContent = d === 0 ? "변화 없음" : (d > 0 ? "+" : "") + d + "° (" + tr.lab + ")";
+    $("rpCapA").textContent = romRoundOf(ra) + "차 · " + fmtDate(ra.at).slice(0, 10) + " · " + ra.value + "°";
+    $("rpCapB").textContent = romRoundOf(rb) + "차 · " + fmtDate(rb.at).slice(0, 10) + " · " + rb.value + "°";
     var tag = repPair.key + "|" + repPair.a + "|" + repPair.b; repPair.tag = tag;
     Promise.all([romRenderRecord(ra, 900), romRenderRecord(rb, 900)]).then(function(cs){
       if(repPair.tag !== tag) return;
-      repPair.cvA = cs[0]; repPair.cvB = cs[1]; repPair.labA = $("rpCapA").textContent; repPair.labB = $("rpCapB").textContent; repPair.title = grp.label; repPair.delta = $("rpDelta").textContent; repPair.better = better; repPair.d = d;
+      repPair.cvA = cs[0]; repPair.cvB = cs[1]; repPair.labA = $("rpCapA").textContent; repPair.labB = $("rpCapB").textContent; repPair.title = grp.label; repPair.delta = $("rpDelta").textContent; repPair.better = better; repPair.t = tr.t; repPair.d = d;
       [["rpImgA", cs[0]], ["rpImgB", cs[1]]].forEach(function(x){ $(x[0]).src = x[1] ? x[1].toDataURL("image/jpeg", 0.85) : ""; });
     });
   }
@@ -8188,7 +8205,7 @@
     var gap = 24, iw = (w - 72 - gap) / 2, sc = Math.min(iw / repPair.cvA.width, iw / repPair.cvB.width), ih = Math.max(repPair.cvA.height, repPair.cvB.height) * sc, H = 110 + ih + 60;
     g.fillStyle = "#FFFFFF"; rr(g, x, y, w, H, 24); g.fill();
     g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("전후 비교 · " + repPair.title, x + 36, y + 56);
-    g.fillStyle = repPair.d === 0 ? "#17212B" : repPair.better ? "#16794A" : "#C03A2B"; g.font = "800 28px " + F; g.textAlign = "right"; g.fillText(repPair.delta, x + w - 36, y + 56); g.textAlign = "left";
+    g.fillStyle = !repPair.t ? "#17212B" : repPair.t > 0 ? "#16794A" : "#C03A2B"; g.font = "800 28px " + F; g.textAlign = "right"; g.fillText(repPair.delta, x + w - 36, y + 56); g.textAlign = "left";
     [[repPair.cvA, repPair.labA], [repPair.cvB, repPair.labB]].forEach(function(p, i){
       var ix = x + 36 + i * (iw + gap), dw = p[0].width * sc, dh = p[0].height * sc;
       g.drawImage(p[0], ix + (iw - dw) / 2, y + 86, dw, dh);
@@ -8225,7 +8242,7 @@
         return '<div class="rom-card scol-card ' + jd.cls + '"><div class="top"><b>' + mv.n + '</b><em>' + (mv.grade === "atr" ? "기준 5° · 7°" : "기준 10° · 25° · 40°") + '</em></div>' +
           '<div class="val">' + (val == null ? '<span class="none">아직 측정하지 않았어요</span>' : '<strong>' + val + '°</strong>') + '</div>' +
           '<div class="judge">' + jd.txt + '</div>' +
-          (dl != null ? (isPro() ? '<div class="rom-delta ' + (dl === 0 ? "same" : dl < 0 ? "up" : "down") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl < 0 ? "▼ " : "▲ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "°" + (dl < 0 ? " (개선)" : " (증가)")) + ' · 총 ' + H.length + '회</div>' : '<div class="rom-delta lock">🔒 이전 회차와의 비교는 PRO에서 볼 수 있어요</div>') : '') +
+          (dl != null ? (isPro() ? (function(){ var tr = trendOf(mv, H[H.length - 2].value, H[H.length - 1].value); return '<div class="rom-delta ' + (tr.t > 0 ? "up" : tr.t < 0 ? "down" : "same") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl < 0 ? "▼ " : "▲ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "° (" + tr.lab + ")") + ' · 총 ' + H.length + '회</div>'; })() : '<div class="rom-delta lock">🔒 이전 회차와의 비교는 PRO에서 볼 수 있어요</div>') : '') +
           (r && r.thumb ? '<img class="thumb rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">' : '') +
           (hist && isPro() ? '<ul class="scol-hist">' + hist + '</ul>' : '') +
           '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-scol="' + mv.k + '">' + (r ? "다시 측정" : "측정하기") + '</button>' +
@@ -8240,16 +8257,16 @@
     var mv = SCOL_JOINT.moves.find(function(m){ return m.k === mk; }), H = rom.all.filter(function(r){ return r.joint === "scol" && r.move === mk; });
     if(!H.length) return;
     var first = H[0], last = H[H.length - 1], prev = H.length >= 2 ? H[H.length - 2] : null, d1 = last.value - first.value, dp = prev ? last.value - prev.value : null;
-    var cls = function(d){ return d == null || d === 0 ? "" : d < 0 ? "up" : "down"; }, sg = function(d){ return d == null ? "–" : (d > 0 ? "+" : "") + d + "°"; };
-    var body = '<div class="rcmp-kpi"><div><span>이전 회차' + (prev ? ' (' + (H.length - 1) + '차)' : '') + '</span><b>' + (prev ? prev.value + '°' : '–') + '</b><em>' + (prev ? fmtDate(prev.at).slice(0, 10) : '이전 기록 없음') + '</em></div>' +
-      '<div><span>최근 (' + H.length + '차)</span><b>' + last.value + '°</b><em>' + fmtDate(last.at).slice(0, 10) + '</em></div>' +
-      '<div class="' + cls(dp) + '"><span>이전 회차 대비</span><b>' + sg(dp) + '</b><em>' + (dp == null ? '' : dp < 0 ? '각도 감소 (개선)' : dp > 0 ? '각도 증가' : '변화 없음') + '</em></div></div>';
-    if(H.length >= 2) body += '<p class="rcmp-note">1차(' + fmtDate(first.at).slice(0, 10) + ', ' + first.value + '°) 대비 <b>' + sg(d1) + '</b> · ' + scolJudge(mv, last.value).txt + '</p>';
+    var tcls = function(a, b){ if(a == null || b == null) return ""; var t = trendOf(mv, a, b).t; return t > 0 ? "up" : t < 0 ? "down" : ""; }, sg = function(d){ return d == null ? "–" : (d > 0 ? "+" : "") + d + "°"; };
+    var body = '<div class="rcmp-kpi"><div><span>이전 회차' + (prev ? ' (' + romRoundOf(prev) + '차)' : '') + '</span><b>' + (prev ? prev.value + '°' : '–') + '</b><em>' + (prev ? fmtDate(prev.at).slice(0, 10) : '이전 기록 없음') + '</em></div>' +
+      '<div><span>최근 (' + romRoundOf(last) + '차)</span><b>' + last.value + '°</b><em>' + fmtDate(last.at).slice(0, 10) + '</em></div>' +
+      '<div class="' + tcls(prev && prev.value, last.value) + '"><span>이전 회차 대비</span><b>' + sg(dp) + '</b><em>' + (dp == null ? '' : trendOf(mv, prev.value, last.value).lab) + '</em></div></div>';
+    if(H.length >= 2) body += '<p class="rcmp-note">' + romRoundOf(first) + '차(' + fmtDate(first.at).slice(0, 10) + ', ' + first.value + '°) 대비 <b>' + sg(d1) + ' · ' + trendOf(mv, first.value, last.value).lab + '</b> · ' + scolJudge(mv, last.value).txt + '</p>';
     body += '<div class="rcmp-chart">' + romChartSvg({ normal: 0 }, H) + '</div>';
     body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
       H.map(function(r, i){ var jd = scolJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
         return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요.</p>';
-    if(prev && prev.thumb && last.thumb) body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(prev.id) + '"><img src="' + safeSrc(prev.thumb) + '" alt=""><figcaption>이전 ' + (H.length - 1) + '차 · ' + prev.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + last.thumb + '" alt=""><figcaption>최근 ' + H.length + '차 · ' + last.value + '°</figcaption></figure></div>';
+    if(prev && prev.thumb && last.thumb) body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(prev.id) + '"><img src="' + safeSrc(prev.thumb) + '" alt=""><figcaption>이전 ' + romRoundOf(prev) + '차 · ' + prev.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + safeSrc(last.thumb) + '" alt=""><figcaption>최근 ' + romRoundOf(last) + '차 · ' + last.value + '°</figcaption></figure></div>';
     $("romCmpTitle").textContent = "측만증 측정 · 이전 회차 비교";
     $("romCmpBody").innerHTML = body; $("romCmp").hidden = false;
   }
@@ -8274,7 +8291,7 @@
         return '<div class="rom-card scol-card ' + jd.cls + '"><div class="top"><b>' + mv.n + '</b><em>기준 55° · 50° · 45°</em></div>' +
           '<div class="val">' + (val == null ? '<span class="none">아직 측정하지 않았어요</span>' : '<strong>' + val + '°</strong>') + '</div>' +
           '<div class="judge">' + jd.txt + '</div>' +
-          (dl != null ? (isPro() ? '<div class="rom-delta ' + (dl === 0 ? "same" : dl > 0 ? "up" : "down") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl > 0 ? "▲ " : "▼ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "°" + (dl > 0 ? " (개선)" : " (감소)")) + ' · 총 ' + H.length + '회</div>' : '<div class="rom-delta same">🔒 회차별 변화는 PRO</div>') : '') +
+          (dl != null ? (isPro() ? (function(){ var tr = trendOf(mv, H[H.length - 2].value, H[H.length - 1].value); return '<div class="rom-delta ' + (tr.t > 0 ? "up" : tr.t < 0 ? "down" : "same") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl > 0 ? "▲ " : "▼ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "° (" + tr.lab + ")") + ' · 총 ' + H.length + '회</div>'; })() : '<div class="rom-delta same">🔒 회차별 변화는 PRO</div>') : '') +
           (r && r.thumb ? '<img class="thumb rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">' : '') +
           (hist && isPro() ? '<ul class="scol-hist">' + hist + '</ul>' : '') +
           '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-fhp="' + mv.k + '">' + (r ? "다시 측정" : "측정하기") + '</button>' +
@@ -8289,11 +8306,11 @@
     var mv = FHP_JOINT.moves.find(function(m){ return m.k === mk; }), H = rom.all.filter(function(r){ return r.joint === "fhp" && r.move === mk; });
     if(!H.length) return;
     var first = H[0], last = H[H.length - 1], prev = H.length >= 2 ? H[H.length - 2] : null, d1 = last.value - first.value, dp = prev ? last.value - prev.value : null;
-    var cls = function(d){ return d == null || d === 0 ? "" : d > 0 ? "up" : "down"; }, sg = function(d){ return d == null ? "–" : (d > 0 ? "+" : "") + d + "°"; };
-    var body = '<div class="rcmp-kpi"><div><span>이전 회차' + (prev ? ' (' + (H.length - 1) + '차)' : '') + '</span><b>' + (prev ? prev.value + '°' : '–') + '</b><em>' + (prev ? fmtDate(prev.at).slice(0, 10) : '이전 기록 없음') + '</em></div>' +
-      '<div><span>최근 (' + H.length + '차)</span><b>' + last.value + '°</b><em>' + fmtDate(last.at).slice(0, 10) + '</em></div>' +
-      '<div class="' + cls(dp) + '"><span>이전 회차 대비</span><b>' + sg(dp) + '</b><em>' + (dp == null ? '' : dp > 0 ? '각도 증가 (개선)' : dp < 0 ? '각도 감소' : '변화 없음') + '</em></div></div>';
-    if(H.length >= 2) body += '<p class="rcmp-note">1차(' + fmtDate(first.at).slice(0, 10) + ', ' + first.value + '°) 대비 <b>' + sg(d1) + '</b> · ' + scolJudge(mv, last.value).txt + '</p>';
+    var tcls = function(a, b){ if(a == null || b == null) return ""; var t = trendOf(mv, a, b).t; return t > 0 ? "up" : t < 0 ? "down" : ""; }, sg = function(d){ return d == null ? "–" : (d > 0 ? "+" : "") + d + "°"; };
+    var body = '<div class="rcmp-kpi"><div><span>이전 회차' + (prev ? ' (' + romRoundOf(prev) + '차)' : '') + '</span><b>' + (prev ? prev.value + '°' : '–') + '</b><em>' + (prev ? fmtDate(prev.at).slice(0, 10) : '이전 기록 없음') + '</em></div>' +
+      '<div><span>최근 (' + romRoundOf(last) + '차)</span><b>' + last.value + '°</b><em>' + fmtDate(last.at).slice(0, 10) + '</em></div>' +
+      '<div class="' + tcls(prev && prev.value, last.value) + '"><span>이전 회차 대비</span><b>' + sg(dp) + '</b><em>' + (dp == null ? '' : trendOf(mv, prev.value, last.value).lab) + '</em></div></div>';
+    if(H.length >= 2) body += '<p class="rcmp-note">' + romRoundOf(first) + '차(' + fmtDate(first.at).slice(0, 10) + ', ' + first.value + '°) 대비 <b>' + sg(d1) + ' · ' + trendOf(mv, first.value, last.value).lab + '</b> · ' + scolJudge(mv, last.value).txt + '</p>';
     body += '<div class="rcmp-chart">' + romChartSvg({ normal: 55 }, H) + '</div>';
     body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
       H.map(function(r, i){ var jd = scolJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
@@ -8698,9 +8715,8 @@
     var H = romHist(jk, romSd(undefined, mv), mv.k);
     if(H.length < 2) return "";
     if(!isPro()) return '<div class="rom-delta lock">🔒 이전 회차와의 변화는 PRO에서 볼 수 있어요</div>';
-    var a = H[H.length - 2].value, b = H[H.length - 1].value, d = b - a;
-    var better = mv.normal === 0 ? d < 0 : d > 0;
-    return '<div class="rom-delta ' + (d === 0 ? "same" : better ? "up" : "down") + '">' + (d === 0 ? "지난 회차와 같음" : (better ? "▲ " : "▼ ") + "지난 회차 대비 " + (d > 0 ? "+" : "") + d + "°" + (mv.normal === 0 ? (better ? " (더 펴짐)" : " (덜 펴짐)") : " (" + (better ? "개선" : "감소") + ")")) + ' · 총 ' + H.length + '회</div>';
+    var a = H[H.length - 2].value, b = H[H.length - 1].value, d = b - a, tr = trendOf(mv, a, b);   // v149 공통 판정
+    return '<div class="rom-delta ' + (tr.t > 0 ? "up" : tr.t < 0 ? "down" : "same") + '">' + (d === 0 ? "지난 회차와 같음" : (d > 0 ? "▲ " : "▼ ") + "지난 회차 대비 " + (d > 0 ? "+" : "") + d + "° (" + tr.lab + ")") + ' · 총 ' + H.length + '회</div>';
   }
   function romRound(list){
     // 회차 = 측정한 날짜 (같은 날 여러 번이면 마지막 값)
@@ -8732,16 +8748,16 @@
       var mv = J.moves.find(function(m){ return m.k === mk; }), H = romHist(J.k, romSd(J, mv), mk);
       sideTxt = romSd(J, mv) === "C" ? "좌우 공통" : (rom.side === "R" ? "우측" : "좌측");
       $("romCmpTitle").textContent = J.n + " " + mv.n + " · " + sideTxt + " 회차 비교";
-      var first = H[0], last = H[H.length - 1], d = last.value - first.value, better = mv.normal === 0 ? d < 0 : d > 0;
-      body += '<div class="rcmp-kpi"><div><span>1차</span><b>' + first.value + '°</b><em>' + fmtDate(first.at).slice(0, 10) + '</em></div>' +
-        '<div><span>최근 (' + H.length + '차)</span><b>' + last.value + '°</b><em>' + fmtDate(last.at).slice(0, 10) + '</em></div>' +
-        '<div class="' + (d === 0 ? "" : better ? "up" : "down") + '"><span>1차 대비</span><b>' + (d > 0 ? "+" : "") + d + '°</b><em>' + romJudge(mv, last.value).txt + '</em></div></div>';
+      var first = H[0], last = H[H.length - 1], d = last.value - first.value, tr = trendOf(mv, first.value, last.value);   // v149 공통 판정
+      body += '<div class="rcmp-kpi"><div><span>' + romRoundOf(first) + '차</span><b>' + first.value + '°</b><em>' + fmtDate(first.at).slice(0, 10) + '</em></div>' +
+        '<div><span>최근 (' + romRoundOf(last) + '차)</span><b>' + last.value + '°</b><em>' + fmtDate(last.at).slice(0, 10) + '</em></div>' +
+        '<div class="' + (tr.t > 0 ? "up" : tr.t < 0 ? "down" : "") + '"><span>' + romRoundOf(first) + '차 대비</span><b>' + (d > 0 ? "+" : "") + d + '° · ' + tr.lab + '</b><em>' + romJudge(mv, last.value).txt + '</em></div></div>';
       body += '<div class="rcmp-chart">' + romChartSvg(mv, H) + '</div>';
       body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
         H.map(function(r, i){ var jd = romJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
           return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + (dd == null ? "–" : (dd > 0 ? "+" : "") + dd + "°") + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요.</p>';
       if(first.thumb && last.thumb && first !== last){
-        body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(first.id) + '"><img src="' + safeSrc(first.thumb) + '" alt=""><figcaption>1차 · ' + first.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + last.thumb + '" alt=""><figcaption>' + H.length + '차 · ' + last.value + '°</figcaption></figure></div>';
+        body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(first.id) + '"><img src="' + safeSrc(first.thumb) + '" alt=""><figcaption>' + romRoundOf(first) + '차 · ' + first.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + safeSrc(last.thumb) + '" alt=""><figcaption>' + romRoundOf(last) + '차 · ' + last.value + '°</figcaption></figure></div>';
       }
     } else {
       $("romCmpTitle").textContent = J.n + " 전체 · " + sideTxt + " 회차 비교" + (J.single && romLrAny(J) ? " (측방굴곡·회전)" : "");
@@ -8752,9 +8768,9 @@
         body += '<div class="rcmp-scroll"><table class="rcmp-tbl wide"><thead><tr><th>항목 (정상)</th>' + days.map(function(d, i){ return '<th>' + (R0.days.length - days.length + i + 1) + '차<br><small>' + d.slice(5) + '</small></th>'; }).join("") + '<th>변화</th></tr></thead><tbody>' +
           J.moves.map(function(mv){
             var vals = days.map(function(d){ return R0.map[d][mv.k] ? R0.map[d][mv.k].value : null; });
-            var got = vals.filter(function(v){ return v != null; }), dd = got.length >= 2 ? got[got.length - 1] - got[0] : null, better = dd != null && (mv.normal === 0 ? dd < 0 : dd > 0);
+            var got = vals.filter(function(v){ return v != null; }), dd = got.length >= 2 ? got[got.length - 1] - got[0] : null, tt = dd == null ? 0 : trendOf(mv, got[0], got[got.length - 1]).t;
             return '<tr><td>' + mv.n + ' <small>(' + mv.normal + '°)</small></td>' + vals.map(function(v){ return '<td class="num ' + (v == null ? "" : romJudge(mv, v).cls) + '">' + (v == null ? "–" : v + "°") + '</td>'; }).join("") +
-              '<td class="num ' + (dd == null || dd === 0 ? "" : better ? "good" : "crit") + '">' + (dd == null ? "–" : (dd > 0 ? "+" : "") + dd + "°") + '</td></tr>';
+              '<td class="num ' + (tt > 0 ? "good" : tt < 0 ? "crit" : "") + '">' + (dd == null ? "–" : (dd > 0 ? "+" : "") + dd + "°") + '</td></tr>';
           }).join("") + '</tbody></table></div>';
       }
     }
@@ -10874,19 +10890,23 @@
 
   /* ===================== v83 회원 회차 = 체형분석 + ROM + 측만증 한 페이지 (보기·수정·삭제) ===================== */
   function mbDay(t){ return fmtDate(t).slice(0, 10); }
+  /* v149 회원 기록의 'N차' = 방문 회차 (같은 날 측정 = 한 번의 방문, 방문 순서대로 1차·2차…)
+     · 체형분석 기록은 측정한 날의 방문에 · ROM·측만증·거북목은 그 기록의 회차가 처음 측정된 날의 방문에 붙음
+       (지난 회차에 나중에 추가로 잰 항목도 원래 방문에 남음) · 회차 번호가 없는 예전 기록은 측정한 날 */
   function mbBuildSessions(rs, roms){
-    var S = rs.map(function(r){ return { key: r.id, at: r.at, rec: r, day: mbDay(r.at), roms: [] }; }), byDay = {}, byRound = {};
-    S.forEach(function(x){ if(!byDay[x.day] || byDay[x.day].at < x.at) byDay[x.day] = x; });
-    S.slice().sort(function(a, b){ return a.at - b.at; }).forEach(function(x, i){ byRound[i + 1] = x; });
+    var S = [], byDay = {};
+    rs.slice().sort(function(a, b){ return a.at - b.at; }).forEach(function(r){
+      var d = mbDay(r.at), ss = byDay[d];
+      if(ss && !ss.rec){ ss.rec = r; ss.key = r.id; ss.at = Math.min(ss.at, r.at); return; }
+      ss = { key: r.id, at: r.at, rec: r, day: d, roms: [] }; S.push(ss);   // 같은 날 체형분석 기록이 둘이면 따로 표시 (기록이 가려지지 않게)
+      if(!byDay[d]) byDay[d] = ss;
+    });
+    var anchor = {};   // 회차가 처음 측정된 날
+    roms.forEach(function(x){ if(!x.round) return; var g = romGrpOf(x.joint) + "|" + x.round; if(!anchor[g] || x.at < anchor[g]) anchor[g] = x.at; });
     roms.slice().sort(function(a, b){ return a.at - b.at; }).forEach(function(x){
-      if(x.round){   // v88: 회차 번호가 있는 ROM·측만증 기록 → 같은 회차로
-        var sr = byRound[x.round];
-        if(!sr){ sr = { key: "r:" + x.round, at: x.at, rec: null, day: mbDay(x.at), roms: [] }; byRound[x.round] = sr; S.push(sr); }
-        sr.roms.push(x); if(!sr.rec && x.at > sr.at) sr.at = x.at; return;
-      }
-      var d = mbDay(x.at), ss = byDay[d];
+      var d = mbDay(x.round ? anchor[romGrpOf(x.joint) + "|" + x.round] : x.at), ss = byDay[d];
       if(!ss){ ss = { key: "d:" + d, at: x.at, rec: null, day: d, roms: [] }; byDay[d] = ss; S.push(ss); }
-      ss.roms.push(x); if(!ss.rec && x.at > ss.at) ss.at = x.at;
+      ss.roms.push(x); if(!ss.rec) ss.at = Math.min(ss.at, x.at);
     });
     S.sort(function(a, b){ return b.at - a.at; });
     return S;
@@ -10897,7 +10917,8 @@
     var name = !J ? x.joint + " " + x.move : (J.k === "scol" ? (mv ? mv.n : "측만증") : J.n + " " + (mv ? mv.n : "(삭제된 항목)"));
     var jd = mv ? (J.k === "scol" ? scolJudge(mv, x.value) : romJudge(mv, x.value)) : { cls: "", txt: "" };
     var ord = J ? ROM_ALL.indexOf(J) * 20 + (mv ? J.moves.indexOf(mv) * 2 : 19) + (x.side === "R" ? 1 : 0) : 999;
-    return { J: J, mv: mv, sd: sd, name: name, jd: jd, ord: ord, scol: !!(J && J.k === "scol") };
+    var cat = J && J.k === "scol" ? "scol" : J && J.k === "fhp" ? "fhp" : "rom";
+    return { J: J, mv: mv, sd: sd, name: name, jd: jd, ord: ord, scol: cat === "scol", cat: cat };
   }
   var mbSessCur = null, mbSessPR = {};   // { m, key, edit, round } · v114 정면·측면 회차
   function mbSessOpen(m, key, edit, round){
@@ -10919,7 +10940,7 @@
     if(r){
       if(r.thumbs && (r.thumbs.front || r.thumbs.side)) h += '<div class="ss-pics">' + [["front", "정면", r.f], ["side", "측면", r.sd]].map(function(v){
         var t = r.thumbs && r.thumbs[v[0]];
-        return '<figure>' + (t ? '<img src="' + safeSrc(t) + '" alt="">' : '<div class="ss-nopic">측정 없음</div>') + '<figcaption>' + v[1] + (v[2] && mbSessPR[r.id] ? " " + mbSessPR[r.id][v[0] === "front" ? "f" : "s"] + "차" : "") + '</figcaption></figure>';
+        return '<figure>' + (t ? '<img src="' + safeSrc(t) + '" alt="">' : '<div class="ss-nopic">측정 없음</div>') + '<figcaption>' + v[1] + (v[2] && mbSessPR[r.id] ? " " + mbSessPR[r.id][v[0] === "front" ? "f" : "s"] + "번째" : "") + '</figcaption></figure>';
       }).join("") + '</div>';
       [["정면 · 좌우 기울기", r.f], ["측면 · 앞뒤 정렬", r.sd]].forEach(function(v){
         if(!v[1] || !v[1].length) return;
@@ -10934,7 +10955,7 @@
     h += '</div>';
     // ROM · 측만증
     var items = ss.roms.map(function(x){ return { x: x, i: mbRomInfo(x) }; }).sort(function(a, b){ return a.i.ord - b.i.ord || a.x.at - b.x.at; });
-    [["ROM", "관절가동범위", items.filter(function(o){ return !o.i.scol; })], ["측만증", "척추 측만 검사", items.filter(function(o){ return o.i.scol; })]].forEach(function(sec){
+    [["ROM", "관절가동범위", items.filter(function(o){ return o.i.cat === "rom"; })], ["측만증", "척추 측만 검사", items.filter(function(o){ return o.i.cat === "scol"; })], ["거북목", "두개척추각(CVA)", items.filter(function(o){ return o.i.cat === "fhp"; })]].forEach(function(sec){
       h += '<div class="ss-sec"><div class="ss-h"><b>' + sec[0] + '</b><span>' + sec[1] + '</span></div>';
       if(!sec[2].length){ h += '<p class="ss-empty">이 회차에는 ' + sec[0] + ' 기록이 없어요.</p></div>'; return; }
       h += '<div class="ss-list">' + sec[2].map(function(o){
@@ -10970,7 +10991,7 @@
       Promise.all(jobs).then(function(){ romCache.all = null; romRenderCache = {}; bkTouch("roms"); toast(jobs.length ? jobs.length + "개 값을 저장했어요." : "바뀐 값이 없어요."); reopen(false); }).catch(function(){ toast("저장하지 못했어요."); });
     };
     if($("ssDelAll")) $("ssDelAll").onclick = function(){
-      if(!window.confirm(round + "차 측정(" + ss.day + ")의 체형분석·ROM·측만증 기록을 모두 삭제할까요? 되돌릴 수 없어요.")) return;
+      if(!window.confirm(round + "차 측정(" + ss.day + ")의 체형분석·ROM·측만증·거북목 기록을 모두 삭제할까요? 되돌릴 수 없어요.")) return;
       var jobs = all.map(function(x){ return dbDel("roms", x.id); });
       if(r) jobs.push(dbDel("records", r.id).then(function(){ if(state.sessionId === r.id) state.sessionId = null; }));
       Promise.all(jobs).then(function(){ toast("회차 기록을 삭제했어요."); $("mbSess").hidden = true; mbSessCur = null; mbOpenDetail(m.id); });

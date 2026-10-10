@@ -1367,6 +1367,12 @@
     <div class="mb-txt"><b id="mbCurName">회원 선택 안 함</b><em id="mbCurMeta">회원을 선택하고 측정 후 [측정 저장]을 누르면 기록에 남아요</em></div>
     <button type="button" class="btn line sm" id="btnMbPick">회원 선택</button>
   </div>
+  <div class="rom-roundbar" id="bodyRoundBar" hidden>
+    <span class="rr-no" id="bodyRoundNo">1차</span>
+    <div class="rr-txt"><b id="bodyRoundTxt">1차 측정</b><em id="bodyRoundSub"></em></div>
+    <button type="button" class="btn primary sm" id="btnBodyNextRound">다음 회차 측정</button>
+  </div>
+  <div class="rom-rounds" id="bodyRounds" role="group" aria-label="회차 선택" hidden></div>
   <div class="sess-bar" id="sessBar" hidden>
     <span class="sess-round" id="sessRound">1차</span>
     <div class="sess-txt"><b id="sessTitle">1차 측정</b><em id="sessState">저장 안 됨</em></div>
@@ -1801,7 +1807,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v129</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v130</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1818,7 +1824,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v129</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v130</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -5871,6 +5877,7 @@
       var i = state.sessionId ? rs.findIndex(function(r){ return r.id === state.sessionId; }) : -1;
       state.sessRound = i >= 0 ? i + 1 : rs.length + 1; state.sessCount = rs.length;
       var PR = poseRounds(rs), cr = i >= 0 ? rs[i] : null, cp = cr ? PR[cr.id] : null;
+      state.bodyRecs = rs; state.bodyPR = PR;   // v130 회차 바·회차 선택용
       state.rnd = cr ? { f: cp.f || PR._next.f, s: cp.s || PR._next.s } : PR._next;   // v126 이전 기록에 새로 찍는 쪽은 다음 회차 번호
       updateSessBar();
     });
@@ -5890,7 +5897,41 @@
     $("btnSessNext").textContent = !saved ? "처음부터 다시" : "새 측정 시작";
     var bb = $("btnSessSaveBot"); if(bb){ bb.textContent = (saved && !dirty) ? "✓ 저장됨" : lbl; bb.disabled = saved && !dirty; bb.hidden = !hasPhotos() || !!$("markControls").hidden; }
     var rb = $("btnRepSess"); if(rb){ rb.textContent = lbl; rb.disabled = saved && !dirty; rb.hidden = !hasPhotos(); }
+    bodySyncRound();
   }
+  /* v130 체형분석도 ROM·측만증처럼 회차 바 + 회차 선택 (정면·측면은 회차를 따로 셈) */
+  function bodySyncRound(){
+    var bar = $("bodyRoundBar"), box = $("bodyRounds"); if(!bar) return;
+    if(!state.member){ bar.hidden = true; box.hidden = true; return; }
+    var side = state.mode === "side", k = side ? "s" : "f", fk = side ? "sd" : "f", nm = side ? "측면" : "정면";
+    var RR = state.rnd || { f: 1, s: 1 }, n = RR[k] || 1, rs = (state.bodyRecs || []).filter(function(r){ return r.memberId === state.member.id; }), PR = state.bodyPR || {};
+    var mine = rs.filter(function(r){ return r[fk] && PR[r.id] && PR[r.id][k]; }), mx = mine.reduce(function(a, r){ return Math.max(a, PR[r.id][k]); }, 0);
+    var curRec = state.sessionId ? rs.find(function(r){ return r.id === state.sessionId; }) : null, has = !!(curRec && curRec[fk]);
+    bar.hidden = false;
+    $("bodyRoundNo").textContent = n + "차";
+    $("bodyRoundTxt").textContent = state.member.name + " · " + nm + " " + n + "차 측정";
+    $("bodyRoundSub").textContent = state.editingOld ? "이전 기록 수정 중 · 저장하면 " + nm + " " + n + "차 기록이 바뀌어요" : has ? "측정 결과는 " + nm + " " + n + "차로 저장됐어요" : (n > 1 ? "새 회차 · 측정하면 " + n + "차로 저장돼요" : "첫 측정 · 1차로 저장돼요");
+    var b = $("btnBodyNextRound"); b.disabled = !state.sessionId; b.textContent = (Math.max(mx, n) + 1) + "차 측정 시작";
+    var top = Math.max(mx, n); box.hidden = top < 2;
+    var sig = state.member.id + "|" + k + "|" + n + "|" + top + "|" + mine.map(function(r){ return r.id + (r.editedAt || r.at); }).join(",");
+    if(top < 2){ box.innerHTML = ""; box._sig = ""; return; }
+    if(box._sig === sig) return;   // 0.8초마다 불려도 같은 내용이면 다시 그리지 않음
+    box._sig = sig;
+    var html = "";
+    for(var q = 1; q <= top; q++){
+      var R = mine.filter(function(r){ return PR[r.id][k] === q; }), rec = R[R.length - 1];
+      var sub = rec ? fmtDate(rec.at).slice(5, 10).replace("-", ".") + (rec.score != null ? " · " + rec.score + "점" : "") : "새 회차";
+      html += '<button type="button" data-rn="' + q + '"' + (rec ? ' data-rid="' + rec.id + '"' : "") + ' aria-pressed="' + (q === n) + '"' + (rec ? "" : ' class="new"') + '><b>' + q + '차</b><em>' + sub + '</em></button>';
+    }
+    box.innerHTML = html;
+    box.querySelectorAll("button[data-rid]").forEach(function(btn){ btn.addEventListener("click", function(){
+      var id = btn.getAttribute("data-rid"); if(id === state.sessionId) return;
+      var all = state.bodyRecs || [], rec = all.find(function(r){ return r.id === id; }); if(!rec) return;
+      openRecordForEdit(state.member, rec, all.indexOf(rec) + 1);
+    }); });
+    var on = box.querySelector('[aria-pressed="true"]'); if(on) box.scrollLeft = Math.max(0, on.offsetLeft - box.clientWidth / 2 + on.offsetWidth / 2);
+  }
+  $("btnBodyNextRound").addEventListener("click", function(){ $("btnSessNext").click(); });
   setInterval(function(){ if(state.view === "analyze" || state.view === "report") updateSessBar(); }, 800);
   (function(){ var bb = $("btnSessSaveBot"); if(bb) bb.addEventListener("click", function(){ $("btnSessSave").click(); setTimeout(updateSessBar, 300); }); })();
 

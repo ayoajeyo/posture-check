@@ -1859,7 +1859,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v149</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v150</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1875,7 +1875,7 @@
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
     <div class="scol-info">
-      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v149</span>
+      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v150</span>
     </div>
   </section>
   <section class="view" id="view-scol" hidden>
@@ -1893,7 +1893,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v149</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v150</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2070,6 +2070,13 @@
       <div class="au-links"><button type="button" id="auCOut">다른 계정으로 로그인</button></div>
     </div>
 
+    <div class="au-pane" data-pane="switch" hidden>
+      <h2>이전 계정의 기록이 아직 서버에 안 올라갔어요</h2>
+      <p class="sub" id="auSwTxt">이 기기에는 다른 계정에서 서버에 올리지 못한 변경이 있어요. 지금 계정으로 바꾸면 이 기기에서 지워져요.</p>
+      <button type="button" class="btn primary au-btn" id="auSwBack">이전 계정으로 다시 로그인 (권장)</button>
+      <button type="button" class="btn line au-btn" id="auSwBackup" style="margin-top:8px">백업 파일로 저장한 뒤 이 계정으로 계속</button>
+      <button type="button" class="btn line au-btn" id="auSwDrop" style="margin-top:8px;color:var(--crit)">저장하지 않고 이 계정으로 계속</button>
+    </div>
     <div class="au-pane" data-pane="offline" hidden>
       <h2>인터넷 연결이 필요해요</h2>
       <p class="sub">처음 한 번은 인터넷에 연결된 상태에서 로그인해야 해요. 로그인한 뒤에는 인터넷이 끊겨도 쓸 수 있고, 연결되면 자동으로 서버에 저장돼요.</p>
@@ -3035,7 +3042,9 @@
     streamFacing = null;
     video.srcObject = null;
   }
+  var camSeq = 0;   // v150 카메라 열기 요청 번호: 연타·전환·화면 이동 뒤 늦게 열린 카메라는 바로 끔
   function pauseCamera(){
+    camSeq++;
     stopLive();
     stopLevelSensor();
     clearTimeout(idleStopTimer);
@@ -3149,18 +3158,21 @@
       return;
     }
     stopStream();
-    var wantFacing = state.facingMode;
+    var wantFacing = state.facingMode, my = ++camSeq;
     navigator.mediaDevices.getUserMedia({
       // 기기가 지원하는 최대 해상도로 요청 (가로·세로 어느 방향이든 가장 큰 모드가 선택됨)
       video: { facingMode: { ideal: wantFacing }, width:{ ideal: 4096 }, height:{ ideal: 4096 }, frameRate:{ ideal: 30 } },
       audio: false
     }).then(function(stream){
+      if(my !== camSeq || state.view !== "analyze"){ try{ stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} return; }
+      if(state.stream && state.stream !== stream){ try{ state.stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} }
       state.stream = stream;
       streamFacing = wantFacing;
       camTune(stream);
       video.srcObject = stream;
       showLive();
     }).catch(function(err){
+      if(my !== camSeq) return;
       var denied = err && (err.name === "NotAllowedError" || err.name === "SecurityError");
       toast(denied ? "카메라 권한이 막혀 있어요. 아래 '촬영 가이드'의 권한 설정 방법을 확인해주세요." : "카메라를 열 수 없어요. 다른 앱이 카메라를 쓰고 있는지 확인해주세요.");
     });
@@ -5200,7 +5212,7 @@
     var scN = (typeof scolRows === "function") ? scolRows(repRomSrc()).length : 0;
     var romN = ((typeof romLRRows === "function") ? romLRRows(repRomSrc()).length : 0) + scN + (scN ? 1 : 0), ROMH = romN ? 130 + romN * 54 + 20 + 30 : 0;
     var PH = 0;
-    if(typeof repPair !== "undefined" && repPair.cvA && repPair.cvB){ var piw = (W - PAD * 2 - 72 - 24) / 2, psc = Math.min(piw / repPair.cvA.width, piw / repPair.cvB.width); PH = 110 + Math.max(repPair.cvA.height, repPair.cvB.height) * psc + 60 + 30; }
+    if(typeof repPair !== "undefined" && repPairOk()){ var piw = (W - PAD * 2 - 72 - 24) / 2, psc = Math.min(piw / repPair.cvA.width, piw / repPair.cvB.width); PH = 110 + Math.max(repPair.cvA.height, repPair.cvB.height) * psc + 60 + 30; }
     ROMH += PH;
     H += ROMH;
     var c = document.createElement("canvas"); c.width = W; c.height = H;
@@ -5282,7 +5294,7 @@
   $("btnSaveReport").addEventListener("click", function(){
     var r = computeReport();
     var go = function(){
-      if(!r.f && !r.sd && !(typeof romLRRows === "function" && (romLRRows(repRomSrc()).length || scolRows(repRomSrc()).length || (repPair.cvA && repPair.cvB)))){ toast("정면·측면 또는 ROM 측정을 먼저 마쳐주세요."); return; }
+      if(!r.f && !r.sd && !(typeof romLRRows === "function" && (romLRRows(repRomSrc()).length || scolRows(repRomSrc()).length || repPairOk()))){ toast("정면·측면 또는 ROM 측정을 먼저 마쳐주세요."); return; }
       deliverCanvas(buildReportCanvas(r), "AYO_report_" + fileTag() + ".jpg");
     };
     if(typeof romLoad === "function") romLoad().then(go, go); else go();
@@ -5990,8 +6002,9 @@
     }catch(e){}
     anchor();
   }
-  $("btnBkExport").addEventListener("click", function(){
-    loadAll().then(function(res){
+  $("btnBkExport").addEventListener("click", function(){ bkExportNow(); });
+  function bkExportNow(){   // v150 계정 전환 화면에서도 쓰려고 함수로 (끝나면 resolve)
+    return loadAll().then(function(res){
       if(!res[0].length){ toast("내보낼 회원이 없어요."); return; }
       var data = { app: "아요바디요", kind: "backup", version: 2, exportedAt: new Date().toISOString(), members: res[0], records: [] };
       var full = function(st, L){ return Promise.all(L.map(function(x){ return dbFull(st, x).then(function(y){ var c = Object.assign({}, y); delete c.blob; return c; }); })); };
@@ -6000,7 +6013,7 @@
       delete data.extra;
       data.settings = getSettings();
 
-      fill.then(function(){
+      return fill.then(function(){
       var blob = new Blob([JSON.stringify(data)], { type: "application/json" });
       var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
       lsSet("ayo_last_backup", String(Date.now())); lsSet("ayo_bk_dirty", "0"); lsSet("ayo_bk_snooze", "0"); if(typeof bkCheck === "function") bkCheck();
@@ -6009,7 +6022,7 @@
       bkInfoRender();
       });
     });
-  });
+  }
   $("btnBkImport").addEventListener("click", function(){ $("bkFile").value = ""; $("bkFile").click(); });
   $("bkFile").addEventListener("change", function(){
     var f = this.files && this.files[0]; if(!f) return;
@@ -6331,13 +6344,16 @@
   $("mbPicker").addEventListener("click", function(e){ if(e.target.id === "btnMpNone" || e.target === $("mbPicker")) state.pendingSave = false; });
 
   // ---- 이전 기록 불러와 수정 ----
-  function restoreMode(m, p){
+  // v150 기록 열기 요청 번호: 늦게 도착한 이전 요청의 사진은 버림 (정면은 A 기록, 측면은 B 기록처럼 섞이지 않게)
+  state.openSeq = 0;
+  function restoreMode(m, p, tok){
     var s = state.byMode[m];
     releaseImage(s); s.img = null; s.points = {}; s.history = []; s.grid = null; s.cutout = null; s.personBox = null;
     if(!p) return Promise.resolve();
     return new Promise(function(res){
       var img = new Image();
       img.onload = function(){
+        if(tok != null && tok !== state.openSeq){ res(); return; }
         s.img = img; s.imgUrl = p.img; s.w = img.naturalWidth; s.h = img.naturalHeight;
         var pts = {}; Object.keys(p.points || {}).forEach(function(k){ pts[k] = Object.assign({}, p.points[k]); });
         s.points = pts;
@@ -6361,10 +6377,13 @@
       return;
     }
     if(state.sessionId !== rec.id && !confirmDiscard()) return;
+    if(!state.member || state.member.id !== m.id){ repPair.key = null; repPair.a = repPair.b = null; repPair.cvA = repPair.cvB = null; repPair.mid = null; }   // v150
     _setMember(m);
+    var tok = ++state.openSeq;
     state.sessionId = rec.id; state.editingOld = true; state.sessRound = round;
     if(rec.height){ $("htField").value = rec.height; }
-    Promise.all([restoreMode("front", rec.photos.front), restoreMode("side", rec.photos.side)]).then(function(){
+    Promise.all([restoreMode("front", rec.photos.front, tok), restoreMode("side", rec.photos.side, tok)]).then(function(){
+      if(tok !== state.openSeq) return;
       $("htField").dispatchEvent(new Event("input"));
       showView("analyze");
       var want = rec.photos.front ? "front" : "side";
@@ -6434,9 +6453,12 @@
     if(r && state.sessionId === r.id){ repSel = { mid: mid, key: ss.key }; renderReport(); return; }
     if(!auto && !confirmDiscard()) return;
     repSel = { mid: mid, key: ss.key };
+    var tok = ++state.openSeq;
     var go = function(rec){
+      if(tok !== state.openSeq) return;
       var P = rec && rec.photos;
-      Promise.all([restoreMode("front", P && P.front), restoreMode("side", P && P.side)]).then(function(){
+      Promise.all([restoreMode("front", P && P.front, tok), restoreMode("side", P && P.side, tok)]).then(function(){
+        if(tok !== state.openSeq || !state.member || state.member.id !== mid) return;
         state.sessionId = rec ? rec.id : null; state.editingOld = !!rec; state.sessRound = ss.round;
         $("htField").value = rec && rec.height ? rec.height : (state.member && state.member.height ? state.member.height : "");
         $("htField").dispatchEvent(new Event("input"));
@@ -8067,6 +8089,7 @@
   }
   function romFind(id){ return rom.all.find(function(r){ return r.id === id; }) || rom.sessionAll.find(function(r){ return r.id === id; }); }
   // 지난 회차 열기: 그때 사진 + 측정점 그대로 → 보기·수정
+  var romOpenSeq = 0;   // v150 지난 기록 열기 요청 번호 (늦게 불러온 이전 기록 사진이 지금 화면을 덮지 않게)
   function openRomRecord(rec){
     if(!rec) return;
     if(!rec.img && rec.blob){ dbFull("roms", rec).then(function(full){ openRomRecord(Object.assign({}, full || rec, { blob: false })); }); return; }
@@ -8077,10 +8100,12 @@
     var H = rom.all.filter(function(r){ return r.joint === rec.joint && r.side === rec.side && r.move === rec.move; }), no = H.findIndex(function(x){ return x.id === rec.id; }) + 1;
     romS.editId = rec.id; romS.editAt = rec.at; romS.editMember = rec.memberId; romS.editRec = rec;
     $("btnRomApply").textContent = "수정 저장";
+    var tok = ++romOpenSeq, stale = function(){ return tok !== romOpenSeq || $("romSheet").hidden || romS.editId !== rec.id; };
     if(!rec.img){
       // v76: 원본 사진이 없는 예전 기록 → 저장된 결과 사진을 보면서 각도를 직접 고치거나, 다시 촬영해 이 회차를 덮어쓰기
       var tim = new Image();
       tim.onload = function(){
+        if(stale()) return;
         romS.img = tim; romS.w = tim.naturalWidth; romS.h = tim.naturalHeight; romS.pts = null; romS.gridOn = false; romS.view = "meas"; romS.manualEdit = true; romSyncGridBtn();
         romCv.hidden = false; $("romEmpty").hidden = true; romDraw();
         $("romManual").hidden = false; $("romManVal").value = rec.value;
@@ -8090,12 +8115,14 @@
         $("romQ").hidden = false; $("romQ").className = "rom-q mid";
         $("romQ").textContent = (no > 0 ? no + "차 · " : "") + fmtDate(rec.at).slice(0, 10) + " 기록 · 원본 사진이 없는 예전 기록이에요. 각도를 직접 고치거나 [촬영하기]로 다시 찍으면 이 회차가 바뀌어요";
       };
-      tim.onerror = function(){ toast("이 기록의 사진을 불러오지 못했어요."); };
+      tim.onerror = function(){ if(!stale()) toast("이 기록의 사진을 불러오지 못했어요."); };
       if(rec.thumb) tim.src = rec.thumb; else tim.onerror();
       return;
     }
     var im = new Image();
+    im.onerror = function(){ if(!stale()) toast("이 기록의 사진을 불러오지 못했어요. 인터넷 연결을 확인해 주세요."); };
     im.onload = function(){
+      if(stale()) return;
       romS.img = im; romS.w = im.naturalWidth; romS.h = im.naturalHeight;
       var k = rec.imgK || 1;
       romS.pts = (rec.pts || []).map(function(q){ return { x: q.x * k, y: q.y * k }; });
@@ -8124,7 +8151,9 @@
   });
 
   /* ===================== v74 리포트: ROM·측만증 전후 사진 비교 ===================== */
-  var repPair = { key: null, a: null, b: null, cvA: null, cvB: null };
+  var repPair = { key: null, a: null, b: null, cvA: null, cvB: null, mid: null };
+  // v150 리포트 전후 비교 사진은 '지금 회원'의 것일 때만 사용 (회원을 바꿨는데 이전 회원 사진이 이미지에 들어가지 않게)
+  function repPairOk(){ return !!(repPair.cvA && repPair.cvB && repPair.mid === (state.member ? state.member.id : null)); }
   function repPairGroups(){
     var map = {}, order = [];
     rom.all.forEach(function(r){
@@ -8174,7 +8203,7 @@
     var box = $("repPair"); if(!box) return;
     var G = repPairGroups();
     box.hidden = !G.length;
-    if(!G.length) return;
+    if(!G.length){ repPair.cvA = repPair.cvB = null; repPair.key = null; repPair.tag = null; return; }
     if(!repPair.key || !G.some(function(g){ return g.key === repPair.key; })) repPair.key = G[0].key;
     var grp = G.find(function(g){ return g.key === repPair.key; }), L = grp.list;
     if(repPair.a == null || repPair.a >= L.length) repPair.a = 0;
@@ -8188,10 +8217,10 @@
     $("rpDelta").textContent = d === 0 ? "변화 없음" : (d > 0 ? "+" : "") + d + "° (" + tr.lab + ")";
     $("rpCapA").textContent = romRoundOf(ra) + "차 · " + fmtDate(ra.at).slice(0, 10) + " · " + ra.value + "°";
     $("rpCapB").textContent = romRoundOf(rb) + "차 · " + fmtDate(rb.at).slice(0, 10) + " · " + rb.value + "°";
-    var tag = repPair.key + "|" + repPair.a + "|" + repPair.b; repPair.tag = tag;
+    var tag = (state.member ? state.member.id : "") + "|" + repPair.key + "|" + repPair.a + "|" + repPair.b, pmid = state.member ? state.member.id : null; repPair.tag = tag;
     Promise.all([romRenderRecord(ra, 900), romRenderRecord(rb, 900)]).then(function(cs){
       if(repPair.tag !== tag) return;
-      repPair.cvA = cs[0]; repPair.cvB = cs[1]; repPair.labA = $("rpCapA").textContent; repPair.labB = $("rpCapB").textContent; repPair.title = grp.label; repPair.delta = $("rpDelta").textContent; repPair.better = better; repPair.t = tr.t; repPair.d = d;
+      repPair.cvA = cs[0]; repPair.cvB = cs[1]; repPair.mid = pmid; repPair.labA = $("rpCapA").textContent; repPair.labB = $("rpCapB").textContent; repPair.title = grp.label; repPair.delta = $("rpDelta").textContent; repPair.better = better; repPair.t = tr.t; repPair.d = d;
       [["rpImgA", cs[0]], ["rpImgB", cs[1]]].forEach(function(x){ $(x[0]).src = x[1] ? x[1].toDataURL("image/jpeg", 0.85) : ""; });
     });
   }
@@ -8201,7 +8230,7 @@
   [["rpImgA", "a"], ["rpImgB", "b"]].forEach(function(x){ $(x[0]).addEventListener("click", function(){ var G = repPairGroups().find(function(g){ return g.key === repPair.key; }); if(G) openRomRecord(G.list[repPair[x[1]]]); }); });
   // 리포트 이미지에 전후 비교 그리기
   function drawRepPair(g, x, y, w, F){
-    if(!repPair.cvA || !repPair.cvB) return 0;
+    if(!repPairOk()) return 0;
     var gap = 24, iw = (w - 72 - gap) / 2, sc = Math.min(iw / repPair.cvA.width, iw / repPair.cvB.width), ih = Math.max(repPair.cvA.height, repPair.cvB.height) * sc, H = 110 + ih + 60;
     g.fillStyle = "#FFFFFF"; rr(g, x, y, w, H, 24); g.fill();
     g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("전후 비교 · " + repPair.title, x + 36, y + 56);
@@ -8827,6 +8856,7 @@
     romVideo.srcObject = null;
   }
   function romCamStop(){
+    romCam.openSeq = (romCam.openSeq || 0) + 1;   // v150 열리는 중이던 카메라는 받자마자 끔
     if(typeof romCdStop === "function") romCdStop();
     romCam.on = false; cancelAnimationFrame(romCam.raf); romCam.ghostId = null; romCam.ghost = null; $("romGTag").hidden = true;
     romStopTracks(); romOrientStop(); romUiLive(false);
@@ -8914,8 +8944,10 @@
     romOrientStart();
     romStopTracks();
     $("romBusy").textContent = "카메라 여는 중…"; $("romBusy").hidden = false;
+    var my = romCam.openSeq = (romCam.openSeq || 0) + 1;
     romOpenCam(romCam.facing).then(function(st){
-      if($("romSheet").hidden){ st.getTracks().forEach(function(t){ t.stop(); }); $("romBusy").hidden = true; return; }
+      if(my !== romCam.openSeq || $("romSheet").hidden){ st.getTracks().forEach(function(t){ t.stop(); }); if(my === romCam.openSeq) $("romBusy").hidden = true; return; }
+      if(romCam.stream && romCam.stream !== st){ try{ romCam.stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} }
       romCam.stream = st; romVideo.srcObject = st;
       var pr = romVideo.play(); if(pr && pr.catch) pr.catch(function(){});
       romCam.on = true; romCam.buf = []; romCam.seen = 0;
@@ -8925,6 +8957,7 @@
       if(romCam.facing === "environment" && kd === "user") toast("후면 카메라를 찾지 못했어요. 🔄 전환 버튼을 눌러 주세요.");
       romLm(); cancelAnimationFrame(romCam.raf); romLoop();
     }).catch(function(e){
+      if(my !== romCam.openSeq) return;
       $("romBusy").hidden = true;
       var denied = e && (e.name === "NotAllowedError" || e.name === "SecurityError");
       if(denied) toast("카메라 권한이 꺼져 있어요. 휴대폰 설정 → 앱 → 권한에서 카메라를 허용해 주세요.");
@@ -11566,17 +11599,29 @@
       $("auCWho").textContent = (user.email || "새 계정") + " 계정으로 시작해요. 아래 내용에 동의해 주세요.";
     }, function(){ if(lsGet("ayo_consent_" + user.id)) authProceed(); else { ACC.uid = null; auShow("offline"); } });
   }
+  // v150 계정 전환 확인: "back" 이전 계정으로 / "backup" 백업 후 계속 / "drop" 그냥 계속
+  function acctSwitchAsk(n){
+    return new Promise(function(res){
+      var pe = lsGet("ayo_owner_email");
+      auShow("switch");
+      $("auSwTxt").textContent = "이 기기에는 " + (pe ? pe + " 계정" : "이전에 쓰던 계정") + "에서 서버에 올리지 못한 변경 " + n + "건이 있어요. 지금 계정(" + ((ACC.user && ACC.user.email) || "새 계정") + ")으로 바꾸면 이 변경은 이 기기에서 지워져요.";
+      var done = function(v){ ["auSwBack", "auSwBackup", "auSwDrop"].forEach(function(id){ $(id).onclick = null; }); if(v !== "back") auHide(); res(v); };
+      $("auSwBack").onclick = function(){ done("back"); };
+      $("auSwBackup").onclick = function(){ done("backup"); };
+      $("auSwDrop").onclick = function(){ if(window.confirm("서버에 못 올린 변경 " + n + "건이 지워져요. 되돌릴 수 없어요. 계속할까요?")) done("drop"); };
+    });
+  }
   function authProceed(){
     if(ACC.ready && ACC.proceeded === ACC.uid){ auHide(); return; }
     ACC.proceeded = ACC.uid;
     auHide();
     var uidNow = ACC.uid, owner = lsGet("ayo_owner") || "";
     var p;
-    if(owner === uidNow) p = Promise.resolve();
+    if(owner === uidNow){ p = Promise.resolve(); if(ACC.user && ACC.user.email) lsSet("ayo_owner_email", ACC.user.email); }
     else if(!owner){
       // 처음 로그인: 이 기기에 있던 기록을 계정으로 옮김
       p = localCount().then(function(n){
-        lsSet("ayo_owner", uidNow);
+        lsSet("ayo_owner", uidNow); lsSet("ayo_owner_email", (ACC.user && ACC.user.email) || "");
         if(!n) return;
         toast("이 기기의 기존 기록을 계정 서버로 옮기고 있어요.");
         return Promise.all(SYNC_STORES.concat(["blobs"]).map(function(s){
@@ -11585,9 +11630,27 @@
       });
     } else {
       // 다른 계정이 쓰던 기기: 이전 계정의 기록은 지우고 이 계정 기록을 받음
-      p = localClear().then(function(){ acctKeysClear(); lsSet("ayo_owner", uidNow); });
+      // v150 이전 계정에서 서버에 못 올린 변경이 있으면 묻지 않고 지우지 않음 → 다시 로그인 / 백업 후 계속 / 그냥 계속 중 선택
+      var nq = sqCount();
+      p = (nq ? acctSwitchAsk(nq) : Promise.resolve("drop")).then(function(ch){
+        if(ch === "back") return "back";
+        return (ch === "backup" ? bkExportNow().catch(function(){}) : Promise.resolve()).then(function(){
+          return localClear().then(function(){ acctKeysClear(); lsSet("ayo_owner", uidNow); lsSet("ayo_owner_email", (ACC.user && ACC.user.email) || ""); });
+        });
+      });
     }
-    p.then(function(){ ACC.ready = true; accRender(); licAfterLogin(); return syncNow(); }).then(function(){
+    p.then(function(r){
+      if(r === "back"){   // 지금 계정은 로그아웃하고 로그인 화면으로 (이전 계정 기록은 그대로)
+        var c = sbClient(); ACC.ready = false; ACC.uid = null; ACC.user = null; ACC.proceeded = null; ACC.loggingOut = true;
+        return (c ? c.auth.signOut() : Promise.resolve()).catch(function(){}).then(function(){
+          ACC.loggingOut = false; accRender(); auShow("login"); loadProviders();
+          var pe = lsGet("ayo_owner_email");
+          auMsg("auLMsg", (pe ? pe + " 계정으로" : "이전 계정으로") + " 로그인하면 못 올린 기록이 서버에 올라가요.", false);
+        }).then(function(){ return "back"; });
+      }
+    }).then(function(r){
+      if(r === "back") return;
+      ACC.ready = true; accRender(); licAfterLogin(); return syncNow(); }).then(function(){
       if(ACC.state === "ok" && ACC.firstToast !== uidNow){ ACC.firstToast = uidNow; }
     });
   }

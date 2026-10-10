@@ -210,7 +210,7 @@
   .rep-rounds-list button{flex:0 0 auto; min-width:84px; font-family:inherit; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 10px; border-radius:12px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); cursor:pointer;}
   .rep-rounds-list button b{font-size:15px; font-weight:800;}
   .rep-rounds-list button em{font-style:normal; font-size:11.5px; color:var(--ink-soft); white-space:nowrap;}
-  .rep-rounds-list button small{font-size:10.5px; color:var(--ink-soft); white-space:nowrap;}
+  .rep-rounds-list button small{font-size:11px; color:var(--ink-soft); white-space:nowrap;}
   .rep-rounds-list button[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#fff;}
   .rep-rounds-list button[aria-pressed="true"] em, .rep-rounds-list button[aria-pressed="true"] small{color:rgba(255,255,255,.85);}
   /* v135 결과 사진 보기: 원본 / 측정 / 격자 */
@@ -522,7 +522,7 @@
   header.top .brand{gap:10px; flex-wrap:wrap;}
   header.top .mark{width:40px; height:40px; border-radius:10px;}
   header.top .ttl{display:flex; flex-direction:column; gap:2px; min-width:0;}
-  header.top .eyebrow{font-size:10.5px; letter-spacing:.16em; color:var(--gold);}
+  header.top .eyebrow{font-size:11px; letter-spacing:.16em; color:var(--gold);}
   header.top h1{font-family:var(--font-body); font-size:21px; font-weight:700; letter-spacing:-.01em; color:var(--ink); display:block;}
   .now-chip{margin-left:auto; font-size:12px; color:var(--ink-soft); background:var(--surface); border:1px solid var(--line); border-radius:100px; padding:6px 11px;}
   .install-btn{margin-left:0!important;}
@@ -533,13 +533,13 @@
   .side-brand img{border-radius:10px; flex:0 0 auto;}
   .side-brand b{display:block; font-size:15px; letter-spacing:.01em;}
   .side-brand span{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
-  .side-brand i{font-style:normal; font-size:10.5px; font-weight:800; letter-spacing:.06em; color:#fff; background:var(--blue); border-radius:5px; padding:2px 6px;}
+  .side-brand i{font-style:normal; font-size:11px; font-weight:800; letter-spacing:.06em; color:#fff; background:var(--blue); border-radius:5px; padding:2px 6px;}
   .side-menu{display:flex; flex-direction:column; gap:4px;}
   .nav-item{font-family:inherit; border:none; background:transparent; color:var(--ink-soft); cursor:pointer;}
   .side .nav-item{display:flex; align-items:center; gap:12px; width:100%; padding:12px 14px; border-radius:12px; font-size:15px; font-weight:600; text-align:left;}
   .side .nav-item:hover{background:rgba(255,255,255,.04); color:var(--ink);}
   .side .nav-item[aria-current="page"]{background:var(--blue); color:#fff;}
-  .side .nav-item em{margin-left:auto; font-style:normal; font-size:10.5px; font-weight:700; color:var(--ink-soft); border:1px solid var(--line); border-radius:100px; padding:2px 7px;}
+  .side .nav-item em{margin-left:auto; font-style:normal; font-size:11px; font-weight:700; color:var(--ink-soft); border:1px solid var(--line); border-radius:100px; padding:2px 7px;}
   .side .nav-item.soon{opacity:.62;}
   .nav-sep{margin:18px 14px 6px; font-size:11px; font-weight:700; letter-spacing:.08em; color:#5F6B86;}
   .side-foot{margin:auto 0 0; padding:0 14px; font-size:11px; color:#5F6B86; letter-spacing:.04em;}
@@ -576,10 +576,10 @@
   .chip{position:relative; border-radius:12px; overflow:hidden; background:#1B2540; color:#fff; border:1px solid rgba(255,255,255,.06); box-shadow:0 6px 14px -10px rgba(0,0,0,.6); padding:8px 10px 9px 13px;}
   .chip::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--gc,#4CC38A);}
   .chip .h{display:flex; align-items:center; justify-content:space-between; gap:6px; font-size:11.5px; font-weight:700; color:#C9D3E6; white-space:nowrap;}
-  .chip .h em{font-style:normal; font-size:10px; font-weight:800; color:var(--gc); background:color-mix(in srgb, var(--gc) 16%, transparent); border-radius:6px; padding:1px 5px;}
+  .chip .h em{font-style:normal; font-size:11px; font-weight:800; color:var(--gc); background:color-mix(in srgb, var(--gc) 16%, transparent); border-radius:6px; padding:1px 5px;}
   .chip .v{font-family:var(--font-num); font-size:20px; font-weight:700; letter-spacing:-.02em; margin-top:3px; line-height:1.15;}
   .chip .f{display:inline-flex; align-items:center; gap:4px; margin-top:5px; font-size:11px; font-weight:700; color:#E6ECF7; background:rgba(255,255,255,.08); border-radius:100px; padding:2px 8px 2px 6px; white-space:nowrap;}
-  .chip .f b{font-size:9px; color:var(--gc);}
+  .chip .f b{font-size:11px; color:var(--gc);}
   .rep-img canvas{display:block; width:100%; height:auto; border-radius:12px; background:var(--surface-2);}
   .rep-empty{border:1.5px dashed var(--line); border-radius:12px; padding:28px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center;}
   .rep-empty p{margin:0; font-size:13.5px; color:var(--ink-soft); font-weight:600;}
@@ -606,7 +606,7 @@
   @media (max-width:759px){
     .rep-fig{grid-template-columns:1fr;}
     .rep-chips{order:2; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px;}
-    .chip{padding:7px 7px 8px 10px;} .chip .h{font-size:10.5px;} .chip .h em{display:none;} .chip .v{font-size:17px;} .chip .f{font-size:10.5px; padding:2px 6px 2px 5px;}
+    .chip{padding:7px 7px 8px 10px;} .chip .h{font-size:11px;} .chip .h em{display:none;} .chip .v{font-size:17px;} .chip .f{font-size:11px; padding:2px 6px 2px 5px;}
     .rep-img{order:1;}
   }
   @media (max-width:599px){ .now-chip{display:none;} }
@@ -677,7 +677,7 @@
     .ds-grid{grid-template-columns:1fr 1.4fr;}
     .ds-grid.three{grid-template-columns:repeat(3,minmax(0,1fr));}
   }
-  @media (max-width:420px){ .bottom-nav .nav-item{font-size:10.5px;} }
+  @media (max-width:420px){ .bottom-nav .nav-item{font-size:11px;} }
 
   /* ===================== v46 운동·상담·매출 ===================== */
   .chips{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;}
@@ -807,7 +807,7 @@
   .gs-list mark{background:rgba(47,107,255,.28); color:inherit; border-radius:3px; padding:0 1px;}
   .gs-empty{font-size:13px; color:var(--ink-soft); text-align:center; padding:18px 0;}
   .sel-search{font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:9px; padding:9px 10px; background:var(--bg); color:var(--ink); width:100%; box-sizing:border-box; margin-bottom:6px;}
-  .no-auto{font-style:normal; font-size:10.5px; font-weight:800; color:var(--blue); margin-left:6px;}
+  .no-auto{font-style:normal; font-size:11px; font-weight:800; color:var(--blue); margin-left:6px;}
   .no-fix{display:flex; align-items:center; gap:10px; padding:10px 14px; margin:0 0 10px; border-radius:12px; background:rgba(240,180,76,.10); border:1px solid rgba(240,180,76,.35); font-size:13px;}
   .no-fix .btn{margin-left:auto; flex:0 0 auto; width:auto; white-space:nowrap;}
   /* v50 측정 저장 · 기록 수정 · 리포트 PRO */
@@ -869,10 +869,10 @@
   .price-grid div{position:relative; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px 9px; text-align:center;}
   .price-grid span{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft);}
   .price-grid b{display:block; font-family:var(--font-num); font-size:14.5px; margin:3px 0 2px; color:var(--ink); white-space:nowrap;}
-  .price-grid em{display:block; font-style:normal; font-size:10.5px; color:var(--ink-soft); line-height:1.45;} .price-grid em u{text-decoration:none; font-weight:800; color:var(--good);} .price-grid div:first-child em u{color:var(--ink-soft); font-weight:600;}
+  .price-grid em{display:block; font-style:normal; font-size:11px; color:var(--ink-soft); line-height:1.45;} .price-grid em u{text-decoration:none; font-weight:800; color:var(--good);} .price-grid div:first-child em u{color:var(--ink-soft); font-weight:600;}
   .price-grid .best{border-color:rgba(122,140,255,.7); background:linear-gradient(135deg,rgba(47,107,255,.22),rgba(122,92,255,.22));}
   .price-grid .best em{color:#9DB7FF; font-weight:700;}
-  .price-grid .best i{position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-style:normal; font-size:10px; font-weight:800; color:#fff; background:linear-gradient(135deg,#2F6BFF,#7A5CFF); border-radius:100px; padding:1px 7px;}
+  .price-grid .best i{position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-style:normal; font-size:11px; font-weight:800; color:#fff; background:linear-gradient(135deg,#2F6BFF,#7A5CFF); border-radius:100px; padding:1px 7px;}
   @media (max-width:420px){ .price-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} }
   /* v56 ROM 관절가동범위 */
   .rom-mb{margin-bottom:12px;}
@@ -1031,7 +1031,7 @@
   .lr-name{display:flex; align-items:baseline; gap:6px;} .lr-name small{color:var(--ink-soft); font-size:11.5px;}
   .lr-vals{display:grid; grid-template-columns:42px 1fr 34px 1fr 42px; align-items:center; gap:6px; margin:6px 0 4px;}
   .lr-vals .lv{text-align:right; font-family:var(--font-num); font-weight:700;} .lr-vals .rv{font-family:var(--font-num); font-weight:700;}
-  .lr-vals .mid{font-size:10.5px; color:var(--ink-soft); text-align:center;}
+  .lr-vals .mid{font-size:11px; color:var(--ink-soft); text-align:center;}
   .lr-bar{position:relative; height:10px; background:rgba(151,163,188,.18); border-radius:100px; overflow:hidden;}
   .lr-bar i{position:absolute; top:0; bottom:0; background:var(--blue); border-radius:100px;} .lr-bar.l i{right:0;} .lr-bar.r i{left:0;}
   .lr-bar i.good{background:var(--good);} .lr-bar i.warn{background:var(--warn);} .lr-bar i.crit{background:var(--crit);}
@@ -1045,7 +1045,7 @@
   @media (max-width:599px){ #rep-rom .rep-rom-tbl, #rep-scol .rep-rom-tbl{min-width:0; font-size:12.5px;} #rep-rom .rep-rom-tbl th, #rep-rom .rep-rom-tbl td, #rep-scol .rep-rom-tbl th, #rep-scol .rep-rom-tbl td{padding:7px 4px;} }
   .rep-rom-tbl th{font-size:12px; color:var(--ink-soft); text-align:left; padding:6px 8px; border-bottom:1px solid var(--line);}
   .rep-rom-tbl td{padding:8px; border-bottom:1px solid var(--line);}
-  .rep-rom-tbl td.num{font-family:var(--font-num); font-weight:700;} .rep-rom-tbl td small{display:block; font-size:10.5px; color:var(--ink-soft); font-weight:500;}
+  .rep-rom-tbl td.num{font-family:var(--font-num); font-weight:700;} .rep-rom-tbl td small{display:block; font-size:11px; color:var(--ink-soft); font-weight:500;}
   .rep-rom-tbl .good{color:var(--good);} .rep-rom-tbl .warn{color:var(--warn);} .rep-rom-tbl .crit{color:var(--crit);}
   .rep-rom-tbl .lrj{font-weight:700; font-size:12.5px;}
   #romJoints{overflow-x:auto; flex-wrap:nowrap; scrollbar-width:none;} #romJoints::-webkit-scrollbar{display:none;} #romJoints button{flex:0 0 auto;}
@@ -1076,7 +1076,7 @@
   .rc-v strong{font-family:var(--font-num); font-size:22px; line-height:1;} .rc-v .none{font-size:13px; color:var(--ink-soft); font-weight:600;}
   .rc-v .judge{font-size:11.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .rom-card.rc .rom-bar{height:6px;}
-  .rc-meta{font-size:10.5px; color:var(--ink-soft);}
+  .rc-meta{font-size:11px; color:var(--ink-soft);}
   .rom-delta.rc-delta{font-size:11px; padding:2px 8px; border-radius:7px; align-self:flex-start;}
   .rc-acts{display:flex; flex-direction:column; gap:6px;} .rc-acts .btn{min-width:64px; padding:7px 10px; font-size:12.5px;}
   .rom-sum{gap:6px; margin-bottom:10px;}
@@ -1094,7 +1094,7 @@
 
   .rc-open{cursor:pointer;} tr.rc-open:hover td{background:rgba(47,107,255,.08);} .scol-hist li.rc-open:hover, figure.rc-open:hover{outline:2px solid rgba(47,107,255,.6);}
   .view.pv-lock > :not(.rep-lock){pointer-events:none; user-select:none; opacity:.55; filter:saturate(.6);}
-  .pv-demo small{font-size:10.5px; color:var(--warn); font-weight:700; margin-left:4px;}
+  .pv-demo small{font-size:11px; color:var(--warn); font-weight:700; margin-left:4px;}
   .rep-pair{margin-top:14px;} .rep-pair h2 small{font-size:13px; color:var(--ink-soft); font-weight:600;}
   .rp-sel{display:flex; flex-direction:column; gap:8px; margin:8px 0 10px;}
   .rp-sel select{font-family:inherit; font-size:14px; border:1px solid var(--line); border-radius:10px; padding:9px 10px; background:var(--surface-2); color:var(--ink); width:100%;}
@@ -1149,7 +1149,7 @@
   .rom-cmp-btn small{font-weight:600; opacity:.75; margin-left:2px;}
   .rom-all-cmp{flex:1 1 100%; font-family:inherit; font-size:14px; font-weight:700; border-radius:14px; padding:12px; cursor:pointer; border:1px solid rgba(122,140,255,.5); color:var(--ink); background:linear-gradient(135deg,rgba(47,107,255,.16),rgba(122,92,255,.16));}
   .rom-all-cmp:disabled{opacity:.45; cursor:default;}
-  .rom-all-cmp i{font-style:normal; font-size:10.5px; font-weight:800; color:#fff; background:linear-gradient(135deg,#2F6BFF,#7A5CFF); border-radius:6px; padding:2px 6px; margin-left:4px;}
+  .rom-all-cmp i{font-style:normal; font-size:11px; font-weight:800; color:#fff; background:linear-gradient(135deg,#2F6BFF,#7A5CFF); border-radius:6px; padding:2px 6px; margin-left:4px;}
   .rcmp-kpi{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:12px 0;}
   .rcmp-kpi div{background:var(--surface-2); border-radius:12px; padding:10px 12px;}
   .rcmp-kpi span{display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft);}
@@ -1480,8 +1480,8 @@
       <div class="hint-chip" id="hintChip" hidden><span id="hintChipText">머리부터 발끝까지 흰 윤곽선 안에 맞추세요</span></div>
       <div class="hint-chip level-chip" id="levelChip" hidden><span id="levelChipText">수평 확인 중…</span></div>
       <div class="zoom-controls" id="zoomControls" hidden>
-        <button type="button" id="btnZoomIn" title="확대">+</button>
-        <button type="button" id="btnZoomOut" title="축소">−</button>
+        <button aria-label="확대" type="button" id="btnZoomIn" title="확대">+</button>
+        <button aria-label="축소" type="button" id="btnZoomOut" title="축소">−</button>
         <button type="button" id="btnZoomReset" title="원래대로">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
         </button>
@@ -1506,9 +1506,9 @@
         <button type="button" class="adj" id="btnRotReset">0°</button>
       </div>
       <div class="row adj">
-        <button type="button" class="icon" id="btnRotMinus" title="반시계 0.5°">⟲</button>
+        <button aria-label="반시계 0.5°" type="button" class="icon" id="btnRotMinus" title="반시계 0.5°">⟲</button>
         <input type="range" id="rotRange" min="-15" max="15" step="0.1" value="0" aria-label="사진 회전 각도">
-        <button type="button" class="icon" id="btnRotPlus" title="시계 0.5°">⟳</button>
+        <button aria-label="시계 0.5°" type="button" class="icon" id="btnRotPlus" title="시계 0.5°">⟳</button>
       </div>
     </div>
 
@@ -1689,7 +1689,7 @@
         <figure><img id="rpImgB" alt=""><figcaption id="rpCapB"></figcaption></figure>
       </div>
       <p class="rp-delta" id="rpDelta"></p>
-      <p class="rcmp-note">사진을 누르면 그 회차를 열어 측정점을 볼 수 있어요. 선택한 전후 비교는 리포트 이미지에도 들어가요.</p>
+      <p class="rcmp-note">사진을 누르면 그 회차를 열어 측정점을 볼 수 있어요. 선택한 전후 비교는 리포트 이미지에도 들어가요. 개선·악화는 촬영 조건에 따라 달라질 수 있는 참고값이에요.</p>
     </section>
     <p class="rep-saved" id="repSaved" hidden></p>
     <div class="rep-actions">
@@ -1859,7 +1859,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v151</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v152</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1875,7 +1875,7 @@
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
     <div class="scol-info">
-      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v151</span>
+      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v152</span>
     </div>
   </section>
   <section class="view" id="view-scol" hidden>
@@ -1893,7 +1893,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v151</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v152</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2210,6 +2210,12 @@
     <button type="button" class="pro-link" id="btnProCodeToggle" hidden>이용 코드가 있어요</button>
   </div>
 </div>
+<div class="confirm-overlay" id="cfModal" hidden role="alertdialog" aria-modal="true" aria-labelledby="cfMsg" style="z-index:300">
+  <div class="confirm-box">
+    <p class="confirm-msg" id="cfMsg"></p>
+    <div class="confirm-btns"><button type="button" class="btn line" id="cfNo" style="flex:1">취소</button><button type="button" class="btn primary" id="cfYes" style="flex:1">확인</button></div>
+  </div>
+</div>
 <div class="confirm-overlay" id="trialEnd" hidden role="dialog" aria-modal="true" aria-labelledby="teTitle">
   <div class="confirm-box te-box">
     <div class="te-ic" aria-hidden="true">🎁</div>
@@ -2321,14 +2327,14 @@
       <div class="rom-gtag" id="romGTag" hidden></div>
       <div class="rom-empty" id="romEmpty"><b>아래 [촬영하기]를 눌러 촬영하세요</b><span id="romEmptyTip"></span></div>
       <div class="rom-busy" id="romBusy" hidden>관절 위치 인식 중…</div>
-      <div class="rom-zoom" id="romZoom" hidden><button type="button" id="btnRomZIn" title="확대">+</button><span id="romZoomVal">100%</span><button type="button" id="btnRomZOut" title="축소">−</button><button type="button" id="btnRomZFit" title="전체 보기">⤢</button></div>
+      <div class="rom-zoom" id="romZoom" hidden><button aria-label="확대" type="button" id="btnRomZIn" title="확대">+</button><span id="romZoomVal">100%</span><button aria-label="축소" type="button" id="btnRomZOut" title="축소">−</button><button aria-label="전체 보기" type="button" id="btnRomZFit" title="전체 보기">⤢</button></div>
     </div>
     <div class="rot-bar rom-rot locked" id="romRot" hidden>
       <div class="row">
         <button type="button" class="lock" id="btnRomRotLock" aria-pressed="false">수평 보정</button>
-        <button type="button" class="icon adj" id="btnRomRotM" title="반시계 0.5°">⟲</button>
+        <button aria-label="반시계 0.5°" type="button" class="icon adj" id="btnRomRotM" title="반시계 0.5°">⟲</button>
         <input type="range" class="adj" id="romRotRange" min="-15" max="15" step="0.1" value="0" aria-label="사람 회전 각도">
-        <button type="button" class="icon adj" id="btnRomRotP" title="시계 0.5°">⟳</button>
+        <button aria-label="시계 0.5°" type="button" class="icon adj" id="btnRomRotP" title="시계 0.5°">⟳</button>
         <span class="val" id="romRotVal">0.0°</span>
         <button type="button" class="adj" id="btnRomRot0">0°</button>
       </div>
@@ -5871,9 +5877,13 @@
       box.innerHTML = ""; return;
     }
     if(pts.length > 12) pts = pts.slice(-12);
-    var first = pts[0].score, last = pts[pts.length - 1].score, d = last - first;
-    $("mbTrendSub").innerHTML = "최근 " + pts.length + "회 · 첫 측정 대비 <b class='" + (d > 0 ? "up-good" : d < 0 ? "up-bad" : "up-same") + "'>" + (d > 0 ? "▲ " + d + "점" : d < 0 ? "▼ " + Math.abs(d) + "점" : "변화 없음") + "</b>";
-    var W = Math.round(Math.max(300, Math.min(680, box.clientWidth || 640))), H = W < 480 ? 210 : 230, L = 36, R = 18, T = 26, B = 40;
+    // v152 점수는 촬영 구성마다 기준이 달라(정면만 = 정면 100점 환산) 같은 구성끼리만 비교 · 다른 구성은 점선·회색 점
+    var comp = function(r){ return r.f && r.sd ? "fs" : r.f ? "f" : "s"; }, compNm = { fs: "정면+측면", f: "정면만", s: "측면만" }, compTag = { fs: "정·측", f: "정면", s: "측면" };
+    var lastP = pts[pts.length - 1], lc = comp(lastP), same = pts.filter(function(p){ return comp(p) === lc; }), mixed = same.length !== pts.length;
+    var first = same[0].score, last = lastP.score, d = last - first;
+    $("mbTrendSub").innerHTML = "최근 " + pts.length + "회 · " + (same.length >= 2 ? "같은 촬영(" + compNm[lc] + ") 첫 측정 대비 <b class='" + (d > 0 ? "up-good" : d < 0 ? "up-bad" : "up-same") + "'>" + (d > 0 ? "▲ " + d + "점" : d < 0 ? "▼ " + Math.abs(d) + "점" : "변화 없음") + "</b>" : "최근 촬영(" + compNm[lc] + ")과 같은 구성의 이전 기록이 없어요") +
+      (mixed ? "<br><small>촬영 구성이 다른 날(점선·회색 점)은 점수 기준이 달라 직접 비교하지 마세요.</small>" : "");
+    var W = Math.round(Math.max(300, Math.min(680, box.clientWidth || 640))), H = W < 480 ? 222 : 242, L = 36, R = 18, T = 26, B = 52;
     var X = function(i){ return L + (pts.length === 1 ? 0 : i * (W - L - R) / (pts.length - 1)); };
     var Y = function(v){ return T + (100 - v) * (H - T - B) / 100; };
     var g = '';
@@ -5884,13 +5894,15 @@
       g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="rgba(151,163,188,.18)"/>' +
            '<text x="' + (L - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" style="fill:var(--ink-soft)">' + v + '</text>';
     });
-    g += '<polyline fill="none" style="stroke:var(--blue)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="' + pts.map(function(p, i){ return X(i) + "," + Y(p.score); }).join(" ") + '"/>';
+    pts.forEach(function(p, i){ if(!i) return; var q = pts[i - 1], ok = comp(p) === comp(q);
+      g += '<line x1="' + X(i - 1) + '" y1="' + Y(q.score) + '" x2="' + X(i) + '" y2="' + Y(p.score) + '" style="stroke:var(--blue)" stroke-width="3" stroke-linecap="round"' + (ok ? '' : ' stroke-dasharray="5 6" opacity=".45"') + '/>'; });
     var step = Math.ceil(pts.length / 6);
     pts.forEach(function(p, i){
-      var lastPt = i === pts.length - 1;
-      g += '<circle cx="' + X(i) + '" cy="' + Y(p.score) + '" r="' + (lastPt ? 6 : 4.5) + '" fill="' + (lastPt ? "#0B7A6B" : "#FFFFFF") + '" style="stroke:var(--blue)" stroke-width="2.5"><title>' + fmtDate(p.at) + " · " + p.score + '점</title></circle>' +
+      var lastPt = i === pts.length - 1, sc = comp(p) === lc;
+      g += '<circle cx="' + X(i) + '" cy="' + Y(p.score) + '" r="' + (lastPt ? 6 : 4.5) + '" fill="' + (lastPt ? "#0B7A6B" : sc ? "#FFFFFF" : "#C9D0DC") + '" style="stroke:' + (sc ? "var(--blue)" : "#97A3BC") + '" stroke-width="2.5"><title>' + fmtDate(p.at) + " · " + p.score + "점 · " + compNm[comp(p)] + '</title></circle>' +
            '<text x="' + X(i) + '" y="' + (Y(p.score) - 11) + '" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ink)">' + p.score + '</text>';
-      if(i % step === 0 || lastPt) g += '<text x="' + X(i) + '" y="' + (H - 14) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + fmtDate(p.at).slice(5, 10) + '</text>';
+      if(i % step === 0 || lastPt) g += '<text x="' + X(i) + '" y="' + (H - 20) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + fmtDate(p.at).slice(5, 10) + '</text>' +
+        '<text x="' + X(i) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + compTag[comp(p)] + '</text>';
     });
     box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="종합 점수 변화">' + g + '</svg>' +
       '<div class="trend-legend"><span><i style="background:rgba(76,195,138,.35)"></i>75점 이상 양호</span><span><i style="background:rgba(240,180,76,.35)"></i>60~74 주의</span><span><i style="background:rgba(240,122,114,.35)"></i>60 미만 개선 필요</span></div>';
@@ -5969,8 +5981,7 @@
     loadAll().then(function(res){
       var last = lsGet("ayo_last_backup");
       var dirty = +(lsGet("ayo_bk_dirty") || 0), days = last ? Math.floor((Date.now() - +last) / 864e5) : null;
-      $("bkInfo").innerHTML = "회원 <b>" + res[0].length + "명</b> · 측정 기록 <b>" + res[1].length + "건</b>이 계정 서버에 자동 저장돼요. 따로 보관하고 싶을 때만 파일로 내보내세요." + (last ? " 마지막 내보내기: <b>" + fmtDate(+last) + "</b>" : ""); if(0) $("bkInfo").innerHTML +=
-        (last ? "마지막 백업: <b>" + fmtDate(+last) + "</b> (" + (days === 0 ? "오늘" : days + "일 전") + ")" + (dirty ? " · 그 뒤 <b class=\"bk-warn\">" + dirty + "건 변경</b>" : " · 그 뒤 변경 없음 ✓") : "<b class=\"bk-warn\">아직 백업한 적이 없어요.</b> 휴대폰을 바꾸거나 앱을 지우기 전에 꼭 저장하세요.");
+      $("bkInfo").innerHTML = "회원 <b>" + res[0].length + "명</b> · 측정 기록 <b>" + res[1].length + "건</b>이 계정 서버에 자동 저장돼요. 따로 보관하고 싶을 때만 파일로 내보내세요." + (last ? " 마지막 내보내기: <b>" + fmtDate(+last) + "</b>" : "");
       $("bkCycle").value = lsGet("ayo_bk_cycle") || "7";
     });
   }
@@ -6046,7 +6057,7 @@
         var extraN = OPS_STORES.reduce(function(a, st){ return a + extra[st].length; }, 0);
         bkLicCarry(data);
         if(!newM.length && !newR.length && !extraN){ toast("새로 불러올 기록이 없어요. 이미 모두 들어 있어요."); bkLicOffer(data); return; }
-        if(!window.confirm("회원 " + newM.length + "명, 측정 기록 " + newR.length + "건" + (extraN ? ", 운동·상담·결제 " + extraN + "건" : "") + "을 불러올까요? 기존 기록은 그대로 유지돼요.")) return;
+        var go = function(){
         var chain = Promise.resolve();
         newM.forEach(function(m){ chain = chain.then(function(){ return dbPut("members", m); }); });
         newR.forEach(function(r){ chain = chain.then(function(){ return dbPut("records", r); }); });
@@ -6055,6 +6066,9 @@
         if(data.settings && !getSettings().name && !getSettings().logo) chain = chain.then(function(){ saveSettings(data.settings); applyBrand(); });
         chain.then(function(){ toast("회원 " + newM.length + "명, 측정 " + newR.length + "건" + (extraN ? ", 운동·상담·결제 " + extraN + "건" : "") + "을 불러왔어요."); mbShowList(); bkInfoRender(); setTimeout(function(){ bkLicOffer(data); }, 900); })
              .catch(function(){ toast("불러오는 중 오류가 났어요."); });
+        };
+        var cmsg = "회원 " + newM.length + "명, 측정 기록 " + newR.length + "건" + (extraN ? ", 운동·상담·결제 " + extraN + "건" : "") + "을 불러올까요? 기존 기록은 그대로 유지돼요.";
+        if(window.confirm(cmsg, go)) go();
         });
       });
     };
@@ -6327,6 +6341,33 @@
   function clearAllModes(){
     ["front", "side"].forEach(function(k){ var s = state.byMode[k]; releaseImage(s); s.img = null; s.points = {}; s.history = []; s.view = { scale:1, cx:0, cy:0 }; s.grid = null; s.rot = 0; s.rotPivot = null; s.centerX = undefined; });
   }
+  /* v152 확인창 디자인 통일: window.confirm을 앱 창으로 바꿈 (TWA·인앱 브라우저마다 모양이 달랐음)
+     confirm은 바로 답을 줘야 해서 → 앱 창을 띄우고 false를 돌려줌 → [확인]을 누르면 마지막으로 누른 버튼을 다시 눌러 같은 동작을 이어감
+     (그때 같은 문구의 확인은 3초 동안 통과 · 이어지는 두 번째 확인도 같은 방식) · 다시 누를 버튼이 없으면 기본 창 */
+  var CF = { ok: [], until: 0, last: null };
+  document.addEventListener("click", function(e){ var t = e.target; if(t && t.closest && !t.closest("#cfModal")) CF.last = t.closest("button, a, [data-rid], [role=button], input, label, li, tr, .rec, .mb-item") || t; }, true);
+  var nativeConfirm = window.confirm.bind(window);
+  window.confirm = function(msg, again){
+    msg = String(msg == null ? "" : msg);
+    if(Date.now() < CF.until && CF.ok.indexOf(msg) >= 0) return true;
+    var tgt = CF.last;
+    if(!again && tgt && tgt.isConnected !== false && !/^(INPUT|SELECT|TEXTAREA)$/.test(tgt.tagName)) again = function(){ tgt.click(); };
+    if(!again) return nativeConfirm(msg);
+    var ctx = Date.now() < CF.until ? CF.ok.slice() : [];
+    var M = $("cfModal"), yes = $("cfYes"), no = $("cfNo");
+    $("cfMsg").textContent = msg;
+    var danger = /삭제|지워|되돌릴 수 없/.test(msg);
+    yes.textContent = danger ? "삭제" : "확인"; yes.style.background = danger ? "var(--crit)" : ""; yes.style.borderColor = danger ? "var(--crit)" : "";
+    M.hidden = false; setTimeout(function(){ try{ no.focus(); }catch(e){} }, 0);
+    var close = function(ok){ M.hidden = true; yes.onclick = no.onclick = M.onclick = null; document.removeEventListener("keydown", key, true);
+      if(ok){ CF.ok = ctx.concat([msg]); CF.until = Date.now() + 3000; setTimeout(again, 0); } };
+    var key = function(e){ if(e.key === "Escape"){ e.preventDefault(); close(false); } };
+    document.addEventListener("keydown", key, true);
+    yes.onclick = function(){ close(true); }; no.onclick = function(){ close(false); };
+    M.onclick = function(e){ if(e.target === M) close(false); };
+    return false;
+  };
+  window.__nativeConfirm = nativeConfirm;
   function confirmDiscard(){ return !isDirty() || window.confirm("저장하지 않은 측정이 있어요. 저장하지 않고 넘어갈까요?\n(저장하려면 취소 후 [측정 저장]을 눌러주세요)"); }
   $("btnSessNext").addEventListener("click", function(){
     if(!confirmDiscard()) return;
@@ -7455,13 +7496,6 @@
       g.strokeStyle = "rgba(255,255,255,.95)"; g.lineWidth = 3 * u; g.setLineDash([12 * u, 9 * u]);
       g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(A.x, A.y); g.stroke(); g.setLineDash([]);
     }
-    if(false){
-      var selR = romS.sel && romS.sel.t === "ref";
-      g.fillStyle = selR ? "#2F6BFF" : "rgba(13,21,40,.85)"; g.strokeStyle = "#fff"; g.lineWidth = 2.5 * u;
-      g.beginPath(); g.arc(A.x, A.y, 11 * u, 0, Math.PI * 2); g.fill(); g.stroke();
-      g.fillStyle = "#fff"; g.font = "700 " + (12 * u) + "px 'IBM Plex Sans KR', sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
-      g.fillText("↻", A.x, A.y + 0.5 * u); g.textAlign = "left"; g.textBaseline = "alphabetic";
-    }
     // 관절 → 말단
     g.strokeStyle = "rgba(0,0,0,.35)"; g.lineWidth = (hv2 ? 12 : 8) * u; g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(D.x, D.y); g.stroke();
     g.strokeStyle = "#2F6BFF"; g.lineWidth = (hv2 ? 9 : 5) * u; g.beginPath(); g.moveTo(V.x, V.y); g.lineTo(D.x, D.y); g.stroke();
@@ -8305,7 +8339,7 @@
     body += '<div class="rcmp-chart">' + romChartSvg({ normal: 0 }, H) + '</div>';
     body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
       H.map(function(r, i){ var jd = scolJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
-        return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요.</p>';
+        return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요. 개선·악화는 촬영 자세·각도에 따라 달라질 수 있는 참고값이에요.</p>';
     if(prev && prev.thumb && last.thumb) body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(prev.id) + '"><img src="' + safeSrc(prev.thumb) + '" alt=""><figcaption>이전 ' + romRoundOf(prev) + '차 · ' + prev.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + safeSrc(last.thumb) + '" alt=""><figcaption>최근 ' + romRoundOf(last) + '차 · ' + last.value + '°</figcaption></figure></div>';
     $("romCmpTitle").textContent = "측만증 측정 · 이전 회차 비교";
     $("romCmpBody").innerHTML = body; $("romCmp").hidden = false;
@@ -8647,7 +8681,7 @@
       // 측만증 칸
       $("repEmpty-scol").hidden = !!sc.length; $("repScolSum").hidden = !sc.length;
       var scId = function(mv){ var H = RS.all.filter(function(x){ return x.joint === "scol" && x.move === mv.k; }); return H.length ? H[H.length - 1].id : ""; };
-      var xb = function(id){ return id ? '<button type="button" class="rp-x" data-rdel="' + id + '" title="이 기록 삭제">✕</button>' : ''; };
+      var xb = function(id){ return id ? '<button aria-label="이 기록 삭제" type="button" class="rp-x" data-rdel="' + id + '" title="이 기록 삭제">✕</button>' : ''; };
       $("repScolBody").innerHTML = sc.length ? '<table class="rep-rom-tbl sc"><thead><tr><th>항목</th><th>각도</th><th>판정</th><th>측정일</th></tr></thead><tbody>' + sc.map(function(r){ return '<tr><td>' + r.mv.n + '</td><td class="num ' + r.jd.cls + '">' + r.v + '°' + xb(scId(r.mv)) + '</td><td class="lrj ' + r.jd.cls + '">' + r.jd.txt + '</td><td>' + fmtDate(r.at).slice(0, 10) + '</td></tr>'; }).join("") + '</tbody></table>' : '';
       if(sc.length) $("repScolSum").textContent = [sc.some(function(r){ return r.mv.grade !== "cva"; }) ? "측만증 기준: 5° 미만 정상 · 5–7° 관찰 · 7° 이상 전문가 상담 권장" : "", sc.some(function(r){ return r.mv.grade === "cva"; }) ? "거북목(CVA) 기준: 55° 이상 정상 · 50° 미만 거북목 · 45° 미만 심함" : ""].filter(Boolean).join(" / ");
       // ROM 칸
@@ -8795,7 +8829,7 @@
       body += '<div class="rcmp-chart">' + romChartSvg(mv, H) + '</div>';
       body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
         H.map(function(r, i){ var jd = romJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
-          return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + (dd == null ? "–" : (dd > 0 ? "+" : "") + dd + "°") + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요.</p>';
+          return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + (dd == null ? "–" : (dd > 0 ? "+" : "") + dd + "°") + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요. 개선·악화는 촬영 자세·각도에 따라 달라질 수 있는 참고값이에요.</p>';
       if(first.thumb && last.thumb && first !== last){
         body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(first.id) + '"><img src="' + safeSrc(first.thumb) + '" alt=""><figcaption>' + romRoundOf(first) + '차 · ' + first.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + safeSrc(last.thumb) + '" alt=""><figcaption>' + romRoundOf(last) + '차 · ' + last.value + '°</figcaption></figure></div>';
       }
@@ -9190,10 +9224,6 @@
     sx2.imageSmoothingEnabled = true; sx2.imageSmoothingQuality = "high"; sx2.drawImage(mc, 0, 0, w, h);
     var sd = sx2.getImageData(0, 0, w, h); for(i = 3; i < sd.data.length; i += 4){ var a = sd.data[i]; sd.data[i] = a >= 128 ? 255 : 0; sd.data[i - 3] = 79; sd.data[i - 2] = 209; sd.data[i - 1] = 232; }
     sx2.putImageData(sd, 0, 0);
-    var ring = document.createElement("canvas"); ring.width = w; ring.height = h; var rx = ring.getContext("2d"), d = Math.max(2, Math.round(Math.max(w, h) / 240));
-    for(var a2 = 0; a2 < 16; a2++){ var an = a2 / 16 * Math.PI * 2; rx.drawImage(sh, Math.round(Math.cos(an) * d), Math.round(Math.sin(an) * d)); }
-    rx.globalCompositeOperation = "destination-out"; rx.drawImage(sh, 0, 0);
-    rx.globalCompositeOperation = "source-in"; rx.fillStyle = "#FFFFFF"; rx.fillRect(0, 0, w, h);
     // v127 테두리 대신 이전 회차 사진에서 사람 부분만 오려 반투명으로 (측정가이드 사진과 같은 모양)
     o.drawImage(im, 0, 0, w, h); o.globalCompositeOperation = "destination-in"; o.drawImage(sh, 0, 0); o.globalCompositeOperation = "source-over";
     return { cv: out, mode: "sil" };
@@ -9645,14 +9675,6 @@
   /* v93 백업 속 이용권·체험 정보 */
   function bkLicCarry(){}   // v106 체험·이용권은 계정 기준이라 백업에서 옮기지 않음
   function bkLicOffer(){}
-  function bkLicOfferOld(data){
-    var p = parseLic(data && data.license && data.license.code);
-    if(!p || p.exp < todayKey() || p.dev === deviceId() || licValid()) return;
-    var old = "AYO-" + p.dev.slice(0, 4) + "-" + p.dev.slice(4);
-    if(!window.confirm("이전 기기(" + old + ")의 PRO 이용권이 백업에 들어 있어요 (" + fmtYmd(p.exp) + "까지).\n\n이 기기로 옮기려면 이용권 이전 요청 메일을 보내주세요. 남은 기간 그대로 새 기기용 코드를 보내드려요.\n\n지금 메일을 작성할까요?")) return;
-    var body = "아요바디요 PRO 이용권 기기 이전을 요청합니다.\n\n- 이전 기기 코드: " + old + "\n- 새 기기 코드: " + deviceCode() + "\n- 이용 기간: " + fmtYmd(p.exp) + "까지\n- 이전 이용 코드: " + p.code + "\n";
-    window.location.href = "mailto:" + PRO_MAIL + "?subject=" + encodeURIComponent("[아요바디요] PRO 이용권 기기 이전 요청") + "&body=" + encodeURIComponent(body);
-  }
   function updateLicUI(){
     syncProBadge();
     document.querySelectorAll(".dev-id").forEach(function(el){ el.textContent = deviceCode(); });
@@ -11009,8 +11031,8 @@
         return '<div class="ss-row" data-rid="' + esc(x.id) + '">' + (x.thumb ? '<img class="ss-th" src="' + safeSrc(x.thumb) + '" alt=""' + (i.mv ? ' data-open="' + esc(x.id) + '"' : '') + '>' : '<div class="ss-th"></div>') +
           '<div class="ss-nm"><b>' + esc(i.name) + (i.sd ? ' <small>' + i.sd + '</small>' : '') + '</b><em class="' + i.jd.cls + '">' + esc(i.jd.txt) + (i.mv && !i.scol ? ' · 정상 0–' + i.mv.normal + '°' : '') + '</em></div>' +
           (edit ? '<label class="ss-in"><input type="number" inputmode="numeric" min="0" max="200" value="' + x.value + '" data-val="' + esc(x.id) + '">°</label>' +
-            (i.mv ? '<button type="button" class="ss-ico" data-open="' + esc(x.id) + '" title="사진 열어 점 수정">✎</button>' : '') + '<button type="button" class="ss-ico ss-x" data-del="' + esc(x.id) + '" title="삭제">✕</button>'
-          : '<b class="ss-v ' + i.jd.cls + '">' + x.value + '°</b><button type="button" class="ss-ico ss-x" data-del="' + esc(x.id) + '" title="삭제">✕</button>') + '</div>';
+            (i.mv ? '<button aria-label="사진 열어 점 수정" type="button" class="ss-ico" data-open="' + esc(x.id) + '" title="사진 열어 점 수정">✎</button>' : '') + '<button aria-label="삭제" type="button" class="ss-ico ss-x" data-del="' + esc(x.id) + '" title="삭제">✕</button>'
+          : '<b class="ss-v ' + i.jd.cls + '">' + x.value + '°</b><button aria-label="삭제" type="button" class="ss-ico ss-x" data-del="' + esc(x.id) + '" title="삭제">✕</button>') + '</div>';
       }).join("") + '</div></div>';
     });
     $("mbSessTitle").textContent = m.name + " · " + round + "차 측정";

@@ -1,5 +1,5 @@
 // 앱 주소에서만 호출되도록 CORS 허용 목록 관리
-export const ALLOWED = ["https://ayoajeyo.github.io", "http://localhost:8765"];
+export const ALLOWED = ["https://ayoajeyo.github.io"];   // v152 실제 앱 주소만 (로컬 테스트 주소 제외)
 export function cors(req: Request) {
   const o = req.headers.get("origin") || "";
   return {

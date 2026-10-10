@@ -1,7 +1,7 @@
 /* AYO체형분석 — 서비스워커
    - 화면(index.html): 네트워크 우선 → GitHub에 올린 최신 버전이 바로 반영되고, 인터넷이 끊기면 저장본으로 열림
    - 인식 모델·라이브러리(MediaPipe)·글꼴: 한 번 받으면 폰에 저장해 두고 재사용 → 두 번째부터 빠르고 오프라인에서도 동작 */
-const VERSION = "pma-v119";
+const VERSION = "pma-v120";
 const SHELL = "pma-shell-" + VERSION;
 const ASSETS = "pma-assets-v1";   // 모델 파일은 버전과 무관하게 유지(약 25MB 재다운로드 방지)
 const SHELL_FILES = ["./", "./index.html", "./manifest.webmanifest",
@@ -37,11 +37,13 @@ self.addEventListener("fetch", (e) => {
 
   // 인식 모델·라이브러리·글꼴: 저장본 우선
   if(isAsset(url)){
+    // v152 재시도용 '?r=N'은 같은 파일로 저장(다음 실행 때 오프라인에서도 찾게) · 실패 응답은 저장하지 않음(글꼴 CSS만 opaque 허용)
+    const key = new URL(req.url); key.searchParams.delete("r");
     e.respondWith(caches.open(ASSETS).then(async (c) => {
-      const hit = await c.match(req);
+      const hit = await c.match(key.href);
       if(hit) return hit;
       const res = await fetch(req);
-      if(res && (res.ok || res.type === "opaque")) c.put(req, res.clone());
+      if(res && (res.ok || (res.type === "opaque" && url.hostname === "fonts.googleapis.com"))) c.put(key.href, res.clone());
       return res;
     }));
     return;
@@ -58,7 +60,8 @@ self.addEventListener("fetch", (e) => {
     };
     // v134 앱 화면은 브라우저 임시저장(최대 10분)도 건너뛰고 항상 최신본 확인
     const net = fetch(req.mode === "navigate" ? new Request(req.url, { cache: "no-cache", credentials: "same-origin" }) : req).then((res) => {
-      if(res && res.ok){ const copy = res.clone(); caches.open(SHELL).then((c) => c.put(req, copy)); }
+      // v152 앱 화면은 주소 뒤 ?code=…(네이버 로그인 등)을 빼고 저장 → 1회용 로그인 코드가 저장본에 남지 않게
+      if(res && res.ok){ const copy = res.clone(), k = req.mode === "navigate" ? url.origin + url.pathname : req; caches.open(SHELL).then((c) => c.put(k, copy)); }
       return res;
     });
     if(req.mode !== "navigate"){ e.respondWith(net.catch(fallback)); return; }

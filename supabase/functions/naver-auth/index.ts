@@ -29,10 +29,11 @@ Deno.serve(async (req) => {
       auth: { autoRefreshToken: false, persistSession: false },
     });
     // 처음이면 계정 생성(이메일 확인 완료 상태). 이미 있으면 오류가 나도 그대로 진행.
-    await admin.auth.admin.createUser({
+    const made = await admin.auth.admin.createUser({
       email, email_confirm: true,
       user_metadata: { provider: "naver", naver_id: p.id, name: p.name || p.nickname || "" },
     }).catch(() => null);
+    const created = !!(made && made.data && made.data.user);
 
     const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email });
     if (error || !data?.properties?.hashed_token){ console.error("[naver-auth] link", error); return json(req, { error: "로그인 토큰을 만들지 못했어요" }, 500); }
@@ -43,6 +44,12 @@ Deno.serve(async (req) => {
     // 처음 연결할 때 네이버 고유번호를 app_metadata(본인이 바꿀 수 없는 값)에 기록
     const linked = u && u.app_metadata && u.app_metadata.naver_id;
     if (linked && linked !== p.id) return json(req, { error: "이 이메일 계정에는 다른 네이버 계정이 연결돼 있어요. 이메일로 로그인해 주세요." }, 403);
+    // 보안(v150): 이미 다른 방법(이메일·구글·카카오)으로 가입해 인증까지 마친 계정에는 네이버를 자동으로 연결하지 않음
+    //   (네이버 프로필 이메일만 맞추면 남의 계정에 들어오는 것 방지) · 예전에 네이버로 만든 계정(user_metadata.naver_id 같음)은 허용
+    const ownNaver = !!(u && u.user_metadata && u.user_metadata.naver_id === p.id);
+    if (u && !linked && !created && !ownNaver && u.email_confirmed_at) {
+      return json(req, { error: "이 이메일은 이미 다른 방법(이메일·카카오·구글)으로 가입돼 있어요. 처음 가입한 방법으로 로그인해 주세요." }, 409);
+    }
     if (u && !u.email_confirmed_at) {
       const rnd = crypto.randomUUID() + crypto.randomUUID();
       await admin.auth.admin.updateUserById(u.id, { password: rnd, email_confirm: true, app_metadata: { naver_id: p.id } });

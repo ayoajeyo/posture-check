@@ -1211,6 +1211,9 @@
   .rom-body{display:flex; align-items:stretch; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:14px 12px 10px 16px; box-shadow:var(--shadow);}
   .adm-xls{margin:4px 0 12px; padding:12px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2);}
   .adm-xls b{display:block; font-size:14px; margin-bottom:4px;}
+  .admx-pick{display:flex; flex-direction:column; gap:8px; margin:0 0 10px;}
+  .admx-pick label{display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700; color:var(--ink-soft);}
+  .admx-pick label .sel{flex:1;}
   .adm-xls p{margin:0 0 10px; font-size:12.5px; line-height:1.55; color:var(--ink-soft);}
   /* v121 정확도 채점 */
   .bench-tabs{display:flex; gap:6px; margin-bottom:8px;}
@@ -1798,7 +1801,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v128</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v129</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1815,7 +1818,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v128</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v129</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2183,6 +2186,10 @@
     <div class="adm-xls" id="admXls" hidden>
       <b>📊 측정 수정 기록 (수정 전 · 수정 후)</b>
       <p id="admXlsInfo">관리자 모드에서 저장한 측정의 자동 인식 점(수정 전)과 최종 점(수정 후)을 사진·좌표와 함께 엑셀로 저장해요.</p>
+      <div class="admx-pick">
+        <label>회원<select class="sel" id="admXlsMember"></select></label>
+        <label>회차<select class="sel" id="admXlsRound"></select></label>
+      </div>
       <button type="button" class="btn primary" id="btnAdmXls" style="width:100%">엑셀 파일로 저장</button>
       <button type="button" class="btn line sm" id="btnAdmXlsClr" style="width:100%;margin-top:6px">보관한 수정 기록 비우기</button>
     </div>
@@ -9262,8 +9269,46 @@
       return Promise.all(keys.filter(function(k){ return String(k).indexOf(ADMX) === 0; }).map(function(k){ return rawGet("blobs", k); }));
     }).then(function(L){ return L.filter(function(x){ return x && x.v; }).map(function(x){ return Object.assign({ id: x.id }, x.v); }); });
   }
+  /* v129 엑셀 저장: 회원 → 회차 선택 (보관 기록의 원래 측정 기록에서 회원·회차를 찾음) */
+  var admxCache = [];
+  function admxResolve(L){
+    return Promise.all(L.map(function(x){
+      var m = String(x.id).match(/^admx:(roms|records):([^:]+)/);
+      return (m ? rawGet(m[1], m[2]) : Promise.resolve(null)).catch(function(){ return null; }).then(function(rec){
+        x.mid = rec && rec.memberId || null;
+        x.round = rec ? (x.kind === "body" ? (x.mode === "front" ? rec.rf : rec.rs) : rec.round) || null : null;
+        return x;
+      });
+    })).then(function(L2){
+      // 회차 번호가 없는 예전 기록: 같은 회원·같은 종류 안에서 측정 날짜 순으로 번호
+      var grp = {};
+      L2.forEach(function(x){ if(x.round) return; var g = (x.mid || x.member || "") + "|" + x.kind; (grp[g] = grp[g] || []).push(x); });
+      Object.keys(grp).forEach(function(g){
+        var days = []; grp[g].forEach(function(x){ var d = fmtDate(x.at).slice(0, 10); if(days.indexOf(d) < 0) days.push(d); });
+        days.sort(); grp[g].forEach(function(x){ x.round = days.indexOf(fmtDate(x.at).slice(0, 10)) + 1; });
+      });
+      return L2;
+    });
+  }
+  function admxMKey(x){ return x.mid ? "id:" + x.mid : "nm:" + (x.member || ""); }
+  function admxFillRounds(){
+    var mk = $("admXlsMember").value, rs = {};
+    admxCache.filter(function(x){ return admxMKey(x) === mk; }).forEach(function(x){ var r = rs[x.round] = rs[x.round] || { n: 0, at: x.at }; r.n++; if(x.at < r.at) r.at = x.at; });
+    var ks = Object.keys(rs).map(Number).sort(function(a, b){ return a - b; });
+    $("admXlsRound").innerHTML = ks.map(function(k){ return '<option value="' + k + '">' + k + '차 · ' + fmtDate(rs[k].at).slice(0, 10) + ' (' + rs[k].n + '건)</option>'; }).join("") +
+      (ks.length > 1 ? '<option value="all">전체 회차 (' + ks.reduce(function(a, k){ return a + rs[k].n; }, 0) + '건)</option>' : "");
+    if(ks.length) $("admXlsRound").value = String(ks[ks.length - 1]);
+  }
+  $("admXlsMember").addEventListener("change", admxFillRounds);
   function admxInfo(){
-    admxAll().then(function(L){
+    admxAll().then(admxResolve).then(function(L){
+      admxCache = L;
+      var ms = {}; L.forEach(function(x){ var k = admxMKey(x); if(!ms[k]) ms[k] = { name: x.member || "회원 미지정", last: 0 }; ms[k].last = Math.max(ms[k].last, x.at || 0); });
+      var mk = Object.keys(ms).sort(function(a, b){ return ms[b].last - ms[a].last; }), prev = $("admXlsMember").value;
+      $("admXlsMember").innerHTML = mk.map(function(k){ return '<option value="' + esc(k) + '">' + esc(ms[k].name) + '</option>'; }).join("");
+      if(prev && ms[prev]) $("admXlsMember").value = prev;
+      admxFillRounds();
+      $("admXlsMember").disabled = $("admXlsRound").disabled = !L.length;
       var nb = L.filter(function(x){ return x.kind === "body"; }).length, nr = L.length - nb;
       $("admXlsInfo").textContent = L.length ? "보관된 기록: 체형분석 " + nb + "장 · ROM " + nr + "건 (이 기기). 관리자 모드에서 측정을 저장할 때마다 자동으로 쌓여요."
         : "아직 보관된 기록이 없어요. 관리자 모드를 켠 채로 측정을 저장하면 자동 인식 점(수정 전)과 최종 점(수정 후)이 사진·좌표와 함께 쌓여요.";
@@ -9322,9 +9367,14 @@
   }
   function admxExport(){
     var btn = $("btnAdmXls"); busyBtn("btnAdmXls", true, "엑셀 만드는 중…");
-    Promise.all([admxAll(), loadExcel()]).then(function(res){
+    var selM = $("admXlsMember").value, selR = $("admXlsRound").value, fname = null;
+    Promise.all([admxAll().then(admxResolve), loadExcel()]).then(function(res){
       var L = res[0], X = res[1];
-      if(!L.length){ toast("보관된 측정 수정 기록이 없어요."); return; }
+      L = L.filter(function(x){ return admxMKey(x) === selM && (selR === "all" || String(x.round) === selR); });
+      if(!L.length){ toast("선택한 회원·회차에 보관된 기록이 없어요."); return; }
+      var nm = (L[0].member || "회원미지정").replace(/[\\/:*?"<>|]/g, "").trim() || "회원미지정";
+      var d0 = new Date(Math.min.apply(null, L.map(function(x){ return x.at || Date.now(); }))), z0 = function(n){ return (n < 10 ? "0" : "") + n; };
+      fname = "아요바디요-" + nm + "-" + (selR === "all" ? "전체회차" : selR + "차") + "-" + d0.getFullYear() + z0(d0.getMonth() + 1) + z0(d0.getDate()) + ".xlsx";
       var ord = function(x){
         if(x.kind === "body") return [0, x.mode === "front" ? 0 : 1, 0, 0];
         var ji = ADMX_ORDER.indexOf(x.joint), J = ROM_ALL.find(function(j){ return j.k === x.joint; }), mi = J ? J.moves.findIndex(function(m){ return m.k === x.move; }) : 99;
@@ -9358,7 +9408,7 @@
       }).then(function(buf){
         var d = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
         deliverFile(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }),
-          "아요바디요_측정수정기록_" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "_" + z(d.getHours()) + z(d.getMinutes()) + ".xlsx",
+          fname || ("아요바디요_측정수정기록_" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "_" + z(d.getHours()) + z(d.getMinutes()) + ".xlsx"),
           "측정 수정 기록 엑셀(" + L.length + "건)을 만들었어요.");
       });
     }).catch(function(e){ console.warn("[admx xlsx]", e); toast("엑셀을 만들지 못했어요. 인터넷 연결을 확인해 주세요."); })

@@ -1277,6 +1277,13 @@
   .hq-grid button{font-family:inherit; border:1px solid var(--line); background:var(--surface); border-radius:16px; padding:16px 6px 14px; display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--ink); font-size:14px; font-weight:800; cursor:pointer; box-shadow:var(--shadow);}
   .hq-grid button span{width:46px; height:46px; border-radius:14px; background:var(--accent-soft); color:var(--blue); display:flex; align-items:center; justify-content:center;}
   .hq-grid button:active{transform:translateY(1px);}
+
+  /* ===================== v128 체형 2차부터 이전 회차 실루엣 · 관리자 원본사진 촬영 ===================== */
+  .stage canvas.bghost{object-fit:cover; background:transparent; opacity:.45; pointer-events:none;}
+  .body-gtag{position:absolute; top:10px; left:10px; right:10px; z-index:3; text-align:center; font-size:12px; font-weight:700; padding:5px 10px; border-radius:100px; color:#fff; background:rgba(31,120,140,.85); pointer-events:none;}
+  .body-gtag[hidden]{display:none;}
+  .adm-raw{border-color:#E0A23A!important; color:#8A5A00!important; background:#FFF4D6!important;}
+  .adm-raw[hidden]{display:none!important;}
 </style>
 
 </head>
@@ -1372,6 +1379,8 @@
     <div class="stage" id="stage">
       <video id="video" autoplay playsinline muted hidden></video>
       <canvas id="segCanvas" class="seg" hidden></canvas>
+      <canvas id="bodyGhost" class="bghost" hidden></canvas>
+      <div class="body-gtag" id="bodyGTag" hidden></div>
       <canvas id="canvas" hidden></canvas>
       <div class="hint-chip" id="detectBadge" hidden><span>자동 인식 중…</span></div>
       <div class="empty-cam" id="emptyCam">
@@ -1460,6 +1469,7 @@
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
       </button>
       <button class="btn line" id="btnTimer" hidden>⏱ 5초</button>
+      <button class="btn line adm-raw" id="btnRawShot" hidden title="관리자: 격자·각도 보정 없이 원본 사진 저장">원본사진</button>
       <button class="btn primary" id="btnShoot">촬영</button>
     </div>
     <div class="stage-controls" id="markControls" hidden>
@@ -1788,7 +1798,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v127</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v128</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1805,7 +1815,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v127</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v128</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2248,6 +2258,7 @@
       <button type="button" class="btn line sm" id="btnRomFlip">🔄 전환</button>
       <button type="button" class="btn line sm" id="btnRomTimer" hidden>⏱ 5초</button>
       <button type="button" class="btn line sm" id="btnRomOutline" aria-pressed="true">테두리</button>
+      <button type="button" class="btn line sm adm-raw" id="btnRomRaw" hidden title="관리자: 격자·각도 보정 없이 원본 사진 저장">원본사진</button>
     </div>
     <div class="rom-btns" id="romBtns1">
       <button type="button" class="btn rom-shot-btn" id="btnRomShot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg><span>촬영하기</span></button>
@@ -2777,6 +2788,7 @@
 
   function syncSilhouettes(){
     var showF = state.mode === "front", showS = state.mode === "side";   // v113 사람을 인식해도 고정 가이드 실루엣을 그대로 유지
+    if(typeof bodyGh !== "undefined" && bodyGh && bodyGh.on && bodyGh.mode === state.mode){ showF = false; showS = false; }   // v128 이전 회차 실루엣이 있으면 고정 실루엣 대신
     // SVG 요소는 .hidden 속성이 동작하지 않으므로 hidden 어트리뷰트를 직접 토글
     if(showF) silhouetteFront.removeAttribute("hidden"); else silhouetteFront.setAttribute("hidden", "");
     if(showS) silhouetteSide.removeAttribute("hidden"); else silhouetteSide.setAttribute("hidden", "");
@@ -2945,16 +2957,65 @@
     timerBtnSync($("btnTimer"), state.facingMode === "user");
     state.phase = "live";
     startLive();
+    bodyGhostPrep();
     var pr = video.play && video.play();
     if(pr && pr.catch) pr.catch(function(){});
   }
   function goIdleFromLive(){
+    bodyGhostHide();
     video.hidden = true; guideOverlay.hidden = true; hintChip.hidden = true;
     emptyCam.hidden = false; camControls.hidden = false; shootControls.hidden = true;
     btnSwitchCam.hidden = true; $("btnTimer").hidden = true; shootCdStop();
     state.phase = "idle";
   }
 
+  /* v128 체형 2차 측정부터: 같은 회원의 직전 기록 사진(정면/측면)에서 사람만 오려 반투명 실루엣으로 */
+  var bodyGh = { on: false, mode: null, key: null, cv: null, tag: "" };
+  function bodyGhostHide(){ bodyGh.on = false; $("bodyGhost").hidden = true; $("bodyGTag").hidden = true; }
+  function bodyGhostShow(){
+    if(state.phase !== "live" || !bodyGh.cv || bodyGh.mode !== state.mode) return;
+    var el = $("bodyGhost"); el.width = bodyGh.cv.width; el.height = bodyGh.cv.height; el.getContext("2d").drawImage(bodyGh.cv, 0, 0);
+    el.hidden = false; bodyGh.on = true; $("bodyGTag").textContent = bodyGh.tag; $("bodyGTag").hidden = false;
+    syncSilhouettes();
+  }
+  function bodyGhostPrep(){
+    bodyGhostHide(); syncSilhouettes();
+    if(!state.member) return;
+    var m = state.mode, mid = state.member.id, sid = state.sessionId;
+    dbAll("records").then(function(all){
+      var L = (all || []).filter(function(r){ return r.memberId === mid && r.id !== sid && (m === "front" ? r.f : r.sd) && (r.photos ? r.photos[m] : r.blob); })
+        .sort(function(a, b){ return (b.at || 0) - (a.at || 0); });
+      var rec = L[0]; if(!rec) return;
+      var rn = m === "front" ? rec.rf : rec.rs;
+      var tag = (rn ? rn + "차" : "이전") + " 기록(" + fmtDate(rec.at).slice(0, 10) + ") 자세·위치에 맞춰 촬영하세요";
+      var key = rec.id + "|" + m + "|" + (rec.editedAt || rec.at);
+      if(bodyGh.key === key && bodyGh.cv){ bodyGh.mode = m; bodyGh.tag = tag; bodyGhostShow(); return; }
+      bodyGh.key = key; bodyGh.cv = null; bodyGh.mode = m; bodyGh.tag = tag;
+      (rec.photos ? Promise.resolve(rec) : dbFull("records", rec)).then(function(full){
+        var ph = full && full.photos && full.photos[m]; if(!ph || !ph.img || bodyGh.key !== key) return;
+        var im = new Image();
+        im.onload = function(){
+          if(bodyGh.key !== key) return;
+          var done = function(mask){ if(bodyGh.key !== key) return; var r = romGhostCanvas(im, mask, [], 1); bodyGh.cv = r.cv; bodyGhostShow(); };
+          (window.__segmentPerson ? window.__segmentPerson(im) : Promise.resolve(null)).then(done, function(){ done(null); });
+        };
+        im.src = ph.img;
+      });
+    }).catch(function(){});
+  }
+  /* v128 관리자 원본사진: 격자 배경 정리·각도(수평) 보정 없이 카메라 원본 그대로 저장 */
+  function adminRawShot(v, kind){
+    if(!ADM.on) return;
+    var vw = v.videoWidth, vh = v.videoHeight;
+    if(!vw || !vh){ toast("카메라 화면이 아직 준비되지 않았어요."); return; }
+    var c = document.createElement("canvas"); c.width = vw; c.height = vh;
+    c.getContext("2d").drawImage(v, 0, 0, vw, vh);
+    var nm = state.member ? state.member.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" : "";
+    var t = new Date(), ts = t.getFullYear() + String(t.getMonth() + 1).padStart(2, "0") + String(t.getDate()).padStart(2, "0") + "_" + String(t.getHours()).padStart(2, "0") + String(t.getMinutes()).padStart(2, "0") + String(t.getSeconds()).padStart(2, "0");
+    deliverCanvas(c, "AYO_RAW_" + kind + "_" + nm + ts + ".jpg");
+    toast("원본 사진(" + vw + "×" + vh + ")을 저장해요 · 격자·각도 보정 없음");
+  }
+  $("btnRawShot").addEventListener("click", function(){ adminRawShot(video, state.mode); });
   function startCamera(){
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
       toast("이 브라우저에서는 카메라를 직접 열 수 없어요. '사진 선택'을 이용해주세요.");
@@ -3642,6 +3703,7 @@
   }
 
   function showFrozen(){
+    bodyGhostHide();
     video.hidden = true; guideOverlay.hidden = true; hintChip.hidden = true; emptyCam.hidden = true;
     levelChip.hidden = true;
     canvas.hidden = false;
@@ -8407,6 +8469,7 @@
     tag.hidden = false; tag.className = "rom-gtag"; tag.textContent = "기본 자세 테두리에 몸을 맞춰 촬영하세요";
   }
   function romOutlineBtn(){ var b = $("btnRomOutline"); b.setAttribute("aria-pressed", String(romGuideOn)); var nm = romCam.ghost ? "실루엣" : "가이드"; b.textContent = nm + (romGuideOn ? " 켬" : " 끔"); }
+  $("btnRomRaw").addEventListener("click", function(){ adminRawShot(romVideo, "ROM_" + rom.joint + "_" + (romS.mv || "")); });
   $("btnRomOutline").addEventListener("click", function(){ romGuideOn = !romGuideOn; lsSet("ayo_rom_outline", romGuideOn ? "1" : "0"); romOutlineBtn(); });
   romOutlineBtn();
   function romSnap(){
@@ -9084,6 +9147,7 @@
   var ADM_HASH = "662f5bbd3664bd4b2da29497ddc292a201b958b60dc6b8ff830e2f6baf267d2e";
   function admSync(){
     $("admChip").hidden = !ADM.on;
+    $("btnRawShot").hidden = !ADM.on; $("btnRomRaw").hidden = !ADM.on;
     if(typeof proRefresh === "function" && admSync._was !== undefined && admSync._was !== ADM.on){ try{ proRefresh(); }catch(e){} }
     admSync._was = ADM.on;
     $("btnMoreAdmT").textContent = ADM.on ? "관리자 모드 (사용 중)" : "관리자 모드";

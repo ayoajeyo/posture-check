@@ -1788,7 +1788,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v126</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v127</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1805,7 +1805,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v126</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v127</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -8299,14 +8299,20 @@
   function romFirstRec(){
     var J = romJoint(), mv = romMove(); if(!mv || J.k === "scol") return null;
     var sd = romSd(J, mv);
-    var H = (rom.all || []).filter(function(r){ return r.joint === J.k && r.side === sd && r.move === mv.k && (r.img || r.blob); }).sort(function(a, b){ return a.at - b.at; });
-    return H[0] || null;
+    var mid = state.member ? state.member.id : null;
+    var H = (rom.all || []).filter(function(r){ return r.joint === J.k && r.side === sd && r.move === mv.k && (r.img || r.blob) && (!mid || r.memberId === mid); });
+    if(!H.length) return null;
+    // v127 직전 회차 기록 (지금 회차보다 앞선 것 중 가장 최근) · 없으면 가장 최근 기록
+    var cur = mid && typeof romCurRound === "function" ? romCurRound() : 0;
+    var key = function(r){ return romRoundOf(r) * 1e13 + (r.at || 0); };
+    var prev = H.filter(function(r){ return cur && romRoundOf(r) < cur; }).sort(function(a, b){ return key(b) - key(a); });
+    return prev[0] || H.sort(function(a, b){ return key(b) - key(a); })[0];
   }
   // v105 1차 기록 실루엣: 인물 윤곽을 다듬고(작은 조각·구멍 제거, 매끈한 경계) 측정한 관절 쪽만 또렷하게
   function romGhostCanvas(im, m, pts, k){
     var W = im.naturalWidth, H = im.naturalHeight, s = Math.min(1, 720 / Math.max(W, H)), w = Math.round(W * s), h = Math.round(H * s);
     var out = document.createElement("canvas"); out.width = w; out.height = h; var o = out.getContext("2d");
-    if(!(m && romMaskOk(m))) return { cv: out, mode: "lines" };   // 윤곽을 못 찾으면 측정선만
+    if(!(m && romMaskOk(m))){ o.drawImage(im, 0, 0, w, h); return { cv: out, mode: "photo" }; }   // 윤곽을 못 찾으면 사진 전체를 흐리게
     // 1) 작은 격자로 줄여 0/1 마스크
     var gs = Math.min(1, 220 / Math.max(m.w, m.h)), gw = Math.max(8, Math.round(m.w * gs)), gh = Math.max(8, Math.round(m.h * gs)), B = new Uint8Array(gw * gh), x, y, i;
     for(y = 0; y < gh; y++) for(x = 0; x < gw; x++){ var sx = Math.min(m.w - 1, Math.floor(x / gs)), sy = Math.min(m.h - 1, Math.floor(y / gs)); B[y * gw + x] = m.data[sy * m.w + sx] > 0.5 ? 1 : 0; }
@@ -8341,7 +8347,8 @@
     for(var a2 = 0; a2 < 16; a2++){ var an = a2 / 16 * Math.PI * 2; rx.drawImage(sh, Math.round(Math.cos(an) * d), Math.round(Math.sin(an) * d)); }
     rx.globalCompositeOperation = "destination-out"; rx.drawImage(sh, 0, 0);
     rx.globalCompositeOperation = "source-in"; rx.fillStyle = "#FFFFFF"; rx.fillRect(0, 0, w, h);
-    o.globalAlpha = 0.22; o.drawImage(sh, 0, 0); o.globalAlpha = 0.95; o.drawImage(ring, 0, 0); o.globalAlpha = 1;
+    // v127 테두리 대신 이전 회차 사진에서 사람 부분만 오려 반투명으로 (측정가이드 사진과 같은 모양)
+    o.drawImage(im, 0, 0, w, h); o.globalCompositeOperation = "destination-in"; o.drawImage(sh, 0, 0); o.globalCompositeOperation = "source-over";
     return { cv: out, mode: "sil" };
   }
   function romGhostPrep(){
@@ -8376,15 +8383,9 @@
     var gh = romCam.ghost;
     if(gh && gh.cv){
       var r = romFit(gh.w / gh.h, vw, vh, 1);
-      g.drawImage(gh.cv, r.x, r.y, r.w, r.h);
-      var k = gh.rec.imgK || 1, P = (gh.rec.pts || []).map(function(q){ return { x: r.x + q.x * k / gh.w * r.w, y: r.y + q.y * k / gh.h * r.h }; });
-      // 1차 측정선(관절이 움직인 모양): ①선 하늘색 · ②선 파랑, 어두운 테두리로 어디서나 보이게
-      var seg = function(a, b, col){ if(!a || !b) return; g.lineCap = "round"; g.strokeStyle = "rgba(13,21,40,.6)"; g.lineWidth = 9; g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); g.strokeStyle = col; g.lineWidth = 5; g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); };
-      if(P.length >= 3) seg(P[0], P[2], "rgba(79,209,232,.9)");
-      if(P.length >= 2) seg(P[0], P[1], "rgba(88,106,244,.95)");
-      P.forEach(function(p, i){ g.beginPath(); g.arc(p.x, p.y, 8, 0, Math.PI * 2); g.fillStyle = "rgba(13,21,40,.55)"; g.fill(); g.lineWidth = 3; g.strokeStyle = ROM_COL[i] || "#fff"; g.stroke(); });
+      g.save(); g.globalAlpha = gh.mode === "sil" ? 0.45 : 0.35; g.drawImage(gh.cv, r.x, r.y, r.w, r.h); g.restore();
       tag.hidden = false; tag.className = "rom-gtag ghost";
-      tag.textContent = "1차 기록(" + fmtDate(gh.rec.at).slice(0, 10) + ") " + (gh.mode === "sil" ? "실루엣·측정선" : "측정선") + "에 맞춰 촬영하세요";
+      tag.textContent = romRoundOf(gh.rec) + "차 기록(" + fmtDate(gh.rec.at).slice(0, 10) + ") 자세·위치에 맞춰 촬영하세요";
       return;
     }
     var gd = romCam.gd;

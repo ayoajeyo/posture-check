@@ -1832,7 +1832,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v135</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v136</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1849,7 +1849,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v135</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v136</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -3093,6 +3093,7 @@
     }).then(function(stream){
       state.stream = stream;
       streamFacing = wantFacing;
+      camTune(stream);
       video.srcObject = stream;
       showLive();
     }).catch(function(err){
@@ -3112,6 +3113,16 @@
     goIdleFromLive();
   });
 
+  // v135 촬영 화질: 지원하는 폰이면 연속 자동 초점·노출·화이트밸런스로 (흐림·어두움 방지)
+  function camTune(stream){
+    try{
+      var t = stream && stream.getVideoTracks()[0]; if(!t || !t.getCapabilities) return;
+      var cap = t.getCapabilities(), adv = [];
+      ["focusMode", "exposureMode", "whiteBalanceMode"].forEach(function(k){ if(cap[k] && cap[k].indexOf && cap[k].indexOf("continuous") >= 0){ var o = {}; o[k] = "continuous"; adv.push(o); } });
+      if(adv.length) t.applyConstraints({ advanced: adv }).catch(function(){});
+    }catch(e){}
+  }
+  window.__camTune = camTune;
   /* ---------- 고화질 촬영 ----------
      1순위: ImageCapture.takePhoto() — 카메라의 사진 모드 최대 해상도(안드로이드 크롬 등)
      2순위: 영상 프레임 캡처 — 스트림 최대 해상도 (아이폰 사파리 등)
@@ -3159,12 +3170,17 @@
         if(!bmpP) return null;
         return bmpP.then(function(bmp){
           var photoPortrait = bmp.height >= bmp.width, videoPortrait = vh >= vw;
-          var sameRatio = Math.abs((bmp.width / bmp.height) - (vw / vh)) < 0.06;
-          if(photoPortrait !== videoPortrait || !sameRatio || bmp.width * bmp.height <= vw * vh){
+          // v135 사진(4:3)과 미리보기 영상(16:9) 비율이 달라도: 미리보기는 사진 가운데를 잘라낸 화면이므로 같은 영역만 잘라 사용
+          var kk = Math.min(bmp.width / vw, bmp.height / vh), fw = Math.round(vw * kk), fh = Math.round(vh * kk);
+          if(photoPortrait !== videoPortrait || fw * fh <= vw * vh * 1.15){
             try{ bmp.close(); }catch(e){}
-            return null;   // 방향·비율이 다르거나 영상보다 작으면 사용하지 않음
+            return null;   // 방향이 다르거나 영상보다 크게 낫지 않으면 영상 프레임 사용
           }
-          var c = cropToStage(bmp, bmp.width, bmp.height);
+          var fc = document.createElement("canvas"); fc.width = fw; fc.height = fh;
+          var fg = fc.getContext("2d"); fg.imageSmoothingQuality = "high";
+          fg.drawImage(bmp, Math.round((bmp.width - fw) / 2), Math.round((bmp.height - fh) / 2), fw, fh, 0, 0, fw, fh);
+          try{ bmp.close(); }catch(e){}
+          var c = cropToStage(fc, fw, fh);
           try{ bmp.close(); }catch(e){}
           return c;
         });
@@ -3423,6 +3439,101 @@
     }
     if(typeof drawCanvas === "function") drawCanvas();
   }
+
+  /* ===================== v135 격자 배경 경계 다듬기 =====================
+     인물 분리 마스크는 해상도가 낮아 경계가 계단·번짐처럼 보임 →
+     ① 사진 밝기 경계를 따라 마스크를 맞추고(guided filter) ② 경계를 또렷하지만 부드럽게(1~2px 안티에일리어싱)
+     ③ 경계 픽셀에 섞인 원래 배경색을 안쪽 몸 색으로 바꿔(색 번짐 제거) 흰 격자 위에서도 자연스럽게 */
+  function cutBox(src, w, h, r, out, tmp){   // 가장자리 보정 평균 필터 (가로 → 세로, O(N))
+    var x, y, i, s, n, row;
+    for(y = 0; y < h; y++){
+      row = y * w; s = 0; n = 0;
+      for(x = 0; x <= r && x < w; x++){ s += src[row + x]; n++; }
+      for(x = 0; x < w; x++){
+        tmp[row + x] = s / n;
+        var add = x + r + 1, rem = x - r;
+        if(add < w){ s += src[row + add]; n++; }
+        if(rem >= 0){ s -= src[row + rem]; n--; }
+      }
+    }
+    for(x = 0; x < w; x++){
+      s = 0; n = 0;
+      for(y = 0; y <= r && y < h; y++){ s += tmp[y * w + x]; n++; }
+      for(y = 0; y < h; y++){
+        out[y * w + x] = s / n;
+        var ad = y + r + 1, rm = y - r;
+        if(ad < h){ s += tmp[ad * w + x]; n++; }
+        if(rm >= 0){ s -= tmp[rm * w + x]; n--; }
+      }
+    }
+    return out;
+  }
+  // img: 원본 사진, mc: 인물 알파 마스크 캔버스(저해상도 가능), W×H: 결과 크기 → 인물만 남긴 캔버스
+  function cutRefine(img, mc, W, H){
+    var L = Math.max(W, H), k = Math.min(1, 1280 / L), w = Math.max(8, Math.round(W * k)), h = Math.max(8, Math.round(H * k)), N = w * h, i;
+    var wc = document.createElement("canvas"); wc.width = w; wc.height = h;
+    var wg = wc.getContext("2d", { willReadFrequently: true });
+    wg.imageSmoothingEnabled = true; wg.imageSmoothingQuality = "high";
+    wg.drawImage(img, 0, 0, w, h);
+    var px = wg.getImageData(0, 0, w, h).data;
+    wg.clearRect(0, 0, w, h);
+    try{ wg.filter = "blur(" + Math.max(0.6, w / 1400) + "px)"; }catch(e){}
+    wg.drawImage(mc, 0, 0, w, h);
+    try{ wg.filter = "none"; }catch(e){}
+    var md = wg.getImageData(0, 0, w, h).data;
+    var I = new Float32Array(N), P = new Float32Array(N), R = new Float32Array(N), G = new Float32Array(N), B = new Float32Array(N);
+    for(i = 0; i < N; i++){
+      R[i] = px[i * 4] / 255; G[i] = px[i * 4 + 1] / 255; B[i] = px[i * 4 + 2] / 255;
+      I[i] = 0.299 * R[i] + 0.587 * G[i] + 0.114 * B[i]; P[i] = md[i * 4 + 3] / 255;
+    }
+    var r = Math.max(2, Math.round(Math.max(w, h) / 260)), eps = 0.0025, T = new Float32Array(N);
+    var mI = cutBox(I, w, h, r, new Float32Array(N), T), mP = cutBox(P, w, h, r, new Float32Array(N), T);
+    var X = new Float32Array(N), Y = new Float32Array(N);
+    for(i = 0; i < N; i++){ X[i] = I[i] * P[i]; Y[i] = I[i] * I[i]; }
+    var mIP = cutBox(X, w, h, r, new Float32Array(N), T), mII = cutBox(Y, w, h, r, new Float32Array(N), T);
+    for(i = 0; i < N; i++){ var va = mII[i] - mI[i] * mI[i], a = (mIP[i] - mI[i] * mP[i]) / (va + eps); X[i] = a; Y[i] = mP[i] - a * mI[i]; }
+    var mA = cutBox(X, w, h, r, new Float32Array(N), T), mB = cutBox(Y, w, h, r, new Float32Array(N), T);
+    var A = new Float32Array(N);
+    for(i = 0; i < N; i++){
+      var q;
+      if(mP[i] < 0.01) q = 0;                 // 확실한 배경
+      else if(mP[i] > 0.995) q = P[i];        // 확실한 몸 안쪽 (관절 뼈대로 채운 부분 포함)
+      else { q = mA[i] * I[i] + mB[i]; q = 0.55 * q + 0.45 * P[i]; }   // 경계: 사진 경계를 따라가되 마스크를 크게 벗어나지 않게
+      q = (q - 0.22) / 0.56; q = q < 0 ? 0 : q > 1 ? 1 : q; q = q * q * (3 - 2 * q);   // 또렷하지만 부드러운 경계
+      A[i] = q;
+    }
+    // 색 번짐 제거: 몸 안쪽(알파 높은 곳) 색으로 경계 색을 추정
+    var Wt = new Float32Array(N); for(i = 0; i < N; i++){ var a4 = A[i] * A[i]; Wt[i] = a4 * a4; }
+    var r2 = Math.max(2, Math.round(r * 1.5)), mW = cutBox(Wt, w, h, r2, new Float32Array(N), T);
+    var FR = new Float32Array(N), FG = new Float32Array(N), FB = new Float32Array(N);
+    for(i = 0; i < N; i++){ X[i] = R[i] * Wt[i]; }
+    cutBox(X, w, h, r2, FR, T);
+    for(i = 0; i < N; i++){ X[i] = G[i] * Wt[i]; }
+    cutBox(X, w, h, r2, FG, T);
+    for(i = 0; i < N; i++){ X[i] = B[i] * Wt[i]; }
+    cutBox(X, w, h, r2, FB, T);
+    var ac = document.createElement("canvas"); ac.width = w; ac.height = h;
+    var ec = document.createElement("canvas"); ec.width = w; ec.height = h;
+    var ag = ac.getContext("2d"), eg = ec.getContext("2d"), ad = ag.createImageData(w, h), ed = eg.createImageData(w, h), aD = ad.data, eD = ed.data;
+    for(i = 0; i < N; i++){
+      var al = A[i], j = i * 4;
+      aD[j + 3] = Math.round(al * 255);
+      if(al > 0.003 && al < 0.97 && mW[i] > 1e-4){
+        var e = 1 - al; e = e > 0.85 ? 1 : e / 0.85;
+        eD[j] = Math.min(255, FR[i] / mW[i] * 255); eD[j + 1] = Math.min(255, FG[i] / mW[i] * 255); eD[j + 2] = Math.min(255, FB[i] / mW[i] * 255);
+        eD[j + 3] = Math.round(e * 255);
+      }
+    }
+    ag.putImageData(ad, 0, 0); eg.putImageData(ed, 0, 0);
+    var c = document.createElement("canvas"); c.width = W; c.height = H;
+    var g = c.getContext("2d"); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
+    g.drawImage(img, 0, 0, W, H);
+    g.globalCompositeOperation = "destination-in"; g.drawImage(ac, 0, 0, W, H);
+    g.globalCompositeOperation = "source-atop"; g.drawImage(ec, 0, 0, W, H);   // 경계 색만 몸 색으로 (알파는 그대로)
+    g.globalCompositeOperation = "source-over";
+    return c;
+  }
+  window.__cutRefine = cutRefine;
   function buildCutout(s, img, mask){
     var d = mask.data, mw = mask.w, mh = mask.h, i, x, y;
     var top = -1, bottom = -1, total = 0, minX = mw, maxX = -1;
@@ -3449,16 +3560,20 @@
     mx.putImageData(id, 0, 0);
 
     var K = Math.min(1, 3000 / Math.max(s.w, s.h));
-    var cw = Math.round(s.w * K), ch = Math.round(s.h * K);
-    var cc = document.createElement("canvas"); cc.width = cw; cc.height = ch;
-    var cx = cc.getContext("2d");
-    cx.drawImage(img, 0, 0, cw, ch);
-    cx.globalCompositeOperation = "destination-in";
-    cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = "high";
-    try{ cx.filter = "blur(" + Math.max(1, Math.round(cw / 900)) + "px)"; }catch(e){}
-    cx.drawImage(mc, 0, 0, cw, ch);
-    try{ cx.filter = "none"; }catch(e){}
-    cx.globalCompositeOperation = "source-over";
+    var cw = Math.round(s.w * K), ch = Math.round(s.h * K), cc;
+    try{ cc = cutRefine(img, mc, cw, ch); }   // v135 경계 다듬기
+    catch(e){
+      console.warn("[cut] refine failed", e);
+      cc = document.createElement("canvas"); cc.width = cw; cc.height = ch;
+      var cx = cc.getContext("2d");
+      cx.drawImage(img, 0, 0, cw, ch);
+      cx.globalCompositeOperation = "destination-in";
+      cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = "high";
+      try{ cx.filter = "blur(" + Math.max(1, Math.round(cw / 900)) + "px)"; }catch(e2){}
+      cx.drawImage(mc, 0, 0, cw, ch);
+      try{ cx.filter = "none"; }catch(e2){}
+      cx.globalCompositeOperation = "source-over";
+    }
 
     var sy = s.h / mh, sxm = s.w / mw;
     s.personBox = { x0: minX * sxm, x1: (maxX + 1) * sxm, y0: top * sy, y1: (bottom + 1) * sy };
@@ -5928,7 +6043,7 @@
 
   /* ===================== v50 측정 저장(차수) · 이전 기록 불러와 수정 · 리포트 PRO ===================== */
   state.savedSig = null; state.sessRound = 1; state.pendingSave = false;
-  var PHOTO_MAX = 1280;   // v112 저장용 사진 압축 강화 (1600 → 1280, 화질 0.88 → 0.8) · 측정용 작업 사진은 그대로
+  var PHOTO_MAX = 1600;   // v135 1280 → 1600, 화질 0.8 → 0.86 (기록을 다시 열어도 선명하게)   // v112 저장용 사진 압축 강화 (1600 → 1280, 화질 0.88 → 0.8) · 측정용 작업 사진은 그대로
 
   // 현재 측정 상태 지문 (사진·점·기울기·기준선·키) → 저장 후 바뀌었는지 판단
   function sessSig(){
@@ -6033,7 +6148,7 @@
     var g = c.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(s.img, 0, 0, cw, ch);
     var sc = function(p){ return p ? Object.assign({}, p, { x: p.x * k, y: p.y * k }) : null; };
     var pts = {}; Object.keys(s.points).forEach(function(key){ pts[key] = sc(s.points[key]); });
-    return { img: c.toDataURL("image/jpeg", 0.8), w: cw, h: ch, points: pts,
+    return { img: c.toDataURL("image/jpeg", 0.86), w: cw, h: ch, points: pts,
       centerX: isFinite(s.centerX) ? s.centerX * k : null, faceSign: s.faceSign, rot: s.rot || 0,
       rotPivot: sc(s.rotPivot), grid: s.grid ? { floorY: s.grid.floorY * k, cell: s.grid.cell * k } : null, captureRoll: s.captureRoll == null ? null : s.captureRoll };
   }
@@ -7483,6 +7598,7 @@
       if(fat && ok(L[0]) && (ok(L[11]) || ok(L[12]))){ var s1 = ok(L[11]) ? L[11] : L[12], nk = { x: (L[0].x + s1.x) / 2, y: (L[0].y + s1.y) / 2 }; mg.lineWidth = Math.max(sh * 0.45, Math.max(W, H) * 0.035) * sx; mg.beginPath(); mg.moveTo(L[0].x * sx, L[0].y * sy); mg.lineTo(s1.x * sx, s1.y * sy); mg.stroke(); }
       if(ok(L[0])){ var hr = (ok(L[7]) && ok(L[8])) ? Math.max(Math.hypot(L[7].x - L[8].x, L[7].y - L[8].y) * (fat ? 1.0 : 0.75), fat ? sh * 0.55 : 0) : sh * (fat ? 0.6 : 0.4); if(fat && hr < Math.max(W, H) * 0.04) hr = Math.max(W, H) * 0.04; if(hr > 0){ var hc = (ok(L[7]) && ok(L[8])) ? { x: (L[0].x + (L[7].x + L[8].x) / 2) / 2, y: (L[0].y + (L[7].y + L[8].y) / 2) / 2 } : L[0]; mg.beginPath(); mg.arc(hc.x * sx, hc.y * sy, hr * sx, 0, Math.PI * 2); mg.fill(); } }
     }
+    if(window.__cutRefine){ try{ return window.__cutRefine(img, mc, W, H); }catch(e){ console.warn("[cut] refine failed", e); } }   // v135 경계 다듬기
     var c = document.createElement("canvas"); c.width = W; c.height = H;
     var g = c.getContext("2d"); g.drawImage(img, 0, 0, W, H);
     g.globalCompositeOperation = "destination-in"; g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
@@ -7742,10 +7858,10 @@
   });
   // 기록용 원본 사진 (회차 사진 보기·수정에 사용)
   function romImgData(){
-    var k = Math.min(1, 1080 / Math.max(romS.w, romS.h)), c = document.createElement("canvas");   // v112 1280 → 1080
+    var k = Math.min(1, 1440 / Math.max(romS.w, romS.h)), c = document.createElement("canvas");   // v135 1080 → 1440
     c.width = Math.round(romS.w * k); c.height = Math.round(romS.h * k);
     c.getContext("2d").drawImage(romS.img, 0, 0, c.width, c.height);
-    return { url: c.toDataURL("image/jpeg", 0.8), k: k };
+    return { url: c.toDataURL("image/jpeg", 0.86), k: k };
   }
   function romFind(id){ return rom.all.find(function(r){ return r.id === id; }) || rom.sessionAll.find(function(r){ return r.id === id; }); }
   // 지난 회차 열기: 그때 사진 + 측정점 그대로 → 보기·수정
@@ -8457,7 +8573,7 @@
   function romOpenCam(want){
     // v65: 후면 고정 강화 — 카메라를 끄고 바로 다른 카메라를 열면 실패하는 폰이 있어 잠깐 쉬었다가 재시도,
     //      이름으로 못 찾으면 카메라를 하나씩 열어 보고 후면인지 직접 확인
-    var size = { width: { ideal: 1920 }, height: { ideal: 1920 } };
+    var size = { width: { ideal: 2560 }, height: { ideal: 2560 } };   // v135 1920 → 2560 (지원하는 최대에 가깝게)
     var denied = function(e){ return e && (e.name === "NotAllowedError" || e.name === "SecurityError"); };
     var sleep = function(ms){ return new Promise(function(r){ setTimeout(r, ms); }); };
     var gum = function(v){
@@ -8468,7 +8584,7 @@
     var stopSt = function(st){ try{ st.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} };
     var idOf = function(st){ try{ return st.getVideoTracks()[0].getSettings().deviceId || ""; }catch(e){ return ""; } };
     var good = function(st){ var k = romCamKind(st.getVideoTracks()[0]); return k === want; };
-    var save = function(st){ var id = idOf(st); if(id) lsSet("ayo_rom_cam_" + want, id); return st; };
+    var save = function(st){ var id = idOf(st); if(id) lsSet("ayo_rom_cam_" + want, id); if(window.__camTune) window.__camTune(st); return st; };
     var saved = lsGet("ayo_rom_cam_" + want);
     return sleep(200).then(function(){
       return saved ? gum(Object.assign({ deviceId: { exact: saved } }, size)).catch(function(e){ if(denied(e)) throw e; return null; }) : null;
@@ -8790,23 +8906,51 @@
   function romOutlineBtn(){ var b = $("btnRomOutline"); b.setAttribute("aria-pressed", String(romGuideOn)); var nm = romCam.ghost ? "실루엣" : "가이드"; b.textContent = nm + (romGuideOn ? " 켬" : " 끔"); }
   $("btnRomOutline").addEventListener("click", function(){ romGuideOn = !romGuideOn; lsSet("ayo_rom_outline", romGuideOn ? "1" : "0"); romOutlineBtn(); });
   romOutlineBtn();
+  // v135 ROM도 사진 모드(최대 화소)로 촬영 · 미리보기와 같은 영역만 · 안 되면 null (영상 프레임 사용)
+  function romPhoto(track, vw, vh, fit){
+    if(!track || typeof window.ImageCapture !== "function" || track.readyState !== "live") return Promise.resolve(null);
+    var ic; try{ ic = new ImageCapture(track); }catch(e){ return Promise.resolve(null); }
+    var optP = ic.getPhotoCapabilities ? ic.getPhotoCapabilities().then(function(cap){ var o = {}; if(cap && cap.imageWidth && cap.imageWidth.max) o.imageWidth = cap.imageWidth.max; if(cap && cap.imageHeight && cap.imageHeight.max) o.imageHeight = cap.imageHeight.max; return o; }).catch(function(){ return {}; }) : Promise.resolve({});
+    var shot = optP.then(function(o){ return ic.takePhoto(o).catch(function(){ return ic.takePhoto(); }); }).then(function(blob){
+      if(!blob || !window.createImageBitmap) return null;
+      return createImageBitmap(blob, { imageOrientation: "from-image" }).catch(function(){ return createImageBitmap(blob); }).then(function(bmp){
+        var kk = Math.min(bmp.width / vw, bmp.height / vh), fw = Math.round(vw * kk), fh = Math.round(vh * kk);
+        if((bmp.height >= bmp.width) !== (vh >= vw) || fw * fh <= vw * vh * 1.15){ try{ bmp.close(); }catch(e){} return null; }
+        var fc = document.createElement("canvas"); fc.width = fw; fc.height = fh;
+        var fg = fc.getContext("2d"); fg.imageSmoothingQuality = "high";
+        fg.drawImage(bmp, Math.round((bmp.width - fw) / 2), Math.round((bmp.height - fh) / 2), fw, fh, 0, 0, fw, fh);
+        try{ bmp.close(); }catch(e){}
+        return fit(fc, fw, fh);
+      });
+    }).catch(function(){ return null; });
+    return Promise.race([shot, new Promise(function(r){ setTimeout(function(){ r(null); }, 3500); })]);
+  }
   function romSnap(){
     if(!romCam.on || !romVideo.videoWidth){ toast("카메라 화면이 아직 준비되지 않았어요."); return; }
-    var vw = romVideo.videoWidth, vh = romVideo.videoHeight, k = Math.min(1, 1600 / Math.max(vw, vh));
-    var c = document.createElement("canvas"); c.width = Math.round(vw * k); c.height = Math.round(vh * k);
-    c.getContext("2d").drawImage(romVideo, 0, 0, c.width, c.height);
+    if(romCam.snapping) return; romCam.snapping = true;   // v135 사진 모드 촬영 중 두 번 눌림 방지
+    var vw = romVideo.videoWidth, vh = romVideo.videoHeight, ROM_MAX = 2560;   // v135 1600 → 2560
+    var fit = function(src, sw, sh){ var k = Math.min(1, ROM_MAX / Math.max(sw, sh)), c = document.createElement("canvas"); c.width = Math.round(sw * k); c.height = Math.round(sh * k); var g = c.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(src, 0, 0, c.width, c.height); return c; };
+    var frame = fit(romVideo, vw, vh);   // 바로 잡아 둔 영상 프레임 (사진 모드가 안 되면 이걸 사용)
     var live = romSmooth(), roll = romCam.roll;
     if(roll != null && (romCam.kind || romCam.facing) === "user") roll = -roll;   // v123 셀카 사진은 기울기 방향이 반대
     playShutter();
-    romCamStop();
-    var im = new Image();
-    im.onload = function(){
-      romS.img = im; romS.w = im.naturalWidth; romS.h = im.naturalHeight;
-      romS.roll = (roll != null && Math.abs(roll) <= 20) ? Math.round(roll * 10) / 10 : null;
-      romS.liveL = live ? live.map(function(p){ return { x: p.x * romS.w, y: p.y * romS.h, v: p.v }; }) : null;
-      romAuto();
-    };
-    im.src = c.toDataURL("image/jpeg", 0.92);
+    var track = romCam.stream && romCam.stream.getVideoTracks ? romCam.stream.getVideoTracks()[0] : null;
+    if(!track && romVideo.srcObject && romVideo.srcObject.getVideoTracks) track = romVideo.srcObject.getVideoTracks()[0];
+    var photoP = romPhoto(track, vw, vh, fit);
+    $("romBusy").hidden = false;
+    photoP.then(function(pc){
+      romCam.snapping = false;
+      romCamStop();
+      var c = pc || frame;
+      var im = new Image();
+      im.onload = function(){
+        romS.img = im; romS.w = im.naturalWidth; romS.h = im.naturalHeight;
+        romS.roll = (roll != null && Math.abs(roll) <= 20) ? Math.round(roll * 10) / 10 : null;
+        romS.liveL = live ? live.map(function(p){ return { x: p.x * romS.w, y: p.y * romS.h, v: p.v }; }) : null;
+        romAuto();
+      };
+      im.src = c.toDataURL("image/jpeg", 0.95);
+    });
   }
   // 사진 정밀 인식 결과 + 촬영 직전 실시간 인식 결과를 점마다 비교해 더 믿을 만한 쪽으로 결정
   // v107 측정하는 쪽은 카메라를 향해 있으므로, 인식이 좌·우를 바꿔 잡았으면(반대쪽이 훨씬 잘 보이면) 좌·우를 바꿔서 사용

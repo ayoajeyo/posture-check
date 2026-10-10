@@ -1859,7 +1859,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v150</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v151</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1875,7 +1875,7 @@
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
     <div class="scol-info">
-      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v150</span>
+      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v151</span>
     </div>
   </section>
   <section class="view" id="view-scol" hidden>
@@ -1893,7 +1893,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v150</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v151</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2538,10 +2538,18 @@
     c.getContext("2d").drawImage(imgEl, 0, 0, c.width, c.height);
     return c;
   }
-  let segP = null, segBroken = false;
+  // v150 네트워크 때문에 실패한 모델 준비는 잠시 뒤 다시 시도 (오프라인으로 처음 켜도, 연결되면 다시 동작)
+  //      온라인인데 실패(기기가 지원 안 함 등)는 예전처럼 이번 실행에서는 다시 시도하지 않음
+  function netFail(){ return !navigator.onLine || !!(window.__poseLoadErr && Date.now() - window.__poseLoadErr < 120000); }
+  let lmTsLast = 0;   // 실시간 인식기 타임스탬프는 항상 증가해야 함 (촬영 화면 루프·인물 분리가 같은 인식기를 씀)
+  window.__lmNow = function(t){ t = t == null ? performance.now() : t; if(t <= lmTsLast) t = lmTsLast + 1; lmTsLast = t; return t; };
+  let segP = null, segBroken = false, segFailAt = 0;
   async function segFull(imgEl){
     if(segBroken) return null;
-    if(!segP) segP = createLandmarker(MODEL_FULL, "IMAGE", true, ["GPU"]).catch(e => { console.warn("[4PM] segmenter unavailable:", e); return null; });
+    if(!segP){
+      if(segFailAt && Date.now() - segFailAt < 15000) return null;
+      segP = createLandmarker(MODEL_FULL, "IMAGE", true, ["GPU"]).catch(e => { console.warn("[4PM] segmenter unavailable:", e); if(netFail()){ segP = null; segFailAt = Date.now(); } return null; });
+    }
     const L = await withTimeout(segP, 20000);
     if(!L) return null;
     try{
@@ -2556,7 +2564,7 @@
     const L = await withTimeout(window.__liveLandmarker(), 15000);
     if(!L) return null;
     try{
-      const r = L.detectForVideo(scaledCanvas(imgEl, 640), performance.now() + 1000);
+      const r = L.detectForVideo(scaledCanvas(imgEl, 640), window.__lmNow());
       const out = copyMask(r);
       try{ (r.segmentationMasks || []).forEach(x => x.close()); }catch(e){}
       return out;
@@ -2600,9 +2608,10 @@
   };
 
   // ---- 촬영 중 실시간 인물 윤곽 ----
-  let liveP = null;
+  let liveP = null, liveFailAt = 0;
   window.__liveLandmarker = function(){
-    return liveP || (liveP = createLandmarker(MODEL_LITE, "VIDEO", true, ["GPU", "CPU"]).catch(e => { console.error("[4PM] live model load failed:", e); return null; }));
+    if(!liveP && liveFailAt && Date.now() - liveFailAt < 15000) return Promise.resolve(null);
+    return liveP || (liveP = createLandmarker(MODEL_LITE, "VIDEO", true, ["GPU", "CPU"]).catch(e => { console.error("[4PM] live model load failed:", e); if(netFail()){ liveP = null; liveFailAt = Date.now(); } return null; }));
   };
   let romVidP = null;
   window.__romVideoLandmarker = function(cpuOnly){
@@ -2962,7 +2971,7 @@
     segSmallCtx.drawImage(video, 0, 0, w, h);
     var tStart = performance.now();
     try{
-      liveLm.detectForVideo(segSmall, now, function(res){
+      liveLm.detectForVideo(segSmall, window.__lmNow ? window.__lmNow(now) : now, function(res){
         var mask = res && res.landmarks && res.landmarks.length && res.segmentationMasks && res.segmentationMasks[0];
         var arr = null;
         if(mask){
@@ -3546,30 +3555,33 @@
   }
   // img: 원본 사진, mc: 인물 알파 마스크 캔버스(저해상도 가능), W×H: 결과 크기 → 인물만 남긴 캔버스
   function cutRefine(img, mc, W, H){
-    var L = Math.max(W, H), k = Math.min(1, 1280 / L), w = Math.max(8, Math.round(W * k)), h = Math.max(8, Math.round(H * k)), N = w * h, i;
+    // v150 저사양 폰 메모리: 작업 해상도 960px · 임시 배열 12개를 돌려 씀 (이전 1280px·20개 ≈ 100MB → 약 33MB)
+    var L = Math.max(W, H), k = Math.min(1, 960 / L), w = Math.max(8, Math.round(W * k)), h = Math.max(8, Math.round(H * k)), N = w * h, i;
     var wc = document.createElement("canvas"); wc.width = w; wc.height = h;
     var wg = wc.getContext("2d", { willReadFrequently: true });
     wg.imageSmoothingEnabled = true; wg.imageSmoothingQuality = "high";
     wg.drawImage(img, 0, 0, w, h);
     var px = wg.getImageData(0, 0, w, h).data;
     wg.clearRect(0, 0, w, h);
-    try{ wg.filter = "blur(" + Math.max(0.6, w / 1400) + "px)"; }catch(e){}
+    try{ wg.filter = "blur(" + Math.max(0.6, w / 1050) + "px)"; }catch(e){}
     wg.drawImage(mc, 0, 0, w, h);
     try{ wg.filter = "none"; }catch(e){}
     var md = wg.getImageData(0, 0, w, h).data;
-    var I = new Float32Array(N), P = new Float32Array(N), R = new Float32Array(N), G = new Float32Array(N), B = new Float32Array(N);
+    wc.width = wc.height = 1;   // 캔버스 메모리 바로 반납
+    var F = function(){ return new Float32Array(N); };
+    var I = F(), P = F(), R = F(), G = F(), B = F(), T = F(), b1 = F(), b2 = F(), b3 = F(), b4 = F(), b5 = F(), b6 = F();
     for(i = 0; i < N; i++){
       R[i] = px[i * 4] / 255; G[i] = px[i * 4 + 1] / 255; B[i] = px[i * 4 + 2] / 255;
       I[i] = 0.299 * R[i] + 0.587 * G[i] + 0.114 * B[i]; P[i] = md[i * 4 + 3] / 255;
     }
-    var r = Math.max(2, Math.round(Math.max(w, h) / 260)), eps = 0.0025, T = new Float32Array(N);
-    var mI = cutBox(I, w, h, r, new Float32Array(N), T), mP = cutBox(P, w, h, r, new Float32Array(N), T);
-    var X = new Float32Array(N), Y = new Float32Array(N);
-    for(i = 0; i < N; i++){ X[i] = I[i] * P[i]; Y[i] = I[i] * I[i]; }
-    var mIP = cutBox(X, w, h, r, new Float32Array(N), T), mII = cutBox(Y, w, h, r, new Float32Array(N), T);
-    for(i = 0; i < N; i++){ var va = mII[i] - mI[i] * mI[i], a = (mIP[i] - mI[i] * mP[i]) / (va + eps); X[i] = a; Y[i] = mP[i] - a * mI[i]; }
-    var mA = cutBox(X, w, h, r, new Float32Array(N), T), mB = cutBox(Y, w, h, r, new Float32Array(N), T);
-    var A = new Float32Array(N);
+    px = md = null;
+    var r = Math.max(2, Math.round(Math.max(w, h) / 260)), eps = 0.0025;
+    var mI = cutBox(I, w, h, r, b1, T), mP = cutBox(P, w, h, r, b2, T);
+    for(i = 0; i < N; i++){ b3[i] = I[i] * P[i]; b4[i] = I[i] * I[i]; }
+    var mIP = cutBox(b3, w, h, r, b5, T), mII = cutBox(b4, w, h, r, b6, T);
+    for(i = 0; i < N; i++){ var va = mII[i] - mI[i] * mI[i], a = (mIP[i] - mI[i] * mP[i]) / (va + eps); b3[i] = a; b4[i] = mP[i] - a * mI[i]; }
+    var mA = cutBox(b3, w, h, r, b5, T), mB = cutBox(b4, w, h, r, b6, T);
+    var A = b3;   // b3(a)는 mA로 옮겼으니 알파 결과로 재사용
     for(i = 0; i < N; i++){
       var q;
       if(mP[i] < 0.01) q = 0;                 // 확실한 배경
@@ -3578,28 +3590,22 @@
       q = (q - 0.22) / 0.56; q = q < 0 ? 0 : q > 1 ? 1 : q; q = q * q * (3 - 2 * q);   // 또렷하지만 부드러운 경계
       A[i] = q;
     }
-    // 색 번짐 제거: 몸 안쪽(알파 높은 곳) 색으로 경계 색을 추정
-    var Wt = new Float32Array(N); for(i = 0; i < N; i++){ var a4 = A[i] * A[i]; Wt[i] = a4 * a4; }
-    var r2 = Math.max(2, Math.round(r * 1.5)), mW = cutBox(Wt, w, h, r2, new Float32Array(N), T);
-    var FR = new Float32Array(N), FG = new Float32Array(N), FB = new Float32Array(N);
-    for(i = 0; i < N; i++){ X[i] = R[i] * Wt[i]; }
-    cutBox(X, w, h, r2, FR, T);
-    for(i = 0; i < N; i++){ X[i] = G[i] * Wt[i]; }
-    cutBox(X, w, h, r2, FG, T);
-    for(i = 0; i < N; i++){ X[i] = B[i] * Wt[i]; }
-    cutBox(X, w, h, r2, FB, T);
+    // 색 번짐 제거: 몸 안쪽(알파 높은 곳) 색으로 경계 색을 추정 (채널마다 한 번씩, 같은 배열 재사용)
+    var Wt = b4; for(i = 0; i < N; i++){ var a4 = A[i] * A[i]; Wt[i] = a4 * a4; }
+    var r2 = Math.max(2, Math.round(r * 1.5)), mW = cutBox(Wt, w, h, r2, b1, T);
     var ac = document.createElement("canvas"); ac.width = w; ac.height = h;
     var ec = document.createElement("canvas"); ec.width = w; ec.height = h;
     var ag = ac.getContext("2d"), eg = ec.getContext("2d"), ad = ag.createImageData(w, h), ed = eg.createImageData(w, h), aD = ad.data, eD = ed.data;
     for(i = 0; i < N; i++){
       var al = A[i], j = i * 4;
       aD[j + 3] = Math.round(al * 255);
-      if(al > 0.003 && al < 0.97 && mW[i] > 1e-4){
-        var e = 1 - al; e = e > 0.85 ? 1 : e / 0.85;
-        eD[j] = Math.min(255, FR[i] / mW[i] * 255); eD[j + 1] = Math.min(255, FG[i] / mW[i] * 255); eD[j + 2] = Math.min(255, FB[i] / mW[i] * 255);
-        eD[j + 3] = Math.round(e * 255);
-      }
+      if(al > 0.003 && al < 0.97 && mW[i] > 1e-4){ var e = 1 - al; e = e > 0.85 ? 1 : e / 0.85; eD[j + 3] = Math.round(e * 255); }
     }
+    [R, G, B].forEach(function(C, ch){
+      for(i = 0; i < N; i++) b5[i] = C[i] * Wt[i];
+      var FC = cutBox(b5, w, h, r2, b6, T);
+      for(i = 0; i < N; i++){ if(eD[i * 4 + 3]) eD[i * 4 + ch] = Math.min(255, FC[i] / mW[i] * 255); }
+    });
     ag.putImageData(ad, 0, 0); eg.putImageData(ed, 0, 0);
     var c = document.createElement("canvas"); c.width = W; c.height = H;
     var g = c.getContext("2d"); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
@@ -3607,6 +3613,7 @@
     g.globalCompositeOperation = "destination-in"; g.drawImage(ac, 0, 0, W, H);
     g.globalCompositeOperation = "source-atop"; g.drawImage(ec, 0, 0, W, H);   // 경계 색만 몸 색으로 (알파는 그대로)
     g.globalCompositeOperation = "source-over";
+    ac.width = ac.height = ec.width = ec.height = 1;
     return c;
   }
   window.__cutRefine = cutRefine;
@@ -6269,7 +6276,7 @@
     var on = box.querySelector('[aria-pressed="true"]'); if(on) box.scrollLeft = Math.max(0, on.offsetLeft - box.clientWidth / 2 + on.offsetWidth / 2);
   }
   $("btnBodyNextRound").addEventListener("click", function(){ $("btnSessNext").click(); });
-  setInterval(function(){ if(state.view === "analyze" || state.view === "report") updateSessBar(); }, 800);
+  setInterval(function(){ if(!document.hidden && (state.view === "analyze" || state.view === "report")) updateSessBar(); }, 800);
   (function(){ var bb = $("btnSessSaveBot"); if(bb) bb.addEventListener("click", function(){ $("btnSessSave").click(); setTimeout(updateSessBar, 300); }); })();
 
   // 사진 + 기준점 묶음 (긴 변 PHOTO_MAX px로 줄이고 좌표도 같은 비율로)
@@ -8170,12 +8177,16 @@
   }
   // 기록 → 측정 화면과 같은 결과 이미지 (원본이 없으면 저장된 미리보기)
   var romRenderCache = {};
+  function romRcPut(k, c){   // v150 900px 캔버스(장당 약 3MB)를 끝없이 쌓지 않게 최근 8개만
+    delete romRenderCache[k]; romRenderCache[k] = c;
+    var ks = Object.keys(romRenderCache); while(ks.length > 8){ delete romRenderCache[ks.shift()]; }
+  }
   function romRenderRecord(rec, maxW){
     var gOn = typeof repGridOn === "undefined" ? true : repGridOn;
     var ck = rec.id + "|" + rec.value + "|" + (maxW || 900) + "|" + JSON.stringify(rec.pts || []) + "|g" + (gOn ? 1 : 0);
     if(romRenderCache[ck]) return Promise.resolve(romRenderCache[ck]);
-    if(!rec.img && rec.blob) return dbFull("roms", rec).then(function(full){ return romRenderRecordRaw(full && full.img ? full : rec, maxW); }).then(function(c){ if(c) romRenderCache[ck] = c; return c; });
-    return romRenderRecordRaw(rec, maxW).then(function(c){ if(c) romRenderCache[ck] = c; return c; });
+    if(!rec.img && rec.blob) return dbFull("roms", rec).then(function(full){ return romRenderRecordRaw(full && full.img ? full : rec, maxW); }).then(function(c){ if(c) romRcPut(ck, c); return c; });
+    return romRenderRecordRaw(rec, maxW).then(function(c){ if(c) romRcPut(ck, c); return c; });
   }
   function romRenderRecordRaw(rec, maxW){
     if(!rec.img){
@@ -8863,7 +8874,8 @@
   }
   function romLm(){
     if(romCam.lmP) return romCam.lmP;
-    romCam.lmP = (window.__romVideoLandmarker ? window.__romVideoLandmarker(romCam.cpu) : Promise.resolve(null)).then(function(l){ romCam.lm = l; return l; });
+    if(romCam.lmFailAt && Date.now() - romCam.lmFailAt < 15000) return Promise.resolve(null);   // v150 실패하면 잠시 뒤 다시 시도
+    romCam.lmP = (window.__romVideoLandmarker ? window.__romVideoLandmarker(romCam.cpu) : Promise.resolve(null)).then(function(l){ romCam.lm = l; if(!l){ romCam.lmP = null; romCam.lmFailAt = Date.now(); } return l; });
     return romCam.lmP;
   }
   /* v63: 후면 카메라 확실히 고르기
@@ -10570,7 +10582,8 @@
     if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, function(){ window.prompt("복사해서 쓰세요", t); });
     else window.prompt("복사해서 쓰세요", t);
   });
-  setInterval(admRender, 400);
+  setInterval(function(){ if(!document.hidden && ADM.on) admRender(); }, 400);
+  var _admOn = null; setInterval(function(){ if(_admOn !== ADM.on){ _admOn = ADM.on; admRender(); } }, 1000);   // 관리자 모드를 끄면 패널 한 번 숨김
   admSync();
   document.querySelectorAll("#moreSheet [data-go]").forEach(function(b){ b.addEventListener("click", function(){ $("moreSheet").hidden = true; showView(b.getAttribute("data-go")); }); });
 

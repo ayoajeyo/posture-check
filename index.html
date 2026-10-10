@@ -1042,6 +1042,7 @@
   .rom-lr-btn{margin:0 0 10px;}
   .rom-zoom{position:absolute; right:10px; top:10px; z-index:3; display:flex; align-items:center; gap:2px; background:rgba(13,21,40,.82); border:1px solid rgba(255,255,255,.22); border-radius:12px; padding:3px;}
   .rom-zoom[hidden]{display:none!important;}
+  #romZoom{display:none!important;}   /* v132 비율 표시·확대/축소 창 숨김 (두 손가락으로 확대·축소는 가능) */
   .rom-zoom button{width:34px; height:34px; border:0; border-radius:9px; background:transparent; color:#fff; font-size:19px; font-weight:700; cursor:pointer; font-family:inherit;}
   .rom-zoom button:active{background:rgba(255,255,255,.15);}
   .rom-zoom span{min-width:44px; text-align:center; color:#fff; font-size:11.5px; font-weight:700; font-family:var(--font-num);}
@@ -1807,7 +1808,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v131</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v132</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1824,7 +1825,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v131</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v132</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2482,10 +2483,40 @@
       return out;
     }catch(e){ console.warn("[4PM] live segment failed:", e); return null; }
   }
+  // v132 자세 인식 모델은 '전신 자세'를 찾아야만 인물 마스크를 줌 → 얼굴·상체만 나온 사진, 누운·엎드린 자세,
+  //      팔다리가 잘린 사진에서는 마스크가 없어 격자가 안 나왔음. 그때 사람 영역만 찾는 분리 모델로 한 번 더.
+  const SEG_DEEPLAB = "https://storage.googleapis.com/mediapipe-models/image_segmenter/deeplab_v3/float32/1/deeplab_v3.tflite";
+  const SEG_SELFIE = "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite";
+  const isegP = {};
+  function imgSegmenter(model){
+    return isegP[model] || (isegP[model] = visionLoad().then(([m, fs]) => m.ImageSegmenter.createFromOptions(fs, {
+      baseOptions: { modelAssetPath: model, delegate: "CPU" }, runningMode: "IMAGE", outputConfidenceMasks: true, outputCategoryMask: false
+    })).catch(e => { console.warn("[4PM] image segmenter unavailable:", model, e); delete isegP[model]; return null; }));
+  }
+  async function segOther(imgEl){
+    for(const [model, pick] of [[SEG_DEEPLAB, ms => ms[15]], [SEG_SELFIE, ms => ms[ms.length - 1]]]){   // deeplab 15번 = 사람
+      const S = await withTimeout(imgSegmenter(model), 25000);
+      if(!S) continue;
+      let out = null, r = null;
+      try{
+        r = S.segment(scaledCanvas(imgEl, 1024));
+        const cm = r && r.confidenceMasks && r.confidenceMasks.length ? pick(r.confidenceMasks) : null;
+        if(cm){
+          const data = cm.getAsFloat32Array().slice();
+          let hit = 0; for(let k = 0; k < data.length; k += 5) if(data[k] > 0.5) hit++;
+          if(hit * 5 >= data.length * 0.01) out = { w: cm.width, h: cm.height, data };
+        }
+      }catch(e){ console.warn("[4PM] image segment failed:", model, e); }
+      try{ ((r && r.confidenceMasks) || []).forEach(x => x.close()); }catch(e){}
+      if(out) return out;
+    }
+    return null;
+  }
   window.__segmentPerson = async function(imgEl){
     let m = null;
     try{ m = await segFull(imgEl); }catch(e){ m = null; }
     if(!m){ try{ m = await segLive(imgEl); }catch(e){ m = null; } }
+    if(!m){ try{ m = await segOther(imgEl); }catch(e){ m = null; } }
     return m;
   };
 
@@ -3882,7 +3913,7 @@
   }
 
   var HIT_RADIUS_CSS = 28;
-  var DRAG_GAIN = 0.6;   // 점 이동 속도(1 = 손가락과 같은 속도)
+  var DRAG_GAIN = 0.4;   // 점 이동 속도(1 = 손가락과 같은 속도) · v132 0.6 → 0.4 (2단계 느리게)
   var LINE_HIT_CSS = 16;   // 빨간 기준선을 잡는 좌우 허용 폭
   var lineDrag = false;
 
@@ -7057,8 +7088,8 @@
     var Z = 2.6 * z, Rl = 41 * u;   // v131 돋보기 2/3 크기 · 지금 확대 배율에 맞춰 더 크게 확대
     // 화면에 보이는 점 위치(확대 상태 반영)
     var sp = z > 1 ? { x: (p.x - romS.vx) * z + romS.w / 2, y: (p.y - romS.vy) * z + romS.h / 2 } : p;
-    var cx = romS.w - Rl - 10 * u, cy = Rl + 54 * u;   // 우측 상단 (확대 버튼 아래)
-    if(Math.hypot(cx - sp.x, cy - sp.y) < Rl * 1.8){ cx = Rl + 10 * u; cy = Rl + 54 * u; }   // 점이 우측 상단에 있으면 좌측 상단
+    var cx = romS.w - Rl - 10 * u, cy = Rl + 10 * u;   // 우측 상단
+    if(Math.hypot(cx - sp.x, cy - sp.y) < Rl * 1.8){ cx = Rl + 10 * u; cy = Rl + 10 * u; }   // 점이 우측 상단에 있으면 좌측 상단
     g.save(); g.beginPath(); g.arc(cx, cy, Rl, 0, Math.PI * 2); g.closePath(); g.clip();
     g.fillStyle = "#000"; g.fillRect(cx - Rl, cy - Rl, Rl * 2, Rl * 2);
     g.translate(cx, cy); g.scale(Z, Z); g.translate(-p.x, -p.y);
@@ -7169,9 +7200,10 @@
     }
     var ed = romS.edit; if(!ed) return;
     var p = romEvtPt(e), cl = function(q){ return { x: Math.max(0, Math.min(romS.w, q.x)), y: Math.max(0, Math.min(romS.h, q.y)) }; };
-    if(ed.h.t === "pt") romS.pts[ed.h.i] = cl({ x: p.x + ed.dx, y: p.y + ed.dy });
+    var RG = 0.5;   // v132 ROM 점·선 이동 속도 (손가락의 절반 · 2단계 느리게)
+    if(ed.h.t === "pt") romS.pts[ed.h.i] = cl({ x: ed.orig[ed.h.i].x + (p.x - ed.start.x) * RG, y: ed.orig[ed.h.i].y + (p.y - ed.start.y) * RG });
     else if(ed.h.t === "seg"){
-      var mx = p.x - ed.start.x, my = p.y - ed.start.y;
+      var mx = (p.x - ed.start.x) * RG, my = (p.y - ed.start.y) * RG;
       [ed.h.a, ed.h.b].forEach(function(i){ romS.pts[i] = cl({ x: ed.orig[i].x + mx, y: ed.orig[i].y + my }); });
     } else if(ed.h.t === "ref"){
       var V = romS.pts[0], vx = p.x - V.x, vy = p.y - V.y, L = Math.hypot(vx, vy);

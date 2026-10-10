@@ -1856,7 +1856,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v145</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v146</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1873,7 +1873,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v145</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v146</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -3090,7 +3090,7 @@
       bodyGh.cv = c; bodyGhostShow();
     };
     im.onerror = function(){ if(bodyGh.key === key){ bodyGh.key = null; bodyGhostPrevPrep(); } };   // 기준 실루엣을 못 받으면 예전 방식(직전 기록)
-    im.src = "guide/sil/body_" + m + "_v2.webp";   // v145 얼굴 흐림 처리본
+    im.src = "guide/sil/body_" + m + "_v3.webp";   // v146 얼굴 흐림 + 몸매 보정본
   }
   function bodyGhostPrevPrep(){
     if(!state.member) return;
@@ -8994,7 +8994,7 @@
         var fid = "fixed:" + sk, im0 = new Image(); romCam.ghostId = fid;
         im0.onload = function(){ if(romCam.ghostId !== fid) return; romCam.ghost = { w: im0.naturalWidth, h: im0.naturalHeight, rec: null, cv: im0, mode: "sil", fixed: true }; romOutlineBtn(); };
         im0.onerror = function(){ if(romCam.ghostId === fid) romGhostPrepRec(); };
-        im0.src = "guide/sil/" + sk + "_v2.webp";   // v145 얼굴 흐림 처리본
+        im0.src = "guide/sil/" + sk + "_v3.webp";   // v146 얼굴 흐림 + 몸매 보정본
         return;
       }
     }

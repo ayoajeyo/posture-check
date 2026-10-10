@@ -1,14 +1,16 @@
 /* AYO체형분석 — 서비스워커
    - 화면(index.html): 네트워크 우선 → GitHub에 올린 최신 버전이 바로 반영되고, 인터넷이 끊기면 저장본으로 열림
    - 인식 모델·라이브러리(MediaPipe)·글꼴: 한 번 받으면 폰에 저장해 두고 재사용 → 두 번째부터 빠르고 오프라인에서도 동작 */
-const VERSION = "pma-v111";
+const VERSION = "pma-v112";
 const SHELL = "pma-shell-" + VERSION;
 const ASSETS = "pma-assets-v1";   // 모델 파일은 버전과 무관하게 유지(약 25MB 재다운로드 방지)
 const SHELL_FILES = ["./", "./index.html", "./manifest.webmanifest",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png",
   // v126 체형분석 측정가이드 사진(예전엔 index.html 안에 있었음 → 오프라인에서도 보이게 미리 저장)
   "./guide/body/front_1.jpg", "./guide/body/front_2.jpg", "./guide/body/front_3.jpg", "./guide/body/front_4.jpg",
-  "./guide/body/side_1.jpg", "./guide/body/side_2.jpg", "./guide/body/side_3.jpg", "./guide/body/side_4.jpg"];
+  "./guide/body/side_1.jpg", "./guide/body/side_2.jpg", "./guide/body/side_3.jpg", "./guide/body/side_4.jpg",
+  // v144 고정 기준 실루엣(체형 정면·측면, 목·허리·어깨 ROM)
+  "./guide/sil/body_front.webp", "./guide/sil/body_side.webp", "./guide/sil/neck_C_flex.webp", "./guide/sil/neck_C_ext.webp", "./guide/sil/neck_L_lat.webp", "./guide/sil/neck_R_lat.webp", "./guide/sil/trunk_C_flex.webp", "./guide/sil/trunk_C_ext.webp", "./guide/sil/trunk_L_lat.webp", "./guide/sil/trunk_R_lat.webp", "./guide/sil/shoulder_L_flex.webp", "./guide/sil/shoulder_R_flex.webp", "./guide/sil/shoulder_L_abd.webp", "./guide/sil/shoulder_R_abd.webp", "./guide/sil/shoulder_L_er.webp", "./guide/sil/shoulder_R_er.webp", "./guide/sil/shoulder_L_ir.webp", "./guide/sil/shoulder_R_ir.webp"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(SHELL).then((c) => c.addAll(SHELL_FILES)).then(() => self.skipWaiting()));

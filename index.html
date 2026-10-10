@@ -1856,7 +1856,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v143</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v144</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1873,7 +1873,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v143</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v144</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -3074,8 +3074,25 @@
     el.hidden = false; bodyGh.on = true; $("bodyGTag").textContent = bodyGh.tag; $("bodyGTag").hidden = false;
     syncSilhouettes();
   }
+  /* v144 고정 기준 실루엣: 관리자가 정한 기준 사진(사람만 오려냄)을 1차·2차·3차… 모든 촬영에서 그대로 사용 */
+  var SIL_TAG = "기준 실루엣 자세·위치에 맞춰 촬영하세요";
+  var SIL_ROM = ["neck_C_flex", "neck_C_ext", "neck_L_lat", "neck_R_lat", "trunk_C_flex", "trunk_C_ext", "trunk_L_lat", "trunk_R_lat",
+    "shoulder_L_flex", "shoulder_R_flex", "shoulder_L_abd", "shoulder_R_abd", "shoulder_L_er", "shoulder_R_er", "shoulder_L_ir", "shoulder_R_ir"];
   function bodyGhostPrep(){
     bodyGhostHide(); syncSilhouettes();
+    var m = state.mode, key = "fixed|" + m;
+    if(bodyGh.key === key && bodyGh.cv){ bodyGh.mode = m; bodyGh.tag = SIL_TAG; bodyGhostShow(); return; }
+    bodyGh.key = key; bodyGh.cv = null; bodyGh.mode = m; bodyGh.tag = SIL_TAG;
+    var im = new Image();
+    im.onload = function(){
+      if(bodyGh.key !== key) return;
+      var c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0);
+      bodyGh.cv = c; bodyGhostShow();
+    };
+    im.onerror = function(){ if(bodyGh.key === key){ bodyGh.key = null; bodyGhostPrevPrep(); } };   // 기준 실루엣을 못 받으면 예전 방식(직전 기록)
+    im.src = "guide/sil/body_" + m + ".webp";
+  }
+  function bodyGhostPrevPrep(){
     if(!state.member) return;
     var m = state.mode, mid = state.member.id, sid = state.sessionId;
     dbAll("records").then(function(all){
@@ -8970,6 +8987,21 @@
   }
   function romGhostPrep(){
     romCam.ghost = null;
+    var J = romJoint(), mv = romMove();
+    if(mv && J.k !== "scol"){
+      var sk = J.k + "_" + romSd(J, mv) + "_" + mv.k;
+      if(SIL_ROM.indexOf(sk) >= 0){   // v144 고정 기준 실루엣 (모든 회차 동일)
+        var fid = "fixed:" + sk, im0 = new Image(); romCam.ghostId = fid;
+        im0.onload = function(){ if(romCam.ghostId !== fid) return; romCam.ghost = { w: im0.naturalWidth, h: im0.naturalHeight, rec: null, cv: im0, mode: "sil", fixed: true }; romOutlineBtn(); };
+        im0.onerror = function(){ if(romCam.ghostId === fid) romGhostPrepRec(); };
+        im0.src = "guide/sil/" + sk + ".webp";
+        return;
+      }
+    }
+    romGhostPrepRec();
+  }
+  function romGhostPrepRec(){
+    romCam.ghost = null;
     var rec = romFirstRec(); if(!rec) return;
     var id = rec.id; romCam.ghostId = id;
     dbFull("roms", rec).then(function(full){
@@ -9002,7 +9034,7 @@
       var r = romFit(gh.w / gh.h, vw, vh, 1);
       g.save(); g.globalAlpha = gh.mode === "sil" ? 0.45 : 0.35; g.drawImage(gh.cv, r.x, r.y, r.w, r.h); g.restore();
       tag.hidden = false; tag.className = "rom-gtag ghost";
-      tag.textContent = romRoundOf(gh.rec) + "차 기록(" + fmtDate(gh.rec.at).slice(0, 10) + ") 자세·위치에 맞춰 촬영하세요";
+      tag.textContent = gh.fixed ? SIL_TAG : romRoundOf(gh.rec) + "차 기록(" + fmtDate(gh.rec.at).slice(0, 10) + ") 자세·위치에 맞춰 촬영하세요";
       return;
     }
     var gd = romCam.gd;

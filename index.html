@@ -1859,7 +1859,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v147</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v148</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1875,7 +1875,7 @@
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
     <div class="scol-info">
-      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v147</span>
+      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v148</span>
     </div>
   </section>
   <section class="view" id="view-scol" hidden>
@@ -1893,7 +1893,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v147</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v148</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -6871,29 +6871,36 @@
     });
   }
   // v88 회차: 기록의 round (예전 기록은 측정 날짜 순서)
+  /* v148 회차 묶음: 거북목(fhp)은 거북목 촬영만으로 회차를 셈 · 나머지(ROM·측만증)는 함께 */
+  function romGrpOf(jk){ return jk === "fhp" ? "fhp" : "main"; }
+  function romGrpNow(){ return (state.view === "fhp" || (typeof rom !== "undefined" && rom.joint === "fhp")) ? "fhp" : "main"; }
   function romRoundOf(r){
     if(r.round) return r.round;
-    var days = []; rom.all.forEach(function(x){ if(!x.round){ var d = fmtDate(x.at).slice(0, 10); if(days.indexOf(d) < 0) days.push(d); } });
+    var g = romGrpOf(r.joint), days = []; rom.all.forEach(function(x){ if(!x.round && romGrpOf(x.joint) === g){ var d = fmtDate(x.at).slice(0, 10); if(days.indexOf(d) < 0) days.push(d); } });
     return days.indexOf(fmtDate(r.at).slice(0, 10)) + 1;
   }
-  function romMaxRound(){ var m = 0; rom.all.forEach(function(r){ m = Math.max(m, romRoundOf(r)); }); return m; }
-  rom.cur = { mid: null, n: 1 };
-  function romCurRound(){
+  function romMaxRound(g){ g = g || romGrpNow(); var m = 0; rom.all.forEach(function(r){ if(romGrpOf(r.joint) === g) m = Math.max(m, romRoundOf(r)); }); return m; }
+  rom.cur = { mid: null, n: 1 }; rom.curF = { mid: null, n: 1 };
+  function romCurRound(g){
     if(!state.member) return null;
-    if(rom.cur.mid !== state.member.id){ rom.cur = { mid: state.member.id, n: Math.max(1, romMaxRound()) }; }
-    return rom.cur.n;
+    g = g || romGrpNow();
+    var key = g === "fhp" ? "curF" : "cur";
+    if(rom[key].mid !== state.member.id){ rom[key] = { mid: state.member.id, n: Math.max(1, romMaxRound(g)) }; }
+    return rom[key].n;
   }
+  function romSetRound(g, n){ rom[g === "fhp" ? "curF" : "cur"] = { mid: state.member.id, n: n }; }
   function romCurRec(jk, sd, mk){
-    var n = romCurRound(); if(n == null) return rom.latest[romKey(jk, sd, mk)];
+    var n = romCurRound(romGrpOf(jk)); if(n == null) return rom.latest[romKey(jk, sd, mk)];
     var H = rom.all.filter(function(r){ return r.joint === jk && r.side === sd && r.move === mk && romRoundOf(r) === n; });
     return H[H.length - 1] || null;
   }
   function romSyncRound(){
     ["rom", "scol", "fhp"].forEach(function(px){
       var bar = $(px + "RoundBar"); if(!bar) return;
-      var n = romCurRound(); bar.hidden = n == null;
+      var grp = px === "fhp" ? "fhp" : "main", inG = function(r){ return romGrpOf(r.joint) === grp; };
+      var n = romCurRound(grp); bar.hidden = n == null;
       if(n == null) return;
-      var mx = romMaxRound(), has = rom.all.some(function(r){ return romRoundOf(r) === n; });
+      var mx = romMaxRound(grp), has = rom.all.some(function(r){ return inG(r) && romRoundOf(r) === n; });
       $(px + "RoundNo").textContent = n + "차";
       $(px + "RoundTxt").textContent = state.member.name + " · " + n + "차 측정";
       $(px + "RoundSub").textContent = has ? "측정 결과는 " + n + "차 회차로 저장돼요" : (n > 1 ? "새 회차 · 측정하면 " + n + "차로 저장돼요" : "첫 측정 · 1차로 저장돼요");
@@ -6904,15 +6911,15 @@
       if(top < 2){ box.innerHTML = ""; return; }
       var html = "";
       for(var k = 1; k <= top; k++){
-        var R = rom.all.filter(function(r){ return romRoundOf(r) === k; });
+        var R = rom.all.filter(function(r){ return inG(r) && romRoundOf(r) === k; });
         var last = R.length ? R.reduce(function(a, r){ return Math.max(a, r.at); }, 0) : 0;
         var sub = last ? fmtDate(last).slice(5, 10).replace("-", ".") + " · " + R.length + "건" : "새 회차";
         html += '<button type="button" data-rn="' + k + '" aria-pressed="' + (k === n) + '"' + (last ? "" : ' class="new"') + '><b>' + k + '차</b><em>' + sub + '</em></button>';
       }
       box.innerHTML = html;
       box.querySelectorAll("button").forEach(function(btn){ btn.addEventListener("click", function(){
-        var k = +btn.getAttribute("data-rn"); if(!state.member || k === romCurRound()) return;
-        rom.cur = { mid: state.member.id, n: k };
+        var k = +btn.getAttribute("data-rn"); if(!state.member || k === romCurRound(grp)) return;
+        romSetRound(grp, k);
         toast(state.member.name + " 회원 " + k + "차 기록을 보고 있어요. 이 상태에서 측정하면 " + k + "차로 저장돼요.");
         if(state.view === "fhp" && typeof renderFhp === "function") renderFhp(); else if(state.view === "scol" && typeof renderScol === "function") renderScol(); else renderRom();
       }); });
@@ -6920,11 +6927,16 @@
     });
   }
   $("btnScolNextRound").addEventListener("click", function(){ $("btnRomNextRound").click(); });
-  $("btnFhpNextRound").addEventListener("click", function(){ $("btnRomNextRound").click(); });
+  $("btnFhpNextRound").addEventListener("click", function(){
+    if(!state.member) return;
+    var n = Math.max(romMaxRound("fhp"), romCurRound("fhp")) + 1; romSetRound("fhp", n);
+    toast(state.member.name + " 회원 거북목 " + n + "차 측정을 시작해요.");
+    if(typeof renderFhp === "function") renderFhp();
+  });
   $("btnRomNextRound").addEventListener("click", function(){
     if(!state.member) return;
-    rom.cur = { mid: state.member.id, n: Math.max(romMaxRound(), romCurRound()) + 1 };
-    toast(state.member.name + " 회원 " + rom.cur.n + "차 측정을 시작해요.");
+    var n = Math.max(romMaxRound("main"), romCurRound("main")) + 1; romSetRound("main", n);
+    toast(state.member.name + " 회원 " + n + "차 측정을 시작해요.");
     if(state.view === "fhp" && typeof renderFhp === "function") renderFhp(); else if(state.view === "scol" && typeof renderScol === "function") renderScol(); else renderRom();
   });
   function romHist(j, side, mk){ return rom.all.filter(function(r){ return r.joint === j && r.side === side && r.move === mk; }); }
@@ -7670,7 +7682,7 @@
     rec.img = ri.url; rec.imgK = ri.k; rec.roll = romS.roll; rec.footOff = romS.footOff; if(romS.ant) rec.ant = romS.ant;
     var editing = !!romS.editId;
     if(editing){ rec.id = romS.editId; rec.at = romS.editAt; rec.memberId = romS.editMember || null; if(romS.editRec && romS.editRec.round) rec.round = romS.editRec.round; }
-    else if(rec.memberId){ var cn = romCurRound(); if(cn){ rec.round = cn; var old = romCurRec(rec.joint, rec.side, rec.move); if(old){ rec.id = old.id; rec.at = old.at; } } }   // 같은 회차 재측정 = 덮어쓰기
+    else if(rec.memberId){ var cn = romCurRound(romGrpOf(rec.joint)); if(cn){ rec.round = cn; var old = romCurRec(rec.joint, rec.side, rec.move); if(old){ rec.id = old.id; rec.at = old.at; } } }   // 같은 회차 재측정 = 덮어쓰기
     if(ADM.on && rec.joint !== "scol") admxSaveRom(rec, val);   // v118 관리자 모드: 수정 전·후 자료 보관
     var shotCv = romResultCanvas(1200), shotName = "AYO_ROM_" + rom.joint + "_" + mv.k + "_" + (state.member ? state.member.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" : "") + toDateInput(Date.now()).replace(/-/g, "") + ".jpg";
     var done = function(){ $("romSheet").hidden = true; if(state.view === "scol" || state.view === "fhp"){ scolRestore(); if(state.view === "fhp") renderFhp(); else renderScol(); } else renderRom(); setTimeout(function(){ deliverCanvas(shotCv, shotName); }, 250); };
@@ -9077,7 +9089,7 @@
     var H = (rom.all || []).filter(function(r){ return r.joint === J.k && r.side === sd && r.move === mv.k && (r.img || r.blob) && (!mid || r.memberId === mid); });
     if(!H.length) return null;
     // v127 직전 회차 기록 (지금 회차보다 앞선 것 중 가장 최근) · 없으면 가장 최근 기록
-    var cur = mid && typeof romCurRound === "function" ? romCurRound() : 0;
+    var cur = mid && typeof romCurRound === "function" ? romCurRound(romGrpOf(J.k)) : 0;
     var key = function(r){ return romRoundOf(r) * 1e13 + (r.at || 0); };
     var prev = H.filter(function(r){ return cur && romRoundOf(r) < cur; }).sort(function(a, b){ return key(b) - key(a); });
     return prev[0] || H.sort(function(a, b){ return key(b) - key(a); })[0];

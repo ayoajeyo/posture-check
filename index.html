@@ -1808,7 +1808,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v133</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v134</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1825,7 +1825,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>측만증 측정 (전방 굴곡 검사)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v133</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v134</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -7389,12 +7389,14 @@
       var segs = [[q[0], q[1]]]; if(q.length > 2 && (kind === "ext" || kind === "d90")) segs.push([q[0], q[2]]);
       var Lm = 0; segs.forEach(function(s){ Lm = Math.max(Lm, Math.hypot(s[1].x - s[0].x, s[1].y - s[0].y)); }); if(Lm < 6) return null;
       // 끝을 조금 늘림 (발끝·무릎 위 등)
-      segs = segs.map(function(s){ var dx = s[1].x - s[0].x, dy = s[1].y - s[0].y, l = Math.hypot(dx, dy) || 1, e = Lm * 0.08; return [{ x: s[0].x - dx / l * e * 0.5, y: s[0].y - dy / l * e * 0.5 }, { x: s[1].x + dx / l * e, y: s[1].y + dy / l * e }]; });
-      var dseg = function(X, Y){ var best = 1e9; segs.forEach(function(s){ var ax = s[0].x, ay = s[0].y, bx = s[1].x - ax, by = s[1].y - ay, l2 = bx * bx + by * by || 1, t = Math.max(0, Math.min(1, ((X - ax) * bx + (Y - ay) * by) / l2)), dx = X - ax - t * bx, dy = Y - ay - t * by, d = Math.sqrt(dx * dx + dy * dy); if(d < best) best = d; }); return best; };
+      var segs0 = segs;   // v134 원래 선분(심지) · 바깥 끝은 길이의 35%까지 늘려 발·발가락처럼 점 너머 부위도 색으로 찾음
+      segs = segs.map(function(s){ var dx = s[1].x - s[0].x, dy = s[1].y - s[0].y, l = Math.hypot(dx, dy) || 1, e = Math.max(Lm * 0.08, l * 0.35); return [{ x: s[0].x - dx / l * Lm * 0.04, y: s[0].y - dy / l * Lm * 0.04 }, { x: s[1].x + dx / l * e, y: s[1].y + dy / l * e }]; });
+      var dsegOf = function(SG, X, Y){ var best = 1e9; SG.forEach(function(s){ var ax = s[0].x, ay = s[0].y, bx = s[1].x - ax, by = s[1].y - ay, l2 = bx * bx + by * by || 1, t = Math.max(0, Math.min(1, ((X - ax) * bx + (Y - ay) * by) / l2)), dx = X - ax - t * bx, dy = Y - ay - t * by, d = Math.sqrt(dx * dx + dy * dy); if(d < best) best = d; }); return best; };
+      var dseg = function(X, Y){ return dsegOf(segs, X, Y); };
       var ycc = function(j){ var r = px[j * 4], gg = px[j * 4 + 1], b = px[j * 4 + 2]; return [0.299 * r + 0.587 * gg + 0.114 * b, 128 - 0.1687 * r - 0.3313 * gg + 0.5 * b, 128 + 0.5 * r - 0.4187 * gg - 0.0813 * b]; };
       // 뼈대(선) 위 색 표본 → 대표색 몇 개 (k-평균)
       var S = [];
-      segs.forEach(function(s){ for(var t = 0.12; t <= 0.9; t += 0.02){ var X = Math.round(s[0].x + (s[1].x - s[0].x) * t), Y = Math.round(s[0].y + (s[1].y - s[0].y) * t); for(var oy = -1; oy <= 1; oy++) for(var ox = -1; ox <= 1; ox++){ var xx = X + ox, yy = Y + oy; if(xx >= 0 && yy >= 0 && xx < w && yy < h) S.push(ycc(yy * w + xx)); } } });
+      segs0.forEach(function(s){ for(var t = 0.12; t <= 0.9; t += 0.02){ var X = Math.round(s[0].x + (s[1].x - s[0].x) * t), Y = Math.round(s[0].y + (s[1].y - s[0].y) * t); for(var oy = -1; oy <= 1; oy++) for(var ox = -1; ox <= 1; ox++){ var xx = X + ox, yy = Y + oy; if(xx >= 0 && yy >= 0 && xx < w && yy < h) S.push(ycc(yy * w + xx)); } } });
       if(S.length < 10) return null;
       var K = Math.min(5, Math.max(2, Math.round(S.length / 60))), C = [];
       for(i = 0; i < K; i++) C.push(S[Math.floor((i + 0.5) / K * S.length)].slice());
@@ -7406,11 +7408,11 @@
       var band = Lm * 0.34, core = Math.max(1.5, Lm * 0.06), T = 15 * 15;
       var D = new Float32Array(n), ok = new Uint8Array(n), M = new Uint8Array(n), st = [];
       for(y = 0; y < h; y++) for(x = 0; x < w; x++){
-        i = y * w + x; var d = dseg(x + 0.5, y + 0.5); D[i] = d; if(d > band) continue;
+        i = y * w + x; var d = dseg(x + 0.5, y + 0.5), d0 = dsegOf(segs0, x + 0.5, y + 0.5); D[i] = d0; if(d > band) continue;
         var v = ycc(i), bd = 1e9; C.forEach(function(cc){ var dd = (v[0] - cc[0]) * (v[0] - cc[0]) * 0.25 + (v[1] - cc[1]) * (v[1] - cc[1]) + (v[2] - cc[2]) * (v[2] - cc[2]); if(dd < bd) bd = dd; });
         var tt = T * (1.3 - 0.6 * d / band);   // 뼈대에서 멀수록 더 엄격하게
         if(bd < tt) ok[i] = 1;
-        if(d <= core){ M[i] = 1; st.push(i); }
+        if(d0 <= core){ M[i] = 1; st.push(i); }
       }
       while(st.length){ var j = st.pop(), jx = j % w, jy = (j - jx) / w; for(var ny = -1; ny <= 1; ny++) for(var nx = -1; nx <= 1; nx++){ var X2 = jx + nx, Y2 = jy + ny; if(X2 < 0 || Y2 < 0 || X2 >= w || Y2 >= h) continue; var j2 = Y2 * w + X2; if(!M[j2] && ok[j2]){ M[j2] = 1; st.push(j2); } } }
       // 매끈하게 (흐림 → 문턱) + 구멍 메우기
@@ -7423,17 +7425,53 @@
       var out = new Float32Array(n); for(i = 0; i < n; i++) out[i] = (M[i] || !ext[i]) ? 1 : 0;
       return { w: w, h: h, data: out };
     }
+  /* v134 인물 마스크 + 측정점 영역 합치기, 파란 침대·작은 조각 지우기
+     - 인물 분리가 발·발목을 놓쳐도 측정점 사이 부위(+발끝 쪽)는 항상 남김
+     - 남색·파란색(치료 침대)은 측정 부위 가까이가 아니면 지움 (검정·회색 옷, 피부는 그대로)
+     - 측정 부위와 떨어진 작은 조각(침대 다리 등)은 지움 */
+  function romMaskMerge(img, base, pm, P, kind){
+    var W = img.naturalWidth || img.width, H = img.naturalHeight || img.height;
+    var k = Math.min(1, 640 / Math.max(W, H)), w = Math.max(8, Math.round(W * k)), h = Math.max(8, Math.round(H * k)), n = w * h, i, x, y;
+    var c = document.createElement("canvas"); c.width = w; c.height = h; var g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(img, 0, 0, w, h);
+    var px = g.getImageData(0, 0, w, h).data;
+    var q = P.map(function(p){ return p ? { x: p.x * k, y: p.y * k } : null; });
+    var segs = [[q[0], q[1]]]; if(q[2] && (kind === "ext" || kind === "d90")) segs.push([q[0], q[2]]);
+    var Lm = 0; segs.forEach(function(s2){ Lm = Math.max(Lm, Math.hypot(s2[1].x - s2[0].x, s2[1].y - s2[0].y)); });
+    var near = Math.max(3, Lm * 0.16), core = Math.max(2, Lm * 0.05);
+    var dseg = function(X, Y){ var best = 1e9; segs.forEach(function(s2){ var ax = s2[0].x, ay = s2[0].y, bx = s2[1].x - ax, by = s2[1].y - ay, l2 = bx * bx + by * by || 1, t = Math.max(0, Math.min(1, ((X - ax) * bx + (Y - ay) * by) / l2)), dx = X - ax - t * bx, dy = Y - ay - t * by, d = Math.sqrt(dx * dx + dy * dy); if(d < best) best = d; }); return best; };
+    var at = function(m, X, Y){ if(!m) return 0; var mx = Math.min(m.w - 1, Math.max(0, Math.floor(X * m.w / w))), my = Math.min(m.h - 1, Math.max(0, Math.floor(Y * m.h / h))); return m.data[my * m.w + mx]; };
+    var M = new Uint8Array(n), C = new Uint8Array(n);
+    for(y = 0; y < h; y++) for(x = 0; x < w; x++){
+      i = y * w + x; var v = Math.max(at(base, x, y), at(pm, x, y)); if(v < 0.3) continue;
+      var d = dseg(x + 0.5, y + 0.5); if(d <= core) C[i] = 1;
+      var r = px[i * 4], gg = px[i * 4 + 1], b = px[i * 4 + 2];
+      var cb = 128 - 0.1687 * r - 0.3313 * gg + 0.5 * b, cr = 128 + 0.5 * r - 0.4187 * gg - 0.0813 * b;
+      if(d > near && cb > 138 && cb - cr > 20 && b > r + 18) continue;   // 파란·남색 (침대) 지우기
+      M[i] = 1;
+    }
+    // 연결된 조각 단위로: 측정 부위에 닿거나 충분히 큰 조각만 남김
+    var lab = new Int32Array(n), tot = 0, comps = [], st = [];
+    for(i = 0; i < n; i++) if(M[i]) tot++;
+    for(i = 0; i < n; i++){ if(!M[i] || lab[i]) continue; var id = comps.length + 1, area = 0, touch = false; lab[i] = id; st.push(i);
+      while(st.length){ var j = st.pop(), jx = j % w; area++; if(C[j]) touch = true;
+        if(jx > 0 && M[j - 1] && !lab[j - 1]){ lab[j - 1] = id; st.push(j - 1); } if(jx < w - 1 && M[j + 1] && !lab[j + 1]){ lab[j + 1] = id; st.push(j + 1); }
+        if(j >= w && M[j - w] && !lab[j - w]){ lab[j - w] = id; st.push(j - w); } if(j + w < n && M[j + w] && !lab[j + w]){ lab[j + w] = id; st.push(j + w); } }
+      comps.push(touch || area >= tot * 0.08); }
+    var out = new Float32Array(n); for(i = 0; i < n; i++) out[i] = (M[i] && comps[lab[i] - 1]) ? 1 : 0;
+    return { w: w, h: h, data: out };
+  }
   function romPtsCutMaybe(){
     if(!romS.img || !romS.cutDone || romS.edit) return;
-    if(romS.cut && !romS.cutWeak) return;
     var P = romS.pts; if(!P || !P[0] || !P[1]) return;
-    var kind = romKind(); if((kind === "ext" || kind === "d90") && !P[2]) return;
+    var kind = romKind(); if(kind === "tilt" || kind === "cobb") return;
+    if((kind === "ext" || kind === "d90") && !P[2]) return;
     var key = kind + ":" + P.slice(0, 3).map(function(p){ return p ? Math.round(p.x) + "," + Math.round(p.y) : "-"; }).join("|");
     if(key === romS.ptsCutKey) return; romS.ptsCutKey = key;
     try{
-      var pm = romPtsMaskOf(romS.img, P, kind); if(!pm) return;
-      romS.cut = romCutBuild(romS.img, pm, romS.cutL || null);   // 뼈대가 있으면 함께 합침
-      romS.cutWeak = true;
+      var pm = romPtsMaskOf(romS.img, P, kind), base = romS.mask || null;
+      if(!pm && !base) return;
+      var mm = romMaskMerge(romS.img, base || pm, base ? pm : null, P, kind);
+      romS.cut = romCutBuild(romS.img, mm, base ? null : (romS.cutL || null));   // 인물 분리가 실패했으면 관절 뼈대도 함께
     }catch(e){ console.warn("[ptscut]", e); }
   }
   function romMakeCut(){

@@ -21,7 +21,7 @@ create index if not exists ayo_items_sync_idx on public.ayo_items (user_id, upda
 
 -- 수정할 때마다 updated_at 자동 갱신 (기기 간 동기화 기준)
 create or replace function public.ayo_touch() returns trigger
-language plpgsql as $$ begin new.updated_at := now(); return new; end $$;
+language plpgsql set search_path = '' as $$ begin new.updated_at := now(); return new; end $$;   -- v157 보안: search_path 고정
 drop trigger if exists ayo_items_touch on public.ayo_items;
 create trigger ayo_items_touch before insert or update on public.ayo_items
   for each row execute function public.ayo_touch();
@@ -31,10 +31,10 @@ drop policy if exists "own rows select" on public.ayo_items;
 drop policy if exists "own rows insert" on public.ayo_items;
 drop policy if exists "own rows update" on public.ayo_items;
 drop policy if exists "own rows delete" on public.ayo_items;
-create policy "own rows select" on public.ayo_items for select to authenticated using (auth.uid() = user_id);
-create policy "own rows insert" on public.ayo_items for insert to authenticated with check (auth.uid() = user_id);
-create policy "own rows update" on public.ayo_items for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "own rows delete" on public.ayo_items for delete to authenticated using (auth.uid() = user_id);
+create policy "own rows select" on public.ayo_items for select to authenticated using ((select auth.uid()) = user_id);
+create policy "own rows insert" on public.ayo_items for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "own rows update" on public.ayo_items for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy "own rows delete" on public.ayo_items for delete to authenticated using ((select auth.uid()) = user_id);
 
 -- 2) 계정 정보(센터명·설정·동의 기록)
 create table if not exists public.ayo_profiles (
@@ -52,7 +52,7 @@ create trigger ayo_profiles_touch before update on public.ayo_profiles
 alter table public.ayo_profiles enable row level security;
 drop policy if exists "own profile" on public.ayo_profiles;
 create policy "own profile" on public.ayo_profiles for all to authenticated
-  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 -- 3) 사진 저장소 (비공개 버킷, 본인 폴더만 접근)
 insert into storage.buckets (id, name, public, file_size_limit)
@@ -64,13 +64,13 @@ drop policy if exists "own photos insert" on storage.objects;
 drop policy if exists "own photos update" on storage.objects;
 drop policy if exists "own photos delete" on storage.objects;
 create policy "own photos select" on storage.objects for select to authenticated
-  using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
+  using (bucket_id = 'photos' and (storage.foldername(name))[1] = (select auth.uid())::text);
 create policy "own photos insert" on storage.objects for insert to authenticated
-  with check (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
+  with check (bucket_id = 'photos' and (storage.foldername(name))[1] = (select auth.uid())::text);
 create policy "own photos update" on storage.objects for update to authenticated
-  using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
+  using (bucket_id = 'photos' and (storage.foldername(name))[1] = (select auth.uid())::text);
 create policy "own photos delete" on storage.objects for delete to authenticated
-  using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
+  using (bucket_id = 'photos' and (storage.foldername(name))[1] = (select auth.uid())::text);
 
 -- 4) v156 사진 저장 방식 2 (사진은 WebP 파일, 정보는 작은 JSON) 이후 권장 설정
 --    장당 최대 5MB · 정보(JSON)와 사진(WebP/JPEG/PNG)만 허용 · 경로 규칙(첫 폴더 = 사용자ID)은 위 정책 그대로

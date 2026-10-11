@@ -1946,7 +1946,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v183</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v184</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1964,7 +1964,7 @@
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v183</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v184</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1983,7 +1983,7 @@
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v183</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v184</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
@@ -3227,7 +3227,7 @@
     if(state.phase !== "live" || !bodyGh.cv || bodyGh.mode !== state.mode) return;
     var el = $("bodyGhost"); el.width = bodyGh.cv.width; el.height = bodyGh.cv.height; el.getContext("2d").drawImage(bodyGh.cv, 0, 0);
     var ad = bodyGh.key === "fixed|" + bodyGh.mode ? SIL_ADJ["body_" + bodyGh.mode] : null;   // v161 기준 실루엣만 크기 조정
-    el.style.transform = ad ? "translateX(" + ((ad.dx || 0) * 100) + "%) scale(" + (ad.s || 1) + ")" : "";
+    el.style.transform = ad ? "translate(" + ((ad.dx || 0) * 100) + "%, " + ((ad.dy || 0) * 100) + "%) scale(" + (ad.s || 1) + ")" : "";
     el.hidden = false; bodyGh.on = true; $("bodyGTag").textContent = bodyGh.tag; $("bodyGTag").hidden = false;
     syncSilhouettes();
   }
@@ -3238,9 +3238,12 @@
     // v160 팔꿈치·무릎·고관절·발목 18개 항목 추가
     "elbow_L_flex", "elbow_R_flex", "elbow_L_ext", "elbow_R_ext", "knee_L_flex", "knee_R_flex", "knee_L_ext", "knee_R_ext", "hip_L_flex", "hip_R_flex", "hip_L_er", "hip_R_er", "hip_L_ir", "hip_R_ir", "ankle_L_dorsi", "ankle_R_dorsi", "ankle_L_plantar", "ankle_R_plantar",
     "fhp_C_cva"];   // v174 거북목(CVA) 기준 실루엣 — 측면 상반신, C7 높이 촬영 가이드
-  /* v161 항목별 기준 실루엣 크기·위치 조정: s = 크기 배율, dx = 오른쪽 이동(화면에 그린 실루엣 폭 대비 비율) */
+  /* v161 항목별 기준 실루엣 크기·위치 조정: s = 크기 배율, dx = 오른쪽 이동(그린 실루엣 폭 대비)
+     v184 dy = 아래쪽 이동(음수면 위로, 촬영 화면 높이 대비) · 체형(body_*) 실루엣에만 적용됨 */
   var SIL_ADJ = {
-    body_front: { s: 1.10 }, body_side: { s: 1.21 },
+    // v184 체형 측면: 1.21에서 10% 키우고(1.33) 위로 9% 올림 — 1.21에서는 발끝이 화면 아래로 1.6% 잘려 있었고,
+    //      이 값이면 발 아래 여백이 정면(2.0%)과 비슷한 2.3~3.1%가 됨
+    body_front: { s: 1.10 }, body_side: { s: 1.33, dy: -0.09 },
     neck_C_flex: { s: 1.05, dx: 0.04 }, neck_C_ext: { s: 1.20 },
     neck_L_lat: { s: 1.20, dx: 0.03 }, neck_R_lat: { s: 1.20, dx: 0.03 },
     shoulder_L_flex: { dx: 0.03 },

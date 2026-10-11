@@ -71,3 +71,10 @@ create policy "own photos update" on storage.objects for update to authenticated
   using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
 create policy "own photos delete" on storage.objects for delete to authenticated
   using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- 4) v156 사진 저장 방식 2 (사진은 WebP 파일, 정보는 작은 JSON) 이후 권장 설정
+--    장당 최대 5MB · 정보(JSON)와 사진(WebP/JPEG/PNG)만 허용 · 경로 규칙(첫 폴더 = 사용자ID)은 위 정책 그대로
+update storage.buckets
+   set file_size_limit = 5242880,
+       allowed_mime_types = array['application/json', 'image/webp', 'image/jpeg', 'image/png']
+ where id = 'photos';

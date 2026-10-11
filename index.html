@@ -1859,7 +1859,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v155</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v156</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1875,7 +1875,7 @@
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
     <div class="scol-info">
-      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v155</span>
+      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v156</span>
     </div>
   </section>
   <section class="view" id="view-scol" hidden>
@@ -1893,7 +1893,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v155</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v156</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -5517,6 +5517,7 @@
       // v124 다른 기기에서 사진·점을 고친 기록: 기기에 있는 사진이 옛 버전이면 서버에서 새로 받기
       var pend = typeof SQ === "object" && SQ && SQ["blobs|" + bk];
       if(b && o.blobAt && b.at !== o.blobAt && !pend) return blobFetch(bk).then(function(nb){ return nb || b; });
+      if(b && blobHasRefs(b.v)) return rawDel0("blobs", bk).then(function(){ return blobFetch(bk); });   // v156 예전 버전 앱이 새 방식 사진을 잘못 받아 둔 경우
       return b || blobFetch(bk);
     }).then(function(b){ var c = Object.assign({}, o); if(b) c[f] = b.v; return c; });
   }
@@ -11272,6 +11273,110 @@
 
   /* ---- 서버로 올리기 ---- */
   function blobPath(id){ return ACC.uid + "/blobs/" + String(id).replace(/[^A-Za-z0-9_.-]/g, "_") + ".json"; }
+  /* ===== v156 사진 저장 방식 2: 사진은 이미지 파일(WebP)로 따로, JSON에는 사진 정보(회전·좌표 등)만 =====
+     photos/{사용자ID}/blobs/{기록}.json            ← 정보(작음)
+     photos/{사용자ID}/blobs/{기록}/front_img.webp  ← 사진 파일
+     예전 방식(JSON 안에 사진 글자 데이터)도 그대로 읽고, 읽은 기록은 새 방식으로 다시 올림 */
+  function blobDir(id){ return ACC.uid + "/blobs/" + String(id).replace(/[^A-Za-z0-9_.-]/g, "_"); }
+  function blobSplit(v){
+    var files = [];
+    var walk = function(x, path){
+      if(typeof x === "string" && /^data:image\//.test(x)){ var k = (path.join("_") || "img").replace(/[^A-Za-z0-9_-]/g, "_"); files.push({ k: k, du: x }); return { $img: k }; }
+      if(Array.isArray(x)) return x.map(function(y, i){ return walk(y, path.concat(String(i))); });
+      if(x && typeof x === "object"){ var o = {}; Object.keys(x).forEach(function(key){ o[key] = walk(x[key], path.concat(key)); }); return o; }
+      return x;
+    };
+    return { v: walk(v, []), files: files };
+  }
+  function blobHasRefs(v){
+    if(v && typeof v === "object"){ if(typeof v.$img === "string") return true; return Object.keys(v).some(function(k){ return blobHasRefs(v[k]); }); }
+    return false;
+  }
+  function blobJoin(v, map){
+    if(v && typeof v === "object"){
+      if(typeof v.$img === "string") return map[v.$img] || null;
+      if(Array.isArray(v)) return v.map(function(y){ return blobJoin(y, map); });
+      var o = {}; Object.keys(v).forEach(function(k){ o[k] = blobJoin(v[k], map); }); return o;
+    }
+    return v;
+  }
+  function duToBlob(du){
+    var m = /^data:([^;,]+)(;base64)?,(.*)$/.exec(du || ""); if(!m) return null;
+    var raw = m[2] ? atob(m[3]) : decodeURIComponent(m[3]), u = new Uint8Array(raw.length);
+    for(var i = 0; i < raw.length; i++) u[i] = raw.charCodeAt(i);
+    return new Blob([u], { type: m[1] });
+  }
+  function blobToDu(b, type){
+    return new Promise(function(res, rej){
+      var fr = new FileReader(); fr.onload = function(){ var r = String(fr.result || ""); if(type && /^data:application\/octet-stream/.test(r)) r = r.replace(/^data:application\/octet-stream/, "data:" + type); res(r); };
+      fr.onerror = function(){ rej(fr.error || new Error("사진 읽기 실패")); }; fr.readAsDataURL(type && b.type !== type ? new Blob([b], { type: type }) : b);
+    });
+  }
+  // 사진 → WebP 파일 (이미 WebP면 그대로) · WebP를 못 만드는 브라우저는 JPEG
+  function blobImgEnc(du){
+    if(/^data:image\/webp/.test(du)) return Promise.resolve({ blob: duToBlob(du), ext: "webp", type: "image/webp" });
+    return loadImg(du).then(function(im){
+      var raw = function(){ var b = duToBlob(du); var t = (b && b.type) || "image/jpeg"; return { blob: b, ext: /png/.test(t) ? "png" : "jpg", type: t }; };
+      if(!im) return raw();
+      var c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight;
+      var g = c.getContext("2d"); g.drawImage(im, 0, 0);
+      var tb = function(type, q){ return new Promise(function(r){ try{ c.toBlob(function(b){ r(b); }, type, q); }catch(e){ r(null); } }); };
+      return tb("image/webp", 0.85).then(function(b){
+        if(b && b.type === "image/webp") return { blob: b, ext: "webp", type: "image/webp" };
+        return tb("image/jpeg", 0.86).then(function(j){ return j ? { blob: j, ext: "jpg", type: "image/jpeg" } : raw(); });
+      });
+    });
+  }
+  function blobUploadV2(bucket, id, o){
+    var sp = blobSplit(o.v), dir = blobDir(id), keep = [];
+    var man = { fmt: 2, v: sp.v, at: o.at || null, files: {} };
+    var p = Promise.resolve();
+    sp.files.forEach(function(f){
+      p = p.then(function(){ return blobImgEnc(f.du); }).then(function(enc){
+        var path = dir + "/" + f.k + "." + enc.ext; keep.push(f.k + "." + enc.ext); man.files[f.k] = { p: path, t: enc.type };
+        return bucket.upload(path, enc.blob, { upsert: true, contentType: enc.type }).then(function(x){ if(x.error) throw x.error; });
+      });
+    });
+    return p.then(function(){   // 사진 파일을 다 올린 뒤에 정보 파일 (다른 기기가 정보만 받고 사진이 없는 일 방지)
+      return bucket.upload(blobPath(id), new Blob([JSON.stringify(man)], { type: "application/json" }), { upsert: true, contentType: "application/json" });
+    }).then(function(x){
+      if(x.error) throw x.error;
+      if(!bucket.list) return;
+      return bucket.list(dir, { limit: 100 }).then(function(r){   // 바뀌어서 안 쓰게 된 사진 파일 정리
+        var old = ((r && r.data) || []).map(function(f){ return f.name; }).filter(function(n){ return n && keep.indexOf(n) < 0; });
+        if(old.length) return bucket.remove(old.map(function(n){ return dir + "/" + n; }));
+      }).catch(function(){});
+    });
+  }
+  function blobRemoveV2(bucket, id){
+    var dir = blobDir(id);
+    var rmDir = !bucket.list ? Promise.resolve() : bucket.list(dir, { limit: 100 }).then(function(r){
+      var names = ((r && r.data) || []).map(function(f){ return f.name; }).filter(Boolean);
+      if(names.length) return bucket.remove(names.map(function(n){ return dir + "/" + n; }));
+    }).catch(function(){});
+    return rmDir.then(function(){ return bucket.remove([blobPath(id)]); });
+  }
+  // 이 기기에 있는 사진을 계정마다 한 번 새 방식으로 다시 올림 (서버의 예전 방식 사진 → 새 방식)
+  function blobUpgradeAll(){
+    if(!ACC || !ACC.uid) return;
+    var mk = {}; try{ mk = JSON.parse(lsGet("ayo_blobfmt2") || "{}") || {}; }catch(e){ mk = {}; }
+    if(mk[ACC.uid]) return;
+    var uid0 = ACC.uid;
+    Promise.all([rawAll("blobs"), rawAll("records"), rawAll("roms")]).then(function(rs){
+      if(ACC.uid !== uid0) return;
+      var lat = {}; rs[1].forEach(function(r){ lat["records:" + r.id] = r; }); rs[2].forEach(function(r){ lat["roms:" + r.id] = r; });
+      var n = 0;
+      rs[0].forEach(function(b){
+        var id = String(b.id); if(id.indexOf("admx:") === 0) return;
+        var l = lat[id]; if(!l || !l.blob) return;
+        if(l.blobAt && b.at && l.blobAt !== b.at) return;   // 다른 기기에서 바뀐 옛 사진은 올리지 않음
+        if(blobHasRefs(b.v)) return;
+        sqAdd("blobs", id); n++;
+      });
+      mk[uid0] = Date.now(); lsSet("ayo_blobfmt2", JSON.stringify(mk));
+      if(n) console.info("[AYO] 사진 저장 방식 2로 다시 올리기", n);
+    }).catch(function(e){ console.warn("[AYO] blob upgrade", e); });
+  }
   function syncPush(){
     var c = sbClient(); if(!c || !ACC.uid) return Promise.resolve();
     var keys = Object.keys(SQ); if(!keys.length) return Promise.resolve();
@@ -11293,10 +11398,10 @@
           var bucket = c.storage.from("photos");
           if(!r.o){
             if(!isDel(e, r)){ done(e); return; }
-            return bucket.remove([blobPath(e.id)]).then(function(x){ if(x.error) throw x.error; done(e); });
+            return blobRemoveV2(bucket, e.id).then(function(x){ if(x && x.error) throw x.error; done(e); });
           }
-          var file = new Blob([JSON.stringify({ v: r.o.v, at: r.o.at || null })], { type: "application/json" });
-          return bucket.upload(blobPath(e.id), file, { upsert: true, contentType: "application/json" }).then(function(x){ if(x.error) throw x.error; done(e); });
+          if(blobHasRefs(r.o.v)){ done(e); return; }   // 사진이 덜 받아진 기록은 올리지 않음
+          return blobUploadV2(bucket, e.id, r.o).then(function(){ done(e); });
         }).catch(function(err){ badBlob[e.id] = 1; failed(e, err); });
       });
     });
@@ -11385,9 +11490,27 @@
   function blobFetch(id){
     var c = sbClient(); if(!c || !ACC.uid || !navigator.onLine) return Promise.resolve(null);
     if(blobWant[id]) return blobWant[id];
-    blobWant[id] = c.storage.from("photos").download(blobPath(id)).then(function(r){
+    var bucket = c.storage.from("photos");
+    blobWant[id] = bucket.download(blobPath(id)).then(function(r){
       if(r.error || !r.data) return null;
-      return r.data.text().then(function(t){ var j = JSON.parse(t); var b = { id: id, v: j.v, at: j.at || null }; return rawPut0("blobs", b).then(function(){ return b; }); });
+      return r.data.text().then(function(t){
+        var j = JSON.parse(t);
+        if(j && j.fmt === 2){   // v156 새 방식: 사진 파일을 받아 다시 붙임
+          var ks = Object.keys(j.files || {}), map = {};
+          return Promise.all(ks.map(function(k){
+            var f = j.files[k];
+            return bucket.download(f.p).then(function(r2){ if(r2.error || !r2.data) throw r2.error || new Error("사진 파일 없음"); return blobToDu(r2.data, f.t); }).then(function(du){ map[k] = du; });
+          })).then(function(){
+            var b = { id: id, v: blobJoin(j.v, map), at: j.at || null };
+            return rawPut0("blobs", b).then(function(){ return b; });
+          });
+        }
+        var b0 = { id: id, v: j.v, at: j.at || null };
+        return rawPut0("blobs", b0).then(function(){
+          if(!SQ || !SQ["blobs|" + id]) sqAdd("blobs", id);   // 예전 방식 → 새 방식으로 다시 올림
+          return b0;
+        });
+      });
     }).catch(function(){ return null; }).then(function(b){ delete blobWant[id]; return b; });
     return blobWant[id];
   }
@@ -11412,6 +11535,7 @@
     ACC.state = "sync"; accRender();
     ACC.busy = go().then(syncPull).then(syncPush).then(function(){   // v124 받기 먼저: 다른 기기의 더 최근 변경을 덮어쓰지 않게
       ACC.state = "ok"; ACC.err = ""; ACC.last = Date.now();
+      try{ blobUpgradeAll(); }catch(e){}
     }, function(e){
       ACC.state = navigator.onLine ? "err" : "offline"; ACC.err = (e && (e.message || e.error_description)) || String(e);
       console.warn("[AYO] sync", e);

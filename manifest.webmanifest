@@ -1,8 +1,8 @@
 {
   "id": "/posture-check/",
-  "name": "아요바디요 - 체형·ROM·측만 측정",
+  "name": "아요바디요 - 체형·ROM·척추 균형 측정",
   "short_name": "아요바디요",
-  "description": "체형분석 · ROM 관절가동범위 · 측만 측정 · 회원 기록과 리포트",
+  "description": "체형분석 · ROM 관절가동범위 · 거북목 · 척추 균형 측정 · 회원 기록과 리포트",
   "lang": "ko",
   "start_url": "./",
   "scope": "./",

@@ -1351,10 +1351,48 @@
   .hs-row .btn{flex:0 0 auto!important; width:auto!important; min-width:68px;}
   .home-quick{display:flex; flex-direction:column; gap:10px;}
   .home-quick h2{margin:0; font-size:17px; font-weight:800;}
-  .hq-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
-  .hq-grid button{font-family:inherit; border:1px solid var(--line); background:var(--surface); border-radius:16px; padding:16px 6px 14px; display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--ink); font-size:14px; font-weight:800; cursor:pointer; box-shadow:var(--shadow);}
-  .hq-grid button span{width:46px; height:46px; border-radius:14px; background:var(--accent-soft); color:var(--blue); display:flex; align-items:center; justify-content:center;}
-  .hq-grid button:active{transform:translateY(1px);}
+  /* v178 워크플로 홈: 회원 → 측정 → 리포트 */
+  .hqh{display:flex; align-items:center; justify-content:space-between; margin:0 0 10px;}
+  .hqh h2{margin:0;}
+  .btn-theme{font-family:inherit; font-size:12.5px; font-weight:700; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:999px; padding:6px 12px; cursor:pointer;}
+  .wf-step{display:block; width:100%; text-align:left; font-family:inherit; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px; box-shadow:var(--shadow); margin-bottom:10px; color:var(--ink);}
+  .wf-step .wfh{display:flex; align-items:center; gap:9px;}
+  .wf-t{font-size:14.5px;}
+  .wf-no{width:23px; height:23px; border-radius:50%; background:var(--surface-2); color:var(--ink-soft); font-size:12px; font-weight:800; display:inline-flex; align-items:center; justify-content:center; flex:none;}
+  .wf-step.done .wf-no{background:var(--good-soft); color:var(--good);}
+  .wf-step.now{border:2px solid var(--accent); padding:11px 13px;}
+  .wf-step.now .wf-no{background:var(--navy); color:var(--navy-ink);}
+  .wf-step.wait{opacity:.72; cursor:pointer;}
+  .wf-av{width:34px; height:34px; border-radius:50%; background:var(--navy); color:var(--navy-ink); font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .wf-mem{flex:1; min-width:0;}
+  .wf-mem b{display:block; font-size:14.5px;}
+  .wf-mem em{font-style:normal; font-size:11.5px; color:var(--ink-soft);}
+  .wf-chips{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:11px 0 2px;}
+  .wf-chip{font-family:inherit; text-align:left; display:flex; align-items:center; gap:9px; border:1.5px solid var(--line); background:var(--surface); color:var(--ink); border-radius:12px; padding:10px 11px; cursor:pointer; font-size:13px; font-weight:700; line-height:1.3;}
+  .wf-chip .ic{width:34px; height:34px; border-radius:10px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; flex:none;}
+  .wf-chip small{display:block; font-size:10.5px; color:var(--ink-soft); font-weight:600;}
+  .wf-chip.sel{border-color:var(--accent); background:var(--accent-soft);}
+  .wf-chip.sel::after{content:"✓"; margin-left:auto; color:var(--accent); font-weight:800;}
+  .wf-chip:active, .wf-step.wait:active{transform:translateY(1px);}
+  .wf-prev{display:inline-block; font-size:11.5px; color:var(--ink-soft); background:var(--gold-soft); border-radius:8px; padding:5px 9px; margin-top:9px;}
+  .wf-desc{display:block; font-size:12px; color:var(--ink-soft); margin:4px 0 0 32px;}
+  /* 테마 선택 시트 */
+  .th-opts{display:grid; gap:8px; margin:8px 0 4px;}
+  .th-opt{font-family:inherit; display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); background:var(--surface); color:var(--ink); border-radius:12px; padding:11px 12px; cursor:pointer; text-align:left; font-size:14px; font-weight:700;}
+  .th-opt small{display:block; font-size:11px; color:var(--ink-soft); font-weight:600;}
+  .th-opt[aria-pressed="true"]{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent);}
+  .th-dots{display:flex; gap:4px; margin-left:auto; flex:none;}
+  .th-dots i{width:14px; height:14px; border-radius:50%; display:block; border:1px solid rgba(0,0,0,.15);}
+  /* v178 컬러 테마(시안 B 톤): 측정 버튼을 항목별 고유색으로 */
+  html[data-skin="vivid"] .wf-chip{border-color:transparent; color:#fff;}
+  html[data-skin="vivid"] .wf-chip small{color:rgba(255,255,255,.82);}
+  html[data-skin="vivid"] .wf-chip .ic{background:rgba(255,255,255,.18); color:#fff;}
+  html[data-skin="vivid"] #wfC1{background:#0E7C6B;}
+  html[data-skin="vivid"] #wfC2{background:#1D4ED8;}
+  html[data-skin="vivid"] #wfC3{background:#B45309;}
+  html[data-skin="vivid"] #wfC4{background:#6D28D9;}
+  html[data-skin="vivid"] .wf-chip.sel{box-shadow:inset 0 0 0 2px rgba(255,255,255,.75);}
+  html[data-skin="vivid"] .wf-chip.sel::after{color:#fff;}
 
   /* ===================== v128 체형 2차부터 이전 회차 실루엣 ===================== */
   .stage canvas.bghost{object-fit:cover; background:transparent; opacity:.45; pointer-events:none;}
@@ -1749,14 +1787,40 @@
       <div class="hs-row" id="hsReport"><span class="ck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="tx">리포트 확인하기</span><button type="button" class="btn line sm" id="btnHsReport">보기</button></div>
     </section>
     <section class="home-quick">
-      <h2>바로 측정</h2>
-      <div class="hq-grid">
-        <button type="button" data-goview="analyze"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg></span>체형분석</button>
-        <button type="button" data-goview="rom"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M4 20L16 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/><circle cx="16" cy="6" r="1.6"/></svg></span>ROM</button>
-        <button type="button" data-goview="fhp"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.8 16.4c0-4.5 2.9-7.6 6.4-7.6s6.4 3.1 6.4 7.6z"/><path d="M4.6 13.6c1.5-1.1 3-1.1 4.6 0s3.1 1.1 4.6 0" stroke-width="1.3"/><circle cx="9.2" cy="11.3" r=".8" fill="currentColor" stroke="none"/><circle cx="18.7" cy="11.6" r="3.3"/><circle cx="19.5" cy="10.8" r=".8" fill="currentColor" stroke="none"/><circle cx="20.6" cy="12.6" r=".75" fill="#f4a3a8" stroke="none"/><path d="M17.9 13.1c.4.4 1 .5 1.5.2" stroke-width="1.1"/><path d="M5.2 16.4v2.1M12.3 16.4v2.1M2.8 16.4l-1.1.5"/></svg></span>거북목</button>
-        <button type="button" data-goview="scol"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.3" r="2"/><path d="M9.6 6.8C6.6 7.2 4.4 8.3 4.1 11.2L3.6 17M14.4 6.8c3 .4 5.2 1.5 5.5 4.4l.5 5.8"/><path d="M7.4 11.6c.5 2.6.3 5.1-.5 9.4M16.6 11.6c-.5 2.6-.3 5.1.5 9.4"/><path d="M12.00 7.60 L11.62 8.00 L11.26 8.40 L10.92 8.80 L10.63 9.20 L10.40 9.60 L10.22 10.00 L10.13 10.40 L10.10 10.80 L10.15 11.20 L10.28 11.60 L10.48 12.00 L10.73 12.40 L11.04 12.80 L11.39 13.20 L11.76 13.60 L12.14 14.00 L12.52 14.40 L12.87 14.80 L13.19 15.20 L13.46 15.60 L13.68 16.00 L13.82 16.40 L13.89 16.80 L13.89 17.20 L13.81 17.60 L13.65 18.00 L13.43 18.40 L13.16 18.80 L12.83 19.20 L12.47 19.60 L12.10 20.00 L11.71 20.40" stroke-width="1.7"/><path d="M9.29 9.37L11.31 10.23M10.96 14.36L12.56 12.84M12.78 17.18L14.93 17.62" stroke-width="1.2"/></svg></span>척추 균형</button>
+      <div class="hqh"><h2>측정 진행</h2><button type="button" class="btn-theme" id="btnHomeTheme">🎨 테마</button></div>
+      <!-- v178 워크플로 홈: 회원 → 측정 → 리포트 순서가 화면이 됨 -->
+      <div class="wf-step" id="wfStep1">
+        <div class="wfh"><span class="wf-no" id="wfNo1">1</span><span class="wf-av" id="wfAv">?</span>
+          <span class="wf-mem"><b id="wfName">회원 선택 안 함</b><em id="wfMeta">회원 없이도 측정할 수 있어요 (이 기기에만 표시)</em></span>
+          <button type="button" class="btn line sm" id="btnWfPick">회원 선택</button></div>
       </div>
+      <div class="wf-step now">
+        <div class="wfh"><span class="wf-no">2</span><b class="wf-t">측정하기</b></div>
+        <div class="wf-chips">
+          <button type="button" class="wf-chip" id="wfC1" data-goview="analyze"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg></span><span>체형분석<small>정면 · 측면</small></span></button>
+          <button type="button" class="wf-chip" id="wfC2" data-goview="rom"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M4 20L16 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/><circle cx="16" cy="6" r="1.6"/></svg></span><span>ROM<small>관절가동범위</small></span></button>
+          <button type="button" class="wf-chip" id="wfC3" data-goview="fhp"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.8 16.4c0-4.5 2.9-7.6 6.4-7.6s6.4 3.1 6.4 7.6z"/><path d="M4.6 13.6c1.5-1.1 3-1.1 4.6 0s3.1 1.1 4.6 0" stroke-width="1.3"/><circle cx="9.2" cy="11.3" r=".8" fill="currentColor" stroke="none"/><circle cx="18.7" cy="11.6" r="3.3"/><circle cx="19.5" cy="10.8" r=".8" fill="currentColor" stroke="none"/><circle cx="20.6" cy="12.6" r=".75" fill="#f4a3a8" stroke="none"/><path d="M17.9 13.1c.4.4 1 .5 1.5.2" stroke-width="1.1"/><path d="M5.2 16.4v2.1M12.3 16.4v2.1M2.8 16.4l-1.1.5"/></svg></span><span>거북목<small>CVA 각도</small></span></button>
+          <button type="button" class="wf-chip" id="wfC4" data-goview="scol"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.3" r="2"/><path d="M9.6 6.8C6.6 7.2 4.4 8.3 4.1 11.2L3.6 17M14.4 6.8c3 .4 5.2 1.5 5.5 4.4l.5 5.8"/><path d="M7.4 11.6c.5 2.6.3 5.1-.5 9.4M16.6 11.6c-.5 2.6-.3 5.1.5 9.4"/><path d="M12.00 7.60 L11.62 8.00 L11.26 8.40 L10.92 8.80 L10.63 9.20 L10.40 9.60 L10.22 10.00 L10.13 10.40 L10.10 10.80 L10.15 11.20 L10.28 11.60 L10.48 12.00 L10.73 12.40 L11.04 12.80 L11.39 13.20 L11.76 13.60 L12.14 14.00 L12.52 14.40 L12.87 14.80 L13.19 15.20 L13.46 15.60 L13.68 16.00 L13.82 16.40 L13.89 16.80 L13.89 17.20 L13.81 17.60 L13.65 18.00 L13.43 18.40 L13.16 18.80 L12.83 19.20 L12.47 19.60 L12.10 20.00 L11.71 20.40" stroke-width="1.7"/><path d="M9.29 9.37L11.31 10.23M10.96 14.36L12.56 12.84M12.78 17.18L14.93 17.62" stroke-width="1.2"/></svg></span><span>척추 균형<small>등 기울기</small></span></button>
+        </div>
+        <span class="wf-prev" id="wfPrev" hidden></span>
+      </div>
+      <button type="button" class="wf-step wait" data-goview="report">
+        <span class="wfh"><span class="wf-no">3</span><b class="wf-t">리포트 확인 · 회원에게 공유</b></span>
+        <span class="wf-desc">측정을 마치면 여기서 이어가세요</span>
+      </button>
     </section>
+
+    <div class="confirm-overlay" id="themeSheet" hidden role="dialog" aria-modal="true" aria-labelledby="themeTitle">
+      <div class="confirm-box">
+        <h3 id="themeTitle">화면 테마</h3>
+        <div class="th-opts">
+          <button type="button" class="th-opt" id="thoLight" aria-pressed="false"><span>밝게 <small>기본 · 지금의 밝은 클리닉 톤</small></span><span class="th-dots"><i style="background:#FFFFFF"></i><i style="background:#17223D"></i><i style="background:#A8844F"></i></span></button>
+          <button type="button" class="th-opt" id="thoDark" aria-pressed="false"><span>어둡게 <small>측정실·저녁에 눈이 편한 다크 네이비</small></span><span class="th-dots"><i style="background:#070B15"></i><i style="background:#18223A"></i><i style="background:#D2B07A"></i></span></button>
+          <button type="button" class="th-opt" id="thoVivid" aria-pressed="false"><span>컬러 <small>측정 버튼을 항목별 고유색으로 (밝은 바탕)</small></span><span class="th-dots"><i style="background:#0E7C6B"></i><i style="background:#1D4ED8"></i><i style="background:#B45309"></i><i style="background:#6D28D9"></i></span></button>
+        </div>
+        <div class="confirm-actions"><button type="button" class="btn line" id="btnThemeClose">닫기</button></div>
+      </div>
+    </div>
     <section class="card ds-card"><h2>재측정 필요 회원</h2><p class="sub">마지막 측정 후 30일이 지난 회원이에요.</p><div id="dsDue"></div></section>
     <div class="ds-kpis" id="dsKpis"></div>
     <div class="ds-grid">
@@ -1889,7 +1953,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v177</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v178</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1907,7 +1971,7 @@
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v177</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v178</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1926,7 +1990,7 @@
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v177</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v178</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
@@ -5459,13 +5523,53 @@
   });
   $("btnMore").addEventListener("click", function(){ $("moreSheet").hidden = false; });
   function applyUiTheme(){
-    var dark = lsGet("ayo_ui") === "dark";
+    var dark = lsGet("ayo_ui") === "dark", vivid = !dark && lsGet("ayo_skin") === "vivid";
     if(dark) document.documentElement.setAttribute("data-ui", "dark"); else document.documentElement.removeAttribute("data-ui");
-    $("themeLbl").textContent = "화면 테마 · " + (dark ? "어둡게" : "밝게");
+    if(vivid) document.documentElement.setAttribute("data-skin", "vivid"); else document.documentElement.removeAttribute("data-skin");   // v178 컬러(시안 B 톤)
+    $("themeLbl").textContent = "화면 테마 · " + (dark ? "어둡게" : vivid ? "컬러" : "밝게");
     var mt = document.querySelector('meta[name="theme-color"]'); if(mt) mt.setAttribute("content", dark ? "#0A1121" : "#FFFFFF");
+    [["thoLight", !dark && !vivid], ["thoDark", dark], ["thoVivid", vivid]].forEach(function(o){ var b = $(o[0]); if(b) b.setAttribute("aria-pressed", String(o[1])); });
   }
-  $("btnMoreTheme").addEventListener("click", function(){ lsSet("ayo_ui", lsGet("ayo_ui") === "dark" ? "" : "dark"); applyUiTheme(); });
+  function themeOpen(){ $("moreSheet").hidden = true; $("themeSheet").hidden = false; }
+  $("btnMoreTheme").addEventListener("click", themeOpen);
+  $("btnHomeTheme").addEventListener("click", themeOpen);
+  $("btnThemeClose").addEventListener("click", function(){ $("themeSheet").hidden = true; });
+  [["thoLight", "", ""], ["thoDark", "dark", ""], ["thoVivid", "", "vivid"]].forEach(function(o){
+    $(o[0]).addEventListener("click", function(){ lsSet("ayo_ui", o[1]); lsSet("ayo_skin", o[2]); applyUiTheme(); });
+  });
   applyUiTheme();
+  // v178 워크플로 홈: 1단계 회원 표시 + 2단계 칩에 지난 방문 구성 표시
+  var wfSeq = 0;
+  function wfRender(){
+    if(!$("wfAv")) return;
+    var m = state.member;
+    $("wfStep1").classList.toggle("done", !!m);
+    $("wfNo1").textContent = m ? "✓" : "1";
+    $("wfAv").textContent = m ? initial(m.name) : "?";
+    $("wfName").textContent = m ? m.name : "회원 선택 안 함";
+    $("wfMeta").textContent = m ? ((m.consentAt ? "촬영·보관 동의 " + fmtDate(m.consentAt).slice(0, 10) : "촬영 동의 미기록") + " · 결과가 기록에 저장돼요")
+      : "회원 없이도 측정할 수 있어요 (이 기기에만 표시)";
+    $("btnWfPick").textContent = m ? "변경" : "회원 선택";
+    ["wfC1", "wfC2", "wfC3", "wfC4"].forEach(function(id){ $(id).classList.remove("sel"); });
+    $("wfPrev").hidden = true;
+    if(!m) return;
+    var my = ++wfSeq;
+    Promise.all([dbAll("records"), dbAll("roms")]).then(function(res){
+      if(my !== wfSeq || !state.member || state.member.id !== m.id) return;
+      var rs = res[0].filter(function(r){ return r.memberId === m.id; }), os = res[1].filter(function(r){ return r.memberId === m.id; });
+      var ts = rs.map(function(r){ return r.at; }).concat(os.map(function(r){ return r.at; })).filter(Boolean);
+      if(!ts.length) return;
+      var d0 = new Date(Math.max.apply(null, ts)); d0.setHours(0, 0, 0, 0);
+      var t0 = d0.getTime(), inDay = function(t){ return t >= t0 && t < t0 + 86400000; };
+      var names = [];
+      if(rs.some(function(r){ return inDay(r.at); })){ $("wfC1").classList.add("sel"); names.push("체형"); }
+      if(os.some(function(r){ return r.joint !== "fhp" && r.joint !== "scol" && inDay(r.at); })){ $("wfC2").classList.add("sel"); names.push("ROM"); }
+      if(os.some(function(r){ return r.joint === "fhp" && inDay(r.at); })){ $("wfC3").classList.add("sel"); names.push("거북목"); }
+      if(os.some(function(r){ return r.joint === "scol" && inDay(r.at); })){ $("wfC4").classList.add("sel"); names.push("척추 균형"); }
+      if(names.length){ $("wfPrev").hidden = false; $("wfPrev").textContent = "지난 방문: " + names.join(" + ") + " · 같은 구성으로 측정하면 회차 비교가 정확해요"; }
+    }).catch(function(){});
+  }
+  $("btnWfPick").addEventListener("click", function(){ $("btnMbPick").click(); });
   $("btnHsMember").addEventListener("click", function(){ showView("members"); setTimeout(function(){ var b = $("btnMbAdd"); if(b) b.click(); }, 50); });
   $("btnHsMeasure").addEventListener("click", function(){ $("navMeasure").click(); });
   $("btnHsReport").addEventListener("click", function(){ showView("report"); });
@@ -5476,6 +5580,7 @@
     $("cbName").textContent = m ? m.name : "회원을 선택하세요";
     $("cbMeta").textContent = m ? (memberMeta(m) || "회원") + " · 결과가 기록에 저장돼요" : (state.view === "report" ? "선택한 회원의 결과로 리포트를 만들어요" : "선택하면 측정 결과가 회원 기록에 저장돼요");
     $("cbGo").textContent = m ? "변경" : "회원 선택";
+    if(typeof wfRender === "function") wfRender();   // v178 홈 워크플로 1·2단계도 같이 갱신
   }
   $("curBar").addEventListener("click", function(){
     var id = { analyze:"btnMbPick", rom:"btnRomPick", scol:"btnScolPick", report:"btnRepPick" }[state.view] || "btnMbPick";
@@ -9514,7 +9619,7 @@
   window.addEventListener("click", function(e){ if(e.isTrusted && !inBack) setTimeout(topUp, 0); }, true);
   window.addEventListener("keydown", function(e){ if(e.isTrusted && !inBack && e.key !== "Escape") setTimeout(topUp, 0); }, true);
   function closeOverlay(el){
-    var closeBtn = { ptGuide: "btnPtGuideClose", mbSess: "btnMbSessClose", proGate: "btnProClose", romSheet: "btnRomClose", saveOverlay: "btnCloseOverlay", gsOverlay: "btnGsClose", moreSheet: "btnMoreClose",
+    var closeBtn = { ptGuide: "btnPtGuideClose", mbSess: "btnMbSessClose", proGate: "btnProClose", romSheet: "btnRomClose", saveOverlay: "btnCloseOverlay", gsOverlay: "btnGsClose", moreSheet: "btnMoreClose", themeSheet: "btnThemeClose",
       romCmp: "btnRomCmpClose", mbForm: "btnMfCancel", progForm: "btnPfCancel", assignPick: "btnApCancel", csForm: "btnCfCancel", slForm: "btnSfCancel", retakeConfirm: "btnRetakeNo" }[el.id];
     if(el.id === "mbPicker") state.pendingSave = false;
     if(closeBtn && $(closeBtn)) $(closeBtn).click(); else el.hidden = true;

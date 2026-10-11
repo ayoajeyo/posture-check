@@ -730,6 +730,10 @@
   .more-list button[hidden]{display:none!important;}
   .more-list svg{flex:0 0 auto; color:var(--ink-soft);}
   .more-list .ml-t{flex:1;}
+  /* v175 서버에 안 올라간 기록 알림: 더보기 메뉴 뱃지 + 하단 탭 빨간 점 */
+  .more-list .ml-b{background:var(--crit); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; margin-right:6px;}
+  .nav-item{position:relative;}
+  .nav-dot{position:absolute; top:7px; left:calc(50% + 9px); width:8px; height:8px; border-radius:50%; background:var(--crit); pointer-events:none;}
   .more-list .ml-c{color:var(--ink-soft); font-size:18px; line-height:1;}
   .use-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px;}
   .use-grid div{background:var(--surface-2); border-radius:12px; padding:10px 12px;}
@@ -1882,7 +1886,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v174</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v175</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1900,7 +1904,7 @@
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v174</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v175</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1919,7 +1923,7 @@
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v174</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v175</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
@@ -2006,7 +2010,7 @@
     <button type="button" class="nav-item" id="navMeasure" data-measure aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.6" r="2.4"/><path d="M12 7.5v7.2M7 10.2h10M12 14.7l-3.2 6.3M12 14.7l3.2 6.3"/></svg><span>측정</span></button>
     <button type="button" class="nav-item" data-view="members"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.4-3.4 2.9-5.6 6-5.6s5.6 2.2 6 5.6"/><path d="M15.5 4.8a3.1 3.1 0 010 6.2M17.5 14.6c2 .7 3.2 2.6 3.5 5.4"/></svg><span>회원</span></button>
     <button type="button" class="nav-item" data-view="report"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/><path d="M8.5 7.5h7"/></svg><span>리포트</span></button>
-    <button type="button" class="nav-item" id="btnMore"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18.5" cy="12" r="1.6"/></svg><span>더보기</span></button>
+    <button type="button" class="nav-item" id="btnMore"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18.5" cy="12" r="1.6"/></svg><i class="nav-dot" id="moreDot" hidden></i><span>더보기</span></button>
   </nav>
 </div>
 
@@ -2291,7 +2295,7 @@
       <button type="button" data-go="settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span class="ml-t">설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreTheme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg><span id="themeLbl">화면 테마 · 밝게</span></button>
       <button type="button" id="btnMoreAcc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span class="ml-t">계정</span><span class="ml-c" aria-hidden="true">›</span></button>
-      <button type="button" id="btnMoreSrv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.7 4.7 0 0 0 7 18.5z"/><path d="M12 15.5v-5M9.8 12.6L12 10.4l2.2 2.2"/></svg><span class="ml-t">서버 저장</span><span class="ml-c" aria-hidden="true">›</span></button>
+      <button type="button" id="btnMoreSrv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.7 4.7 0 0 0 7 18.5z"/><path d="M12 15.5v-5M9.8 12.6L12 10.4l2.2 2.2"/></svg><span class="ml-t">서버 저장</span><span class="ml-b" id="srvPendB" hidden></span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreBk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span class="ml-t">내 데이터 내보내기 · 불러오기</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreAdm"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg><span class="ml-t" id="btnMoreAdmT">관리자 모드</span><span class="ml-c" aria-hidden="true">›</span></button>
     </div>
@@ -10552,7 +10556,8 @@
     var main = r.angM != null ? f1(r.angM) + "°" : r.ptM != null ? f1(r.ptM) + "%" : "–", L = [];
     if(r.angM != null) L.push("각도 오차 평균 " + f1(r.angM) + "° · 최대 " + r.angX + "° · 5° 이내 " + Math.round(r.a5 * 100) + "%");
     if(r.ptM != null) L.push("점 오차 평균 " + f1(r.ptM) + "%" + (r.worst ? " · 가장 큰 오차: " + esc(r.worst.n) + " " + f1(r.worst.v) + "%" : ""));
-    if(r.fail) L.push("자동 인식 실패·일부 점 못 찾음 " + r.fail + "건");
+    // v175 항목별 자동 인식 성공률 — CVA 인식 보정 여부를 숫자로 판단할 수 있게
+    L.push("자동 인식 성공 " + (r.n - r.fail) + "/" + r.n + "건 (" + Math.round((r.n - r.fail) / r.n * 100) + "%)" + (r.fail ? " · 실패·일부 점 못 찾음 " + r.fail + "건" : ""));
     if(d && Math.abs(d.d) >= 0.05) L.push('<span class="bd ' + (d.d < 0 ? "up" : "down") + '">' + esc(prevVer) + " 채점보다 " + f1(Math.abs(d.d)) + d.u + (d.d < 0 ? " 좋아짐 ▲" : " 나빠짐 ▼") + "</span>");
     else if(d) L.push(esc(prevVer) + " 채점과 같음");
     return '<div class="bench-row"><div class="bh"><b>' + esc(r.label) + " · " + r.n + '건</b><span class="bg ' + benchGrade(r) + '">' + main + "</span></div>" + L.join("<br>") + "</div>";
@@ -12070,6 +12075,10 @@
     var st = { sync: "🔄 동기화 중…", ok: "✅ 서버에 저장됨", err: "⚠️ 서버 저장 실패 — 잠시 뒤 자동으로 다시 시도해요", offline: "📴 오프라인 — 연결되면 자동으로 올려요", "": "준비 중" }[ACC.state || ""];
     $("accStat").innerHTML = "<b>" + st + "</b><br>올릴 변경: " + n + "건 · 마지막 동기화: " + fmtAgo(ACC.last) +
       (ACC.state === "err" && ACC.err ? '<br><small style="opacity:.7">' + esc(ACC.err).slice(0, 120) + "</small>" : "");
+    // v175 서버에 못 올라간 기록이 쌓여 있으면(오프라인·오류·비로그인) 시트를 열지 않아도 보이게
+    var risk = n > 0 && ACC.state !== "ok" && ACC.state !== "sync";
+    var pb = $("srvPendB"); if(pb){ pb.hidden = !risk; pb.textContent = "안 올라감 " + n + "건"; }
+    var md = $("moreDot"); if(md) md.hidden = !risk;
   }
   function accAsk(html, yesTxt, fn){
     $("accAskTxt").innerHTML = html; $("btnAccAskYes").textContent = yesTxt; $("accAsk").hidden = false;

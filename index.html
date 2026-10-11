@@ -730,6 +730,9 @@
   .more-list button[hidden]{display:none!important;}
   .more-list svg{flex:0 0 auto; color:var(--ink-soft);}
   .more-list .ml-t{flex:1;}
+  /* v176 회원 촬영·보관 동의 체크 */
+  .mf-consent{display:flex; align-items:center; gap:8px; margin:4px 0 2px; font-size:13px; color:var(--ink); cursor:pointer;}
+  .mf-consent input{width:18px; height:18px; accent-color:var(--blue); flex:none;}
   /* v175 서버에 안 올라간 기록 알림: 더보기 메뉴 뱃지 + 하단 탭 빨간 점 */
   .more-list .ml-b{background:var(--crit); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; margin-right:6px;}
   .nav-item{position:relative;}
@@ -1720,7 +1723,7 @@
     </section>
     <p class="rep-saved" id="repSaved" hidden></p>
     <div class="rep-actions">
-      <button type="button" class="btn primary" id="btnRepSess">측정 저장</button><button type="button" class="btn primary" id="btnSaveReport">리포트 이미지 저장</button>
+      <button type="button" class="btn primary" id="btnRepSess">측정 저장</button><button type="button" class="btn primary" id="btnSaveReport">리포트 이미지 저장</button><button type="button" class="btn line" id="btnShareReport">📤 회원에게 공유</button>
       <button type="button" class="btn line" id="btnNewPatient">새 측정 시작</button>
     </div>
     <details class="info">
@@ -1886,7 +1889,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v175</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v176</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1904,7 +1907,7 @@
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v175</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v176</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1923,7 +1926,7 @@
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v175</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v176</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
@@ -2143,6 +2146,8 @@
       <label>출생연도<input id="mfBirth" type="number" inputmode="numeric" min="1920" max="2025" placeholder="예: 1988 (연령대 통계)"></label>
       <label style="visibility:hidden">.<input tabindex="-1"></label>
     </div>
+    <!-- v176 촬영·보관 동의 기록: 체크한 날짜를 회원 정보에 보관 -->
+    <label class="mf-consent"><input id="mfConsent" type="checkbox"><span id="mfConsentD">신체 사진 촬영·보관에 동의함 (체크한 날짜를 기록)</span></label>
     <label>메모<textarea id="mfMemo" rows="2" placeholder="예: 목·어깨 긴장, 주 2회 수업"></textarea></label>
     <div class="confirm-btns">
       <button type="button" class="no" id="btnMfCancel">취소</button>
@@ -5369,14 +5374,33 @@
     g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandFoot(), W - PAD, H - 32);
     return c;
   }
-  $("btnSaveReport").addEventListener("click", function(){
+  // v176 리포트를 공유 시트(카톡 등)로 바로 보내기 · 공유를 지원하지 않는 기기는 이미지 저장으로
+  function shareCanvas(out, filename, title){
+    out.toBlob(function(blob){
+      if(!blob){ toast("이미지를 만들지 못했어요."); return; }
+      var file = null;
+      try{ file = new File([blob], filename, { type: "image/jpeg" }); }catch(e){}
+      if(file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })){
+        navigator.share({ files: [file], title: title || "아요바디요 리포트" }).catch(function(err){
+          if(err && err.name === "AbortError") return;
+          toast("공유하지 못했어요. [리포트 이미지 저장]으로 저장한 뒤 보내주세요.");
+        });
+      } else {
+        toast("이 기기는 바로 공유를 지원하지 않아 이미지로 저장해요.");
+        deliverCanvas(out, filename);
+      }
+    }, "image/jpeg", 0.92);
+  }
+  function repGoOut(sender){
     var r = computeReport();
     var go = function(){
       if(!r.f && !r.sd && !(typeof romLRRows === "function" && (romLRRows(repRomSrc()).length || scolRows(repRomSrc()).length || repPairOk()))){ toast("정면·측면 또는 ROM 측정을 먼저 마쳐주세요."); return; }
-      deliverCanvas(buildReportCanvas(r), "AYO_report_" + fileTag() + ".jpg");
+      sender(buildReportCanvas(r), "AYO_report_" + fileTag() + ".jpg");
     };
     if(typeof romLoad === "function") romLoad().then(go, go); else go();
-  });
+  }
+  $("btnShareReport").addEventListener("click", function(){ repGoOut(function(c, n){ shareCanvas(c, n, "아요바디요 체형 분석 리포트"); }); });
+  $("btnSaveReport").addEventListener("click", function(){ repGoOut(deliverCanvas); });
 
   /* ---- 화면 전환 (사이드바 / 하단 탭) ---- */
   state.view = "analyze";
@@ -5694,6 +5718,8 @@
     $("mfSex").value = m ? (m.sex || "") : ""; $("mfHeight").value = m && m.height ? m.height : "";
     $("mfPhone").value = m ? (m.phone || "") : ""; $("mfMemo").value = m ? (m.memo || "") : "";
     $("mfBirth").value = m && m.birth ? m.birth : "";
+    $("mfConsent").checked = !!(m && m.consentAt);
+    $("mfConsentD").textContent = m && m.consentAt ? fmtDate(m.consentAt).slice(0, 10) + "에 신체 사진 촬영·보관 동의함" : "신체 사진 촬영·보관에 동의함 (체크한 날짜를 기록)";
     $("mfNoTag").hidden = !!m;
     if(!m) dbAll("members").then(function(L){ if(!formEditing && !$("mfNo").value) $("mfNo").value = nextMemberNo(L); });
     $("mbForm").hidden = false; setTimeout(function(){ $("mfName").focus(); }, 50);
@@ -5708,6 +5734,7 @@
     m.height = (isFinite(h) && h >= 80 && h <= 230) ? Math.round(h * 10) / 10 : null;
     m.phone = $("mfPhone").value.trim(); m.memo = $("mfMemo").value.trim();
     var by = parseInt($("mfBirth").value, 10); m.birth = (by >= 1920 && by <= new Date().getFullYear()) ? by : null;
+    m.consentAt = $("mfConsent").checked ? (m.consentAt || Date.now()) : null;   // v176 처음 체크한 날짜 유지, 해제하면 지움
     dbAll("members").then(function(L){
       if(!m.no && !formEditing) m.no = nextMemberNo(L);
       var dup = m.no && L.find(function(x){ return x.id !== m.id && (x.no || "").toLowerCase() === m.no.toLowerCase(); });
@@ -5772,7 +5799,7 @@
       mbCurrent = m; mbSel = [];
       $("mbListWrap").hidden = true; $("mbDetail").hidden = false; $("mbCompare").hidden = true;
       $("mbDAvatar").textContent = initial(m.name); $("mbDName").textContent = m.name;
-      $("mbDMeta").textContent = memberMeta(m) || "추가 정보 없음"; $("mbDMemo").textContent = m.memo || "";
+      $("mbDMeta").textContent = (memberMeta(m) || "추가 정보 없음") + (m.consentAt ? " · 촬영·보관 동의 " + fmtDate(m.consentAt).slice(0, 10) : ""); $("mbDMemo").textContent = m.memo || "";
       var rs = res[1].filter(function(r){ return r.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
       var box = $("mbRecords");
       dbAll("roms").then(function(RL){

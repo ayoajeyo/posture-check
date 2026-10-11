@@ -1,7 +1,7 @@
 /* AYO체형분석 — 서비스워커
    - 화면(index.html): 네트워크 우선 → GitHub에 올린 최신 버전이 바로 반영되고, 인터넷이 끊기면 저장본으로 열림
    - 인식 모델·라이브러리(MediaPipe)·글꼴: 한 번 받으면 폰에 저장해 두고 재사용 → 두 번째부터 빠르고 오프라인에서도 동작 */
-const VERSION = "pma-v126";
+const VERSION = "pma-v127";
 const SHELL = "pma-shell-" + VERSION;
 const ASSETS = "pma-assets-v1";   // 모델 파일은 버전과 무관하게 유지(약 25MB 재다운로드 방지)
 const SHELL_FILES = ["./", "./index.html", "./manifest.webmanifest",
@@ -10,7 +10,8 @@ const SHELL_FILES = ["./", "./index.html", "./manifest.webmanifest",
   "./guide/body/front_1.jpg", "./guide/body/front_2.jpg", "./guide/body/front_3.jpg", "./guide/body/front_4.jpg",
   "./guide/body/side_1.jpg", "./guide/body/side_2.jpg", "./guide/body/side_3.jpg", "./guide/body/side_4.jpg",
   // v144 고정 기준 실루엣(v145 얼굴 흐림 · v146 몸매 보정)(체형 정면·측면, 목·허리·어깨 ROM)
-  "./guide/sil/body_front_v3.webp", "./guide/sil/body_side_v3.webp", "./guide/sil/neck_C_flex_v3.webp", "./guide/sil/neck_C_ext_v3.webp", "./guide/sil/neck_L_lat_v3.webp", "./guide/sil/neck_R_lat_v3.webp", "./guide/sil/trunk_C_flex_v3.webp", "./guide/sil/trunk_C_ext_v3.webp", "./guide/sil/trunk_L_lat_v3.webp", "./guide/sil/trunk_R_lat_v3.webp", "./guide/sil/shoulder_L_flex_v3.webp", "./guide/sil/shoulder_R_flex_v3.webp", "./guide/sil/shoulder_L_abd_v3.webp", "./guide/sil/shoulder_R_abd_v3.webp", "./guide/sil/shoulder_L_er_v3.webp", "./guide/sil/shoulder_R_er_v3.webp", "./guide/sil/shoulder_L_ir_v3.webp", "./guide/sil/shoulder_R_ir_v3.webp"];
+  "./guide/sil/body_front_v3.webp", "./guide/sil/body_side_v3.webp", "./guide/sil/neck_C_flex_v3.webp", "./guide/sil/neck_C_ext_v3.webp", "./guide/sil/neck_L_lat_v3.webp", "./guide/sil/neck_R_lat_v3.webp", "./guide/sil/trunk_C_flex_v3.webp", "./guide/sil/trunk_C_ext_v3.webp", "./guide/sil/trunk_L_lat_v3.webp", "./guide/sil/trunk_R_lat_v3.webp", "./guide/sil/shoulder_L_flex_v3.webp", "./guide/sil/shoulder_R_flex_v3.webp", "./guide/sil/shoulder_L_abd_v3.webp", "./guide/sil/shoulder_R_abd_v3.webp", "./guide/sil/shoulder_L_er_v3.webp", "./guide/sil/shoulder_R_er_v3.webp", "./guide/sil/shoulder_L_ir_v3.webp", "./guide/sil/shoulder_R_ir_v3.webp",
+  "./guide/sil/elbow_L_flex_v3.webp", "./guide/sil/elbow_R_flex_v3.webp", "./guide/sil/elbow_L_ext_v3.webp", "./guide/sil/elbow_R_ext_v3.webp", "./guide/sil/knee_L_flex_v3.webp", "./guide/sil/knee_R_flex_v3.webp", "./guide/sil/knee_L_ext_v3.webp", "./guide/sil/knee_R_ext_v3.webp", "./guide/sil/hip_L_flex_v3.webp", "./guide/sil/hip_R_flex_v3.webp", "./guide/sil/hip_L_er_v3.webp", "./guide/sil/hip_R_er_v3.webp", "./guide/sil/hip_L_ir_v3.webp", "./guide/sil/hip_R_ir_v3.webp", "./guide/sil/ankle_L_dorsi_v3.webp", "./guide/sil/ankle_R_dorsi_v3.webp", "./guide/sil/ankle_L_plantar_v3.webp", "./guide/sil/ankle_R_plantar_v3.webp"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(SHELL).then((c) => c.addAll(SHELL_FILES)).then(() => self.skipWaiting()));

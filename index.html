@@ -1872,7 +1872,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v159</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v160</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1888,7 +1888,7 @@
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
     <div class="scol-info">
-      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v159</span>
+      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v160</span>
     </div>
   </section>
   <section class="view" id="view-scol" hidden>
@@ -1906,7 +1906,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v159</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v160</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -3142,7 +3142,9 @@
   /* v144 고정 기준 실루엣: 관리자가 정한 기준 사진(사람만 오려냄)을 1차·2차·3차… 모든 촬영에서 그대로 사용 */
   var SIL_TAG = "기준 실루엣 자세·위치에 맞춰 촬영하세요";
   var SIL_ROM = ["neck_C_flex", "neck_C_ext", "neck_L_lat", "neck_R_lat", "trunk_C_flex", "trunk_C_ext", "trunk_L_lat", "trunk_R_lat",
-    "shoulder_L_flex", "shoulder_R_flex", "shoulder_L_abd", "shoulder_R_abd", "shoulder_L_er", "shoulder_R_er", "shoulder_L_ir", "shoulder_R_ir"];
+    "shoulder_L_flex", "shoulder_R_flex", "shoulder_L_abd", "shoulder_R_abd", "shoulder_L_er", "shoulder_R_er", "shoulder_L_ir", "shoulder_R_ir",
+    // v160 팔꿈치·무릎·고관절·발목 18개 항목 추가
+    "elbow_L_flex", "elbow_R_flex", "elbow_L_ext", "elbow_R_ext", "knee_L_flex", "knee_R_flex", "knee_L_ext", "knee_R_ext", "hip_L_flex", "hip_R_flex", "hip_L_er", "hip_R_er", "hip_L_ir", "hip_R_ir", "ankle_L_dorsi", "ankle_R_dorsi", "ankle_L_plantar", "ankle_R_plantar"];
   function bodyGhostPrep(){
     bodyGhostHide(); syncSilhouettes();
     var m = state.mode, key = "fixed|" + m;

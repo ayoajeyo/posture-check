@@ -78,3 +78,19 @@ update storage.buckets
    set file_size_limit = 5242880,
        allowed_mime_types = array['application/json', 'image/webp', 'image/jpeg', 'image/png']
  where id = 'photos';
+
+-- ===== v158 Google Play 월 구독 상태 =====
+-- 서버 함수(play-verify)만 기록하고, 본인은 읽기만 가능
+create table if not exists public.ayo_subs (
+  user_id        uuid primary key references auth.users(id) on delete cascade,
+  product_id     text not null,
+  purchase_token text not null unique,
+  state          text,
+  expires_at     timestamptz,
+  auto_renew     boolean,
+  updated_at     timestamptz not null default now()
+);
+alter table public.ayo_subs enable row level security;
+drop policy if exists "own sub read" on public.ayo_subs;
+create policy "own sub read" on public.ayo_subs for select to authenticated using ((select auth.uid()) = user_id);
+revoke insert, update, delete, truncate on public.ayo_subs from anon, authenticated;

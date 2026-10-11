@@ -1175,6 +1175,17 @@
 
   .pro-jump{display:block; width:100%; margin:6px 0 10px; font-family:inherit; font-size:13px; font-weight:700; color:#fff; background:rgba(47,107,255,.22); border:1px solid rgba(47,107,255,.6); border-radius:10px; padding:9px 10px; cursor:pointer; text-align:center;}
   .pro-code-h{margin:4px 0 0; font-size:15px;}
+  /* v158 Google Play 월 구독 */
+  .pro-sub{border:1px solid rgba(11,122,107,.3); background:var(--accent-soft); border-radius:14px; padding:14px; margin:0 0 14px; text-align:center;}
+  .pro-sub .sub-price{display:flex; align-items:baseline; justify-content:center; gap:6px; margin-bottom:4px;}
+  .pro-sub .sub-price span{font-size:12px; font-weight:700; color:var(--ink-soft);}
+  .pro-sub .sub-price b{font-size:22px; color:var(--ink);}
+  .pro-sub .sub-meta{font-size:12px; color:var(--ink-soft); margin:0 0 10px;}
+  .pro-sub .btn{width:100%;}
+  .pro-sub .sub-links{display:flex; justify-content:center; gap:14px; margin-top:10px; font-size:12.5px;}
+  .pro-sub .sub-links button, .pro-sub .sub-links a{background:none; border:0; padding:0; color:var(--accent); font-weight:700; text-decoration:underline; cursor:pointer; font-size:12.5px;}
+  .pro-sub .sub-on{font-size:13.5px; font-weight:700; color:var(--ink); margin:2px 0 6px;}
+  .pro-sub .sub-note{font-size:11.5px; color:var(--ink-soft); margin:8px 0 0; line-height:1.5;}
   .pro-code{background:var(--surface-2); border:1px solid rgba(122,140,255,.35); border-radius:14px; padding:12px;}
   .pro-code p{margin:0; font-size:12.5px; line-height:1.55; color:var(--ink-soft);}
   @media (max-width:420px){ .pro-box .price-grid{gap:6px;} .pro-box #proList{margin:8px 0; font-size:13px;} .pro-box h3{font-size:18px;} }
@@ -1382,7 +1393,7 @@
   <div class="trial-bar" id="trialBar" hidden role="status">
     <span class="tb-ic" aria-hidden="true">🎁</span>
     <div class="tb-txt"><b id="tbTitle">PRO 무료 체험 중</b><em id="tbSub"></em></div>
-    <button type="button" class="btn primary sm" id="btnTbPay"><span class="play-hide">결제 안내</span><span class="play-only">코드 입력</span></button>
+    <button type="button" class="btn primary sm" id="btnTbPay"><span class="play-hide">결제 안내</span><span class="play-only">구독하기</span></button>
   </div>
   <div class="bk-banner" id="bkBanner" hidden role="status">
     <span class="bk-ic" aria-hidden="true">💾</span>
@@ -1859,7 +1870,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v156</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v158</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1875,7 +1886,7 @@
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
     <div class="scol-info">
-      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v156</span>
+      <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v158</span>
     </div>
   </section>
   <section class="view" id="view-scol" hidden>
@@ -1893,7 +1904,7 @@
     <div class="rom-grid" id="scolGrid"></div>
     <div class="scol-info">
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
-      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v156</span>
+      촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요. <span style="opacity:.6">· 앱 버전 v158</span>
     </div>
   </section>
   <section class="view" id="view-members" hidden>
@@ -2172,7 +2183,7 @@
   <div class="confirm-box pro-box">
     <span class="pro-badge">PRO</span>
     <h3 id="proTitle">유료 플랜에서 이용할 수 있어요</h3>
-    <button type="button" class="pro-jump" id="btnProJump"><span class="play-hide">🔑 이미 결제했어요 · 이용 코드 입력하기 ↓</span><span class="play-only">🔑 이용 코드 입력하기 ↓</span></button>
+    <button type="button" class="pro-jump play-hide" id="btnProJump"><span class="play-hide">🔑 이미 결제했어요 · 이용 코드 입력하기 ↓</span><span class="play-only">🔑 이용 코드 입력하기 ↓</span></button>
     <p id="proDesc">설정 메뉴는 <b>아요바디요 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.</p>
     <ul id="proList">
       <li>센터명·로고를 리포트·운동 카드·비교 이미지에 표시</li>
@@ -2180,6 +2191,14 @@
       <li>앱 상단을 센터 브랜드로 변경</li>
       <li>자주 쓰는 결제 항목·금액 기본값 저장</li>
     </ul>
+    <div class="pro-sub play-only" id="proSub">
+      <div class="sub-price"><span>PRO 월 구독</span><b id="subPrice">월 8,900원</b></div>
+      <p class="sub-meta" id="subMeta">매월 자동 결제 · 언제든 해지 가능</p>
+      <p class="sub-on" id="subOn" hidden></p>
+      <button type="button" class="btn primary" id="btnSubBuy">PRO 구독하기</button>
+      <div class="sub-links"><button type="button" id="btnSubRestore">구독 복원</button><a id="subManage" href="https://play.google.com/store/account/subscriptions?sku=ayo_pro_monthly&amp;package=com.physiomaster.posture" target="_blank" rel="noopener">구독 관리·해지</a></div>
+      <p class="sub-note">Google Play로 결제돼요. 해지해도 이미 결제한 기간이 끝날 때까지 PRO를 쓸 수 있고, 해지는 Play 스토어 → 결제 및 정기 결제 → 정기 결제에서 할 수 있어요.</p>
+    </div>
     <div class="price-grid play-hide" aria-label="PRO 요금">
       <div><span>1개월</span><b>8,900원</b><em>월 8,900원<br><u>기본</u></em></div>
       <div><span>3개월</span><b>23,900원</b><em>월 7,967원<br><u>10% 할인</u></em></div>
@@ -2220,9 +2239,9 @@
   <div class="confirm-box te-box">
     <div class="te-ic" aria-hidden="true">🎁</div>
     <h3 id="teTitle">가입 후 7일 PRO 무료 체험이 끝났어요</h3>
-    <p>지금부터는 <b>무료 버전</b>으로 이용돼요.<br>체험 기간에 저장한 <b>회원·측정 기록은 그대로</b> 남아 있어요.<br><span class="play-hide">PRO를 계속 쓰시려면 결제 안내를 확인해 주세요.</span><span class="play-only">PRO 이용 코드가 있으면 입력해 주세요.</span></p>
+    <p>지금부터는 <b>무료 버전</b>으로 이용돼요.<br>체험 기간에 저장한 <b>회원·측정 기록은 그대로</b> 남아 있어요.<br><span class="play-hide">PRO를 계속 쓰시려면 결제 안내를 확인해 주세요.</span><span class="play-only">PRO를 계속 쓰시려면 <b>월 구독</b>을 시작해 주세요.</span></p>
     <div class="te-acts">
-      <button type="button" class="btn primary" id="btnTePay"><span class="play-hide">💳 유료 결제 안내 보기</span><span class="play-only">🔑 이용 코드 입력</span></button>
+      <button type="button" class="btn primary" id="btnTePay"><span class="play-hide">💳 유료 결제 안내 보기</span><span class="play-only">⭐ PRO 구독 보기</span></button>
       <button type="button" class="btn line" id="btnTeBackup" hidden>💾 기록 백업하기</button>
       <button type="button" class="btn line" id="btnTeClose">무료로 계속 쓰기</button>
     </div>
@@ -9548,7 +9567,111 @@
     if(now > seen) lsSet("ayo_trial_seen", String(now));
     return Math.max(0, trialEndAt() - now);
   }
-  function trialActive(){ return !licValid() && !admPro() && trialLeftMs() > 0; }
+  function trialActive(){ return !subActive() && !licValid() && !admPro() && trialLeftMs() > 0; }
+  /* ===================== v158 Google Play 월 구독 =====================
+     Play 앱(TWA)에서 Digital Goods API + Payment Request로 결제 → 서버(play-verify)가 Google에 직접 확인·확정 → ayo_subs에 기록
+     구독 상태는 계정 기준(웹에서 로그인해도 PRO). 기기에는 마지막 확인 결과만 저장. */
+  var SUB_ID = "ayo_pro_monthly";
+  var SUB_OK_STATES = ["SUBSCRIPTION_STATE_ACTIVE", "SUBSCRIPTION_STATE_IN_GRACE_PERIOD", "SUBSCRIPTION_STATE_CANCELED"];
+  var SUB = { svc: null, busy: false };
+  function subKey(){ return "ayo_sub_" + (acctUid() || "x"); }
+  function subGet(){ try{ return JSON.parse(lsGet(subKey()) || "null"); }catch(e){ return null; } }
+  function subSet(o){ try{ if(o) lsSet(subKey(), JSON.stringify(o)); else localStorage.removeItem(subKey()); }catch(e){} }
+  function subActive(){ var s = subGet(); return !!(s && s.pro && s.exp && Date.now() < s.exp + 6 * 36e5); }   // 갱신 확인 전 6시간 여유
+  function subSvc(){
+    if(SUB.svc) return Promise.resolve(SUB.svc);
+    if(!IS_PLAY || !("getDigitalGoodsService" in window)) return Promise.resolve(null);
+    return window.getDigitalGoodsService("https://play.google.com/billing").then(function(s){ SUB.svc = s || null; return SUB.svc; }, function(){ return null; });
+  }
+  function subVerify(token){
+    var c = sbClient(); if(!c || !acctUid()) return Promise.resolve({ error: "로그인 후 다시 시도해 주세요." });
+    return c.functions.invoke("play-verify", { body: token ? { purchaseToken: token, productId: SUB_ID } : {} }).then(function(r){
+      if(r.error){
+        var ctx = r.error.context;
+        if(ctx && typeof ctx.json === "function") return ctx.json().then(function(j){ return { error: (j && j.error) || "결제를 확인하지 못했어요.", code: j && j.code }; }, function(){ return { error: "결제를 확인하지 못했어요." }; });
+        return { error: "결제를 확인하지 못했어요." };
+      }
+      var d = r.data || {};
+      if(d.none) subSet(null);
+      else subSet({ pro: !!d.pro, exp: Date.parse(d.expires_at || "") || 0, ar: !!d.auto_renew, st: d.state || "", at: Date.now() });
+      lsSet("ayo_sub_chk_" + acctUid(), String(Date.now()));
+      return d;
+    }, function(){ return { error: "인터넷 연결을 확인해 주세요." }; });
+  }
+  function subRestore(silent){
+    return subSvc().then(function(svc){
+      if(!svc){ if(!silent) toast(IS_PLAY ? "Play 스토어에서 앱을 최신 버전으로 업데이트한 뒤 다시 시도해 주세요." : "구독 복원은 Play 스토어 앱에서 할 수 있어요."); return null; }
+      return svc.listPurchases().then(function(list){
+        var p = (list || []).filter(function(x){ return x.itemId === SUB_ID; })[0];
+        if(!p){ if(!silent) toast("이 Google 계정에서 구독 내역을 찾지 못했어요."); return null; }
+        return subVerify(p.purchaseToken).then(function(d){
+          if(!silent) toast(d && d.pro ? "구독을 복원했어요. PRO를 이용할 수 있어요." : (d && d.error) || "구독 기간이 끝났어요.");
+          return d;
+        });
+      });
+    }).then(function(d){ proChanged(); return d; }, function(){ if(!silent) toast("구독 내역을 불러오지 못했어요."); });
+  }
+  function subRefresh(){
+    var c = sbClient(); if(!c || !acctUid() || !navigator.onLine) return Promise.resolve();
+    return c.from("ayo_subs").select("expires_at,state,auto_renew").maybeSingle().then(function(r){
+      if(!r || r.error) return;
+      var d = r.data;
+      if(!d){ subSet(null); return IS_PLAY ? subRestore(true) : null; }
+      var exp = Date.parse(d.expires_at || "") || 0;
+      subSet({ pro: SUB_OK_STATES.indexOf(d.state) >= 0 && exp > Date.now(), exp: exp, ar: !!d.auto_renew, st: d.state, at: Date.now() });
+      // 결제일이 하루 안으로 다가왔거나 지났으면 Google에 다시 확인(자동 갱신 반영) · 6시간에 한 번만
+      var last = +(lsGet("ayo_sub_chk_" + acctUid()) || 0);
+      if(d.state !== "SUBSCRIPTION_STATE_EXPIRED" && exp - Date.now() < 864e5 && Date.now() - last > 6 * 36e5) return subVerify(null);
+    }).then(function(){ proChanged(); }, function(){});
+  }
+  function proChanged(){
+    try{ updateLicUI(); applyBrand(); syncRepLock(); syncMbLock(); subUI(); }catch(e){}
+    try{ if(state.view === "scol") renderScol(); else if(state.view === "fhp") renderFhp(); else if(state.view === "rom") renderRom(); }catch(e){}
+  }
+  function subUI(){
+    var s = subGet(), on = subActive(), b = $("btnSubBuy"); if(!b) return;
+    $("subOn").hidden = !on; $("subMeta").hidden = on; b.hidden = on;
+    if(on) $("subOn").textContent = s.ar ? "✅ PRO 구독 중 · 다음 결제일 " + fmtDate(s.exp).slice(0, 10) : "✅ PRO 이용 중 · " + fmtDate(s.exp).slice(0, 10) + "까지 (자동 결제 해지됨)";
+    b.disabled = SUB.busy;
+    b.textContent = SUB.busy ? (SUB.busyTxt || "처리 중…") : "PRO 구독하기";
+  }
+  function subPrice(){
+    subSvc().then(function(svc){
+      if(!svc) return;
+      return svc.getDetails([SUB_ID]).then(function(list){
+        var d = list && list[0]; if(!d || !d.price) return;
+        var t = new Intl.NumberFormat("ko-KR", { style: "currency", currency: d.price.currency }).format(+d.price.value);
+        $("subPrice").textContent = "월 " + t;
+      });
+    }).catch(function(){});
+  }
+  function subBuy(){
+    if(SUB.busy) return;
+    if(!acctUid()){ toast("구독하려면 먼저 로그인해 주세요."); return; }
+    var busy = function(t){ SUB.busy = !!t; SUB.busyTxt = t || ""; subUI(); };
+    busy("결제 창 여는 중…");
+    subSvc().then(function(svc){
+      if(!svc || !window.PaymentRequest) throw { msg: "이 앱 버전에서는 구독 결제를 쓸 수 없어요. Play 스토어에서 앱을 최신 버전으로 업데이트해 주세요." };
+      var pr = new PaymentRequest([{ supportedMethods: "https://play.google.com/billing", data: { sku: SUB_ID } }], { total: { label: "Total", amount: { currency: "KRW", value: "0" } } });
+      return pr.show();
+    }).then(function(resp){
+      busy("결제 확인 중…");
+      var tok = resp && resp.details && resp.details.purchaseToken;
+      if(!tok){ try{ resp.complete("fail"); }catch(e){} throw { msg: "결제 정보를 받지 못했어요. '구독 복원'을 눌러 주세요." }; }
+      return subVerify(tok).then(function(d){
+        try{ resp.complete(d && d.pro ? "success" : "fail").catch(function(){}); }catch(e){}
+        if(!(d && d.pro)) throw { msg: (d && d.error) || "결제를 확인하지 못했어요. 잠시 뒤 '구독 복원'을 눌러 주세요." };
+        $("proGate").hidden = true; proChanged();
+        if(proKind === "report") showView("report");
+        if(proKind === "members") showView("members");
+        toast("PRO 구독이 시작됐어요. 고마워요!");
+      });
+    }).catch(function(e){
+      if(e && e.name === "AbortError") return;   // 결제 창을 닫음
+      toast((e && e.msg) || "결제를 진행하지 못했어요. 잠시 뒤 다시 시도해 주세요.");
+      console.warn("[AYO] sub", e);
+    }).then(function(){ busy(""); });
+  }
   function trialLeftTxt(){
     var ms = trialLeftMs(), d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.max(1, Math.ceil(ms % 36e5 / 6e4));
     return d >= 1 ? Math.ceil(ms / 864e5) + "일" : h >= 1 ? h + "시간" : m + "분";
@@ -9654,8 +9777,8 @@
   setTimeout(function(){
     trialTick();
   }, 600);
-  $("btnTbPay").addEventListener("click", function(){ openProGate("trial", IS_PLAY ? { code: true } : null); });
-  $("btnTePay").addEventListener("click", function(){ $("trialEnd").hidden = true; openProGate("trial", IS_PLAY ? { code: true } : null); });
+  $("btnTbPay").addEventListener("click", function(){ openProGate("trial"); });
+  $("btnTePay").addEventListener("click", function(){ $("trialEnd").hidden = true; openProGate("trial"); });
   $("btnTeClose").addEventListener("click", function(){ $("trialEnd").hidden = true; toast("무료 버전으로 계속 이용해요. PRO는 더보기 → 설정에서 언제든 켤 수 있어요."); });
   $("btnTeBackup").addEventListener("click", function(){ $("trialEnd").hidden = true; openBkSheet(); });
   /* v93 백업 시트 (무료 버전에서도 백업·복원 가능) */
@@ -9679,7 +9802,12 @@
     document.querySelectorAll(".dev-id").forEach(function(el){ el.textContent = deviceCode(); });
     var st = $("licState"), ex = $("licExp"); if(!st) return;
     st.className = ""; ex.className = "";
-    if(admPro() && !licValid()){
+    if(subActive()){
+      var sb = subGet();
+      st.textContent = "PRO 구독 중";
+      ex.textContent = sb.ar ? "다음 결제일 " + fmtDate(sb.exp).slice(0, 10) + " (매월 자동 결제)" : fmtDate(sb.exp).slice(0, 10) + "까지 (자동 결제 해지됨)";
+      if(!sb.ar && sb.exp - Date.now() < 7 * 864e5) ex.className = "lic-warn";
+    } else if(admPro() && !licValid()){
       st.textContent = "PRO (관리자 모드)"; ex.textContent = "관리자 모드를 켜 둔 동안";
     } else if(licValid()){
       var dl = daysLeft(LIC.exp);
@@ -9723,7 +9851,7 @@
   /* ===================== v47 설정 · PRO 플랜 ===================== */
   var SET_KEY = "ayo_settings", PRO_KEY = "ayo_pro";
   var DEFAULT_ITEMS = [ { n:"체형분석", a:30000 }, { n:"필라테스 10회권", a:0 }, { n:"PT 10회권", a:0 }, { n:"1개월 회원권", a:0 } ];
-  function isPro(){ return licValid() || admPro() || trialActive(); }
+  function isPro(){ return subActive() || licValid() || admPro() || trialActive(); }
   function getSettings(){
     var o = null; try{ o = JSON.parse(lsGet(SET_KEY) || "null"); }catch(e){}
     o = o || {};
@@ -9870,11 +9998,14 @@
     if(IS_PLAY){ $("proDesc").innerHTML = $("proDesc").innerHTML.replace(/ 플랜 전용 기능/g, " 기능"); }
     $("btnProPreview").hidden = ["settings", "report", "members"].indexOf(proKind) < 0 || trialActive();
     $("proCodeRow").classList.add("on"); $("proCode").value = ""; $("proCodeMsg").hidden = true;
+    if(IS_PLAY){ subUI(); subPrice(); }
     var ov = $("proGate"); setTimeout(function(){ ov.scrollTop = 0; }, 0);
     $("proGate").hidden = false;
     if(opts && opts.code){ $("proCodeRow").classList.add("on"); setTimeout(function(){ $("proCode").focus(); }, 60); }
   }
   $("btnSetPro").addEventListener("click", function(){ openProGate("settings"); });
+  $("btnSubBuy").addEventListener("click", subBuy);
+  $("btnSubRestore").addEventListener("click", function(){ if(!acctUid()){ toast("먼저 로그인해 주세요."); return; } subRestore(false); });
   $("btnProPreview").addEventListener("click", function(){
     $("proGate").hidden = true;
     if(proKind === "report" || proKind === "members"){ state.preview = proKind; showView(proKind); toast("미리 보기 중 · 어떤 기능이 있는지 둘러보세요 (저장·수정은 PRO)"); }
@@ -11815,6 +11946,7 @@
     try{ licInit(); trialTick(); updateLicUI(); }catch(e){}
     setTimeout(function(){ try{ if(!isPro() && !lsGet(trialKey())) onTrialEnd(false); }catch(e){} }, 2500);   // 체험이 이미 끝난 계정: 한 번 안내
     var c = sbClient(); if(!c || !ACC.uid || !navigator.onLine) return;
+    subRefresh();   // v158 Google Play 구독 상태
     c.from("ayo_profiles").select("settings").eq("user_id", ACC.uid).maybeSingle().then(function(r){
       // v124 센터 설정(센터명·연락처·로고·결제 항목): 계정에 저장된 값을 이 기기에 → 없으면 이 기기 값을 계정에
       var ctr = r && !r.error && r.data && r.data.settings && r.data.settings.center;
@@ -11957,7 +12089,8 @@
     });
   });
   $("btnAccDel").addEventListener("click", function(){
-    accAsk("계정과 서버에 저장된 <b>모든 회원·측정 기록·사진</b>이 영구 삭제되고 되돌릴 수 없어요. 필요하면 먼저 <b>백업</b>을 받아 두세요.", "계정 영구 삭제", function(){
+    var sbw = subGet(), subWarn = sbw && sbw.pro && sbw.ar ? "<br><br>⚠️ <b>Google Play 구독은 계정을 지워도 자동으로 해지되지 않아요.</b> 먼저 Play 스토어 → 결제 및 정기 결제 → 정기 결제에서 해지해 주세요." : "";
+    accAsk("계정과 서버에 저장된 <b>모든 회원·측정 기록·사진</b>이 영구 삭제되고 되돌릴 수 없어요. 필요하면 먼저 <b>백업</b>을 받아 두세요." + subWarn, "계정 영구 삭제", function(){
       var c = sbClient(); if(!c || !navigator.onLine){ toast("인터넷 연결 후 다시 시도해 주세요."); return; }
       busyBtn("btnAccDel", true, "삭제 중…");
       c.functions.invoke("delete-account", { body: {} }).then(function(r){

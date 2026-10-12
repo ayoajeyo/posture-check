@@ -10258,7 +10258,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v196";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v197";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -11030,27 +11030,47 @@
           liveL: romS.liveL ? romS.liveL.map(function(p){ return { x: Math.round(p.x * 10) / 10, y: Math.round(p.y * 10) / 10, v: Math.round(p.v * 1000) / 1000 }; }) : null }; }));
     }catch(e){ console.warn("[admx rom]", e); }
   }
+  // v197 사람 오려내기(격자 배경)가 아직 없으면 만들어 둠 — 보는 화면이 '측정'·'원본'이거나 분리가 덜 끝난 채 저장해도 엑셀 사진은 격자
+  function admxCutReady(m){
+    var s = state.byMode[m], img = s.img;
+    if(!img || s.cutout || !window.__segmentPerson) return Promise.resolve();
+    var job = (s.segMask ? Promise.resolve(s.segMask) : window.__segmentPerson(img)).then(function(mask){
+      if(!mask || s.img !== img || s.cutout) return;
+      s.segMask = mask;
+      try{ withMode(m, function(){ buildCutout(s, img, mask); }); }catch(e){ console.warn("[admx cut]", e); }
+    }).catch(function(){});
+    return Promise.race([job, new Promise(function(r){ setTimeout(r, 20000); })]);
+  }
   function admxSaveBody(rec){
-    ["front", "side"].forEach(function(m){
-      var s = state.byMode[m]; if(!s.img) return;
-      try{
+    var jobs = ["front", "side"].map(function(m){
+      var s = state.byMode[m]; if(!s.img) return null;
+      var img = s.img, snap = {}, A = JSON.parse(JSON.stringify(s.autoPos || {})), editOld = state.editingOld, mName = state.member ? state.member.name : "";
+      Object.keys(s.points).forEach(function(k){ snap[k] = { x: s.points[k].x, y: s.points[k].y }; });   // 저장 순간의 점 (분리를 기다리는 동안 점을 옮겨도 그대로)
+      if(!s.grid) s.grid = gridFromPose(s, null);
+      return admxCutReady(m).then(function(){
+        if(s.img !== img) return;
+        var sv = { g: state.gridBg, v: state.bgView }, bak = {};
+        Object.keys(s.points).forEach(function(k){ bak[k] = { x: s.points[k].x, y: s.points[k].y }; });
+        var setPts = function(P){ Object.keys(s.points).forEach(function(k){ if(P[k]){ s.points[k].x = P[k].x; s.points[k].y = P[k].y; } }); };
         var shot = function(){ var c = withMode(m, function(){ return buildAnnotated({ footer: false }); }), k = Math.min(1, 640 / c.width), o = document.createElement("canvas");
           o.width = Math.round(c.width * k); o.height = Math.round(c.height * k); o.getContext("2d").drawImage(c, 0, 0, o.width, o.height); return o.toDataURL("image/jpeg", 0.82); };
         var pts = function(){ var o = {}; Object.keys(s.points).forEach(function(k){ var p = s.points[k]; o[k] = { label: p.label || k, x: Math.round(p.x), y: Math.round(p.y) }; }); return o; };
-        var after = { img: shot(), pts: pts() }, before = null, A = s.autoPos || {};
-        if(Object.keys(A).length){
-          var bak = {};
-          Object.keys(s.points).forEach(function(k){ bak[k] = { x: s.points[k].x, y: s.points[k].y }; if(A[k]){ s.points[k].x = A[k].x; s.points[k].y = A[k].y; } });
-          try{ before = { img: shot(), pts: pts() }; } finally { Object.keys(bak).forEach(function(k){ s.points[k].x = bak[k].x; s.points[k].y = bak[k].y; }); }
-        }
-        if(!before && !state.editingOld) before = { fail: true };   // v123 자동 인식 실패 → 손으로 찍은 기록
-        admxStore(ADMX + "records:" + rec.id + ":" + m, { kind: "body", mode: m, at: rec.at, member: state.member ? state.member.name : "",
-          w: Math.round(s.w), h: Math.round(s.h), before: before, after: after, savedAt: Date.now() }, !!before && !state.editingOld,
-          state.editingOld ? null : admxSrc(s.imgUrl).then(function(src){ return { src: src, rot: s.rot || 0, rotPivot: s.rotPivot ? { x: s.rotPivot.x, y: s.rotPivot.y } : null,
+        var after, before = null;
+        state.gridBg = true; state.bgView = "grid";   // 수정 전·후 모두 흰 격자 배경으로
+        try{
+          setPts(snap); after = { img: shot(), pts: pts() };
+          if(Object.keys(A).length){ setPts(A); before = { img: shot(), pts: pts() }; }
+        } finally { setPts(bak); state.gridBg = sv.g; state.bgView = sv.v; }
+        if(!before && !editOld) before = { fail: true };   // v123 자동 인식 실패 → 손으로 찍은 기록
+        return admxStore(ADMX + "records:" + rec.id + ":" + m, { kind: "body", mode: m, at: rec.at, member: mName,
+          w: Math.round(s.w), h: Math.round(s.h), before: before, after: after, grid: !!s.cutout, savedAt: Date.now() }, !!before && !editOld,
+          editOld ? null : admxSrc(s.imgUrl).then(function(src){ return { src: src, rot: s.rot || 0, rotPivot: s.rotPivot ? { x: s.rotPivot.x, y: s.rotPivot.y } : null,
             captureRoll: s.captureRoll == null ? null : s.captureRoll }; }));
-      }catch(e){ console.warn("[admx body]", e); }
+      }).catch(function(e){ console.warn("[admx body]", e); });
     });
+    return Promise.all(jobs);
   }
+  window.__admxBody = function(rec){ return admxSaveBody(rec); };   // 점검용
   function admxAll(){
     return idbKeys("blobs").then(function(keys){
       return Promise.all(keys.filter(function(k){ return String(k).indexOf(ADMX) === 0; }).map(function(k){ return rawGet("blobs", k); }));
@@ -11078,6 +11098,34 @@
       return L2;
     });
   }
+  // v197 관리자 보관 자료가 없는 척추 균형·거북목 기록(보관 기능 이전 측정 등)도 엑셀에 — 저장된 최종 결과 사진·점으로 한 줄
+  function admxAddLegacy(L){
+    var have = {}, names = {};
+    L.forEach(function(x){ have[x.id] = 1; if(x.mid) names[x.mid] = names[x.mid] || x.member; });
+    return dbAll("roms").then(function(all){
+      var add = (all || []).filter(function(r){ return (r.joint === "scol" || r.joint === "fhp") && r.memberId && names[r.memberId] && !have[ADMX + "roms:" + r.id] && (r.thumb || r.img || r.blob); });
+      return Promise.all(add.map(function(r){
+        return dbFull("roms", r).catch(function(){ return r; }).then(function(f){
+          f = f || r;
+          return (f.img ? admxImgSize(f.img) : Promise.resolve(null)).then(function(sz){
+            var k = f.imgK || 1, J = r.joint === "scol" ? SCOL_JOINT : FHP_JOINT;
+            var pts = (r.pts || []).map(function(q){ return { x: Math.round(q.x), y: Math.round(q.y) }; });
+            var after = { img: r.thumb || null, pts: pts, val: r.value };
+            return { id: ADMX + "roms:" + r.id, kind: "rom", joint: r.joint, side: r.side || "C", move: r.move, at: r.at, member: names[r.memberId], mid: r.memberId, rec0: r,
+              round: r.round || null, legacy: true, w: sz ? Math.round(sz.w / k) : 0, h: sz ? Math.round(sz.h / k) : 0,
+              names: (J.pts || []).map(function(n){ return ROM_PTNAME[n] || n; }), before: { pts: pts, none: true }, after: after };
+          });
+        });
+      })).then(function(X){
+        X.forEach(function(x){   // 회차 번호가 없는 예전 기록: 같은 회원 ROM 기록의 같은 날 회차를 따름
+          if(x.round) return;
+          var d = fmtDate(x.at).slice(0, 10), m = L.find(function(y){ return y.mid === x.mid && y.kind === "rom" && y.joint !== "fhp" && fmtDate(y.at).slice(0, 10) === d; });
+          x.round = m ? m.round : 1;
+        });
+        return L.concat(X);
+      });
+    }).catch(function(e){ console.warn("[admx legacy]", e); return L; });
+  }
   function admxMKey(x){ return x.mid ? "id:" + x.mid : "nm:" + (x.member || ""); }
   function admxFillRounds(){
     var mk = $("admXlsMember").value, rs = {};
@@ -11089,7 +11137,7 @@
   }
   $("admXlsMember").addEventListener("change", admxFillRounds);
   function admxInfo(){
-    admxAll().then(admxResolve).then(function(L){
+    admxAll().then(admxResolve).then(admxAddLegacy).then(function(L){
       admxCache = L;
       var ms = {}; L.forEach(function(x){ var k = admxMKey(x); if(!ms[k]) ms[k] = { name: x.member || "회원 미지정", last: 0 }; ms[k].last = Math.max(ms[k].last, x.at || 0); });
       var mk = Object.keys(ms).sort(function(a, b){ return ms[b].last - ms[a].last; }), prev = $("admXlsMember").value;
@@ -11166,7 +11214,7 @@
     }).catch(function(){ return null; });
   }
   function admxImgSize(url){ return new Promise(function(res){ var im = new Image(); im.onload = function(){ res({ w: im.naturalWidth, h: im.naturalHeight }); }; im.onerror = function(){ res(null); }; im.src = url; }); }
-  var ADMX_ORDER = ["neck", "trunk", "shoulder", "knee", "hip", "ankle", "elbow"];
+  var ADMX_ORDER = ["neck", "trunk", "shoulder", "knee", "hip", "ankle", "elbow", "scol", "fhp"];
   function admxRow(x){
     var dirTxt = function(a, b, H){
       var dx = b.x - a.x, dy = b.y - a.y, t = [];
@@ -11186,7 +11234,8 @@
     }
     var J = ROM_ALL.find(function(j){ return j.k === x.joint; }), mv = J ? J.moves.find(function(m){ return m.k === x.move; }) : null;
     var GD = ROM_GD[x.joint + "|" + x.move], sp = function(t){ var i = (t || "").indexOf(" · "); return i < 0 ? [t || "", ""] : [t.slice(0, i), t.slice(i + 3)]; };
-    var role = ["각도축", "2선 끝점", "1선 끝점"], nm = x.names || [];
+    var SC = x.joint === "scol";   // v197 척추 균형: 두 점 선 ↔ 바닥 수평선
+    var role = SC ? ["시작점", "끝점"] : ["각도축", "2선 끝점", "1선 끝점"], nm = x.names || [];
     (A.pts || []).forEach(function(a, i){
       var b = (B.pts || [])[i] || a, r = (role[i] || "점" + (i + 1)) + "(" + (nm[i] || "") + ")", m2 = dirTxt(b, a, x.h);
       cb.push(r + ": (" + b.x + ", " + b.y + ")"); ca.push(r + ": (" + a.x + ", " + a.y + ")");
@@ -11196,16 +11245,16 @@
     if(vb != null && va != null && vb !== va) lines.push("- 각도 : " + vb + "° → " + va + "° (" + (va > vb ? "+" : "") + (va - vb) + "°)");
     var V = sp(GD && GD.V), D = sp(GD && GD.D), Ar = sp(GD && GD.A);
     return { a: J ? J.n : x.joint, b: (mv ? mv.n : x.move) + (x.side === "L" ? "(좌측)" : x.side === "R" ? "(우측)" : ""),
-      e: GD ? "- 시작점(" + V[0] + ") : " + V[1] + "\n\n- 끝점(" + Ar[0] + ") : " + Ar[1] : "",
-      f: GD ? "- 시작점(" + V[0] + ") : 1선 시작점\n\n- 끝점(" + D[0] + ") : " + D[1] : "",
-      g: GD ? V[0] + "(1선과 2선이 만나는 지점)" : "",
-      h: lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)", ib: cb.join("\n"), ia: ca.join("\n"),
+      e: SC ? "- 시작점(좌측 높은 점) : 좌측 허리(등)의 가장 높은 곳\n\n- 끝점(우측 높은 점) : 우측 허리(등)의 가장 높은 곳" : GD ? "- 시작점(" + V[0] + ") : " + V[1] + "\n\n- 끝점(" + Ar[0] + ") : " + Ar[1] : "",
+      f: SC ? "바닥 수평선 (좌측 높은 점을 지나는 가로선)" : GD ? "- 시작점(" + V[0] + ") : 1선 시작점\n\n- 끝점(" + D[0] + ") : " + D[1] : "",
+      g: SC ? "좌측 높은 점 (두 점을 이은 선과 바닥 수평선이 만나는 지점)" : GD ? V[0] + "(1선과 2선이 만나는 지점)" : "",
+      h: x.legacy ? "수정 전 자료 없음 (관리자 보관 자료가 없는 기록 · 저장된 최종 결과만 표시)" : lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)", ib: x.legacy ? "–" : cb.join("\n"), ia: ca.join("\n"),
       k: (vb == null ? "–" : vb + "°") + " → " + (va == null ? "–" : va + "°") };
   }
   function admxExport(){
     var btn = $("btnAdmXls"); busyBtn("btnAdmXls", true, "엑셀 만드는 중…");
     var selM = $("admXlsMember").value, selR = $("admXlsRound").value, fname = null;
-    Promise.all([admxAll().then(admxResolve), loadExcel()]).then(function(res){
+    Promise.all([admxAll().then(admxResolve).then(admxAddLegacy), loadExcel()]).then(function(res){
       var L = res[0], X = res[1];
       L = L.filter(function(x){ return admxMKey(x) === selM; });
       if(selR !== "all"){
@@ -11301,7 +11350,7 @@
     return c;
   }
   function benchSavedCases(L){
-    return L.filter(function(x){ return x.after && x.after.pts; }).map(function(x){ var B = x.before || x.after; return (B.fail || B.weak) ? benchCase(x, null) : benchCase(x, { pts: B.pts, val: B.val }); });   // v163 weak(자동 인식 실패)도 오차 집계에서 제외
+    return L.filter(function(x){ return x.after && x.after.pts && !x.legacy; }).map(function(x){ var B = x.before || x.after; return (B.fail || B.weak) ? benchCase(x, null) : benchCase(x, { pts: B.pts, val: B.val }); });   // v163 weak(자동 인식 실패)도 오차 집계에서 제외
   }
   function benchAgg(C){
     var G = {};

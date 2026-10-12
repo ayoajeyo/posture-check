@@ -977,6 +977,7 @@
   .rom-overlay{align-items:flex-start; overflow-y:auto; padding:12px;}
   .rom-box{max-width:720px; text-align:left; padding:16px; margin:auto;}
   .cap-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;} .cap-head h2{margin:0;}
+  .app-ver{text-align:center; font-size:11px; color:var(--ink-soft); opacity:.6; margin:14px 0 4px; letter-spacing:.02em;}   /* v194 홈 버전 표시 */
   /* v192 측면 촬영 방향(좌측/우측) 선택 — 측정가이드 버튼 왼쪽 */
   .side-dir{margin-left:auto; display:inline-flex; gap:2px; padding:3px; border-radius:100px; background:var(--surface-2); border:1px solid var(--line);}
   .side-dir + .pt-guide-btn{margin-left:0;}
@@ -1892,6 +1893,7 @@
       <section class="card ds-card"><h2>주요 프로그램 TOP 5</h2><p class="sub">진행 중인 회원 수 기준이에요.</p><div id="dsProg"></div></section>
       <section class="card ds-card"><h2>매출 현황</h2><p class="sub" id="dsSalesSub">매출관리의 결제 기록 기준이에요.</p><div id="dsSales"></div></section>
     </div>
+    <p class="app-ver" id="appVer" aria-label="앱 버전"></p>
   </section>
 
   <section class="view" id="view-exercise" hidden>
@@ -2029,7 +2031,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v193</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. · <span style="opacity:.6" class="app-ver-note">앱 버전 v193</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -2047,7 +2049,7 @@
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목젖 아랫부분 높이에서 가로선을 그었을 때 목 뒤 끝)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v193</span></p>
+    <p class="rom-note"><span style="opacity:.6" class="app-ver-note">앱 버전 v193</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -2066,7 +2068,7 @@
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v193</span></p>
+    <p class="rom-note"><span style="opacity:.6" class="app-ver-note">앱 버전 v193</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
@@ -10146,7 +10148,9 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
+  var APP_VER = "v194";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
+  (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
     try{
       var q = new URLSearchParams(location.search);

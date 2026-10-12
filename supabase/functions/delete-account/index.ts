@@ -36,6 +36,14 @@ Deno.serve(async (req) => {
       const { error: re } = await admin.storage.from("photos").remove(files.slice(i, i + 1000));
       if (re) return json(req, { error: "사진을 삭제하지 못했어요. 잠시 뒤 다시 시도해 주세요." }, 500);
     }
+    // v185 리포트 공유 이미지(shares/{uid}/*.jpg)도 함께 삭제 — 버킷이 아직 없으면 건너뜀
+    for (;;) {
+      const { data: sh, error: she } = await admin.storage.from("shares").list(uid, { limit: 1000 });
+      if (she || !sh || !sh.length) break;
+      const { error: shr } = await admin.storage.from("shares").remove(sh.map((it) => uid + "/" + it.name));
+      if (shr) return json(req, { error: "공유 이미지를 삭제하지 못했어요. 잠시 뒤 다시 시도해 주세요." }, 500);
+      if (sh.length < 1000) break;
+    }
     const del = await admin.auth.admin.deleteUser(uid);
     if (del.error){ console.error("[delete-account]", del.error); return json(req, { error: "계정 삭제 실패" }, 500); }
     return json(req, { ok: true });

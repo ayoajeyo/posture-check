@@ -94,3 +94,6 @@ alter table public.ayo_subs enable row level security;
 drop policy if exists "own sub read" on public.ayo_subs;
 create policy "own sub read" on public.ayo_subs for select to authenticated using ((select auth.uid()) = user_id);
 revoke insert, update, delete, truncate on public.ayo_subs from anon, authenticated;
+
+-- ===== v185 리포트 공유 링크 =====
+-- 내용은 supabase/v185_share.sql 참고 (ayo_shares 표 + shares 비공개 버킷 + 서버 함수 share-view)

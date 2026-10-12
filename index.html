@@ -8312,7 +8312,7 @@
     var editing = !!romS.editId;
     if(editing){ rec.id = romS.editId; rec.at = romS.editAt; rec.memberId = romS.editMember || null; if(romS.editRec && romS.editRec.round) rec.round = romS.editRec.round; }
     else if(rec.memberId){ var cn = romCurRound(romGrpOf(rec.joint)); if(cn){ rec.round = cn; var old = romCurRec(rec.joint, rec.side, rec.move); if(old){ rec.id = old.id; rec.at = old.at; } } }   // 같은 회차 재측정 = 덮어쓰기
-    if(ADM.on && rec.joint !== "scol") admxSaveRom(rec, val);   // v118 관리자 모드: 수정 전·후 자료 보관
+    if(ADM.on) admxSaveRom(rec, val);   // v185 척추 균형도 보관 (v118에서 빠져 있어 엑셀에 안 나왔음)
     var shotCv = romResultCanvas(1200), shotName = "AYO_ROM_" + rom.joint + "_" + mv.k + "_" + (state.member ? state.member.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" : "") + toDateInput(Date.now()).replace(/-/g, "") + ".jpg";
     var done = function(){ $("romSheet").hidden = true; if(state.view === "scol" || state.view === "fhp"){ scolRestore(); if(state.view === "fhp") renderFhp(); else renderScol(); } else renderRom(); setTimeout(function(){ deliverCanvas(shotCv, shotName); }, 250); };
     if(editing && !rec.memberId){
@@ -10972,7 +10972,13 @@
     var selM = $("admXlsMember").value, selR = $("admXlsRound").value, fname = null;
     Promise.all([admxAll().then(admxResolve), loadExcel()]).then(function(res){
       var L = res[0], X = res[1];
-      L = L.filter(function(x){ return admxMKey(x) === selM && (selR === "all" || String(x.round) === selR); });
+      L = L.filter(function(x){ return admxMKey(x) === selM; });
+      if(selR !== "all"){
+        // v185 거북목만 회차를 따로 셈(ROM 3차 방문에 거북목은 1차일 수 있음) → 거북목은 선택한 회차에 측정한 '날짜'로도 찾음
+        var day = function(x){ return fmtDate(x.at).slice(0, 10); }, days = {};
+        L.forEach(function(x){ if(x.joint !== "fhp" && String(x.round) === selR) days[day(x)] = 1; });
+        L = L.filter(function(x){ return x.joint === "fhp" ? (String(x.round) === selR || days[day(x)]) : String(x.round) === selR; });
+      }
       if(!L.length){ toast("선택한 회원·회차에 보관된 기록이 없어요."); return; }
       var nm = (L[0].member || "회원미지정").replace(/[\\/:*?"<>|]/g, "").trim() || "회원미지정";
       var d0 = new Date(Math.min.apply(null, L.map(function(x){ return x.at || Date.now(); }))), z0 = function(n){ return (n < 10 ? "0" : "") + n; };

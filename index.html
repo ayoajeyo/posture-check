@@ -788,6 +788,29 @@
   fieldset.set-fs{border:0; margin:0; padding:0; min-width:0;}
   fieldset.set-fs[disabled]{opacity:.55;}
   .set-form label{display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:var(--ink-soft); margin-bottom:12px;}
+  .set-form input[type=url], .set-form textarea{font-family:inherit; font-size:14px; font-weight:500; border:1px solid var(--line); border-radius:9px; padding:10px; background:var(--bg); color:var(--ink); width:100%; box-sizing:border-box;}
+  .set-form textarea{resize:vertical; line-height:1.5;}
+  /* v186 센터 소개 페이지 */
+  .cp-badge{font-size:11px; font-weight:700; vertical-align:middle; margin-left:6px; padding:2px 8px; border-radius:100px; background:var(--surface-2); color:var(--ink-soft);}
+  .cp-badge.on{background:var(--good-soft); color:var(--good);}
+  .cp-law{margin:-4px 0 12px; padding:9px 11px; border-radius:10px; background:var(--warn-soft); color:var(--warn); font-size:12px; line-height:1.5;}
+  .cp-tags-h{font-size:12px; font-weight:700; color:var(--ink-soft); margin:0 0 6px;}
+  .cp-tags-h small{font-weight:500;}
+  .cp-tags{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
+  .cp-tags button{font:inherit; font-size:12.5px; font-weight:600; padding:6px 11px; border-radius:100px; border:1px solid var(--line); background:var(--bg); color:var(--ink); cursor:pointer;}
+  .cp-tags button.on{background:var(--navy); border-color:var(--navy); color:var(--navy-ink);}
+  .cp-stat{font-size:12.5px; color:var(--ink-soft); background:var(--surface-2); border-radius:10px; padding:9px 11px; margin-bottom:10px;}
+  .cp-stat b{color:var(--ink);}
+  .cp-btns{display:flex; gap:8px; flex-wrap:wrap;}
+  /* v186 공유 링크 얼굴 모자이크 · 미리 보기 */
+  .sh-blur{display:flex; gap:10px; align-items:center; margin:0 0 8px; font-size:13.5px; font-weight:600; cursor:pointer;}
+  .sh-blur input{width:20px; height:20px; margin:0; accent-color:var(--navy);}
+  .sh-prev{max-height:260px; overflow-y:auto; border-radius:12px; border:1px solid var(--line); background:var(--surface-2); margin:0 0 8px; min-height:80px; display:grid; place-items:center;}
+  .sh-prev img{display:block; width:100%; height:auto;}
+  .sh-prev em{font-style:normal; font-size:12.5px; color:var(--ink-soft); padding:20px;}
+  .sh-fst{font-size:12px; line-height:1.5; margin:0 2px 12px; color:var(--ink-soft);}
+  .sh-fst.ok{color:var(--good);}
+  .sh-fst.warn{color:var(--warn);}
   .set-form input[type=text], .set-form input[type=tel], .set-form input[type=number], .set-form select{font-family:inherit; font-size:14px; font-weight:500; border:1px solid var(--line); border-radius:9px; padding:10px; background:var(--bg); color:var(--ink); width:100%; box-sizing:border-box;}
   .logo-spec{font-size:12px; line-height:1.55; margin:-4px 0 10px; opacity:.9;}
   .logo-spec b{font-weight:700; color:var(--ink);}
@@ -1919,6 +1942,21 @@
       <label>예약 링크 (선택) · 공유 링크의 [예약하기]<input id="stBook" type="url" inputmode="url" maxlength="300" placeholder="예: 네이버 예약·카카오톡 채널 주소"></label>
       <label class="chk"><input id="stApply" type="checkbox" checked>결과 이미지에 센터명·로고 표시</label>
     </section>
+    <!-- v186 센터 소개 페이지 (공개 선택) -->
+    <section class="card set-form" id="cpCard">
+      <h2>센터 소개 페이지 <span class="cp-badge" id="cpBadge">비공개</span></h2>
+      <p class="sub">공유 링크를 받은 회원이 <b>[센터 소개 보기]</b>로 들어오는 공개 페이지예요. 위의 센터명·로고·전화번호·예약 링크가 함께 보여요.</p>
+      <label class="chk"><input id="cpOn" type="checkbox">소개 페이지 공개하기</label>
+      <label>업종<select id="cpKind"><option value="">선택 안 함</option><option>필라테스</option><option>피트니스 · PT</option><option>재활 · 교정 운동센터</option><option>요가</option><option>물리치료실 (의료기관)</option><option>기타</option></select></label>
+      <p class="cp-law" id="cpLaw" hidden>의료기관은 의료법의 의료광고 규정이 적용돼요. ‘치료 효과 보장’, ‘완치’, 치료 경험담·전후 사진 같은 표현은 넣지 마세요.</p>
+      <label>한 줄 소개<textarea id="cpIntro" maxlength="300" rows="3" placeholder="예: 측정으로 시작해 변화로 확인하는 1:1 자세 관리 스튜디오"></textarea></label>
+      <label>주소<input id="cpAddr" type="text" maxlength="80" placeholder="예: 부산 북구 화명대로 00, 3층"></label>
+      <label>운영 시간<input id="cpHours" type="text" maxlength="80" placeholder="예: 평일 10–21시 · 토 10–14시"></label>
+      <div class="cp-tags-h">함께 관리하는 고민 <small>(최대 5개)</small></div>
+      <div class="cp-tags" id="cpTags"></div>
+      <div class="cp-stat" id="cpStat" hidden></div>
+      <div class="cp-btns"><button type="button" class="btn line sm" id="btnCpView">페이지 보기</button><button type="button" class="btn line sm" id="btnCpCopy">링크 복사</button></div>
+    </section>
     <section class="card set-form">
       <h2>미리 보기</h2>
       <p class="sub">회원에게 보내는 이미지 상단과 하단에 이렇게 들어가요.</p>
@@ -1972,7 +2010,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v185</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v186</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1990,7 +2028,7 @@
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v185</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v186</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -2009,7 +2047,7 @@
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v185</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v186</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
@@ -2362,6 +2400,9 @@
       <label class="sh-days">링크 사용 기간
         <select id="shDays"><option value="7">7일</option><option value="30" selected>30일</option><option value="90">90일</option></select>
       </label>
+      <label class="sh-blur"><input type="checkbox" id="shBlur" checked><span>얼굴 자동 모자이크 <small style="font-weight:500;color:var(--ink-soft)">(권장)</small></span></label>
+      <div class="sh-prev" id="shPrev"><em>미리 보기를 만드는 중…</em></div>
+      <p class="sh-fst" id="shFst"></p>
       <label class="sh-agree"><input type="checkbox" id="shAgree"><span>회원에게 <b>사진·측정 결과를 링크로 보내는 것에 대해 동의</b>를 받았어요</span></label>
       <p class="sh-warn">링크를 받은 사람은 누구나 볼 수 있어요. 기간이 끝나거나 공유를 중지하면 바로 볼 수 없게 돼요.</p>
       <button type="button" class="btn primary" id="btnShMake" style="width:100%">링크 만들기</button>
@@ -5060,6 +5101,7 @@
     oc.fillStyle = "#0E1424";
     oc.fillRect(0,0,out.width, out.height);
     drawBase(oc, s, K);
+    if(ANNOT_AFTER_BASE) ANNOT_AFTER_BASE(oc, s);   // v186 공유 링크용 얼굴 모자이크 (점·선은 그 위에 그려짐)
 
     var c = cfg();
 
@@ -5336,6 +5378,7 @@
   /* v135 리포트 사진 격자 배경 켜기·끄기 (체형 사진 + ROM 전후 비교 사진, 화면·저장 이미지 공통) */
   var repGridOn = lsGet("ayo_rep_grid") !== "0";
   function repAnnot(m){
+    if(REP_FACE && REP_FACE[m]) return REP_FACE[m];   // v186 얼굴 모자이크본
     var sv = state.gridBg; state.gridBg = repGridOn;
     try{ return withMode(m, function(){ return buildAnnotated({ footer:false, labels:false }); }); }
     finally{ state.gridBg = sv; }
@@ -5525,7 +5568,116 @@
   /* ===================== v185 리포트 공유 링크 =====================
      리포트 이미지 → 비공개 저장소(shares/{uid}/{키}.jpg) + 링크 정보(ayo_shares)
      회원은 r.html?k=키 로 열람 (서버 함수 share-view가 기간·중지 여부를 확인하고 10분짜리 이미지 주소 발급) */
-  var shCanvas = null, shUrlNow = "", shBusy = false;
+  var shCanvas = null, shRaw = null, shUrlNow = "", shBusy = false, shPrepN = 0;
+
+  /* ---- v186 얼굴 자동 모자이크 (공유 링크 전용 · 기기 안에서 처리, 원본 사진은 그대로) ----
+     자세 인식(얼굴 점 0~10번)으로 얼굴 위치를 찾고, 못 찾으면 체형 사진은 귓볼·귀 측정점으로 추정 */
+  var ANNOT_AFTER_BASE = null, REP_FACE = null;
+  function faceFromLm(lm, w, h){
+    if(!lm || lm.length < 13) return null;
+    var xs = [], ys = [];
+    for(var i = 0; i <= 10; i++){ var q = lm[i]; if(q && isFinite(q.x) && isFinite(q.y)){ xs.push(q.x * w); ys.push(q.y * h); } }
+    if(xs.length < 5) return null;
+    var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+    if(x1 < 0 || y1 < 0 || x0 > w || y0 > h) return null;
+    var sh = (lm[11] && lm[12]) ? { x: (lm[11].x + lm[12].x) / 2 * w, y: (lm[11].y + lm[12].y) / 2 * h } : null;
+    var neck = sh ? Math.hypot(sh.x - lm[0].x * w, sh.y - lm[0].y * h) : 0;
+    var sz = Math.max((x1 - x0) * 1.5, (y1 - y0) * 2.4, neck * 0.95, Math.min(w, h) * 0.03);
+    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 - sz * 0.08, rx: sz * 0.62, ry: sz * 0.78 };
+  }
+  function faceFromPts(s, m){
+    var P = s.points || {};
+    if(m === "front"){
+      var a = P.earlobe_0, b = P.earlobe_1; if(!a || !b) return null;
+      var W = Math.max(Math.abs(a.x - b.x), s.w * 0.02) * 1.35;
+      return { cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 - W * 0.3, rx: W * 0.75, ry: W * 0.95 };
+    }
+    var e = P.ear, f = P.malleolus; if(!e) return null;
+    var Hb = f ? Math.abs(f.y - e.y) : s.h * 0.8, sg = s.faceSign || -1;
+    return { cx: e.x + sg * Hb * 0.035, cy: e.y - Hb * 0.005, rx: Hb * 0.085, ry: Hb * 0.1 };
+  }
+  function mosaic(g, R){
+    var cw = g.canvas.width, ch = g.canvas.height;
+    var x = Math.max(0, Math.floor(R.cx - R.rx)), y = Math.max(0, Math.floor(R.cy - R.ry));
+    var w = Math.min(cw, Math.ceil(R.cx + R.rx)) - x, h = Math.min(ch, Math.ceil(R.cy + R.ry)) - y;
+    if(w < 2 || h < 2) return;
+    var blk = Math.max(6, Math.round(Math.min(R.rx, R.ry) / 2.6));
+    var t = document.createElement("canvas"); t.width = Math.max(1, Math.round(w / blk)); t.height = Math.max(1, Math.round(h / blk));
+    t.getContext("2d").drawImage(g.canvas, x, y, w, h, 0, 0, t.width, t.height);
+    g.save(); g.beginPath(); g.ellipse(R.cx, R.cy, R.rx, R.ry, 0, 0, Math.PI * 2); g.clip();
+    g.imageSmoothingEnabled = false; g.drawImage(t, 0, 0, t.width, t.height, x, y, w, h); g.restore();
+  }
+  function faceRegion(cv, fb){
+    var det = window.__detectPose ? Promise.resolve(window.__detectPose(cv)).catch(function(){ return null; }) : Promise.resolve(null);
+    var to = new Promise(function(r){ setTimeout(function(){ r(null); }, 20000); });
+    return Promise.race([det, to]).then(function(lm){ return faceFromLm(lm, cv.width, cv.height) || fb || null; });
+  }
+  function faceBody(m){
+    var base = withMode(m, function(){
+      var s = cur(); if(!s || !s.w || !(s.img || s.bmp)) return null;
+      var sv = state.gridBg; state.gridBg = repGridOn;
+      try{
+        var c = document.createElement("canvas"); c.width = s.w; c.height = s.h;
+        var g = c.getContext("2d"); g.fillStyle = "#0E1424"; g.fillRect(0, 0, s.w, s.h);
+        drawBase(g, s, Math.max(1, Math.min(s.w, s.h * 0.75) / 1080));
+        return { c: c, fb: faceFromPts(s, m) };
+      } finally { state.gridBg = sv; }
+    });
+    if(!base) return Promise.resolve({ cv: null, ok: false });
+    return faceRegion(base.c, base.fb).then(function(R){
+      ANNOT_AFTER_BASE = R ? function(g){ mosaic(g, R); } : null;
+      try{ return { cv: repAnnot(m), ok: !!R }; } finally { ANNOT_AFTER_BASE = null; }
+    });
+  }
+  function faceCanvas(cv){
+    if(!cv) return Promise.resolve({ cv: null, ok: false });
+    return faceRegion(cv, null).then(function(R){
+      var o = document.createElement("canvas"); o.width = cv.width; o.height = cv.height;
+      var g = o.getContext("2d"); g.drawImage(cv, 0, 0); if(R) mosaic(g, R);
+      return { cv: o, ok: !!R };
+    });
+  }
+  // 리포트 이미지 만들기 (blur = 얼굴 모자이크) → { c, n: 사진 수, miss: 얼굴 못 찾은 사진 수 }
+  function shBuild(blur){
+    var r = computeReport();
+    if(!blur) return Promise.resolve({ c: buildReportCanvas(r), n: 0, miss: 0 });
+    var jobs = [], F = {}, n = 0, miss = 0;
+    var tally = function(x){ if(x.cv){ n++; if(!x.ok) miss++; } return x.cv; };
+    if(r.f) jobs.push(faceBody("front").then(function(x){ F.front = tally(x); }));
+    if(r.sd) jobs.push(faceBody("side").then(function(x){ F.side = tally(x); }));
+    var pr = repPairOk(), A = repPair.cvA, B = repPair.cvB;
+    if(pr){ jobs.push(faceCanvas(A).then(function(x){ F.cvA = tally(x); })); jobs.push(faceCanvas(B).then(function(x){ F.cvB = tally(x); })); }
+    return Promise.all(jobs).then(function(){
+      REP_FACE = F; if(pr){ repPair.cvA = F.cvA || A; repPair.cvB = F.cvB || B; }
+      try{ return { c: buildReportCanvas(r), n: n, miss: miss }; }
+      finally { REP_FACE = null; if(pr){ repPair.cvA = A; repPair.cvB = B; } }
+    });
+  }
+  function shPreview(c){
+    var k = Math.min(1, 640 / c.width), t = document.createElement("canvas");
+    t.width = Math.round(c.width * k); t.height = Math.round(c.height * k);
+    t.getContext("2d").drawImage(c, 0, 0, t.width, t.height);
+    $("shPrev").innerHTML = '<img alt="공유될 리포트 미리 보기" src="' + t.toDataURL("image/jpeg", 0.8) + '">';
+  }
+  function shFst(t, cls){ $("shFst").textContent = t; $("shFst").className = "sh-fst" + (cls ? " " + cls : ""); }
+  function shPrep(){
+    var my = ++shPrepN, blur = $("shBlur").checked;
+    shCanvas = null; $("btnShMake").disabled = true;
+    $("shPrev").innerHTML = "<em>" + (blur ? "얼굴을 찾아 모자이크하는 중…" : "미리 보기를 만드는 중…") + "</em>"; shFst("");
+    (typeof romLoad === "function" ? romLoad() : Promise.resolve()).then(function(){ return shBuild(blur); }).then(function(res){
+      if(my !== shPrepN) return;
+      shCanvas = res.c; shPreview(res.c);
+      if(!blur) shFst("얼굴이 그대로 보여요. 회원 동의를 꼭 확인해 주세요.", "warn");
+      else if(!res.n) shFst("리포트에 사진이 없어요.", "");
+      else if(!res.miss) shFst("사진 " + res.n + "장의 얼굴을 모자이크했어요. 미리 보기로 확인해 주세요.", "ok");
+      else shFst("사진 " + res.n + "장 중 " + res.miss + "장은 얼굴을 찾지 못했어요. 미리 보기를 꼭 확인해 주세요.", "warn");
+    }).catch(function(e){
+      if(my !== shPrepN) return;
+      console.warn("[share blur]", e);
+      shCanvas = blur ? null : shRaw; if(shCanvas) shPreview(shCanvas);
+      shFst(blur ? "얼굴 처리를 하지 못했어요. 잠시 뒤 다시 시도하거나 모자이크를 끄고 미리 보기를 확인해 주세요." : "", "warn");
+    }).then(function(){ if(my === shPrepN) $("btnShMake").disabled = !shCanvas || shBusy; });
+  }
   function shBase(){ return location.origin + location.pathname.replace(/[^\/]*$/, "") + "r.html?k="; }
   function shToken(){   // 추측할 수 없는 24자 키
     var a = new Uint8Array(18); crypto.getRandomValues(a);
@@ -5558,19 +5710,20 @@
   function shReset(){
     $("shMake").hidden = false; $("shDone").hidden = true; $("shAgree").checked = false; shUrlNow = "";
     var st = getSettings(); $("shTip").hidden = !!(st.phone || st.book);
-    $("btnShMake").disabled = false; $("btnShMake").textContent = "링크 만들기";
+    $("btnShMake").disabled = true; $("btnShMake").textContent = "링크 만들기"; $("shBlur").checked = true;
   }
   function openShare(){
     if(!isPro()){ openProGate("report"); return; }
     if(!ACC.uid || !sbClient()){ toast("공유 링크는 로그인한 계정에서 만들 수 있어요."); return; }
     if(!navigator.onLine){ toast("인터넷에 연결된 뒤 다시 시도해 주세요."); return; }
-    repGoOut(function(c){ shCanvas = c; shReset(); $("shSheet").hidden = false; shList(); });
+    repGoOut(function(c){ shRaw = c; shReset(); $("shSheet").hidden = false; shPrep(); shList(); });
   }
   function shMake(){
     if(shBusy) return;
     if(!$("shAgree").checked){ toast("회원 동의를 받았는지 확인하고 체크해 주세요."); return; }
     var c = sbClient(), uid = ACC.uid;
-    if(!c || !uid || !shCanvas){ toast("로그인 상태를 확인한 뒤 다시 시도해 주세요."); return; }
+    if(!shCanvas){ toast("미리 보기가 준비되면 다시 눌러 주세요."); return; }
+    if(!c || !uid){ toast("로그인 상태를 확인한 뒤 다시 시도해 주세요."); return; }
     shBusy = true; $("btnShMake").disabled = true; $("btnShMake").textContent = "링크 만드는 중…";
     var id = shToken(), path = uid + "/" + id + ".jpg", days = parseInt($("shDays").value, 10) || 30;
     shBlob(shCanvas).then(function(blob){
@@ -5609,14 +5762,14 @@
   function shList(){
     var c = sbClient(); if(!c || !ACC.uid){ return; }
     $("shItems").innerHTML = '<p class="sh-empty">불러오는 중…</p>';
-    c.from("ayo_shares").select("id, image_path, created_at, expires_at, views").order("created_at", { ascending: false }).limit(30).then(function(r){
+    c.from("ayo_shares").select("id, image_path, created_at, expires_at, views, calls, books").order("created_at", { ascending: false }).limit(30).then(function(r){
       if(r.error){ $("shCnt").textContent = ""; $("shItems").innerHTML = '<p class="sh-empty">' + esc(shErr(r.error)) + '</p>'; return; }
       var rows = r.data || [], live = rows.filter(function(x){ return shDday(x.expires_at) > 0; }).length;
       $("shCnt").textContent = rows.length ? "· 사용 중 " + live + "개" : "";
       if(!rows.length){ $("shItems").innerHTML = '<p class="sh-empty">아직 만든 링크가 없어요.</p>'; return; }
       $("shItems").innerHTML = rows.map(function(x){
         var d = shDday(x.expires_at), on = d > 0;
-        return '<div class="sh-it"><div class="t"><b>' + shMd(x.created_at) + ' 만듦</b> · ' + (on ? "D-" + d : '<span class="x">기간 끝남</span>') + ' · 조회 ' + (x.views || 0) + '</div>' +
+        return '<div class="sh-it"><div class="t"><b>' + shMd(x.created_at) + ' 만듦</b> · ' + (on ? "D-" + d : '<span class="x">기간 끝남</span>') + '<br>조회 ' + (x.views || 0) + ' · 전화 ' + (x.calls || 0) + ' · 예약 ' + (x.books || 0) + '</div>' +
           (on ? '<button type="button" data-cp="' + esc(x.id) + '">복사</button>' : '') +
           '<button type="button" class="stop" data-rm="' + esc(x.id) + '" data-p="' + esc(x.image_path) + '">' + (on ? "중지" : "삭제") + '</button></div>';
       }).join("");
@@ -5640,17 +5793,19 @@
       return c.storage.from("shares").remove([p]).then(null, function(){});
     }).then(function(){
       toast("공유를 중지했어요. 이 링크는 이제 열리지 않아요.");
-      if(shUrlNow && shUrlNow.slice(-id.length) === id) shReset();
+      if(shUrlNow && shUrlNow.slice(-id.length) === id){ shReset(); shPrep(); }
       shList();
     }).catch(function(err){ b.disabled = false; toast(shErr(err)); });
   });
   $("btnLinkReport").addEventListener("click", openShare);
   $("btnShMake").addEventListener("click", shMake);
+  $("shBlur").addEventListener("change", shPrep);
   $("btnShSend").addEventListener("click", function(){ if(shUrlNow) shSend(shUrlNow); });
   $("btnShCopy").addEventListener("click", function(){ if(shUrlNow) shCopy(shUrlNow); });
   $("shUrl").addEventListener("focus", function(){ this.select(); });
-  $("btnShClose").addEventListener("click", function(){ $("shSheet").hidden = true; shCanvas = null; });
-  $("shSheet").addEventListener("click", function(e){ if(e.target === $("shSheet")){ $("shSheet").hidden = true; shCanvas = null; } });
+  function shClose(){ $("shSheet").hidden = true; shCanvas = null; shRaw = null; shPrepN++; $("shPrev").innerHTML = ""; }
+  $("btnShClose").addEventListener("click", shClose);
+  $("shSheet").addEventListener("click", function(e){ if(e.target === $("shSheet")) shClose(); });
   $("btnShSet").addEventListener("click", function(){ $("shSheet").hidden = true; showView("settings"); });
 
   /* ---- 화면 전환 (사이드바 / 하단 탭) ---- */
@@ -10181,7 +10336,7 @@
   function getSettings(){
     var o = null; try{ o = JSON.parse(lsGet(SET_KEY) || "null"); }catch(e){}
     o = o || {};
-    return { name: o.name || "", contact: o.contact || "", phone: o.phone || "", book: o.book || "", logo: o.logo || "", apply: o.apply !== false, method: o.method || "카드", items: Array.isArray(o.items) ? o.items : DEFAULT_ITEMS.slice() };
+    return { name: o.name || "", contact: o.contact || "", phone: o.phone || "", book: o.book || "", page: (o.page && typeof o.page === "object") ? o.page : {}, logo: o.logo || "", apply: o.apply !== false, method: o.method || "카드", items: Array.isArray(o.items) ? o.items : DEFAULT_ITEMS.slice() };
   }
   function saveSettings(o, fromServer){
     try{ localStorage.setItem(SET_KEY, JSON.stringify(o)); }catch(e){ return false; }
@@ -10261,7 +10416,7 @@
     stDraft = getSettings(); stDraft.items = stDraft.items.map(function(x){ return { n:x.n, a:x.a || 0 }; });
     var pro = isPro();
     $("setLock").hidden = pro; $("setOn").hidden = !pro; $("setFs").disabled = !pro; updateLicUI();
-    $("stName").value = stDraft.name; $("stContact").value = stDraft.contact; $("stPhone").value = stDraft.phone; $("stBook").value = stDraft.book; $("stApply").checked = stDraft.apply; $("stMethod").value = stDraft.method;
+    $("stName").value = stDraft.name; $("stContact").value = stDraft.contact; $("stPhone").value = stDraft.phone; $("stBook").value = stDraft.book; cpFill(); $("stApply").checked = stDraft.apply; $("stMethod").value = stDraft.method;
     stRenderLogo(); stRenderItems(); stRenderPreview();
     if(entering && !pro) openProGate();
   }
@@ -10303,12 +10458,88 @@
       else { toast("예약 링크는 https://로 시작하는 주소로 넣어주세요."); $("stBook").focus(); return; }
     }
     var phone = $("stPhone").value.replace(/[^0-9+\-]/g, "");
-    var o = { name: $("stName").value.trim(), contact: $("stContact").value.trim(), phone: phone, book: book, logo: stDraft.logo || "", apply: $("stApply").checked, method: $("stMethod").value,
+    var page = cpRead();
+    if(page.on && !$("stName").value.trim()){ toast("소개 페이지를 공개하려면 센터명을 입력해 주세요."); $("stName").focus(); return; }
+    var o = { name: $("stName").value.trim(), contact: $("stContact").value.trim(), phone: phone, book: book, page: page, logo: stDraft.logo || "", apply: $("stApply").checked, method: $("stMethod").value,
               items: stDraft.items.filter(function(x){ return x.n && x.n.trim(); }).map(function(x){ return { n:x.n.trim(), a: Math.max(0, x.a || 0) }; }) };
     if(!saveSettings(o)){ toast("저장 공간이 부족해요. 더 작은 로고 이미지를 사용해주세요."); return; }
     applyBrand(); fillSaleItems(); renderSettings(false);
     toast("설정을 저장했어요.");
+    // v186 센터 소개 페이지 서버 반영 (공개한 적이 있을 때만)
+    cpPush(o).then(function(slug){
+      if(slug && page.on) toast("설정을 저장했어요 · 센터 소개 페이지가 공개 중이에요.");
+      cpStatLoad();
+    }, function(e){ console.warn("[center]", e); toast("센터 소개 페이지를 저장하지 못했어요. 로그인·인터넷 연결을 확인해 주세요."); });
   });
+
+  /* ===================== v186 센터 소개 페이지 =====================
+     설정의 센터 정보 + 소개(업종·한 줄 소개·주소·운영 시간·고민 태그) → ayo_centers
+     공개한 경우만 c.html?c=주소키 로 누구나 열람 (서버 함수 share-view가 공개 여부 확인) */
+  var CP_TAGS = ["거북목 · 일자목", "라운드숄더", "골반 불균형", "척추 측만 관리", "허리 관리", "무릎 · 하체 정렬", "산전 · 산후 체형", "시니어 체력", "자세 교정", "부상 후 운동 복귀"];
+  var cpTagSel = [];
+  function cpUrl(slug){ return location.origin + location.pathname.replace(/[^\/]*$/, "") + "c.html?c=" + slug; }
+  function cpSlug(){ var a = new Uint8Array(9); crypto.getRandomValues(a); return btoa(String.fromCharCode.apply(null, a)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+  function cpRenderTags(){
+    $("cpTags").innerHTML = CP_TAGS.map(function(t){ return '<button type="button" data-t="' + esc(t) + '" class="' + (cpTagSel.indexOf(t) >= 0 ? "on" : "") + '" aria-pressed="' + (cpTagSel.indexOf(t) >= 0) + '">' + esc(t) + '</button>'; }).join("");
+  }
+  $("cpTags").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-t]"); if(!b) return;
+    var t = b.getAttribute("data-t"), i = cpTagSel.indexOf(t);
+    if(i >= 0) cpTagSel.splice(i, 1);
+    else { if(cpTagSel.length >= 5){ toast("고민 태그는 5개까지 고를 수 있어요."); return; } cpTagSel.push(t); }
+    cpRenderTags();
+  });
+  function cpLawSync(){ $("cpLaw").hidden = $("cpKind").value.indexOf("의료기관") < 0; }
+  $("cpKind").addEventListener("change", cpLawSync);
+  function cpFill(){
+    var p = (stDraft && stDraft.page) || {};
+    $("cpOn").checked = !!p.on; $("cpKind").value = p.kind || ""; $("cpIntro").value = p.intro || ""; $("cpAddr").value = p.address || ""; $("cpHours").value = p.hours || "";
+    cpTagSel = Array.isArray(p.tags) ? p.tags.slice(0, 5) : [];
+    cpRenderTags(); cpLawSync(); cpStatLoad();
+  }
+  function cpRead(){
+    var old = (stDraft && stDraft.page) || {};
+    return { on: $("cpOn").checked, kind: $("cpKind").value, intro: $("cpIntro").value.trim(), address: $("cpAddr").value.trim(), hours: $("cpHours").value.trim(), tags: cpTagSel.slice(0, 5), slug: old.slug || "" };
+  }
+  function cpProfile(o){
+    var p = o.page || {}, on = o.apply !== false;
+    return { name: o.name || "", logo: on ? (o.logo || "") : "", contact: o.contact || "", phone: o.phone || "", book: o.book || "",
+             kind: p.kind || "", intro: p.intro || "", address: p.address || "", hours: p.hours || "", tags: (p.tags || []).slice(0, 5) };
+  }
+  function cpPush(o){
+    var c = sbClient(), p = o.page || {};
+    if(!p.on && !p.slug) return Promise.resolve(null);   // 한 번도 공개한 적 없으면 서버에 만들지 않음
+    if(!c || !ACC.uid) return Promise.reject(new Error("login"));
+    return c.from("ayo_centers").select("slug").eq("user_id", ACC.uid).maybeSingle().then(function(r){
+      if(r.error) throw r.error;
+      var slug = (r.data && r.data.slug) || p.slug || cpSlug();
+      return c.from("ayo_centers").upsert({ user_id: ACC.uid, slug: slug, published: !!p.on, profile: cpProfile(o) }, { onConflict: "user_id" }).then(function(u){
+        if(u.error) throw u.error;
+        if(p.slug !== slug){ var st = getSettings(); st.page = Object.assign({}, st.page, { slug: slug }); saveSettings(st); if(stDraft) stDraft.page = st.page; }
+        return slug;
+      });
+    });
+  }
+  var cpRow = null;
+  function cpStatLoad(){
+    var c = sbClient();
+    if(!c || !ACC.uid){ $("cpStat").hidden = true; $("cpBadge").textContent = "비공개"; $("cpBadge").className = "cp-badge"; return; }
+    c.from("ayo_centers").select("slug, published, views, calls, books").eq("user_id", ACC.uid).maybeSingle().then(function(r){
+      cpRow = (r && !r.error) ? r.data : null;
+      var on = !!(cpRow && cpRow.published);
+      $("cpBadge").textContent = on ? "공개 중" : "비공개"; $("cpBadge").className = "cp-badge" + (on ? " on" : "");
+      if(!cpRow){ $("cpStat").hidden = true; return; }
+      $("cpStat").innerHTML = "지금까지 <b>조회 " + (cpRow.views || 0) + "</b> · 전화 " + (cpRow.calls || 0) + " · 예약 " + (cpRow.books || 0) + (on ? "" : " · 지금은 비공개라 열리지 않아요");
+      $("cpStat").hidden = false;
+    }, function(){});
+  }
+  function cpLink(){
+    var slug = (cpRow && cpRow.slug) || (getSettings().page || {}).slug;
+    if(!slug || !(cpRow && cpRow.published)){ toast("‘소개 페이지 공개하기’를 켜고 [저장]한 뒤 볼 수 있어요."); return null; }
+    return cpUrl(slug);
+  }
+  $("btnCpView").addEventListener("click", function(){ var u = cpLink(); if(u) window.open(u, "_blank", "noopener"); });
+  $("btnCpCopy").addEventListener("click", function(){ var u = cpLink(); if(u) shCopy(u); });
 
   // ---- PRO 팝업 ----
   var proPrevView = "dash";

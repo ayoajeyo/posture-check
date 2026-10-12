@@ -35,6 +35,7 @@
   .btn{display:flex; align-items:center; justify-content:center; gap:8px; min-height:52px; border-radius:14px; font-size:16px; font-weight:700; text-decoration:none; border:1px solid var(--line); background:var(--surface); color:var(--ink);}
   .btn.pri{background:var(--navy); color:#fff; border-color:var(--navy);}
   .btn:active{transform:translateY(1px);}
+  .btn.more{margin:0 0 12px; min-height:46px; font-size:15px;}
   .contact{margin:0 0 12px; font-size:14px; color:var(--ink-soft); text-align:center;}
   .note{font-size:12.5px; color:var(--ink-soft); margin:0;}
   .note b{color:var(--ink);}
@@ -68,6 +69,7 @@
       <a class="btn pri" id="btnBook" href="#" target="_blank" rel="noopener" hidden>📅 예약하기</a>
     </div>
     <p class="contact" id="ctrContact" hidden></p>
+    <a class="btn more" id="btnPage" href="#" hidden>🏢 센터 소개 보기</a>
     <div class="card">
       <p class="note">촬영 조건에 따라 달라질 수 있는 <b>스크리닝 참고값</b>이며 진단을 대신하지 않습니다. 궁금한 점은 센터에 문의해 주세요.</p>
       <p class="note" id="expNote" style="margin-top:6px"></p>
@@ -89,6 +91,10 @@
   var SB_URL = "https://doltciamvnrrysoynbzo.supabase.co";
   var SB_KEY = "sb_publishable_tla5mhOH6x6DkFcqBcPeLw_KX4dgCEQ";   // 공개 키 (서버 함수 호출용)
   function $(id){ return document.getElementById(id); }
+  // v186 전화·예약 버튼 누름 집계 (실패해도 버튼 동작은 그대로)
+  function hit(ev){
+    try{ fetch(SB_URL + "/functions/v1/share-view", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", "apikey": SB_KEY }, body: JSON.stringify({ k: k, ev: ev }) }).catch(function(){}); }catch(e){}
+  }
   function show(id){ ["loading", "ok", "gone"].forEach(function(x){ $(x).hidden = x !== id; }); }
   function gone(title, desc){ $("goneT").textContent = title; $("goneD").textContent = desc; show("gone"); }
   function ymd(s){ var d = new Date(s); return isNaN(d) ? "" : d.getFullYear() + "." + (d.getMonth() + 1) + "." + d.getDate(); }
@@ -122,8 +128,9 @@
     }
     $("repImg").src = j.image; $("repLink").href = j.image;
     var n = 0;
-    if(c.phone){ $("btnTel").href = "tel:" + c.phone; $("btnTel").hidden = false; n++; }
-    if(c.book && /^https?:\/\//i.test(c.book)){ $("btnBook").href = c.book; $("btnBook").hidden = false; n++; }
+    if(c.phone){ $("btnTel").href = "tel:" + c.phone; $("btnTel").hidden = false; n++; $("btnTel").addEventListener("click", function(){ hit("call"); }); }
+    if(c.book && /^https?:\/\//i.test(c.book)){ $("btnBook").href = c.book; $("btnBook").hidden = false; n++; $("btnBook").addEventListener("click", function(){ hit("book"); }); }
+    if(j.page && /^[A-Za-z0-9_-]{8,40}$/.test(j.page)){ $("btnPage").href = "c.html?c=" + encodeURIComponent(j.page); $("btnPage").hidden = false; }
     if(n === 1) $("acts").className = "acts one";
     if(n === 0) $("acts").hidden = true;
     if(c.contact){ $("ctrContact").textContent = c.contact; $("ctrContact").hidden = false; }

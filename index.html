@@ -5841,9 +5841,15 @@
     var r = computeReport();
     var go = function(){
       if(!r.f && !r.sd && !(typeof romLRRows === "function" && (romLRRows(repRomSrc()).length || scolRows(repRomSrc()).length || repPairOk()))){ toast("정면·측면 또는 ROM 측정을 먼저 마쳐주세요."); return; }
-      var pages = buildReportPages(r), tag0 = fileTag();   // v195 A4 여러 장
-      if(pages.length === 1){ sender(pages[0], "AYO_report_" + tag0 + ".jpg"); return; }
-      sender(pages, "AYO_report_" + tag0 + ".jpg");
+      var build = function(){
+        var pages = buildReportPages(r), tag0 = fileTag();   // v195 A4 여러 장
+        if(pages.length === 1){ sender(pages[0], "AYO_report_" + tag0 + ".jpg"); return; }
+        sender(pages, "AYO_report_" + tag0 + ".jpg");
+      };
+      // v201 전후 비교 사진은 이때 한 장씩 준비 (오래 걸리면 진행 상황 안내)
+      if(typeof repPairAll !== "function" || !repPair.todo || !repPair.todo.list.length){ build(); return; }
+      var shown = false, t0 = Date.now();
+      repPairAll(function(k, n){ if(n > 2 && (shown || Date.now() - t0 > 600)){ shown = true; toast("리포트 이미지 준비 중… 전후 비교 " + k + "/" + n); } }).then(build, build);
     };
     if(typeof romLoad === "function") romLoad().then(go, go); else go();
   }
@@ -9139,11 +9145,29 @@
       if(repPair.tag !== tag) return;
       repPair.cvA = cs[0]; repPair.cvB = cs[1]; repPair.mid = pmid; repPair.labA = labA; repPair.labB = labB; repPair.title = grp.label; repPair.delta = dt0.s; repPair.better = dt0.t > 0; repPair.t = dt0.t; repPair.d = dt0.d;
     });
-    // v195 저장 이미지(A4)에는 화면과 같게 모든 항목을 넣음 → 전부 미리 그려 둠
-    repPair.rows = null;
-    Promise.all(rows.map(function(x){ return Promise.all([romRenderRecord(x.a, 900), romRenderRecord(x.b, 900)]).then(function(cs){ var dt = dTxt(x); return { title: x.g.label, cvA: cs[0], cvB: cs[1], labA: repPair.ra + "차 · " + x.a.value + "°", labB: repPair.rb + "차 · " + x.b.value + "°", delta: dt.s, t: dt.t }; }); })).then(function(all){
-      if(repPair.tag !== tag) return;
-      repPair.rows = all.filter(function(x){ return x.cvA && x.cvB; }); repPair.rowsMid = pmid;
+    // v201 저장 이미지(A4)용 전체 항목 사진은 리포트를 열 때 그리지 않음 (항목이 많으면 폰이 멈춤)
+    //  → [리포트 이미지 저장·공유]를 누를 때 repPairAll()이 한 장씩 차례로 그림
+    repPair.rows = null; repPair.rowsMid = null;
+    repPair.todo = { tag: tag, mid: pmid, ra: repPair.ra, rb: repPair.rb, list: rows.map(function(x){ var dt = dTxt(x); return { g: x.g, a: x.a, b: x.b, delta: dt.s, t: dt.t }; }) };
+  }
+  // v201 전후 비교 전체 항목 사진을 한 장씩(중간중간 화면에 양보하며) 그림 → 저장·공유 직전에만 호출
+  function repPairAll(onStep){
+    var td = repPair.todo;
+    if(!td || td.tag !== repPair.tag) return Promise.resolve();
+    if(repPair.rows && repPair.rowsTag === td.tag) return Promise.resolve();
+    var out = [], i = 0;
+    return new Promise(function(res){
+      (function next(){
+        if(repPair.tag !== td.tag){ res(); return; }   // 그사이 회원·회차가 바뀜
+        if(i >= td.list.length){ repPair.rows = out; repPair.rowsMid = td.mid; repPair.rowsTag = td.tag; res(); return; }
+        var x = td.list[i++];
+        if(onStep) onStep(i, td.list.length);
+        romRenderRecord(x.a, 900).then(function(cA){
+          return romRenderRecord(x.b, 900).then(function(cB){
+            if(cA && cB) out.push({ title: x.g.label, cvA: cA, cvB: cB, labA: td.ra + "차 · " + x.a.value + "°", labB: td.rb + "차 · " + x.b.value + "°", delta: x.delta, t: x.t });
+          });
+        }).catch(function(e){ console.warn("[repPairAll]", e); }).then(function(){ setTimeout(next, 30); });
+      })();
     });
   }
   $("rpA").addEventListener("change", function(){ repPair.ra = +this.value; renderRepPair(); });
@@ -10401,7 +10425,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v200";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v201";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

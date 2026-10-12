@@ -5267,6 +5267,17 @@
 
   // 캔버스를 JPG로 저장(다운로드 → 공유 시트 → 길게 눌러 저장 순으로 시도)
   function deliverCanvas(out, filename){
+    if(Array.isArray(out)){   // v195 리포트 A4 여러 장
+      var base = filename.replace(/\.jpg$/, ""), outs = out;
+      if(dlNS){ toast("리포트 " + outs.length + "장을 저장해요."); (function next(i){ if(i >= outs.length) return; deliverCanvas(outs[i], base + "_" + (i + 1) + ".jpg"); setTimeout(function(){ next(i + 1); }, 700); })(0); return; }
+      Promise.all(outs.map(function(c){ return new Promise(function(res){ c.toBlob(res, "image/jpeg", 0.92); }); })).then(function(blobs){
+        var files = []; try{ files = blobs.map(function(b, i){ return new File([b], base + "_" + (i + 1) + ".jpg", { type: "image/jpeg" }); }); }catch(e){}
+        if(files.length && navigator.share && navigator.canShare && navigator.canShare({ files: files })){
+          navigator.share({ files: files, title: "아요바디요 결과" }).then(function(){ toast("공유 시트에서 '이미지 저장'을 선택하면 " + outs.length + "장이 갤러리에 저장돼요."); }).catch(function(err){ if(err && err.name === "AbortError") return; deliverCanvas(outs[0], base + "_1.jpg"); });
+        } else { toast("리포트가 " + outs.length + "장이에요. 한 장씩 저장해 주세요."); (function next(i){ if(i >= outs.length) return; deliverCanvas(outs[i], base + "_" + (i + 1) + ".jpg"); setTimeout(function(){ next(i + 1); }, 1200); })(0); }
+      });
+      return;
+    }
     out.toBlob(function(blob){
       if(!blob){ toast("이미지를 만들지 못했어요."); return; }
 
@@ -5590,14 +5601,66 @@
     g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandFoot(), W - PAD, H - 32);
     return c;
   }
+  /* v195 리포트 저장·공유용 A4 페이지: 화면 리포트와 같게 전후 비교를 '모든 항목' 넣고, A4 비율(2000×2828)로 나눠 여러 장 */
+  function buildReportPages(r){
+    var W = 2000, PH = 2828, PAD = 48, HEAD = 150, FOOT = 80, F = "'IBM Plex Sans KR', 'IBM Plex Sans', sans-serif", M = "'IBM Plex Mono', monospace";
+    var one = buildReportCanvas(r);   // 기존 리포트(헤더·체형·점수·첫 비교·ROM 표)에서 헤더~점수까지는 그대로 복사
+    var COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3), BOARD = 100 + IMGH + 40, BOT = 330;
+    var topH = HEAD + BOARD + 30 + BOT;   // 복사할 윗부분 높이
+    var pages = [], g = null, y = 0, pn = 0;
+    var foot = function(){
+      g.fillStyle = "#7A8794"; g.font = "500 21px " + F; g.textAlign = "left";
+      g.fillText("촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며 진단을 대신하지 않습니다.", PAD, PH - 32);
+      g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandFoot(), W - PAD, PH - 32); g.textAlign = "left";
+    };
+    var newPage = function(){
+      if(g) foot();
+      var c = document.createElement("canvas"); c.width = W; c.height = PH; g = c.getContext("2d"); pages.push(c); pn++;
+      g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, PH); g.textBaseline = "alphabetic"; g.textAlign = "left";
+      if(pn === 1){ g.drawImage(one, 0, 0, W, topH, 0, 0, W, topH); y = topH + 30; }
+      else { g.fillStyle = "#5B6875"; g.font = "700 24px " + F; g.fillText(brandLabel("POSTURE CHECK PRO", "체형 분석 리포트") + " · " + nowText() + " · " + pn + "쪽", PAD, 70); y = 110; }
+    };
+    var need = function(h){ if(y + h > PH - FOOT) newPage(); };
+    newPage();
+    // 전후 비교 — 모든 항목 (화면과 동일), 한 항목이 한 카드
+    var rows = (repPair.rows && repPair.rowsMid === (state.member ? state.member.id : null)) ? repPair.rows : (repPairOk() ? [{ title: repPair.title, cvA: repPair.cvA, cvB: repPair.cvB, labA: repPair.labA, labB: repPair.labB, delta: repPair.delta, t: repPair.t }] : []);
+    if(rows.length){
+      var w = W - PAD * 2, gap = 24, iw = (w - 72 - gap) / 2;
+      rows.forEach(function(p, idx){
+        var sc = Math.min(iw / p.cvA.width, iw / p.cvB.width, 620 / Math.max(p.cvA.height, p.cvB.height)), ih = Math.max(p.cvA.height, p.cvB.height) * sc, H = 100 + ih + 60;
+        need(H + 20);
+        if(idx === 0 || y === 110 || y === topH + 30){ g.fillStyle = "#5B6875"; g.font = "700 26px " + F; }
+        g.fillStyle = "#FFFFFF"; rr(g, PAD, y, w, H, 24); g.fill();
+        g.fillStyle = "#17212B"; g.font = "800 30px " + F; g.fillText(p.title, PAD + 36, y + 56);
+        g.fillStyle = !p.t ? "#17212B" : p.t > 0 ? "#16794A" : "#C03A2B"; g.font = "800 30px " + F; g.textAlign = "right"; g.fillText(p.delta, PAD + w - 36, y + 56); g.textAlign = "left";
+        [[p.cvA, p.labA], [p.cvB, p.labB]].forEach(function(q, i){
+          var ix = PAD + 36 + i * (iw + gap), dw = q[0].width * sc, dh = q[0].height * sc;
+          g.save(); rr(g, ix, y + 80, iw, ih, 16); g.clip(); g.fillStyle = "#0B1222"; g.fillRect(ix, y + 80, iw, ih);
+          g.drawImage(q[0], ix + (iw - dw) / 2, y + 80 + (ih - dh) / 2, dw, dh); g.restore();
+          g.fillStyle = "#17212B"; g.font = "700 26px " + F; g.fillText(q[1], ix, y + 80 + ih + 42);
+        });
+        y += H + 20;
+      });
+    }
+    // ROM 좌우 비교 표
+    var RS = repRomSrc(), rn = (typeof romLRRows === "function" ? romLRRows(RS).length : 0), sn = (typeof scolRows === "function" ? scolRows(RS).length : 0);
+    if(rn || sn){
+      var TH = 130 + (rn + sn + (sn ? 1 : 0)) * 54 + 20;
+      need(TH);
+      drawRepRom(g, PAD, y, W - PAD * 2, F, M); y += TH + 20;
+    }
+    foot();
+    return pages;
+  }
   // v176 리포트를 공유 시트(카톡 등)로 바로 보내기 · 공유를 지원하지 않는 기기는 이미지 저장으로
   function shareCanvas(out, filename, title){
-    out.toBlob(function(blob){
-      if(!blob){ toast("이미지를 만들지 못했어요."); return; }
-      var file = null;
-      try{ file = new File([blob], filename, { type: "image/jpeg" }); }catch(e){}
-      if(file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })){
-        navigator.share({ files: [file], title: title || "아요바디요 리포트" }).catch(function(err){
+    var outs = Array.isArray(out) ? out : [out], base = filename.replace(/\.jpg$/, "");   // v195 여러 장이면 한 번에 공유
+    Promise.all(outs.map(function(c){ return new Promise(function(res){ c.toBlob(res, "image/jpeg", 0.92); }); })).then(function(blobs){
+      if(blobs.some(function(b){ return !b; })){ toast("이미지를 만들지 못했어요."); return; }
+      var files = [];
+      try{ files = blobs.map(function(b, i){ return new File([b], outs.length > 1 ? base + "_" + (i + 1) + ".jpg" : filename, { type: "image/jpeg" }); }); }catch(e){}
+      if(files.length && navigator.share && navigator.canShare && navigator.canShare({ files: files })){
+        navigator.share({ files: files, title: title || "아요바디요 리포트" }).catch(function(err){
           if(err && err.name === "AbortError") return;
           toast("공유하지 못했어요. [리포트 이미지 저장]으로 저장한 뒤 보내주세요.");
         });
@@ -5605,13 +5668,15 @@
         toast("이 기기는 바로 공유를 지원하지 않아 이미지로 저장해요.");
         deliverCanvas(out, filename);
       }
-    }, "image/jpeg", 0.92);
+    });
   }
   function repGoOut(sender){
     var r = computeReport();
     var go = function(){
       if(!r.f && !r.sd && !(typeof romLRRows === "function" && (romLRRows(repRomSrc()).length || scolRows(repRomSrc()).length || repPairOk()))){ toast("정면·측면 또는 ROM 측정을 먼저 마쳐주세요."); return; }
-      sender(buildReportCanvas(r), "AYO_report_" + fileTag() + ".jpg");
+      var pages = buildReportPages(r), tag0 = fileTag();   // v195 A4 여러 장
+      if(pages.length === 1){ sender(pages[0], "AYO_report_" + tag0 + ".jpg"); return; }
+      sender(pages, "AYO_report_" + tag0 + ".jpg");
     };
     if(typeof romLoad === "function") romLoad().then(go, go); else go();
   }
@@ -8892,6 +8957,12 @@
       if(repPair.tag !== tag) return;
       repPair.cvA = cs[0]; repPair.cvB = cs[1]; repPair.mid = pmid; repPair.labA = labA; repPair.labB = labB; repPair.title = grp.label; repPair.delta = dt0.s; repPair.better = dt0.t > 0; repPair.t = dt0.t; repPair.d = dt0.d;
     });
+    // v195 저장 이미지(A4)에는 화면과 같게 모든 항목을 넣음 → 전부 미리 그려 둠
+    repPair.rows = null;
+    Promise.all(rows.map(function(x){ return Promise.all([romRenderRecord(x.a, 900), romRenderRecord(x.b, 900)]).then(function(cs){ var dt = dTxt(x); return { title: x.g.label, cvA: cs[0], cvB: cs[1], labA: repPair.ra + "차 · " + x.a.value + "°", labB: repPair.rb + "차 · " + x.b.value + "°", delta: dt.s, t: dt.t }; }); })).then(function(all){
+      if(repPair.tag !== tag) return;
+      repPair.rows = all.filter(function(x){ return x.cvA && x.cvB; }); repPair.rowsMid = pmid;
+    });
   }
   $("rpA").addEventListener("change", function(){ repPair.ra = +this.value; renderRepPair(); });
   $("rpB").addEventListener("change", function(){ repPair.rb = +this.value; renderRepPair(); });
@@ -10148,7 +10219,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v194";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v195";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

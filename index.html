@@ -262,6 +262,31 @@
   button.btn.shoot-big{flex:1; min-height:58px; display:inline-flex; align-items:center; justify-content:center; gap:10px; font-size:18px; font-weight:800; border-radius:16px;}
   button.btn.ghost.icon.shoot-up{width:58px; min-height:58px; border-radius:16px;}
   .rom-idle #btnRomAuto, .rom-idle #romBtns2{display:none;}
+  /* v200 카메라가 켜지면 촬영 화면을 전체 화면 팝업으로 (사진 비율 3:4는 그대로 → 측정 기준 동일) */
+  html.cam-full, html.cam-full body{overflow:hidden; overscroll-behavior:none;}
+  html.cam-full .bottom-nav{display:none;}
+  html.cam-full .toast{z-index:420; bottom:calc(96px + env(safe-area-inset-bottom,0px));}
+  #capture-card.cam-full::before{content:""; position:fixed; inset:0; background:#000; z-index:300;}
+  #capture-card.cam-full .stage{position:fixed; z-index:301; left:50%; top:calc((100vh - 92px) / 2); top:calc((100dvh - 92px - env(safe-area-inset-bottom,0px)) / 2);
+    transform:translate(-50%,-50%); width:min(100vw, calc((100vh - 92px) * .75)); width:min(100vw, calc((100dvh - 92px - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px)) * .75));
+    height:auto; aspect-ratio:3/4; border:0; border-radius:0;}
+  #capture-card.cam-full #shootControls{position:fixed; z-index:302; left:0; right:0; bottom:0; margin:0; padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px)); background:#000; align-items:center;}
+  #capture-card.cam-full #shootControls .btn{min-height:56px; border-radius:16px;}
+  #capture-card.cam-full #btnShoot{flex:1; font-size:18px; font-weight:800;}
+  #capture-card.cam-full #btnCancelShoot, #capture-card.cam-full #btnTimer{background:#1B2233; color:#fff; border-color:#2C3650;}
+  #capture-card.cam-full #btnSwitchCam{width:56px; background:#1B2233; color:#fff;}
+  .rom-overlay.cam-full{padding:0; background:#000;}
+  .rom-box.cam-full{max-width:none; width:100%; min-height:100vh; min-height:100dvh; margin:0; border:0; border-radius:0; box-shadow:none; background:#000; color:#fff;
+    display:flex; flex-direction:column; padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));}
+  .rom-box.cam-full #btnRomGuide, .rom-box.cam-full .rom-ref, .rom-box.cam-full #romPvBar, .rom-box.cam-full #romMan, .rom-box.cam-full .rom-head p{display:none !important;}
+  .rom-box.cam-full .rom-head{align-items:center; margin-bottom:8px;}
+  .rom-box.cam-full .rom-head h3{color:#fff; font-size:17px;}
+  .rom-box.cam-full .rom-x{background:#1B2233; color:#fff;}
+  .rom-box.cam-full #romStage{flex:1; display:flex; align-items:center; justify-content:center; border-radius:0; min-height:0;}
+  .rom-box.cam-full #romStage video{max-height:calc(100vh - 150px); max-height:calc(100dvh - 150px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)); max-width:100%;}
+  .rom-box.cam-full #romCamBtns{margin-top:10px;}
+  .rom-box.cam-full #romCamBtns .btn{min-height:54px; border-radius:14px;}
+  .rom-box.cam-full #romCamBtns .btn.line{background:#1B2233; color:#fff; border-color:#2C3650;}
   button.btn{
     font-family:inherit; font-size:14px; font-weight:600; border-radius:11px; border:1px solid transparent;
     padding:12px 14px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px;
@@ -3053,6 +3078,14 @@
   }
   idleWatch($("emptyCam"), $("stage"), null);
   idleWatch($("romEmpty"), $("romStage"), $("romStage").parentElement);
+  /* v200 촬영 버튼 줄이 보이는 동안(=카메라 켜짐) 전체 화면 촬영 모드 */
+  function camFullWatch(bar, on){
+    var sync = function(){ var live = !bar.hidden; on(live); document.documentElement.classList.toggle("cam-full", !!document.querySelector(".cam-full:not(html)")); };
+    sync();
+    if(window.MutationObserver) new MutationObserver(sync).observe(bar, { attributes: true, attributeFilter: ["hidden"] });
+  }
+  camFullWatch($("shootControls"), function(live){ $("capture-card").classList.toggle("cam-full", live); });
+  camFullWatch($("romCamBtns"), function(live){ var box = $("romStage").parentElement; box.classList.toggle("cam-full", live); $("romSheet").classList.toggle("cam-full", live); });
   var emptyCam = $("emptyCam"), guideOverlay = $("guideOverlay"), hintChip = $("hintChip"), hintChipText = $("hintChipText");
   var detectBadge = $("detectBadge");
   var stage = $("stage");
@@ -10368,7 +10401,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v199";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v200";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

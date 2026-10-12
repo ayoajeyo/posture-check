@@ -257,6 +257,11 @@
   .empty-cam p{margin:0; font-size:13px; line-height:1.6;}
 
   .stage-controls{display:flex; gap:8px; margin-top:12px;}
+  /* v199 촬영 전 빈 검은 화면 없애기: 대기 중엔 화면 칸을 접고 [촬영하기]만 크게 */
+  .stage.is-idle, .rom-stage.is-idle{display:none;}
+  button.btn.shoot-big{flex:1; min-height:58px; display:inline-flex; align-items:center; justify-content:center; gap:10px; font-size:18px; font-weight:800; border-radius:16px;}
+  button.btn.ghost.icon.shoot-up{width:58px; min-height:58px; border-radius:16px;}
+  .rom-idle #btnRomAuto, .rom-idle #romBtns2{display:none;}
   button.btn{
     font-family:inherit; font-size:14px; font-weight:600; border-radius:11px; border:1px solid transparent;
     padding:12px 14px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px;
@@ -1749,8 +1754,8 @@
     </div>
 
     <div class="stage-controls" id="camControls">
-      <button class="btn primary" id="btnStartCam">카메라 시작</button>
-      <button class="btn ghost icon" id="btnUpload" title="사진 선택">
+      <button class="btn primary shoot-big" id="btnStartCam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg><span>촬영하기</span></button>
+      <button class="btn ghost icon shoot-up" id="btnUpload" title="앨범에서 사진 선택" aria-label="앨범에서 사진 선택">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
       </button>
       <input type="file" id="fileInput" accept="image/*" capture="environment">
@@ -3040,6 +3045,14 @@
   /* ---------- dom ---------- */
   var $ = function(id){ return document.getElementById(id); };
   var video = $("video"), canvas = $("canvas"), ctx = canvas.getContext("2d");
+  /* v199 빈 안내 화면이 보일 때(촬영 전)는 검은 화면 칸 자체를 접음 */
+  function idleWatch(empty, stage, box){
+    var sync = function(){ var idle = !empty.hidden; stage.classList.toggle("is-idle", idle); if(box) box.classList.toggle("rom-idle", idle); };
+    sync();
+    if(window.MutationObserver) new MutationObserver(sync).observe(empty, { attributes: true, attributeFilter: ["hidden"] });
+  }
+  idleWatch($("emptyCam"), $("stage"), null);
+  idleWatch($("romEmpty"), $("romStage"), $("romStage").parentElement);
   var emptyCam = $("emptyCam"), guideOverlay = $("guideOverlay"), hintChip = $("hintChip"), hintChipText = $("hintChipText");
   var detectBadge = $("detectBadge");
   var stage = $("stage");
@@ -10355,7 +10368,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v198";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v199";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

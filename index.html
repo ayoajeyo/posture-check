@@ -3346,7 +3346,7 @@
     "elbow_L_flex", "elbow_R_flex", "elbow_L_ext", "elbow_R_ext", "knee_L_flex", "knee_R_flex", "knee_L_ext", "knee_R_ext", "hip_L_flex", "hip_R_flex", "hip_L_er", "hip_R_er", "hip_L_ir", "hip_R_ir", "ankle_L_dorsi", "ankle_R_dorsi", "ankle_L_plantar", "ankle_R_plantar",
     "fhp_C_cva"];   // v174 거북목(CVA) 기준 실루엣 — 측면 상반신, C7 높이 촬영 가이드
   /* v161 항목별 기준 실루엣 크기·위치 조정: s = 크기 배율, dx = 오른쪽 이동(그린 실루엣 폭 대비)
-     v184 dy = 아래쪽 이동(음수면 위로, 촬영 화면 높이 대비) · 체형(body_*) 실루엣에만 적용됨 */
+     v187 dy = 아래쪽 이동(음수면 위로). 체형(body_*)은 촬영 화면 높이 대비, ROM은 그린 실루엣 높이 대비 */
   var SIL_ADJ = {
     // v184 체형 측면: 1.21에서 10% 키우고(1.33) 위로 9% 올림 — 1.21에서는 발끝이 화면 아래로 1.6% 잘려 있었고,
     //      이 값이면 발 아래 여백이 정면(2.0%)과 비슷한 2.3~3.1%가 됨
@@ -3354,7 +3354,8 @@
     neck_C_flex: { s: 1.05, dx: 0.04 }, neck_C_ext: { s: 1.20 },
     neck_L_lat: { s: 1.20, dx: 0.03 }, neck_R_lat: { s: 1.20, dx: 0.03 },
     shoulder_L_flex: { dx: 0.03 },
-    trunk_C_flex: { s: 1.43 }, trunk_C_ext: { s: 1.10 }, trunk_L_lat: { s: 1.20 }, trunk_R_lat: { s: 1.20 },
+    // v187 허리 굴곡: 촬영 화면이 가로로 납작해 1.43배에서 발끝이 아래로 3.2% 잘려 있었음 → 위로 4% (아래 여백 2.5%, 체형 정면과 비슷)
+    trunk_C_flex: { s: 1.43, dy: -0.04 }, trunk_C_ext: { s: 1.10 }, trunk_L_lat: { s: 1.20 }, trunk_R_lat: { s: 1.20, dy: -0.03 },   // v187 우측도 발끝이 1.6% 잘려 있었음 → 좌측과 같은 여백으로
     // v166 좌우 크기 맞춤: 사진 속 몸통(옷) 길이·종아리 두께를 재서 작은 쪽을 기준 쪽과 같은 크기로
     hip_L_flex: { s: 1.30 }, knee_L_flex: { s: 1.34 }, knee_L_ext: { s: 1.31 },
     ankle_R_dorsi: { s: 1.33 }, ankle_R_plantar: { s: 1.27 }
@@ -9822,7 +9823,7 @@
       var r = romFit(gh.w / gh.h, vw, vh, 1);
       if(gh.adj){   // v161 항목별 크기(가운데 기준 확대)·좌우 위치
         var ks = gh.adj.s || 1, nw = r.w * ks, nh = r.h * ks;
-        r = { x: r.x - (nw - r.w) / 2 + (gh.adj.dx || 0) * nw, y: r.y - (nh - r.h) / 2, w: nw, h: nh };
+        r = { x: r.x - (nw - r.w) / 2 + (gh.adj.dx || 0) * nw, y: r.y - (nh - r.h) / 2 + (gh.adj.dy || 0) * nh, w: nw, h: nh };   // v187 dy = 위아래 이동
       }
       g.save(); g.globalAlpha = gh.mode === "sil" ? 0.45 : 0.35; g.drawImage(gh.cv, r.x, r.y, r.w, r.h); g.restore();
       tag.hidden = false; tag.className = "rom-gtag ghost";

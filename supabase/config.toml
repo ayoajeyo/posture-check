@@ -12,3 +12,7 @@ verify_jwt = false
 # v158 Google Play 구독 확인 (함수 안에서 직접 로그인 토큰을 확인함)
 [functions.play-verify]
 verify_jwt = false
+
+# v185 리포트 공유 링크 열람 (로그인 없이 회원이 여는 페이지에서 호출 · 링크 키로 확인)
+[functions.share-view]
+verify_jwt = false

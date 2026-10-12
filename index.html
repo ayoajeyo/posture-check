@@ -356,6 +356,29 @@
 
   .confirm-overlay{position:fixed; inset:0; z-index:90; background:rgba(6,10,20,.55); display:flex; align-items:flex-start; justify-content:center; padding:24px 16px; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;}
   .confirm-overlay > .confirm-box{margin:auto; flex-shrink:0;}
+  /* v185 리포트 공유 링크 */
+  .sh-sheet{max-width:380px;}
+  .sh-days{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:12px 0 10px; font-size:14px; font-weight:600;}
+  .sh-days select{font:inherit; padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:var(--surface); color:var(--ink);}
+  .sh-agree{display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border-radius:12px; background:var(--surface-2); font-size:13.5px; line-height:1.5; cursor:pointer;}
+  .sh-agree input{width:20px; height:20px; margin:1px 0 0; flex:0 0 auto; accent-color:var(--navy);}
+  .sh-warn{margin:8px 2px 12px; font-size:12px; color:var(--ink-soft); line-height:1.5;}
+  .sh-url{width:100%; margin:12px 0 8px; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font-family:var(--font-num); font-size:12.5px;}
+  .sh-row{display:grid; grid-template-columns:1fr auto; gap:8px;}
+  .sh-tip{margin:12px 0 0; padding:10px 12px; border-radius:12px; background:var(--gold-soft); color:var(--ink); font-size:12.5px; line-height:1.5;}
+  .sh-lnk{border:0; background:none; padding:0; font:inherit; font-weight:700; color:var(--gold); text-decoration:underline; cursor:pointer;}
+  .sh-list{margin-top:12px; border-top:1px solid var(--line); padding-top:10px;}
+  .sh-list summary{cursor:pointer; font-size:13.5px; font-weight:700;}
+  .sh-list summary span{color:var(--ink-soft); font-weight:500;}
+  .sh-it{display:flex; align-items:center; gap:8px; padding:9px 0; border-bottom:1px solid var(--line); font-size:12.5px;}
+  .sh-it:last-child{border-bottom:0;}
+  .sh-it .t{flex:1; min-width:0; color:var(--ink-soft); line-height:1.4;}
+  .sh-it .t b{color:var(--ink); font-weight:600;}
+  .sh-it .t .x{color:var(--crit);}
+  .sh-it button{flex:0 0 auto; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:8px; padding:5px 9px; font:inherit; font-size:12px; cursor:pointer;}
+  .sh-it button.stop{color:var(--crit); border-color:var(--crit-soft);}
+  .sh-it button.stop.arm{background:var(--crit); color:#fff; border-color:var(--crit);}
+  .sh-empty{padding:10px 0 2px; font-size:12.5px; color:var(--ink-soft);}
   .confirm-box{background:var(--surface); color:var(--ink); border-radius:18px; padding:22px 20px 16px; width:100%; max-width:340px; box-shadow:0 20px 50px rgba(0,0,0,.35); border:1px solid var(--line);}
   .confirm-msg{margin:0 0 18px; font-size:15px; line-height:1.6; font-weight:600; text-align:center; word-break:keep-all;}
   .confirm-btns{display:flex; gap:8px;}
@@ -1763,7 +1786,7 @@
     </section>
     <p class="rep-saved" id="repSaved" hidden></p>
     <div class="rep-actions">
-      <button type="button" class="btn primary" id="btnRepSess">측정 저장</button><button type="button" class="btn primary" id="btnSaveReport">리포트 이미지 저장</button><button type="button" class="btn line" id="btnShareReport">📤 회원에게 공유</button>
+      <button type="button" class="btn primary" id="btnRepSess">측정 저장</button><button type="button" class="btn primary" id="btnSaveReport">리포트 이미지 저장</button><button type="button" class="btn line" id="btnShareReport">📤 회원에게 공유</button><button type="button" class="btn line" id="btnLinkReport">🔗 공유 링크</button>
       <button type="button" class="btn line" id="btnNewPatient">새 측정 시작</button>
     </div>
     <details class="info">
@@ -1891,6 +1914,9 @@
       </div>
       <label>센터명<input id="stName" type="text" maxlength="24" placeholder="예: 바른자세 필라테스 서면점"></label>
       <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 051-000-0000 · @barun_pilates"></label>
+      <!-- v185 리포트 공유 링크를 받은 회원 화면에 [전화하기] [예약하기] 버튼으로 표시 -->
+      <label>전화번호 (선택) · 공유 링크의 [전화하기]<input id="stPhone" type="tel" inputmode="tel" maxlength="20" placeholder="예: 051-000-0000"></label>
+      <label>예약 링크 (선택) · 공유 링크의 [예약하기]<input id="stBook" type="url" inputmode="url" maxlength="300" placeholder="예: 네이버 예약·카카오톡 채널 주소"></label>
       <label class="chk"><input id="stApply" type="checkbox" checked>결과 이미지에 센터명·로고 표시</label>
     </section>
     <section class="card set-form">
@@ -1946,7 +1972,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v184</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v185</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -1964,7 +1990,7 @@
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목과 등 경계의 튀어나온 뼈)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v184</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v185</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -1983,7 +2009,7 @@
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v184</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v185</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
@@ -2325,6 +2351,28 @@
       <button type="button" class="btn line" id="btnTeBackup" hidden>💾 기록 백업하기</button>
       <button type="button" class="btn line" id="btnTeClose">무료로 계속 쓰기</button>
     </div>
+  </div>
+</div>
+<!-- v185 리포트 공유 링크: 회원이 앱 설치 없이 링크로 리포트를 보고 센터에 전화·예약 -->
+<div class="confirm-overlay" id="shSheet" hidden role="dialog" aria-modal="true" aria-labelledby="shT">
+  <div class="confirm-box sh-sheet">
+    <h3 id="shT">🔗 리포트 공유 링크</h3>
+    <p class="sub">회원이 앱 설치 없이 링크로 리포트를 보고, 센터에 바로 전화·예약할 수 있어요.</p>
+    <div id="shMake">
+      <label class="sh-days">링크 사용 기간
+        <select id="shDays"><option value="7">7일</option><option value="30" selected>30일</option><option value="90">90일</option></select>
+      </label>
+      <label class="sh-agree"><input type="checkbox" id="shAgree"><span>회원에게 <b>사진·측정 결과를 링크로 보내는 것에 대해 동의</b>를 받았어요</span></label>
+      <p class="sh-warn">링크를 받은 사람은 누구나 볼 수 있어요. 기간이 끝나거나 공유를 중지하면 바로 볼 수 없게 돼요.</p>
+      <button type="button" class="btn primary" id="btnShMake" style="width:100%">링크 만들기</button>
+    </div>
+    <div id="shDone" hidden>
+      <input type="text" id="shUrl" class="sh-url" readonly aria-label="공유 링크 주소">
+      <div class="sh-row"><button type="button" class="btn primary" id="btnShSend">📤 카톡 등으로 보내기</button><button type="button" class="btn line" id="btnShCopy">복사</button></div>
+    </div>
+    <p class="sh-tip" id="shTip" hidden>설정에서 <b>전화번호·예약 링크</b>를 넣으면 회원 화면에 [전화하기] [예약하기] 버튼이 생겨요. <button type="button" class="sh-lnk" id="btnShSet">설정으로 가기</button></p>
+    <details class="sh-list" id="shList"><summary>내가 만든 링크 <span id="shCnt"></span></summary><div id="shItems"></div></details>
+    <div class="confirm-btns"><button type="button" class="no" id="btnShClose">닫기</button></div>
   </div>
 </div>
 <div class="confirm-overlay" id="bkSheet" hidden role="dialog" aria-modal="true" aria-labelledby="bkSheetT">
@@ -5473,6 +5521,137 @@
   }
   $("btnShareReport").addEventListener("click", function(){ repGoOut(function(c, n){ shareCanvas(c, n, "아요바디요 체형 분석 리포트"); }); });
   $("btnSaveReport").addEventListener("click", function(){ repGoOut(deliverCanvas); });
+
+  /* ===================== v185 리포트 공유 링크 =====================
+     리포트 이미지 → 비공개 저장소(shares/{uid}/{키}.jpg) + 링크 정보(ayo_shares)
+     회원은 r.html?k=키 로 열람 (서버 함수 share-view가 기간·중지 여부를 확인하고 10분짜리 이미지 주소 발급) */
+  var shCanvas = null, shUrlNow = "", shBusy = false;
+  function shBase(){ return location.origin + location.pathname.replace(/[^\/]*$/, "") + "r.html?k="; }
+  function shToken(){   // 추측할 수 없는 24자 키
+    var a = new Uint8Array(18); crypto.getRandomValues(a);
+    return btoa(String.fromCharCode.apply(null, a)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function shCenter(){
+    var st = getSettings(), on = st.apply !== false;
+    return { name: on ? st.name : "", contact: on ? st.contact : "", logo: on ? st.logo : "", phone: st.phone || "", book: st.book || "" };
+  }
+  function shBlob(cv){   // 3MB 제한 안으로
+    return new Promise(function(res, rej){
+      var tryQ = function(c, q){
+        c.toBlob(function(b){
+          if(!b){ rej(new Error("이미지를 만들지 못했어요.")); return; }
+          if(b.size <= 2900000) { res(b); return; }
+          if(q > 0.65){ tryQ(c, q - 0.12); return; }
+          var s = document.createElement("canvas"); s.width = Math.round(c.width * 0.75); s.height = Math.round(c.height * 0.75);
+          s.getContext("2d").drawImage(c, 0, 0, s.width, s.height); tryQ(s, 0.82);
+        }, "image/jpeg", q);
+      };
+      tryQ(cv, 0.86);
+    });
+  }
+  function shErr(e){
+    var m = String((e && (e.message || e.error || e.statusCode)) || "");
+    if(/bucket not found|ayo_shares|does not exist|schema cache|404/i.test(m)) return "공유 링크 서버 설정이 아직 안 됐어요. 관리자에게 알려주세요.";
+    if(/network|fetch|failed to/i.test(m)) return "인터넷 연결이 불안정해요. 잠시 뒤 다시 시도해 주세요.";
+    return "링크를 만들지 못했어요. 잠시 뒤 다시 시도해 주세요.";
+  }
+  function shReset(){
+    $("shMake").hidden = false; $("shDone").hidden = true; $("shAgree").checked = false; shUrlNow = "";
+    var st = getSettings(); $("shTip").hidden = !!(st.phone || st.book);
+    $("btnShMake").disabled = false; $("btnShMake").textContent = "링크 만들기";
+  }
+  function openShare(){
+    if(!isPro()){ openProGate("report"); return; }
+    if(!ACC.uid || !sbClient()){ toast("공유 링크는 로그인한 계정에서 만들 수 있어요."); return; }
+    if(!navigator.onLine){ toast("인터넷에 연결된 뒤 다시 시도해 주세요."); return; }
+    repGoOut(function(c){ shCanvas = c; shReset(); $("shSheet").hidden = false; shList(); });
+  }
+  function shMake(){
+    if(shBusy) return;
+    if(!$("shAgree").checked){ toast("회원 동의를 받았는지 확인하고 체크해 주세요."); return; }
+    var c = sbClient(), uid = ACC.uid;
+    if(!c || !uid || !shCanvas){ toast("로그인 상태를 확인한 뒤 다시 시도해 주세요."); return; }
+    shBusy = true; $("btnShMake").disabled = true; $("btnShMake").textContent = "링크 만드는 중…";
+    var id = shToken(), path = uid + "/" + id + ".jpg", days = parseInt($("shDays").value, 10) || 30;
+    shBlob(shCanvas).then(function(blob){
+      return c.storage.from("shares").upload(path, blob, { contentType: "image/jpeg", upsert: false, cacheControl: "600" });
+    }).then(function(r){
+      if(r.error) throw r.error;
+      return c.from("ayo_shares").insert({ id: id, user_id: uid, image_path: path, center: shCenter(), expires_at: new Date(Date.now() + days * 864e5).toISOString() });
+    }).then(function(r){
+      if(r.error){ c.storage.from("shares").remove([path]).then(null, function(){}); throw r.error; }
+      shUrlNow = shBase() + id;
+      $("shUrl").value = shUrlNow; $("shMake").hidden = true; $("shDone").hidden = false;
+      toast("공유 링크를 만들었어요 · " + days + "일 동안 볼 수 있어요");
+      shList();
+    }).catch(function(e){
+      console.warn("[share]", e); toast(shErr(e));
+      $("btnShMake").disabled = false; $("btnShMake").textContent = "링크 만들기";
+    }).then(function(){ shBusy = false; });
+  }
+  function shCopy(url){
+    var ok = function(){ toast("링크를 복사했어요. 카톡·문자에 붙여넣어 보내주세요."); };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(ok, function(){ shCopyOld(url) ? ok() : toast("복사하지 못했어요. 링크를 길게 눌러 복사해 주세요."); }); return; }
+    if(shCopyOld(url)) ok(); else toast("복사하지 못했어요. 링크를 길게 눌러 복사해 주세요.");
+  }
+  function shCopyOld(url){
+    try{ var t = document.createElement("textarea"); t.value = url; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select(); var ok = document.execCommand("copy"); t.remove(); return ok; }catch(e){ return false; }
+  }
+  function shSend(url){
+    var nm = getSettings().name;
+    var text = (nm ? nm + "에서 " : "") + "보내드리는 체형 분석 리포트예요. 아래 링크에서 확인해 주세요.";
+    if(navigator.share){
+      navigator.share({ title: "체형 분석 리포트", text: text, url: url }).catch(function(err){ if(!(err && err.name === "AbortError")) shCopy(url); });
+    } else shCopy(url);
+  }
+  function shDday(exp){ var d = Math.ceil((new Date(exp).getTime() - Date.now()) / 864e5); return d; }
+  function shMd(s){ var d = new Date(s); return (d.getMonth() + 1) + "." + d.getDate(); }
+  function shList(){
+    var c = sbClient(); if(!c || !ACC.uid){ return; }
+    $("shItems").innerHTML = '<p class="sh-empty">불러오는 중…</p>';
+    c.from("ayo_shares").select("id, image_path, created_at, expires_at, views").order("created_at", { ascending: false }).limit(30).then(function(r){
+      if(r.error){ $("shCnt").textContent = ""; $("shItems").innerHTML = '<p class="sh-empty">' + esc(shErr(r.error)) + '</p>'; return; }
+      var rows = r.data || [], live = rows.filter(function(x){ return shDday(x.expires_at) > 0; }).length;
+      $("shCnt").textContent = rows.length ? "· 사용 중 " + live + "개" : "";
+      if(!rows.length){ $("shItems").innerHTML = '<p class="sh-empty">아직 만든 링크가 없어요.</p>'; return; }
+      $("shItems").innerHTML = rows.map(function(x){
+        var d = shDday(x.expires_at), on = d > 0;
+        return '<div class="sh-it"><div class="t"><b>' + shMd(x.created_at) + ' 만듦</b> · ' + (on ? "D-" + d : '<span class="x">기간 끝남</span>') + ' · 조회 ' + (x.views || 0) + '</div>' +
+          (on ? '<button type="button" data-cp="' + esc(x.id) + '">복사</button>' : '') +
+          '<button type="button" class="stop" data-rm="' + esc(x.id) + '" data-p="' + esc(x.image_path) + '">' + (on ? "중지" : "삭제") + '</button></div>';
+      }).join("");
+    }, function(e){ $("shItems").innerHTML = '<p class="sh-empty">' + esc(shErr(e)) + '</p>'; });
+  }
+  $("shItems").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    if(b.hasAttribute("data-cp")){ shCopy(shBase() + b.getAttribute("data-cp")); return; }
+    if(!b.hasAttribute("data-rm")) return;
+    if(!b.classList.contains("arm")){   // 한 번 더 눌러야 실행 (실수 방지)
+      b.classList.add("arm"); b.dataset.t = b.textContent; b.textContent = "정말?";
+      setTimeout(function(){ if(b.isConnected && b.classList.contains("arm")){ b.classList.remove("arm"); b.textContent = b.dataset.t; } }, 3000);
+      return;
+    }
+    var c = sbClient(); if(!c) return;
+    b.disabled = true;
+    var id = b.getAttribute("data-rm"), p = b.getAttribute("data-p");
+    // 링크 정보부터 지워 즉시 열람 불가 → 그다음 이미지 삭제
+    c.from("ayo_shares").delete().eq("id", id).then(function(r){
+      if(r.error) throw r.error;
+      return c.storage.from("shares").remove([p]).then(null, function(){});
+    }).then(function(){
+      toast("공유를 중지했어요. 이 링크는 이제 열리지 않아요.");
+      if(shUrlNow && shUrlNow.slice(-id.length) === id) shReset();
+      shList();
+    }).catch(function(err){ b.disabled = false; toast(shErr(err)); });
+  });
+  $("btnLinkReport").addEventListener("click", openShare);
+  $("btnShMake").addEventListener("click", shMake);
+  $("btnShSend").addEventListener("click", function(){ if(shUrlNow) shSend(shUrlNow); });
+  $("btnShCopy").addEventListener("click", function(){ if(shUrlNow) shCopy(shUrlNow); });
+  $("shUrl").addEventListener("focus", function(){ this.select(); });
+  $("btnShClose").addEventListener("click", function(){ $("shSheet").hidden = true; shCanvas = null; });
+  $("shSheet").addEventListener("click", function(e){ if(e.target === $("shSheet")){ $("shSheet").hidden = true; shCanvas = null; } });
+  $("btnShSet").addEventListener("click", function(){ $("shSheet").hidden = true; showView("settings"); });
 
   /* ---- 화면 전환 (사이드바 / 하단 탭) ---- */
   state.view = "analyze";
@@ -10002,7 +10181,7 @@
   function getSettings(){
     var o = null; try{ o = JSON.parse(lsGet(SET_KEY) || "null"); }catch(e){}
     o = o || {};
-    return { name: o.name || "", contact: o.contact || "", logo: o.logo || "", apply: o.apply !== false, method: o.method || "카드", items: Array.isArray(o.items) ? o.items : DEFAULT_ITEMS.slice() };
+    return { name: o.name || "", contact: o.contact || "", phone: o.phone || "", book: o.book || "", logo: o.logo || "", apply: o.apply !== false, method: o.method || "카드", items: Array.isArray(o.items) ? o.items : DEFAULT_ITEMS.slice() };
   }
   function saveSettings(o, fromServer){
     try{ localStorage.setItem(SET_KEY, JSON.stringify(o)); }catch(e){ return false; }
@@ -10082,7 +10261,7 @@
     stDraft = getSettings(); stDraft.items = stDraft.items.map(function(x){ return { n:x.n, a:x.a || 0 }; });
     var pro = isPro();
     $("setLock").hidden = pro; $("setOn").hidden = !pro; $("setFs").disabled = !pro; updateLicUI();
-    $("stName").value = stDraft.name; $("stContact").value = stDraft.contact; $("stApply").checked = stDraft.apply; $("stMethod").value = stDraft.method;
+    $("stName").value = stDraft.name; $("stContact").value = stDraft.contact; $("stPhone").value = stDraft.phone; $("stBook").value = stDraft.book; $("stApply").checked = stDraft.apply; $("stMethod").value = stDraft.method;
     stRenderLogo(); stRenderItems(); stRenderPreview();
     if(entering && !pro) openProGate();
   }
@@ -10117,7 +10296,14 @@
   });
   $("btnStSave").addEventListener("click", function(){
     if(!isPro()){ openProGate(); return; }
-    var o = { name: $("stName").value.trim(), contact: $("stContact").value.trim(), logo: stDraft.logo || "", apply: $("stApply").checked, method: $("stMethod").value,
+    // v185 예약 링크: 'booking.naver.com/…'처럼 앞부분 없이 붙여넣어도 https://를 붙여 저장
+    var book = $("stBook").value.trim();
+    if(book && !/^https?:\/\//i.test(book)){
+      if(/^[^\s/]+\.[^\s]+/.test(book)) book = "https://" + book;
+      else { toast("예약 링크는 https://로 시작하는 주소로 넣어주세요."); $("stBook").focus(); return; }
+    }
+    var phone = $("stPhone").value.replace(/[^0-9+\-]/g, "");
+    var o = { name: $("stName").value.trim(), contact: $("stContact").value.trim(), phone: phone, book: book, logo: stDraft.logo || "", apply: $("stApply").checked, method: $("stMethod").value,
               items: stDraft.items.filter(function(x){ return x.n && x.n.trim(); }).map(function(x){ return { n:x.n.trim(), a: Math.max(0, x.a || 0) }; }) };
     if(!saveSettings(o)){ toast("저장 공간이 부족해요. 더 작은 로고 이미지를 사용해주세요."); return; }
     applyBrand(); fillSaleItems(); renderSettings(false);

@@ -97,3 +97,4 @@ revoke insert, update, delete, truncate on public.ayo_subs from anon, authentica
 
 -- ===== v185 리포트 공유 링크 =====
 -- 내용은 supabase/v185_share.sql 참고 (ayo_shares 표 + shares 비공개 버킷 + 서버 함수 share-view)
+-- v186 클릭 집계·센터 소개 페이지: supabase/v186_center.sql 참고

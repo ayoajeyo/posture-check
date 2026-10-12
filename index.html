@@ -977,6 +977,12 @@
   .rom-overlay{align-items:flex-start; overflow-y:auto; padding:12px;}
   .rom-box{max-width:720px; text-align:left; padding:16px; margin:auto;}
   .cap-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;} .cap-head h2{margin:0;}
+  /* v192 측면 촬영 방향(좌측/우측) 선택 — 측정가이드 버튼 왼쪽 */
+  .side-dir{margin-left:auto; display:inline-flex; gap:2px; padding:3px; border-radius:100px; background:var(--surface-2); border:1px solid var(--line);}
+  .side-dir + .pt-guide-btn{margin-left:0;}
+  .side-dir button{font-family:inherit; font-size:12.5px; font-weight:800; color:var(--ink-soft); background:transparent; border:0; border-radius:100px; padding:5px 11px; cursor:pointer;}
+  .side-dir button[aria-pressed="true"]{background:var(--accent); color:#fff;}
+  .silhouette.mirror{transform:scaleX(-1);}
   .pt-guide-btn{margin-left:auto; font-family:inherit; font-size:12.5px; font-weight:800; color:#fff; background:linear-gradient(135deg,#2F6BFF,#5B8CFF); border:0; border-radius:100px; padding:7px 13px; cursor:pointer; white-space:nowrap; box-shadow:0 6px 14px -8px rgba(47,107,255,.8);}
   .pg-box #ptGuideSub{margin:3px 0 0; font-size:12.5px; color:var(--ink-soft);}
   .pg-pose{margin:12px 0; background:var(--surface-2); border-radius:12px; padding:11px 13px; font-size:13.5px; line-height:1.55;}
@@ -1559,7 +1565,7 @@
   <div class="an-grid">
   <div class="an-col">
   <section class="card" id="capture-card">
-    <div class="cap-head"><h2 id="capture-title">1. 정면 사진 촬영</h2><button type="button" class="pt-guide-btn" id="btnPtGuide">📍 측정가이드</button></div>
+    <div class="cap-head"><h2 id="capture-title">1. 정면 사진 촬영</h2><div class="side-dir" id="sideDir" role="group" aria-label="측면 촬영 방향" hidden><button type="button" data-dir="L" aria-pressed="true">좌측</button><button type="button" data-dir="R" aria-pressed="false">우측</button></div><button type="button" class="pt-guide-btn" id="btnPtGuide">📍 측정가이드</button></div>
     <p class="sub" id="capture-sub">정면을 보고 편안히 선 자세에서, 카메라를 배꼽 높이에 두고 수평(가늠자 초록)으로 맞춰 촬영하세요.</p>
 
     <div class="pv-bar" id="bodyPvBar" hidden>
@@ -2023,7 +2029,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v191</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v192</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -2041,7 +2047,7 @@
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목젖 아랫부분 높이에서 가로선을 그었을 때 목 뒤 끝)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v191</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v192</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -2060,7 +2066,7 @@
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v191</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v192</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
@@ -2872,6 +2878,7 @@
     side: {
       title: "측면 사진 촬영",
       sub: "몸의 정면이 화면 좌측을 향하도록 옆모습 전신을 한 장 촬영하세요(좌측=전방, 우측=후방 기준). 귀·어깨·고관절·무릎·발목이 화면 안에 들어와야 합니다.",
+      subR: "몸의 정면이 화면 우측을 향하도록 옆모습 전신을 한 장 촬영하세요(우측=전방, 좌측=후방 기준). 귀·어깨·고관절·무릎·발목이 화면 안에 들어와야 합니다.",
       hint: "복사뼈(발목)를 빨간 선에 맞추고 몸 전체가 화면 안에",
       facing: "environment",
       type: "chain",
@@ -2897,6 +2904,7 @@
   /* ---------- state ---------- */
   var state = {
     mode: "front",
+    sideDir: "L",   // v192 측면 촬영 방향: L = 몸의 정면이 화면 좌측(기본) · R = 우측
     byMode: {
       front: { img:null, w:0, h:0, points:{}, view:{scale:1, cx:0, cy:0} },
       side:  { img:null, w:0, h:0, points:{}, view:{scale:1, cx:0, cy:0} }
@@ -3005,6 +3013,25 @@
     ).trim() || "#fff";
   }
 
+  /* v192 측면 촬영 방향 선택 (좌측 기본 · 우측은 버튼을 눌러야만) — 실루엣을 거울처럼 뒤집고, 전방·후방 판정 기준도 같이 바꿈 */
+  function sideDirSync(){
+    var box = $("sideDir"); if(!box) return;
+    var side = state.mode === "side", R = state.sideDir === "R";
+    box.hidden = !side;
+    box.querySelectorAll("button[data-dir]").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-dir") === state.sideDir)); });
+    captureSub.textContent = (side && R && cfg().subR) ? cfg().subR : cfg().sub;
+    silhouetteSide.classList.toggle("mirror", R);
+    if(typeof bodyGhostShow === "function" && typeof bodyGh !== "undefined" && bodyGh.on) bodyGhostShow();   // 촬영 중이면 실루엣 즉시 뒤집기
+  }
+  $("sideDir").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-dir]"); if(!b) return;
+    var d = b.getAttribute("data-dir"); if(d === state.sideDir) return;
+    state.sideDir = d;
+    var s = cur();
+    if(s && s.img && cfg().type === "chain"){ s.faceSign = d === "R" ? 1 : -1; s.faceSet = true; syncFaceBtn(); requestDraw(); renderResults(); }
+    sideDirSync();
+    toast(d === "R" ? "우측 측면 촬영 · 몸의 정면이 화면 오른쪽을 향하게 서 주세요." : "좌측 측면 촬영 · 몸의 정면이 화면 왼쪽을 향하게 서 주세요.");
+  });
   /* ---------- tabs ---------- */
   function selectMode(m){
     if(state.mode === m) return;
@@ -3015,7 +3042,7 @@
     tabFront.setAttribute("aria-selected", m==="front" ? "true":"false");
     tabSide.setAttribute("aria-selected", m==="side" ? "true":"false");
     captureTitle.textContent = "1. " + cfg().title;
-    captureSub.textContent = cfg().sub;
+    sideDirSync();
     hintChipText.textContent = cfg().hint;
     // SVG 요소는 .hidden 속성이 동작하지 않으므로 hidden 어트리뷰트를 직접 토글
     syncSilhouettes();
@@ -3334,7 +3361,8 @@
     if(state.phase !== "live" || !bodyGh.cv || bodyGh.mode !== state.mode) return;
     var el = $("bodyGhost"); el.width = bodyGh.cv.width; el.height = bodyGh.cv.height; el.getContext("2d").drawImage(bodyGh.cv, 0, 0);
     var ad = bodyGh.key === "fixed|" + bodyGh.mode ? SIL_ADJ["body_" + bodyGh.mode] : null;   // v161 기준 실루엣만 크기 조정
-    el.style.transform = ad ? "translate(" + ((ad.dx || 0) * 100) + "%, " + ((ad.dy || 0) * 100) + "%) scale(" + (ad.s || 1) + ")" : "";
+    var mir = (bodyGh.mode === "side" && state.sideDir === "R") ? " scaleX(-1)" : "";   // v192 우측 측면: 거울처럼 뒤집기
+    el.style.transform = (ad ? "translate(" + ((ad.dx || 0) * 100) + "%, " + ((ad.dy || 0) * 100) + "%) scale(" + (ad.s || 1) + ")" : "") + mir;
     el.hidden = false; bodyGh.on = true; $("bodyGTag").textContent = bodyGh.tag; $("bodyGTag").hidden = false;
     syncSilhouettes();
   }
@@ -3606,7 +3634,8 @@
     s.points = {};
     s.history = [];
     s.centerX = undefined;
-    s.faceSign = -1;
+    s.faceSign = (cfg().type === "chain" && state.sideDir === "R") ? 1 : -1;   // v192 선택한 촬영 방향으로 시작
+    s.sideDir = cfg().type === "chain" ? state.sideDir : undefined;
     s.rot = 0; s.rotPivot = null; s.personBox = null;
     if(state.rotMode) setRotMode(false);
     s.captureRoll = state.pendingRoll; state.pendingRoll = null;
@@ -4178,7 +4207,11 @@
       var earP = bestLm(7, 8);
       // 얼굴 방향: 코가 귀보다 화면 좌측이면 좌측을 보고 선 것(전방 = 화면 좌측)
       var noseP = pt(0);
-      if(noseP && earP) s.faceSign = (noseP.x < earP.x) ? -1 : 1;
+      if(noseP && earP){
+        var det = (noseP.x < earP.x) ? -1 : 1, want = (s.sideDir === "R") ? 1 : -1;
+        s.faceSign = det;
+        if(det !== want && !s.faceSet) toast((want > 0 ? "우측" : "좌측") + " 측면으로 선택했지만 사진은 반대 방향으로 보여요. 얼굴 방향(◀▶) 버튼으로 확인해 주세요.");   // v192
+      }
       var shL = pt(11), shR = pt(12);
       var c7P = null;
       if(shL || shR){
@@ -6859,7 +6892,7 @@
     var sc = function(p){ return p ? Object.assign({}, p, { x: p.x * k, y: p.y * k }) : null; };
     var pts = {}; Object.keys(s.points).forEach(function(key){ pts[key] = sc(s.points[key]); });
     return { img: c.toDataURL("image/jpeg", 0.86), w: cw, h: ch, points: pts,
-      centerX: isFinite(s.centerX) ? s.centerX * k : null, faceSign: s.faceSign, rot: s.rot || 0,
+      centerX: isFinite(s.centerX) ? s.centerX * k : null, faceSign: s.faceSign, sideDir: s.sideDir, rot: s.rot || 0,
       rotPivot: sc(s.rotPivot), grid: s.grid ? { floorY: s.grid.floorY * k, cell: s.grid.cell * k } : null, captureRoll: s.captureRoll == null ? null : s.captureRoll };
   }
   function saveMeasurement(){
@@ -6961,7 +6994,8 @@
         s.img = img; s.imgUrl = p.img; s.w = img.naturalWidth; s.h = img.naturalHeight;
         var pts = {}; Object.keys(p.points || {}).forEach(function(k){ pts[k] = Object.assign({}, p.points[k]); });
         s.points = pts;
-        s.centerX = p.centerX == null ? undefined : p.centerX; s.faceSign = p.faceSign == null ? -1 : p.faceSign;
+        s.centerX = p.centerX == null ? undefined : p.centerX; s.faceSign = p.faceSign == null ? -1 : p.faceSign; s.sideDir = p.sideDir || (s.faceSign > 0 ? "R" : "L");
+        if(cfg().type === "chain"){ state.sideDir = s.sideDir; sideDirSync(); }   // v192 저장된 기록의 촬영 방향
         s.rot = p.rot || 0; s.rotPivot = p.rotPivot ? Object.assign({}, p.rotPivot) : null;
         s.grid = p.grid ? Object.assign({}, p.grid) : null; s.captureRoll = p.captureRoll; s.framed = true;
         s.view = { scale: 1, cx: s.w / 2, cy: s.h / 2 };

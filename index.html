@@ -1459,7 +1459,7 @@
   html[data-skin="vivid"] .wf-chip.sel::after{color:#fff;}
 
   /* ===================== v128 체형 2차부터 이전 회차 실루엣 ===================== */
-  .stage canvas.bghost{object-fit:cover; background:transparent; opacity:.45; pointer-events:none;}
+  .stage canvas.bghost{object-fit:cover; background:transparent; opacity:1; pointer-events:none;}   /* v191 투명도는 실루엣 스타일에 포함 */
   .body-gtag{position:absolute; top:10px; left:10px; right:10px; z-index:3; text-align:center; font-size:12px; font-weight:700; padding:5px 10px; border-radius:100px; color:#fff; background:rgba(31,120,140,.85); pointer-events:none;}
   .body-gtag[hidden]{display:none;}
 </style>
@@ -2023,7 +2023,7 @@
     </div>
     <div class="rom-sum" id="romSum"></div>
     <div class="rom-grid" id="romGrid"></div>
-    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v190</span></p>
+    <p class="rom-note">정상 각도는 일반적인 참고 범위예요. 촬영 각도·자세에 따라 달라질 수 있는 참고값이에요. <span style="opacity:.6">· 앱 버전 v191</span></p>
   </section>
   <section class="view" id="view-fhp" hidden>
     <div class="member-bar rom-mb" id="fhpMember">
@@ -2041,7 +2041,7 @@
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목젖 아랫부분 높이에서 가로선을 그었을 때 목 뒤 끝)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v190</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v191</span></p>
   </section>
   <section class="view" id="view-scol" hidden>
     <div class="member-bar rom-mb" id="scolMember">
@@ -2060,7 +2060,7 @@
       <b>척추 균형 측정 (앞으로 숙인 자세)</b> · 무릎을 펴고 허리를 숙인 자세를 <b>뒤(등 쪽)에서</b> 등 높이로 촬영 → 척추 양옆 같은 거리의 등 높이를 자동으로 찾아 수평선과의 각도(체간 회전각)를 계산해요. <b>5° 미만</b> 정상 범위, <b>5–7°</b> 관찰, <b>7° 이상</b>은 전문가 상담을 권장해요.<br>
       촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
-    <p class="rom-note"><span style="opacity:.6">앱 버전 v190</span></p>
+    <p class="rom-note"><span style="opacity:.6">앱 버전 v191</span></p>
   </section>
   <section class="view" id="view-members" hidden>
     <div class="rep-lock" id="mbLock" hidden><div><b>🔒 회원 관리는 PRO 플랜 전용이에요</b><span>미리 보기 중 · 회원 등록·검색·기록 관리는 PRO에서 할 수 있어요</span></div><button type="button" class="btn primary sm rep-pro-btn" id="btnMbPro">PRO 알아보기</button></div>
@@ -3368,8 +3368,7 @@
     var im = new Image();
     im.onload = function(){
       if(bodyGh.key !== key) return;
-      var c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0);
-      bodyGh.cv = c; bodyGhostShow();
+      bodyGh.cv = silStylize(im); bodyGhostShow();   // v191 색 빼고 윤곽선 스타일
     };
     im.onerror = function(){ if(bodyGh.key === key){ bodyGh.key = null; bodyGhostPrevPrep(); } };   // 기준 실루엣을 못 받으면 예전 방식(직전 기록)
     im.src = "guide/sil/body_" + m + "_v3.webp";   // v146 얼굴 흐림 + 몸매 보정본
@@ -9749,6 +9748,34 @@
     return prev[0] || H.sort(function(a, b){ return key(b) - key(a); })[0];
   }
   // v105 1차 기록 실루엣: 인물 윤곽을 다듬고(작은 조각·구멍 제거, 매끈한 경계) 측정한 관절 쪽만 또렷하게
+  /* v191 실루엣 스타일: 사진 색을 빼고 연한 흑백 명암 + 흰 후광 + 또렷한 어두운 윤곽선 (사람 사진이 그대로 보이지 않게) */
+  function silStylize(src, sw, sh){
+    var w = sw || src.naturalWidth || src.width, h = sh || src.naturalHeight || src.height;
+    if(!w || !h) return src;
+    var c = document.createElement("canvas"); c.width = w; c.height = h; var g = c.getContext("2d");
+    g.drawImage(src, 0, 0, w, h);
+    var id; try{ id = g.getImageData(0, 0, w, h); }catch(e){ return src; }   // 외부 이미지 보호 등으로 못 읽으면 원본 그대로
+    var d = id.data, n = w * h, A = new Uint8Array(n), i;
+    for(i = 0; i < n; i++){
+      var a = d[i * 4 + 3]; A[i] = a > 127 ? 1 : 0;
+      var l = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2];
+      l = Math.max(0, Math.min(255, (l - 60) * 0.6 + 150));   // 명암만 연하게 남김
+      d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = l; d[i * 4 + 3] = a ? Math.round(a * 0.32) : 0;
+    }
+    g.putImageData(id, 0, 0);
+    // 윤곽선: 마스크의 안/밖 경계 — 바깥쪽 흰 후광(어두운 배경용) + 안쪽 짙은 선
+    var r1 = Math.max(2, Math.round(Math.max(w, h) / 360)), r2 = Math.max(3, Math.round(r1 * 2));   // 화면에서 약 1.5px 선 + 후광
+    var edge = function(r){ var E = new Uint8Array(n), x, y, dx, dy; for(y = 0; y < h; y++) for(x = 0; x < w; x++){ var v = A[y * w + x], hit = 0;
+        for(dy = -r; dy <= r && !hit; dy++) for(dx = -r; dx <= r; dx++){ var X = x + dx, Y = y + dy; if(X < 0 || Y < 0 || X >= w || Y >= h) continue; if(A[Y * w + X] !== v){ hit = 1; break; } }
+        E[y * w + x] = hit; } return E; };
+    var halo = edge(r2), line = edge(r1), hd = g.getImageData(0, 0, w, h), q = hd.data;
+    for(i = 0; i < n; i++){
+      if(line[i]){ q[i * 4] = 13; q[i * 4 + 1] = 21; q[i * 4 + 2] = 40; q[i * 4 + 3] = 235; }
+      else if(halo[i]){ var ha = 140; q[i * 4] = Math.round((q[i * 4] * q[i * 4 + 3] + 255 * (255 - q[i * 4 + 3])) / 255); q[i * 4 + 1] = q[i * 4]; q[i * 4 + 2] = q[i * 4]; q[i * 4 + 3] = Math.max(q[i * 4 + 3], ha); }
+    }
+    g.putImageData(hd, 0, 0);
+    return c;
+  }
   function romGhostCanvas(im, m, pts, k){
     var W = im.naturalWidth, H = im.naturalHeight, s = Math.min(1, 720 / Math.max(W, H)), w = Math.round(W * s), h = Math.round(H * s);
     var out = document.createElement("canvas"); out.width = w; out.height = h; var o = out.getContext("2d");
@@ -9785,7 +9812,7 @@
     sx2.putImageData(sd, 0, 0);
     // v127 테두리 대신 이전 회차 사진에서 사람 부분만 오려 반투명으로 (측정가이드 사진과 같은 모양)
     o.drawImage(im, 0, 0, w, h); o.globalCompositeOperation = "destination-in"; o.drawImage(sh, 0, 0); o.globalCompositeOperation = "source-over";
-    return { cv: out, mode: "sil" };
+    return { cv: silStylize(out), mode: "sil" };   // v191 색 빼고 윤곽선 스타일
   }
   function romGhostPrep(){
     romCam.ghost = null;
@@ -9794,7 +9821,7 @@
       var sk = J.k + "_" + romSd(J, mv) + "_" + mv.k;
       if(SIL_ROM.indexOf(sk) >= 0){   // v144 고정 기준 실루엣 (모든 회차 동일)
         var fid = "fixed:" + sk, im0 = new Image(); romCam.ghostId = fid;
-        im0.onload = function(){ if(romCam.ghostId !== fid) return; romCam.ghost = { w: im0.naturalWidth, h: im0.naturalHeight, rec: null, cv: im0, mode: "sil", fixed: true, adj: SIL_ADJ[sk] || null }; romOutlineBtn(); };
+        im0.onload = function(){ if(romCam.ghostId !== fid) return; romCam.ghost = { w: im0.naturalWidth, h: im0.naturalHeight, rec: null, cv: silStylize(im0), mode: "sil", fixed: true, adj: SIL_ADJ[sk] || null }; romOutlineBtn(); };   // v191
         im0.onerror = function(){ if(romCam.ghostId === fid) romGhostPrepRec(); };
         im0.src = "guide/sil/" + sk + "_v3.webp";   // v146 얼굴 흐림 + 몸매 보정본
         return;
@@ -9838,7 +9865,7 @@
         var ks = gh.adj.s || 1, nw = r.w * ks, nh = r.h * ks;
         r = { x: r.x - (nw - r.w) / 2 + (gh.adj.dx || 0) * nw, y: r.y - (nh - r.h) / 2 + (gh.adj.dy || 0) * nh, w: nw, h: nh };   // v187 dy = 위아래 이동
       }
-      g.save(); g.globalAlpha = gh.mode === "sil" ? 0.45 : 0.35; g.drawImage(gh.cv, r.x, r.y, r.w, r.h); g.restore();
+      g.save(); g.globalAlpha = gh.mode === "sil" ? 1 : 0.35; g.drawImage(gh.cv, r.x, r.y, r.w, r.h); g.restore();   // v191 실루엣은 스타일에 투명도 포함
       tag.hidden = false; tag.className = "rom-gtag ghost";
       tag.textContent = gh.fixed ? SIL_TAG : romRoundOf(gh.rec) + "차 기록(" + fmtDate(gh.rec.at).slice(0, 10) + ") 자세·위치에 맞춰 촬영하세요";
       return;

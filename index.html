@@ -1421,6 +1421,17 @@
   .cur-bar{display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:8px 8px 8px 10px; cursor:pointer; text-align:left; font-family:inherit; color:var(--ink); width:100%;}
   .cur-bar .mb-avatar{width:36px; height:36px;}
   .cur-row{display:flex; gap:8px; align-items:stretch;}
+  /* v234 개선·추가 기능 요청 폼 */
+  .fb-box{max-height:88vh; overflow-y:auto; text-align:left;}
+  .fb-box form{display:flex; flex-direction:column; gap:10px; margin:6px 0 12px;}
+  .fb-sec{font-size:13px; font-weight:800; color:var(--ink); margin-top:4px; padding-bottom:4px; border-bottom:1px solid var(--line);}
+  .fb-box select, .fb-box textarea{width:100%; max-width:100%; box-sizing:border-box; font-family:inherit; font-size:14px; border:1px solid var(--line); border-radius:11px; padding:10px 12px; background:var(--surface); color:var(--ink);}
+  .fb-box textarea{resize:vertical; line-height:1.5;}
+  .fb-chips{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px;}
+  .fb-chips button{font-family:inherit; font-size:12.5px; font-weight:700; padding:8px 2px; white-space:nowrap; border-radius:100px; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); cursor:pointer;}
+  .fb-chips button[aria-pressed="true"]{border:2px solid var(--blue); color:var(--blue); background:var(--accent-soft); padding:7px 1px;}
+  .fb-note{font-size:12px; color:var(--ink-soft); margin:0;}
+  .fb-box .err{outline:2px solid var(--crit); outline-offset:1px;}
   .cur-row .cur-bar{flex:1; min-width:0; min-height:54px;}
   /* v233 회원 선택 전: 물음표 없이 '회원 선택' 버튼만 · 선택 후: 87 송인경 */
   .cur-bar:not(.on){padding:0; border:0; background:transparent!important; box-shadow:none!important;}
@@ -2663,6 +2674,7 @@
       <button type="button" data-go="settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span class="ml-t">설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreAcc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span class="ml-t">계정</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreSrv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.7 4.7 0 0 0 7 18.5z"/><path d="M12 15.5v-5M9.8 12.6L12 10.4l2.2 2.2"/></svg><span class="ml-t">서버 저장</span><span class="ml-b" id="srvPendB" hidden></span><span class="ml-c" aria-hidden="true">›</span></button>
+      <button type="button" id="btnMoreFb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v6M9 10h6"/></svg>개선·추가 기능 요청</button>
       <button type="button" id="btnMoreTheme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14.5" cy="7.5" r="1"/></svg><span class="ml-t">화면 테마</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreBk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span class="ml-t">내 데이터 내보내기 · 불러오기</span><span class="ml-c" aria-hidden="true">›</span></button>
       <button type="button" id="btnMoreAdm"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg><span class="ml-t" id="btnMoreAdmT">관리자 모드</span><span class="ml-c" aria-hidden="true">›</span></button>
@@ -2688,7 +2700,7 @@
     </div>
     <div class="adm-xls" id="admBench" hidden>
       <b>🎯 정확도 채점</b>
-      <p id="admBenchInfo">원장님이 고친 최종 점을 정답으로 보고, 자동 인식이 얼마나 맞았는지 항목별로 점수를 내요.</p>
+      <p id="admBenchInfo">아요가 고친 최종 점을 정답으로 보고, 자동 인식이 얼마나 맞았는지 항목별로 점수를 내요.</p>
       <div class="bench-tabs" role="tablist">
         <button type="button" class="bench-tab" id="btnBenchSaved" aria-pressed="true">저장 당시</button>
         <button type="button" class="bench-tab" id="btnBenchNow" aria-pressed="false">현재 버전</button>
@@ -2801,6 +2813,26 @@
   <div class="confirm-box rom-box">
     <div class="rom-head"><div><h3 id="romLRTitle">좌우 비교 분석</h3><p>좌측·우측 최근 측정값 비교</p></div><button type="button" class="rom-x" id="btnRomLRClose" aria-label="닫기">✕</button></div>
     <div id="romLRBody"></div>
+  </div>
+</div>
+<div class="confirm-overlay" id="fbOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="fbTitle">   <!-- v234 개선·추가 기능 요청 → 개발자 메일 -->
+  <div class="confirm-box fb-box">
+    <h3 id="fbTitle">개선·추가 기능 요청</h3>
+    <form id="fbForm" novalidate>
+      <div class="fb-sec">작성자 정보</div>
+      <div class="field-row"><div class="field"><label for="fbName">이름 *</label><input id="fbName" maxlength="40" autocomplete="name"></div>
+        <div class="field"><label for="fbOrg">소속(센터·병원)</label><input id="fbOrg" maxlength="60" autocomplete="organization"></div></div>
+      <div class="field"><label for="fbContact">답변 받을 연락처 (이메일 또는 전화) *</label><input id="fbContact" maxlength="80" autocomplete="email"></div>
+      <div class="fb-sec">요청 내용</div>
+      <div class="field"><label>요청 종류 *</label><div class="fb-chips" id="fbKind" role="radiogroup">
+        <button type="button" data-v="개선 요청" aria-pressed="true">개선 요청</button><button type="button" data-v="새 기능" aria-pressed="false">새 기능</button><button type="button" data-v="오류 신고" aria-pressed="false">오류 신고</button><button type="button" data-v="기타" aria-pressed="false">기타</button></div></div>
+      <div class="field-row"><div class="field"><label for="fbScreen">관련 화면</label><select id="fbScreen"><option>측정 - 체형</option><option>측정 - ROM</option><option>측정 - 거북목</option><option>측정 - 척추 균형</option><option>리포트</option><option>회원</option><option>현황</option><option>더보기·설정</option><option>기타</option></select></div>
+        <div class="field"><label for="fbPri">중요도</label><select id="fbPri"><option>보통</option><option>높음 (업무에 지장)</option><option>낮음 (있으면 좋음)</option></select></div></div>
+      <div class="field"><label for="fbSubj">제목 *</label><input id="fbSubj" maxlength="100" placeholder="예: 리포트에 날짜별 비교 그래프 추가"></div>
+      <div class="field"><label for="fbBody">상세 내용 *</label><textarea id="fbBody" rows="6" maxlength="4000" placeholder="■ 현재 상황(무엇이 불편한가요?)&#10;&#10;■ 원하는 방식(어떻게 바뀌면 좋을까요?)&#10;&#10;■ 오류라면: 어떤 순서로 눌렀을 때 생겼나요?"></textarea></div>
+      <p class="fb-note">앱 버전·기기 정보가 함께 전송돼요.</p>
+    </form>
+    <div class="confirm-btns"><button type="button" class="no" id="btnFbClose">닫기</button><button type="button" class="yes ok" id="btnFbSend">보내기</button></div>
   </div>
 </div>
 <div class="confirm-overlay" id="mbPicker" hidden role="dialog" aria-modal="true" aria-labelledby="mbPickTitle">
@@ -6510,6 +6542,41 @@
     [["thoLight", !dark && !vivid], ["thoDark", dark], ["thoVivid", vivid]].forEach(function(o){ var b = $(o[0]); if(b) b.setAttribute("aria-pressed", String(o[1])); });
   }
   function themeOpen(){ $("moreSheet").hidden = true; $("themeSheet").hidden = false; }
+  /* v234 개선·추가 기능 요청: 입력 → 개발자 메일(FormSubmit)로 전송, 실패하면 메일 앱으로 같은 내용 */
+  var FB_MAIL = "aesonge26@gmail.com";
+  function fbOpen(){
+    $("moreSheet").hidden = true;
+    var em = ""; try{ em = (ACC && ACC.user && ACC.user.email) || ""; }catch(e){}
+    if(!$("fbContact").value && em) $("fbContact").value = em;
+    try{ if(!$("fbOrg").value && typeof shCenter === "function") $("fbOrg").value = (shCenter() || {}).name || ""; }catch(e){}
+    $("fbOverlay").hidden = false;
+  }
+  $("btnMoreFb").addEventListener("click", fbOpen);
+  $("btnFbClose").addEventListener("click", function(){ $("fbOverlay").hidden = true; });
+  $("fbKind").addEventListener("click", function(e){ var b = e.target.closest("button"); if(!b) return;
+    $("fbKind").querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); });
+  function fbData(){
+    var kb = $("fbKind").querySelector('[aria-pressed="true"]'), em = "";
+    try{ em = (ACC && ACC.user && ACC.user.email) || ""; }catch(e){}
+    return { "요청 종류": kb ? kb.getAttribute("data-v") : "개선 요청", "제목": $("fbSubj").value.trim(), "관련 화면": $("fbScreen").value, "중요도": $("fbPri").value,
+      "상세 내용": $("fbBody").value.trim(), "작성자": $("fbName").value.trim(), "소속": $("fbOrg").value.trim(), "연락처": $("fbContact").value.trim(),
+      "로그인 계정": em, "앱 버전": APP_VER, "기기": navigator.userAgent, "작성 시각": new Date().toLocaleString("ko-KR") };
+  }
+  function fbMailto(d){
+    var body = Object.keys(d).map(function(k){ return "■ " + k + "\n" + d[k]; }).join("\n\n");
+    location.href = "mailto:" + FB_MAIL + "?subject=" + encodeURIComponent("[아요바디요 " + d["요청 종류"] + "] " + d["제목"]) + "&body=" + encodeURIComponent(body);
+  }
+  $("btnFbSend").addEventListener("click", function(){
+    var need = ["fbName", "fbContact", "fbSubj", "fbBody"], bad = need.filter(function(id){ var el = $(id); var v = !el.value.trim(); el.classList.toggle("err", v); return v; });
+    if(bad.length){ $(bad[0]).focus(); toast("* 표시 항목을 입력해 주세요."); return; }
+    var d = fbData(), btn = $("btnFbSend"); btn.disabled = true; btn.textContent = "보내는 중…";
+    var payload = Object.assign({ _subject: "[아요바디요 " + d["요청 종류"] + "] " + d["제목"], _template: "table", _captcha: "false" }, d);
+    var done = function(){ btn.disabled = false; btn.textContent = "보내기"; };
+    fetch("https://formsubmit.co/ajax/" + FB_MAIL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(payload) })
+      .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ if(!r.ok || String(j.success) === "false") throw new Error(j.message || r.status); }); })
+      .then(function(){ done(); $("fbOverlay").hidden = true; $("fbSubj").value = ""; $("fbBody").value = ""; toast("요청을 보냈어요. 소중한 의견 감사합니다!"); },
+        function(){ done(); toast("인터넷 전송이 안 돼서 메일 앱으로 같은 내용을 열게요."); setTimeout(function(){ fbMailto(d); }, 600); });
+  });
   $("btnMoreTheme").addEventListener("click", function(){ $("moreSheet").hidden = true; themeOpen(); });   // v223 테마는 더보기에서
   $("btnThemeClose").addEventListener("click", function(){ $("themeSheet").hidden = true; });
   [["thoLight", "", ""], ["thoDark", "dark", ""], ["thoVivid", "", "vivid"]].forEach(function(o){
@@ -10959,7 +11026,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v233";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v234";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -12212,7 +12279,7 @@
     if(!nOk){ box.innerHTML = '<div class="bench-sum">아직 채점할 기록이 없어요. 관리자 모드를 켠 채로 측정을 저장하고, 틀린 점은 고친 뒤 저장해 주세요.</div>'; return; }
     if(benchTab === "saved"){
       var C = benchSavedCases(L);
-      box.innerHTML = benchSumHtml(benchTotal(C), "<strong>저장 당시</strong> 자동 인식 ↔ 원장님 최종 점 (점 오차는 사진 높이 대비 %)") + benchAgg(C).map(function(r){ return benchRowHtml(r); }).join("");
+      box.innerHTML = benchSumHtml(benchTotal(C), "<strong>저장 당시</strong> 자동 인식 ↔ 아요 최종 점 (점 오차는 사진 높이 대비 %)") + benchAgg(C).map(function(r){ return benchRowHtml(r); }).join("");
       return;
     }
     var R = benchRuns(), run = R[0];

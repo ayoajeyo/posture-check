@@ -10989,7 +10989,7 @@
     return list[0];
   }
   function backDepth(){   // 지금 뒤로가기로 되돌아갈 수 있는 단계 수
-    var d = openOverlays().length + ((typeof romCam !== "undefined" && romCam.on) ? 1 : 0);
+    var d = openOverlays().length + ((typeof romCam !== "undefined" && romCam.on) ? 1 : 0) + (bodyCamOn() ? 1 : 0);   // v242 체형 촬영 화면도 1단계
     if(state.view === "members" && !$("mbDetail").hidden){ d++; if(!$("mbCompare").hidden) d++; }
     if(state.mode === "side") d++;   // 정면 화면으로 돌아왔을 때 측면→정면 1단계
     var ns = navStack.filter(function(x){ return x !== state.view; }).length;
@@ -11008,7 +11008,8 @@
     }catch(e){}
   }
   var inBack = false;   // 뒤로가기 처리 중(프로그램이 누른 버튼)에는 기록 추가 금지
-  window.addEventListener("click", function(e){ if(e.isTrusted && !inBack) setTimeout(topUp, 0); }, true);
+  // v242 카메라는 탭한 뒤 조금 늦게 켜지므로 0.5초·1.5초 뒤에도 한 번 더 보호 기록을 채움 (탭 직후 사용자 활성 시간 안)
+  window.addEventListener("click", function(e){ if(e.isTrusted && !inBack){ setTimeout(topUp, 0); setTimeout(topUp, 600); setTimeout(topUp, 1600); } }, true);
   window.addEventListener("keydown", function(e){ if(e.isTrusted && !inBack && e.key !== "Escape") setTimeout(topUp, 0); }, true);
   function closeOverlay(el){
     var closeBtn = { ptGuide: "btnPtGuideClose", mbSess: "btnMbSessClose", proGate: "btnProClose", romSheet: "btnRomClose", saveOverlay: "btnCloseOverlay", pagesOverlay: "btnPgClose", gsOverlay: "btnGsClose", moreSheet: "btnMoreClose", themeSheet: "btnThemeClose",
@@ -11016,10 +11017,13 @@
     if(el.id === "mbPicker") state.pendingSave = false;
     if(closeBtn && $(closeBtn)) $(closeBtn).click(); else el.hidden = true;
   }
+  function bodyCamOn(){ return state.phase === "live" || $("capture-card").classList.contains("cam-full"); }
   function handleBack(){
+    // v242 촬영 화면(카메라)에서 뒤로가기 = 촬영 바로 전 화면으로만 (다른 측정 화면·앱 종료로 가지 않게)
     if(typeof romCam !== "undefined" && romCam.on){ romCamStop(); return true; }   // ROM 카메라 켜져 있으면 카메라만 끄기
     var ov = topOverlay();
     if(ov){ closeOverlay(ov); return true; }
+    if(bodyCamOn()){ try{ if(typeof shootCdStop === "function") shootCdStop(); }catch(e){} btnCancelShoot.click(); return true; }
     if(state.view === "members" && !$("mbDetail").hidden){
       if(!$("mbCompare").hidden){ $("mbCompare").hidden = true; return true; }
       mbShowList(); return true;
@@ -11071,7 +11075,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v241";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v242";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

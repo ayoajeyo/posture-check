@@ -388,6 +388,8 @@
   .pg-top2{display:grid; grid-template-columns:1fr 1fr; gap:8px; max-width:520px; margin:4px auto 10px;}
   .pg-top2 .pg-pdf{margin:0;}
   .pg-pdf.send{background:#2F6BFF;}
+  .pg-pdf{border:3px solid transparent;}
+  .pg-pdf.on{border:4px solid #FFD54A; box-shadow:0 0 0 3px rgba(255,213,74,.25);}   /* v217 고른 버튼 표시 */
   .pg-choice{display:grid; grid-template-columns:1fr 1fr; gap:8px; max-width:520px; margin:0 auto 10px;}
   .pg-choice[hidden]{display:none!important;}
   .pg-choice button{font-family:inherit; font-size:15px; font-weight:800; border-radius:12px; border:1px solid rgba(255,255,255,.35); padding:12px 8px; background:rgba(255,255,255,.12); color:#fff;}
@@ -6032,28 +6034,42 @@
     var getPdf = function(){ return pdfBlob ? Promise.resolve(pdfBlob) : pagesToPdf(pages).then(function(b){ pdfBlob = b; return b; }); };
     getPdf().catch(function(){});   // v216 창을 열 때 PDF를 미리 만들어 둠 (보내기 버튼을 누른 순간 바로 공유 창 — 늦으면 폰이 공유를 막음)
     $("pgChoice").hidden = true; $("pgSendChoice").hidden = true; $("pgImgN").textContent = "모든 쪽 " + n + "장"; $("pgSendN").textContent = "모든 쪽 " + n + "장";
-    $("btnPgPdf").onclick = function(){ $("pgSendChoice").hidden = true; $("pgChoice").hidden = !$("pgChoice").hidden; };
-    $("btnPgSend").onclick = function(){ $("pgChoice").hidden = true; $("pgSendChoice").hidden = !$("pgSendChoice").hidden; };
+    // v217 고른 버튼은 테두리를 굵게
+    var selK = send ? "send" : "";   // 마지막으로 고른 쪽 (아래 선택을 닫아도 표시 유지)
+    var selUi = function(){ $("btnPgPdf").classList.toggle("on", selK === "save"); $("btnPgSend").classList.toggle("on", selK === "send"); };
+    $("btnPgPdf").onclick = function(){ selK = "save"; $("pgSendChoice").hidden = true; $("pgChoice").hidden = !$("pgChoice").hidden; selUi(); };
+    $("btnPgSend").onclick = function(){ selK = "send"; $("pgChoice").hidden = true; $("pgSendChoice").hidden = !$("pgSendChoice").hidden; selUi(); };
+    // v217 공유 파일 이름은 영문·숫자만 (폰 공유 기능이 한글 파일 이름을 거부하는 경우 대비)
+    var abase = base.replace(/[^A-Za-z0-9_\-]/g, "").replace(/_+/g, "_") || "AYO_report";
     // v216 회원에게 보내기: 미리 만든 파일로 '누른 그 순간' 공유 창을 염
     var canFiles = function(fs){ try{ return !!(fs.length && navigator.share && navigator.canShare && navigator.canShare({ files: fs })); }catch(e){ return false; } };
-    var sendFiles = function(fs, what){
+    var sendFiles = function(fs, what, done){
       if(!fs){ toast("파일을 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요."); return; }
       if(!canFiles(fs)){ toast("이 기기는 앱에서 바로 보내기를 지원하지 않아요. [저장하기]로 저장한 뒤 카톡에서 파일·사진을 첨부해 주세요."); return; }
-      navigator.share({ files: fs, title: "체형 분석 리포트", text: "체형 분석 리포트 (" + what + ")" }).catch(function(err){
+      navigator.share({ files: fs }).then(function(){ if(done) done(); }, function(err){   // v217 파일만 (제목·문구를 같이 넣으면 일부 앱이 거부)
         if(err && err.name === "AbortError") return;
-        console.warn("[send]", err); toast("보내지 못했어요. 다시 한 번 눌러 주세요. 계속 안 되면 [저장하기] 후 카톡에서 첨부해 주세요.");
+        console.warn("[send]", err); toast("보내지 못했어요 (" + ((err && err.name) || "오류") + "). 다시 한 번 눌러 주세요.");
       });
     };
     $("btnPgSendPdf").onclick = function(){
-      $("pgSendChoice").hidden = true;
-      var f = null; if(pdfBlob){ try{ f = [new File([pdfBlob], fname, { type: "application/pdf" })]; }catch(e){} }
+      $("pgSendChoice").hidden = true; selUi();
+      var f = null; if(pdfBlob){ try{ f = [new File([pdfBlob], abase + ".pdf", { type: "application/pdf" })]; }catch(e){} }
       sendFiles(f, "PDF");
     };
-    $("btnPgSendImg").onclick = function(){
-      $("pgSendChoice").hidden = true;
-      var fs = null; if(imgBlobs){ try{ fs = imgBlobs.filter(Boolean).map(function(b, i){ return new File([b], base + "_" + (i + 1) + ".jpg", { type: "image/jpeg" }); }); }catch(e){} }
-      sendFiles(fs, "사진 " + n + "장");
+    // v217 폰 공유는 한 번에 파일 10개까지 → 10장씩 나눠 보내기 (11장 이상이면 [다음 사진 보내기] 버튼)
+    var sendAt = 0;
+    var sendImgs = function(){
+      if(!imgBlobs){ toast("사진을 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요."); return; }
+      var to = Math.min(n, sendAt + 10), fs = null;
+      try{ fs = imgBlobs.slice(sendAt, to).map(function(b, k){ return new File([b], abase + "_" + (sendAt + k + 1) + ".jpg", { type: "image/jpeg" }); }); }catch(e){}
+      var from = sendAt;
+      sendFiles(fs, "사진", function(){
+        sendAt = to;
+        if(sendAt < n){ $("pgStep").hidden = false; $("btnPgStep").disabled = false; $("btnPgStep").textContent = "📤 다음 사진 보내기 (" + (sendAt + 1) + "–" + Math.min(n, sendAt + 10) + " / " + n + ")"; $("pgStepTip").textContent = (from + 1) + "–" + to + "쪽을 보냈어요. 폰은 한 번에 10장까지 보낼 수 있어요."; $("btnPgStep").onclick = sendImgs; }
+        else { $("pgStep").hidden = false; $("btnPgStep").disabled = true; $("btnPgStep").textContent = "✓ 사진 " + n + "장 모두 보냈어요"; $("pgStepTip").textContent = ""; }
+      });
     };
+    $("btnPgSendImg").onclick = function(){ $("pgSendChoice").hidden = true; selUi(); sendAt = 0; sendImgs(); };
     var shareOr = function(files, title, fallback){
       if(files.length && navigator.share && navigator.canShare && navigator.canShare({ files: files })){
         navigator.share({ files: files, title: title }).catch(function(err){ if(!(err && err.name === "AbortError")) fallback(); });
@@ -6100,6 +6116,7 @@
     };
     ov.hidden = false; ov.scrollTop = 0;
     if(send) $("pgSendChoice").hidden = false;   // v216 [회원에게 공유]로 열면 보내기 선택을 바로 보여줌
+    selUi();
   }
   function dlBlob(b, name){
     var u = URL.createObjectURL(b), a = document.createElement("a"); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
@@ -10758,7 +10775,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v216";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v217";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

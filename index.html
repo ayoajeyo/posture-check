@@ -1217,7 +1217,8 @@
   .rom-auto-btn{flex:1 1 0; min-height:58px; font-size:14.5px; font-weight:700; border-radius:16px;}
   .rom-save-btn{flex:1 1 100%; min-height:54px; font-size:17px; font-weight:800; border-radius:16px;}
   /* v71 동작 카드 압축 */
-  .rom-grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:8px;}
+  .rom-grid{grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr)); gap:8px;} .rom-grid > *{min-width:0;}   /* v228 좁은 폰에서 카드가 화면 밖으로 넘치지 않게 */
+  .view > .rom-siderow, .view > .rom-sum, .view > .rom-gd-btn, .view > details.shoot-man, .view > .scol-info, .view > .rom-note{margin:0;}   /* v228 블록 간격은 .view gap(12px) 하나로 */
   .rom-card.rc{display:grid; grid-template-columns:52px 1fr auto; align-items:center; gap:10px; padding:10px 10px 10px 10px; border-radius:14px;}
   .rc-th{width:52px; height:52px; border-radius:10px; object-fit:cover; background:#0B1222;}
   .rc-th0{display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:var(--ink-soft); background:var(--surface-2);}
@@ -1423,7 +1424,8 @@
   .cur-bar .cb-go{flex:0 0 auto; font-size:13px; font-weight:800; color:var(--blue); padding:8px 10px; border-radius:10px; background:var(--accent-soft);}
   .cur-bar:not(.on) .cb-go{background:var(--blue); color:#fff;}
   /* 화면마다 반복되던 회원 카드는 숨김 (기능은 상단 회원 바가 대신) */
-  #memberBar, #romMember, #scolMember, #repMember{display:none!important;}
+  #memberBar, #romMember, #scolMember, #fhpMember, #repMember{display:none!important;}   /* v228 거북목 중복 회원 줄도 숨김 */
+  #view-fhp .rom-note, #view-scol .rom-note{display:none;}
   /* 체험 안내는 홈에서만 */
   body:not([data-view="dash"]) #trialBar{display:none!important;}
   /* 제목 줄바꿈 방지 */
@@ -6530,7 +6532,8 @@
     bar.classList.toggle("on", !!m);
     $("cbAv").textContent = m ? initial(m.name) : "?";
     $("cbName").textContent = m ? m.name : "";
-    $("cbMeta").textContent = m ? (memberMeta(m) || "회원") : ""; $("cbMeta").hidden = !m;   // v214 설명 문구 삭제 (회원 정보만)
+    var by = m && m.birth ? String(m.birth).replace(/\D/g, "").slice(-2) : "";   // v228 이름 아래엔 출생연도 두 자리만 (예: 87)
+    $("cbMeta").textContent = by; $("cbMeta").hidden = !by;   // v214 설명 문구 삭제 (회원 정보만)
     $("cbGo").textContent = m ? "변경" : "회원 선택";
     if(typeof wfRender === "function") wfRender();   // v178 홈 워크플로 1·2단계도 같이 갱신
   }
@@ -10925,7 +10928,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v227";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v228";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

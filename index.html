@@ -393,7 +393,9 @@
   .pg-list{display:flex; flex-direction:column; gap:16px; align-items:center;}
   .pg-list figure{margin:0; width:100%; max-width:520px;}
   .pg-list img{display:block; width:100%; height:auto; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.5); background:#fff;}
-  .pg-list figcaption{color:#9FB3AF; font-size:12.5px; text-align:center; margin-top:6px;}
+  .pg-list figcaption{display:flex; align-items:center; justify-content:center; gap:10px; color:#9FB3AF; font-size:12.5px; text-align:center; margin-top:6px;}
+  .pg-list figcaption button{font-family:inherit; font-size:12.5px; font-weight:700; border-radius:9px; border:1px solid rgba(255,255,255,.35); padding:6px 12px; background:rgba(255,255,255,.1); color:#fff;}
+  .pg-list figcaption button.done{border-color:rgba(76,192,138,.6); color:#7FE0B0;}
   .save-overlay .msg{color:#fff; font-size:14px; font-weight:600; text-align:center; line-height:1.6;}
   .save-overlay .msg em{display:block; font-style:normal; color:#9FB3AF; font-weight:500; font-size:12.5px; margin-top:4px;}
   .save-overlay button{
@@ -2791,9 +2793,9 @@
   <button type="button" class="pg-pdf" id="btnPgPdf">💾 리포트 저장·공유 <small>PDF 또는 사진으로 저장할 수 있어요</small></button>
   <div class="pg-choice" id="pgChoice" hidden>
     <button type="button" id="btnPgAsPdf">📄 PDF로 저장<small>모든 쪽을 한 파일로 · 출력용</small></button>
-    <button type="button" id="btnPgAsImg">🖼️ 사진으로 저장<small id="pgImgN">쪽마다 사진 1장씩</small></button>
+    <button type="button" id="btnPgAsImg">🖼️ 사진으로 저장<small id="pgImgN">모든 쪽을 사진으로</small></button>
   </div>
-  <p class="pg-tip">쪽 이미지를 하나씩 <b>길게 눌러</b> "이미지 저장"을 누르면 갤러리에 저장돼요.</p>
+  <p class="pg-tip">쪽마다 <b>⬇ 이 쪽 저장</b>을 누르거나 이미지를 <b>길게 눌러</b> 저장할 수도 있어요.</p>
   <div class="pg-list" id="pgList"></div>
 </div>
 <div class="save-overlay" id="saveOverlay" hidden>
@@ -5856,10 +5858,10 @@
     blocks.push({ h: topH, draw: function(g, y){ g.drawImage(one, 0, 0, W, topH, 0, y, W, topH); } });
     // v210 큰 제목(파트 구분): 왼쪽 색 막대 + 42px — 바로 다음 블록과 같은 쪽에 붙어 다님
     var secTitle = function(t, sub){
-      blocks.push({ h: 84, t: true, draw: function(g, y){
-        g.fillStyle = "#0B7A6B"; rr(g, PAD + 4, y + 22, 10, 50, 5); g.fill();
-        g.fillStyle = "#17212B"; g.font = "800 42px " + F; g.fillText(t, PAD + 30, y + 64);
-        if(sub){ var tw = g.measureText(t).width; g.fillStyle = "#5B6875"; g.font = "600 26px " + F; g.fillText(sub, PAD + 50 + tw, y + 62); }
+      blocks.push({ h: 104, t: true, draw: function(g, y){   // v212 56px로 더 크게
+        g.fillStyle = "#0B7A6B"; rr(g, PAD + 4, y + 24, 12, 66, 6); g.fill();
+        g.fillStyle = "#17212B"; g.font = "800 56px " + F; g.fillText(t, PAD + 34, y + 80);
+        if(sub){ var tw = g.measureText(t).width; g.fillStyle = "#5B6875"; g.font = "700 32px " + F; g.fillText(sub, PAD + 58 + tw, y + 78); }
       } });
     };
     // 1) ROM·척추 균형 표
@@ -6008,12 +6010,12 @@
     pages.forEach(function(c, i){
       var f = document.createElement("figure"), im = new Image();
       im.alt = "리포트 " + (i + 1) + "쪽"; im.src = c.toDataURL("image/jpeg", 0.9);
-      var cap = document.createElement("figcaption"); cap.textContent = (i + 1) + " / " + n + "쪽 · 길게 눌러 저장";
+      var cap = document.createElement("figcaption"); cap.innerHTML = '<span>' + (i + 1) + " / " + n + '쪽</span><button type="button" data-pgdl="' + i + '">⬇ 이 쪽 저장</button>';
       f.appendChild(im); f.appendChild(cap); list.appendChild(f);
     });
     var pdfBlob = null, fname = base + ".pdf";
     var getPdf = function(){ return pdfBlob ? Promise.resolve(pdfBlob) : pagesToPdf(pages).then(function(b){ pdfBlob = b; return b; }); };
-    $("pgChoice").hidden = true; $("pgImgN").textContent = "쪽마다 1장씩 · " + n + "장";
+    $("pgChoice").hidden = true; $("pgImgN").textContent = "모든 쪽 " + n + "장 한 번에";
     $("btnPgPdf").onclick = function(){ $("pgChoice").hidden = !$("pgChoice").hidden; };
     var shareOr = function(files, title, fallback){
       if(files.length && navigator.share && navigator.canShare && navigator.canShare({ files: files })){
@@ -6027,18 +6029,22 @@
         shareOr(file ? [file] : [], "체형 분석 리포트", function(){ dlBlob(b, fname); toast("PDF를 저장했어요 · 내 파일 → 다운로드에서 열 수 있어요."); });
       }).catch(function(e){ console.warn("[pdf]", e); toast("PDF를 만들지 못했어요. 쪽 이미지를 길게 눌러 저장해 주세요."); });
     };
+    // v212 사진 저장: 창을 열 때 쪽 사진을 미리 만들어 두고, 버튼을 누른 그 순간 모든 쪽을 한꺼번에 다운로드 (폰이 '자동 다운로드'로 막지 않게)
+    var imgBlobs = null;
+    Promise.all(pages.map(function(c){ return new Promise(function(res){ c.toBlob(res, "image/jpeg", 0.9); }); })).then(function(bs){ if(ov.dataset.k === myK) imgBlobs = bs; });
+    var myK = String(Date.now()); ov.dataset.k = myK;
+    list.onclick = function(e){
+      var b = e.target.closest("[data-pgdl]"); if(!b) return;
+      var i = +b.getAttribute("data-pgdl"), bl = imgBlobs && imgBlobs[i];
+      if(!bl){ toast("사진을 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요."); return; }
+      dlBlob(bl, base + "_" + (i + 1) + ".jpg"); b.textContent = "✓ 저장함"; b.classList.add("done");
+    };
     $("btnPgAsImg").onclick = function(){
-      $("pgChoice").hidden = true; toast("사진 " + n + "장을 준비하는 중…");
-      Promise.all(pages.map(function(c){ return new Promise(function(res){ c.toBlob(res, "image/jpeg", 0.9); }); })).then(function(blobs){
-        blobs = blobs.filter(Boolean); if(!blobs.length){ toast("사진을 만들지 못했어요."); return; }
-        var files = []; try{ files = blobs.map(function(b, i){ return new File([b], base + "_" + (i + 1) + ".jpg", { type: "image/jpeg" }); }); }catch(e){}
-        shareOr(files, "체형 분석 리포트", function(){
-          (function next(i){
-            if(i >= blobs.length){ toast("사진 " + blobs.length + "장을 저장했어요 · 갤러리 '다운로드' 앨범에서 볼 수 있어요."); return; }
-            dlBlob(blobs[i], base + "_" + (i + 1) + ".jpg"); setTimeout(function(){ next(i + 1); }, 700);
-          })(0);
-        });
-      });
+      $("pgChoice").hidden = true;
+      if(!imgBlobs){ toast("사진을 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요."); return; }
+      imgBlobs.forEach(function(b, i){ if(b) dlBlob(b, base + "_" + (i + 1) + ".jpg"); });
+      list.querySelectorAll("[data-pgdl]").forEach(function(b){ b.textContent = "✓ 저장함"; b.classList.add("done"); });
+      toast("사진 " + n + "장을 저장했어요 · 갤러리 '다운로드' 앨범에서 볼 수 있어요. 빠진 쪽이 있으면 그 쪽 아래 [저장]을 눌러 주세요.");
     };
     ov.hidden = false; ov.scrollTop = 0;
   }
@@ -9924,7 +9930,7 @@
     });
     if(sc.length){
       var yb = y + 130 + rows.length * RH + 34;
-      g.fillStyle = "#17212B"; g.font = "800 30px " + F; g.fillText(sc.some(function(r){ return r.mv.grade === "cva"; }) ? (sc.some(function(r){ return r.mv.grade !== "cva"; }) ? "척추 균형 · 거북목" : "거북목 (CVA)") : "척추 균형 체크", cols[0], yb);
+      g.fillStyle = "#17212B"; g.font = "800 34px " + F; g.fillText(sc.some(function(r){ return r.mv.grade === "cva"; }) ? (sc.some(function(r){ return r.mv.grade !== "cva"; }) ? "척추 균형 · 거북목" : "거북목 (CVA)") : "척추 균형 체크", cols[0], yb);
       sc.forEach(function(r, k){
         var yy = yb + (k + 1) * RH;
         g.fillStyle = "#17212B"; g.font = "700 25px " + F; g.fillText(r.mv.n, cols[0], yy);
@@ -10699,7 +10705,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v211";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v212";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

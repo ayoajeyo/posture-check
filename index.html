@@ -389,6 +389,11 @@
   .pg-choice[hidden]{display:none!important;}
   .pg-choice button{font-family:inherit; font-size:15px; font-weight:800; border-radius:12px; border:1px solid rgba(255,255,255,.35); padding:12px 8px; background:rgba(255,255,255,.12); color:#fff;}
   .pg-choice button small{display:block; font-size:11.5px; font-weight:600; opacity:.8; margin-top:3px;}
+  .pg-step{position:sticky; top:52px; z-index:1; max-width:520px; margin:0 auto 10px; padding:10px; border-radius:14px; background:#0E2A26; border:1px solid rgba(76,192,138,.5);}
+  .pg-step[hidden]{display:none!important;}
+  .pg-step button{display:block; width:100%; font-family:inherit; font-size:17px; font-weight:800; border:0; border-radius:12px; padding:14px; background:#2FA36B; color:#fff;}
+  .pg-step button:disabled{background:#1F5C45; color:#BFE9D4;}
+  .pg-step p{color:#C9D6D3; font-size:12.5px; text-align:center; margin:8px 0 0;}
   .pg-tip{color:#C9D6D3; font-size:13px; text-align:center; margin:0 0 12px;}
   .pg-list{display:flex; flex-direction:column; gap:16px; align-items:center;}
   .pg-list figure{margin:0; width:100%; max-width:520px;}
@@ -2795,6 +2800,7 @@
     <button type="button" id="btnPgAsPdf">📄 PDF로 저장<small>모든 쪽을 한 파일로 · 출력용</small></button>
     <button type="button" id="btnPgAsImg">🖼️ 사진으로 저장<small id="pgImgN">모든 쪽을 사진으로</small></button>
   </div>
+  <div class="pg-step" id="pgStep" hidden><button type="button" id="btnPgStep">⬇ 다음 쪽 저장</button><p id="pgStepTip"></p></div>
   <p class="pg-tip">쪽마다 <b>⬇ 이 쪽 저장</b>을 누르거나 이미지를 <b>길게 눌러</b> 저장할 수도 있어요.</p>
   <div class="pg-list" id="pgList"></div>
 </div>
@@ -6039,12 +6045,29 @@
       if(!bl){ toast("사진을 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요."); return; }
       dlBlob(bl, base + "_" + (i + 1) + ".jpg"); b.textContent = "✓ 저장함"; b.classList.add("done");
     };
+    // v213 폰(안드로이드 앱·브라우저)은 '한 번 누를 때 파일 1개'만 내려받게 막혀 있음 (보안 정책)
+    //  → 폰: [사진으로 저장]을 누를 때마다 다음 쪽이 저장되는 큰 버튼(1/5 → 5/5) · PC: 한 번에 모두
+    var MOB = /Android|iPhone|iPad/i.test(navigator.userAgent) || (typeof IS_PLAY !== "undefined" && IS_PLAY), nextI = 0;
+    var mark = function(i){ var b = list.querySelector('[data-pgdl="' + i + '"]'); if(b){ b.textContent = "✓ 저장함"; b.classList.add("done"); } };
+    var stepUi = function(){
+      var st = $("pgStep");
+      if(nextI >= n){ st.hidden = false; $("btnPgStep").textContent = "✓ " + n + "장 모두 저장했어요"; $("btnPgStep").disabled = true; $("pgStepTip").textContent = "갤러리 '다운로드' 앨범에서 볼 수 있어요."; return; }
+      st.hidden = false; $("btnPgStep").disabled = false;
+      $("btnPgStep").textContent = "⬇ " + (nextI + 1) + "쪽 저장 (" + (nextI + 1) + " / " + n + ")";
+      $("pgStepTip").textContent = nextI ? "한 번 누를 때마다 다음 쪽이 저장돼요. 폰은 보안상 한 번에 1장씩만 내려받을 수 있어요." : "버튼을 누를 때마다 1쪽씩 차례로 저장돼요.";
+    };
+    $("btnPgStep").onclick = function(){
+      if(!imgBlobs){ toast("사진을 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요."); return; }
+      if(nextI >= n) return;
+      dlBlob(imgBlobs[nextI], base + "_" + (nextI + 1) + ".jpg"); mark(nextI); nextI++; stepUi();
+    };
+    $("pgStep").hidden = true;
     $("btnPgAsImg").onclick = function(){
       $("pgChoice").hidden = true;
       if(!imgBlobs){ toast("사진을 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요."); return; }
-      imgBlobs.forEach(function(b, i){ if(b) dlBlob(b, base + "_" + (i + 1) + ".jpg"); });
-      list.querySelectorAll("[data-pgdl]").forEach(function(b){ b.textContent = "✓ 저장함"; b.classList.add("done"); });
-      toast("사진 " + n + "장을 저장했어요 · 갤러리 '다운로드' 앨범에서 볼 수 있어요. 빠진 쪽이 있으면 그 쪽 아래 [저장]을 눌러 주세요.");
+      if(MOB){ nextI = 0; $("btnPgStep").onclick(); return; }   // 지금 누른 것으로 1쪽 저장 → 다음 쪽은 큰 버튼으로
+      imgBlobs.forEach(function(b, i){ if(b){ dlBlob(b, base + "_" + (i + 1) + ".jpg"); mark(i); } });
+      toast("사진 " + n + "장을 저장했어요.");
     };
     ov.hidden = false; ov.scrollTop = 0;
   }
@@ -10705,7 +10728,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v212";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v213";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

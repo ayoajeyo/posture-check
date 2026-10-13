@@ -10250,7 +10250,7 @@
   function romGdPrep(){
     romCam.gd = null;
     var J = romJoint(), mv = romMove(); if(!mv || !ROM_GD[J.k + "|" + mv.k]) return;
-    var sd = romSd(J, mv), src = "guide/rom/" + J.k + "_" + sd + "_" + mv.k + ".jpg", im = new Image();
+    var sd = romSd(J, mv), src = "guide/rom/" + J.k + "_" + sd + "_" + mv.k + ".jpg?v=205", im = new Image();   // v205 흑백 가이드
     im.onload = function(){ if(romCam.gd && romCam.gd.src === src) romCam.gd.ok = true; };
     romCam.gd = { src: src, im: im, ok: false }; im.src = src;
   }
@@ -10512,7 +10512,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v204";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v205";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -12462,7 +12462,7 @@
     var G = PT_GUIDE[state.mode === "side" ? "side" : "front"];
     $("ptGuideTitle").textContent = G.title; $("ptGuideSub").textContent = G.sub;
     $("ptGuideBody").innerHTML = '<div class="pg-pose"><b>측정 자세</b> · ' + G.pose + '</div>' +
-      '<div class="pg-pics">' + G.imgs.map(function(src, i){ return '<figure><img src="' + src + '?v=202" alt="표시점 위치 예시 ' + (i + 1) + '"></figure>'; }).join("") + '</div>' +
+      '<div class="pg-pics">' + G.imgs.map(function(src, i){ return '<figure><img src="' + src + '?v=205" alt="표시점 위치 예시 ' + (i + 1) + '"></figure>'; }).join("") + '</div>' +
       '<ul class="pg-list">' + G.pts.map(function(p){ return '<li><i style="background:' + p[1] + '"></i><b>' + p[0] + '</b><span>' + p[2] + '</span></li>'; }).join("") + '</ul>' +
       '<p class="pg-tip">사진을 누르면 크게 볼 수 있어요.</p>';
     $("ptGuideBody").querySelectorAll(".pg-pics figure").forEach(function(f){ f.addEventListener("click", function(){ f.classList.toggle("big"); }); });
@@ -12497,7 +12497,7 @@
     var G = ROM_GD[J.k + "|" + mv.k]; if(!G) return;
     var sd = romSd(J, mv), lr = sd !== "C";
     if(romGdSide == null || !lr) romGdSide = lr ? sd : "C";
-    var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=202";   // v202 새 기준 실루엣 사진으로 교체
+    var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=205";   // v202 새 기준 실루엣 사진으로 교체
     $("ptGuideTitle").textContent = "측정가이드 · " + J.n + " " + mv.n;
     $("ptGuideSub").textContent = (lr ? (romGdSide === "R" ? "우측" : "좌측") + " 예시 · " : "") + "측정점 3개 · 측정선 2개";
     var pts = romPts(), nm = function(i){ return ROM_PART[pts[i]] || ROM_PTNAME[pts[i]] || ""; };

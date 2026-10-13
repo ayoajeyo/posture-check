@@ -556,14 +556,14 @@
   .cmp-table td{padding:8px 4px; border-bottom:1px solid var(--line); text-align:right; font-family:var(--font-num);}
   .cmp-table td:first-child{font-family:var(--font-body); font-weight:600;}
   .up-good{color:var(--good); font-weight:700;} .up-bad{color:var(--crit); font-weight:700;} .up-same{color:var(--ink-soft);}
-  .rep-gridsw{display:flex; align-items:center; gap:10px; margin:0; padding:10px 14px; background:var(--surface); border:1px solid var(--line); border-radius:14px; cursor:pointer;}
+  .rep-gridsw{display:inline-flex; align-self:flex-start; width:auto; align-items:center; gap:8px; margin:0; padding:6px 14px 6px 8px; border-radius:100px!important; background:var(--surface); border:1px solid var(--line); border-radius:14px; cursor:pointer;}
   .rep-gridsw input{position:absolute; opacity:0; width:1px; height:1px;}
   .rep-gridsw .sw{flex:0 0 auto; width:42px; height:24px; border-radius:100px; background:var(--line); position:relative; transition:background .2s;}
   .rep-gridsw .sw::after{content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:left .2s;}
   .rep-gridsw input:checked + .sw{background:var(--good);}
   .rep-gridsw input:checked + .sw::after{left:21px;}
   .rep-gridsw input:focus-visible + .sw{outline:2px solid var(--good); outline-offset:2px;}
-  .rep-gridsw .tx b{display:block; font-size:14px;} .rep-gridsw .tx small{display:block; font-size:12px; color:var(--ink-soft); font-weight:500;}
+  .rep-gridsw .tx b{display:block; font-size:13.5px; white-space:nowrap;} .rep-gridsw .tx small{display:block; font-size:12px; color:var(--ink-soft); font-weight:500;}
   .rep-saved{margin:0; font-size:12.5px; color:var(--good); font-weight:600;}
   .mb-form, .mb-pick{max-width:420px; text-align:left;}
   .mb-form h3, .mb-pick h3{margin:0 0 14px; font-size:17px;}
@@ -1747,7 +1747,7 @@
   <div class="an-grid">
   <div class="an-col">
   <section class="card" id="capture-card">
-    <div class="cap-head"><h2 id="capture-title">1. 정면 사진 촬영</h2><div class="side-dir" id="sideDir" role="group" aria-label="측면 촬영 방향" hidden><button type="button" data-dir="L" aria-pressed="true">좌측</button><button type="button" data-dir="R" aria-pressed="false">우측</button></div></div><div class="cap-tools"><button type="button" class="pt-guide-btn" id="btnPtGuide">📍 측정가이드</button></div>
+    <div class="cap-head"><h2 id="capture-title">정면 사진 촬영</h2><div class="side-dir" id="sideDir" role="group" aria-label="측면 촬영 방향" hidden><button type="button" data-dir="L" aria-pressed="true">좌측</button><button type="button" data-dir="R" aria-pressed="false">우측</button></div></div><div class="cap-tools"><button type="button" class="pt-guide-btn" id="btnPtGuide">📍 측정가이드</button></div>
     <p class="sub" id="capture-sub">정면을 보고 편안히 선 자세에서, 카메라를 배꼽 높이에 두고 수평(가늠자 초록)으로 맞춰 촬영하세요.</p>
 
     <div class="pv-bar" id="bodyPvBar" hidden>
@@ -1939,7 +1939,7 @@
     <div class="rep-head" id="repHead" hidden>
       <span class="rep-meta" id="repMeta"></span>
     </div>
-    <label class="rep-gridsw" for="repGridOn"><input type="checkbox" id="repGridOn"><span class="sw" aria-hidden="true"></span><span class="tx"><b>사진에 격자 배경 넣기</b><small>체형·ROM 사진 모두 · 리포트 이미지 저장에도 적용</small></span></label>
+    <label class="rep-gridsw" for="repGridOn"><input type="checkbox" id="repGridOn"><span class="sw" aria-hidden="true"></span><span class="tx"><b>격자 배경</b></span></label>
 
     <div class="rep-board">
       <div class="rep-col" id="rep-front">
@@ -3268,7 +3268,7 @@
     if(state.rotMode) setRotMode(false);
     tabFront.setAttribute("aria-selected", m==="front" ? "true":"false");
     tabSide.setAttribute("aria-selected", m==="side" ? "true":"false");
-    captureTitle.textContent = "1. " + cfg().title;
+    captureTitle.textContent = cfg().title;   // v229 번호 삭제
     sideDirSync();
     hintChipText.textContent = cfg().hint;
     // SVG 요소는 .hidden 속성이 동작하지 않으므로 hidden 어트리뷰트를 직접 토글
@@ -10928,7 +10928,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v228";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v229";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

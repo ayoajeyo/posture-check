@@ -385,6 +385,9 @@
   .pg-head button{font-family:inherit; font-size:14px; font-weight:600; border-radius:11px; border:1px solid rgba(255,255,255,.3); padding:9px 18px; background:rgba(255,255,255,.1); color:#fff;}
   .pg-pdf{display:block; width:100%; max-width:520px; margin:4px auto 10px; font-family:inherit; font-size:15.5px; font-weight:800; border:0; border-radius:14px; padding:14px 16px; background:#0B7A6B; color:#fff;}
   .pg-pdf small{display:block; font-size:12px; font-weight:600; opacity:.8; margin-top:2px;}
+  .pg-top2{display:grid; grid-template-columns:1fr 1fr; gap:8px; max-width:520px; margin:4px auto 10px;}
+  .pg-top2 .pg-pdf{margin:0;}
+  .pg-pdf.send{background:#2F6BFF;}
   .pg-choice{display:grid; grid-template-columns:1fr 1fr; gap:8px; max-width:520px; margin:0 auto 10px;}
   .pg-choice[hidden]{display:none!important;}
   .pg-choice button{font-family:inherit; font-size:15px; font-weight:800; border-radius:12px; border:1px solid rgba(255,255,255,.35); padding:12px 8px; background:rgba(255,255,255,.12); color:#fff;}
@@ -2794,7 +2797,14 @@
 
 <div class="pages-overlay" id="pagesOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="pgTitle">
   <div class="pg-head"><b id="pgTitle">리포트</b><button type="button" id="btnPgClose">닫기</button></div>
-  <button type="button" class="pg-pdf" id="btnPgPdf">💾 리포트 저장·공유 <small>PDF 또는 사진으로 저장할 수 있어요</small></button>
+  <div class="pg-top2">
+    <button type="button" class="pg-pdf" id="btnPgPdf">💾 저장하기 <small>PDF · 사진</small></button>
+    <button type="button" class="pg-pdf send" id="btnPgSend">📤 회원에게 보내기 <small>카톡·문자 등</small></button>
+  </div>
+  <div class="pg-choice" id="pgSendChoice" hidden>
+    <button type="button" id="btnPgSendPdf">📄 PDF로 보내기<small>파일 1개 · 출력용</small></button>
+    <button type="button" id="btnPgSendImg">🖼️ 사진으로 보내기<small id="pgSendN">모든 쪽 사진</small></button>
+  </div>
   <div class="pg-choice" id="pgChoice" hidden>
     <button type="button" id="btnPgAsPdf">📄 PDF로 저장<small>모든 쪽을 한 파일로 · 출력용</small></button>
     <button type="button" id="btnPgAsImg">🖼️ 사진으로 저장<small id="pgImgN">모든 쪽을 사진으로</small></button>
@@ -6008,7 +6018,7 @@
     });
   }
   // v209 리포트 여러 쪽 저장 화면: 쪽마다 길게 눌러 저장 + PDF 한 파일로 저장·공유
-  function showPagesOverlay(pages, base){
+  function showPagesOverlay(pages, base, send){
     var ov = $("pagesOverlay"), list = $("pgList"), n = pages.length;
     $("pgTitle").textContent = "리포트 " + n + "쪽 (A4)";
     list.innerHTML = "";
@@ -6020,19 +6030,39 @@
     });
     var pdfBlob = null, fname = base + ".pdf";
     var getPdf = function(){ return pdfBlob ? Promise.resolve(pdfBlob) : pagesToPdf(pages).then(function(b){ pdfBlob = b; return b; }); };
-    $("pgChoice").hidden = true; $("pgImgN").textContent = "모든 쪽 " + n + "장 한 번에";
-    $("btnPgPdf").onclick = function(){ $("pgChoice").hidden = !$("pgChoice").hidden; };
+    getPdf().catch(function(){});   // v216 창을 열 때 PDF를 미리 만들어 둠 (보내기 버튼을 누른 순간 바로 공유 창 — 늦으면 폰이 공유를 막음)
+    $("pgChoice").hidden = true; $("pgSendChoice").hidden = true; $("pgImgN").textContent = "모든 쪽 " + n + "장"; $("pgSendN").textContent = "모든 쪽 " + n + "장";
+    $("btnPgPdf").onclick = function(){ $("pgSendChoice").hidden = true; $("pgChoice").hidden = !$("pgChoice").hidden; };
+    $("btnPgSend").onclick = function(){ $("pgChoice").hidden = true; $("pgSendChoice").hidden = !$("pgSendChoice").hidden; };
+    // v216 회원에게 보내기: 미리 만든 파일로 '누른 그 순간' 공유 창을 염
+    var canFiles = function(fs){ try{ return !!(fs.length && navigator.share && navigator.canShare && navigator.canShare({ files: fs })); }catch(e){ return false; } };
+    var sendFiles = function(fs, what){
+      if(!fs){ toast("파일을 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요."); return; }
+      if(!canFiles(fs)){ toast("이 기기는 앱에서 바로 보내기를 지원하지 않아요. [저장하기]로 저장한 뒤 카톡에서 파일·사진을 첨부해 주세요."); return; }
+      navigator.share({ files: fs, title: "체형 분석 리포트", text: "체형 분석 리포트 (" + what + ")" }).catch(function(err){
+        if(err && err.name === "AbortError") return;
+        console.warn("[send]", err); toast("보내지 못했어요. 다시 한 번 눌러 주세요. 계속 안 되면 [저장하기] 후 카톡에서 첨부해 주세요.");
+      });
+    };
+    $("btnPgSendPdf").onclick = function(){
+      $("pgSendChoice").hidden = true;
+      var f = null; if(pdfBlob){ try{ f = [new File([pdfBlob], fname, { type: "application/pdf" })]; }catch(e){} }
+      sendFiles(f, "PDF");
+    };
+    $("btnPgSendImg").onclick = function(){
+      $("pgSendChoice").hidden = true;
+      var fs = null; if(imgBlobs){ try{ fs = imgBlobs.filter(Boolean).map(function(b, i){ return new File([b], base + "_" + (i + 1) + ".jpg", { type: "image/jpeg" }); }); }catch(e){} }
+      sendFiles(fs, "사진 " + n + "장");
+    };
     var shareOr = function(files, title, fallback){
       if(files.length && navigator.share && navigator.canShare && navigator.canShare({ files: files })){
         navigator.share({ files: files, title: title }).catch(function(err){ if(!(err && err.name === "AbortError")) fallback(); });
       } else fallback();
     };
-    $("btnPgAsPdf").onclick = function(){
-      $("pgChoice").hidden = true; toast("PDF를 만드는 중…");
-      getPdf().then(function(b){
-        var file = null; try{ file = new File([b], fname, { type: "application/pdf" }); }catch(e){}
-        shareOr(file ? [file] : [], "체형 분석 리포트", function(){ dlBlob(b, fname); toast("PDF를 저장했어요 · 내 파일 → 다운로드에서 열 수 있어요."); });
-      }).catch(function(e){ console.warn("[pdf]", e); toast("PDF를 만들지 못했어요. 쪽 이미지를 길게 눌러 저장해 주세요."); });
+    $("btnPgAsPdf").onclick = function(){   // v216 저장은 저장만 (공유 창 없이 바로 다운로드)
+      $("pgChoice").hidden = true;
+      if(pdfBlob){ dlBlob(pdfBlob, fname); toast("PDF를 저장했어요 · 내 파일 → 다운로드에서 열 수 있어요."); return; }
+      toast("PDF를 만드는 중이에요. 잠시 뒤 다시 눌러 주세요.");
     };
     // v212 사진 저장: 창을 열 때 쪽 사진을 미리 만들어 두고, 버튼을 누른 그 순간 모든 쪽을 한꺼번에 다운로드 (폰이 '자동 다운로드'로 막지 않게)
     var imgBlobs = null;
@@ -6069,6 +6099,7 @@
       toast("사진 " + n + "장을 저장했어요.");
     };
     ov.hidden = false; ov.scrollTop = 0;
+    if(send) $("pgSendChoice").hidden = false;   // v216 [회원에게 공유]로 열면 보내기 선택을 바로 보여줌
   }
   function dlBlob(b, name){
     var u = URL.createObjectURL(b), a = document.createElement("a"); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
@@ -6111,7 +6142,8 @@
     };
     if(typeof romLoad === "function") romLoad().then(go, go); else go();
   }
-  $("btnShareReport").addEventListener("click", function(){ repGoOut(function(c, n){ shareCanvas(c, n, "아요바디요 체형 분석 리포트"); }); });
+  // v216 리포트를 다 만든 뒤에는 '누른 순간'이 지나 폰이 공유를 막음 → 쪽 목록 화면에서 [보내기]를 한 번 더 눌러 공유
+  $("btnShareReport").addEventListener("click", function(){ repGoOut(function(c, n){ showPagesOverlay(Array.isArray(c) ? c : [c], String(n || "AYO_report").replace(/\.jpg$/, ""), true); }); });
   $("btnSaveReport").addEventListener("click", function(){ repGoOut(deliverCanvas); });
 
   /* ===================== v185 리포트 공유 링크 =====================
@@ -10726,7 +10758,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v215";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v216";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

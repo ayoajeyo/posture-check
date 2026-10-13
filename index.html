@@ -1175,7 +1175,8 @@
   /* v186 리포트: ROM·척추 균형·거북목 측정 사진 */
   .rep-shots{display:grid; grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:10px; margin-top:12px;}
   /* v202 ROM·척추 균형·거북목도 정면·측면처럼 [수치 카드 + 측정 사진] */
-  .rep-shots:has(.rep-mfig){grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px;}
+  .rep-shots:has(.rep-mfig){grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr)); gap:12px;}   /* v232 좁은 폰에서 사진이 오른쪽 밖으로 나가지 않게 */
+  .rep-shots > *{min-width:0;} .rep-mfig > *{min-width:0;}
   .rep-shots figure.rep-mfig{display:grid; grid-template-columns:118px minmax(0,1fr); gap:10px; align-items:start; border:0; border-radius:0; background:none; overflow:visible;}
   .rep-mfig .chip .h span{overflow:hidden; text-overflow:ellipsis; white-space:normal; line-height:1.3;}
   .rep-mfig .chip .h{white-space:normal; align-items:flex-start;}
@@ -10953,7 +10954,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v231";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v232";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

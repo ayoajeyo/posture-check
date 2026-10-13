@@ -1421,7 +1421,12 @@
   .cur-bar{display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:8px 8px 8px 10px; cursor:pointer; text-align:left; font-family:inherit; color:var(--ink); width:100%;}
   .cur-bar .mb-avatar{width:36px; height:36px;}
   .cur-row{display:flex; gap:8px; align-items:stretch;}
-  .cur-row .cur-bar{flex:1; min-width:0;}
+  .cur-row .cur-bar{flex:1; min-width:0; min-height:54px;}
+  /* v233 회원 선택 전: 물음표 없이 '회원 선택' 버튼만 · 선택 후: 87 회원 */
+  .cur-bar:not(.on){padding:0; border:0; background:transparent!important; box-shadow:none!important;}
+  .cur-bar:not(.on) .mb-avatar, .cur-bar:not(.on) .cb-txt{display:none;}
+  .cur-bar:not(.on) .cb-go{flex:1; align-self:stretch; display:flex; align-items:center; justify-content:center; font-size:14px; border-radius:14px; padding:0;}
+  .cur-bar .cb-by{color:var(--ink-soft); font-weight:700; margin-right:2px;}
   .cb-add{flex:0 0 auto; font-family:inherit; font-size:13px; font-weight:800; color:var(--blue); background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:0 14px; cursor:pointer; white-space:nowrap;}
   html[data-skin="vivid"] .cb-add{background:#fff; border-color:#9FDCC6; color:var(--p-mint-i);}
   .cur-bar.on{border-color:var(--blue);}
@@ -1698,7 +1703,7 @@
         <h1 id="pageTitle">체형 분석</h1>
       </div>
       <button type="button" class="pro-chip" id="proChip" hidden title="PRO 이용 정보 보기"><svg class="pc-i" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 3.5L12 5l4.5 6.5L21 8l-2 10H5L3 8z" fill="currentColor"/><path d="M5.5 20.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="pc-k">PRO</span><span class="pc-s">멤버십</span><span class="pc-d" id="proChipD"></span></button>
-      <button type="button" class="gs-btn" id="btnGs" aria-label="회원 검색"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><span>회원 검색</span><kbd>/</kbd></button>
+      <button type="button" class="gs-btn" id="btnGs" aria-label="회원 검색" hidden style="display:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><span>회원 검색</span><kbd>/</kbd></button>
       <span class="adm-chip" id="admChip" hidden>관리자</span>
       <span class="now-chip mono" id="nowChip"></span>
     </div>
@@ -6465,7 +6470,7 @@
     $("view-scol").hidden = (v !== "scol");
     $("view-fhp").hidden = (v !== "fhp");
     $("pageTitle").textContent = v === "report" ? "리포트" : v === "members" ? "회원" : v === "dash" ? "현황" : MSR_VIEWS.indexOf(v) >= 0 ? "측정" : v === "exercise" ? "운동관리" : v === "consult" ? "상담일지" : v === "sales" ? "매출관리" : v === "settings" ? "설정" : v === "rom" ? "ROM 관절가동범위" : v === "scol" ? "척추 균형 체크" : "체형 분석";
-    $("btnGs").hidden = ["rom", "scol", "fhp", "report"].indexOf(v) >= 0;
+    $("btnGs").hidden = true;   // v233 상단 돋보기 삭제
     document.querySelectorAll(".nav-item[data-view]").forEach(function(b){
       if(b.getAttribute("data-view") === v) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
@@ -6551,9 +6556,9 @@
     var m = state.member, bar = $("curBar"); if(!bar) return;
     bar.classList.toggle("on", !!m);
     $("cbAv").textContent = m ? initial(m.name) : "?";
-    $("cbName").textContent = m ? m.name : "";
-    var by = m && m.birth ? String(m.birth).replace(/\D/g, "").slice(-2) : "";   // v228 이름 아래엔 출생연도 두 자리만 (예: 87)
-    $("cbMeta").textContent = by; $("cbMeta").hidden = !by;   // v214 설명 문구 삭제 (회원 정보만)
+    var by = m && m.birth ? String(m.birth).replace(/\D/g, "").slice(-2) : "";   // v233 출생연도 두 자리를 이름 앞에 (예: 87 회원)
+    $("cbName").innerHTML = m ? (by ? '<span class="cb-by">' + by + '</span> ' : "") + esc(m.name) : "";
+    $("cbMeta").textContent = ""; $("cbMeta").hidden = true;   // v214 설명 문구 삭제 (회원 정보만)
     $("cbGo").textContent = m ? "변경" : "회원 선택";
     if(typeof wfRender === "function") wfRender();   // v178 홈 워크플로 1·2단계도 같이 갱신
   }
@@ -10954,7 +10959,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v232";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v233";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

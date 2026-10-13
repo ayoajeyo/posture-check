@@ -8549,7 +8549,7 @@
     q.textContent = !ok ? "자동 인식 실패 · 두 점을 직접 맞춰주세요" : lv === "good" ? "✓ 자동 인식 정확도 높음 (" + Math.round(romS.q * 100) + "%) · 점 위치만 확인하세요" : lv === "mid" ? "자동 인식 정확도 보통 (" + Math.round(romS.q * 100) + "%) · 점 위치를 확인해 주세요" : "관절이 가려져 정확도 낮음 (" + Math.round(romS.q * 100) + "%) · 점을 직접 맞춰주세요";
     if(ok && romS.roll != null && Math.abs(romS.roll) >= 0.3) q.textContent += " · 폰 기울기 " + romS.roll.toFixed(1) + "° 자동 보정";
     if(romS.img && !romS.cut && !romS.maskP) romS.maskP = romMakeCut();
-    else if(romS.mask && ok && romJoint().k !== "scol"){ try{ romRefine(romS.mask); }catch(e){} romDraw(); }
+    else if(romS.mask && (ok || romLimbJoint()) && romJoint().k !== "scol"){ try{ romRefine(romS.mask); }catch(e){ console.warn("[refine]", e); } romDraw(); }
     if(msg) toast(msg);
   }
   $("btnRomAuto").addEventListener("click", romAuto);
@@ -9147,15 +9147,22 @@
       romS.mask = good ? m : null;
       try{ romS.cut = romCutBuild(img, m, romS.L); }catch(e){ console.warn("[cut]", e); romS.cut = null; }
       romS.cutDone = true;
-      if(good && romS.autoPts && romJoint().k !== "scol"){ try{ romRefine(m); }catch(e){ console.warn("[refine]", e); } }
+      if(good && (romS.autoPts || (romLimbJoint() && !romS.touched)) && romJoint().k !== "scol"){ try{ romRefine(m); }catch(e){ console.warn("[refine]", e); } }
       if(romS.pts) romDraw();
       return m;
     }).catch(function(){ romS.cutDone = true; return null; });
   }
   /* ===== v88 자동 측정점 정밀 보정 (인물 윤곽 이용) =====
      허리: 장골능·등 최고점을 실제 등 윤곽 위로 / 목: 목 앞·뒤 윤곽의 정중앙 / 정수리: 머리 윤곽 끝 / 손가락 끝: 손 윤곽 끝 */
+  function romLimbJoint(){ var J = romJoint(), mv = romMove(); return !!mv && ((J.k === "hip" && (mv.k === "er" || mv.k === "ir")) || J.k === "ankle"); }   // v220 윤곽으로 찾는 항목
   function romRefine(m){
-    var P = romS.pts, L = romS.L, W = romS.w, H = romS.h; if(!P || !L) return;
+    var P = romS.pts, L = romS.L, W = romS.w, H = romS.h; if(!P) return;
+    if(!L){   // v220 관절 인식이 실패해도 고관절 회전·발목은 윤곽만으로
+      if(!romLimbJoint()) return;
+      var lf0 = romLimbFix(m, romPts(), null, rom.side);
+      if(lf0){ lf0.forEach(function(q, i){ if(q) P[i] = q; }); if(P.length > 2 && !romIsLm(romPts()[2]) && !romS.refCustom) P[2] = romSynthA(romPts()[2], P[0], P[1], null, W, H, romS.roll); romS.autoPts = true; romS.autoOk = true; }
+      return;
+    }
     var pn = romPts(), side = rom.side;
     var inside = function(p){ if(p.x < 0 || p.y < 0 || p.x >= W || p.y >= H) return false; return m.data[Math.min(m.h - 1, Math.floor(p.y * m.h / H)) * m.w + Math.min(m.w - 1, Math.floor(p.x * m.w / W))] > 0.45; };
     var step = Math.max(W, H) / 400;
@@ -9242,8 +9249,122 @@
       var wr = romGet("wrist", L, side), fg = romGet("finger", L, side);
       if(wr && fg){ var u2 = nrm({ x: fg.x - wr.x, y: fg.y - wr.y }), tip = edge(fg, u2, body * 0.35); if(tip) setPt(1, tip); }
     }
+    // v220 관리자 피드백(회원 1차) 반영: 누워서 찍는 고관절 회전·발목, 팔꿈치 90° 어깨 회전은 관절 인식이 자주 엉뚱한 곳을 잡음 → 사람 윤곽으로 다시 찾기
+    var lf = romLimbFix(m, pn, L, side);
+    if(lf) lf.forEach(function(q, i){ if(q) setPt(i, q); });
     if(changed && romS.autoPts) romLearnAdj(moved);   // v203 윤곽으로 새로 놓인 점에도 학습 보정
     if(changed && pn.length > 2 && !romIsLm(pn[2]) && !romS.refCustom) P[2] = romSynthA(pn[2], P[0], P[1], L, W, H, romS.roll);   // v190 거북목(점 2개)은 기준점 없음
+  }
+  /* ===== v220 윤곽 기반 측정점 (관리자 기준) =====
+     ① 고관절 외·내회전(엎드려 무릎 90°): 위로 든 아래다리를 윤곽에서 직접 찾음 (좌·우 다리를 헷갈리지 않게)
+        - 발목 = 발과 다리가 이어지는 곳(아래다리에서 가장 가는 곳)의 중앙 · 무릎 = 아래다리 축을 따라 내려간 끝(슬개골 정중앙)
+     ② 발목 배측·저측굴곡(누워서 옆에서): 다리 윤곽을 발끝 쪽부터 따라감
+        - 비골 = 무릎(다리 윗선의 가장 높은 곳)에서 발 쪽으로 조금 · 다리 뒤쪽(아래쪽)
+        - 발바닥 = 비골 → 외측 복사뼈 후면 직선을 발 쪽으로 늘려 발바닥 윤곽과 만나는 곳
+        - 발끝 = 발바닥을 따라 새끼발가락 앞 MTP 관절 끝
+     ③ 어깨 외·내회전: 팔꿈치 = 아래팔 축을 따라 몸 쪽 끝(팔꿈치)까지 · 손목 = 아래팔과 손바닥 사이 */
+  function romLimbFix(m, pn, L, side){
+    var J = romJoint(), mv = romMove(); if(!m || !mv) return null;
+    var MW = m.w, MH = m.h, W = romS.w, H = romS.h, sx = W / MW, sy = H / MH;
+    var at = function(x, y){ x = Math.round(x); y = Math.round(y); return x >= 0 && y >= 0 && x < MW && y < MH && m.data[y * MW + x] > 0.45; };
+    var runs = function(y){ var out = [], x = 0; while(x < MW){ if(at(x, y)){ var a = x; while(x < MW && at(x, y)) x++; out.push({ a: a, b: x - 1, c: (a + x - 1) / 2, w: x - a }); } else x++; } return out; };
+    var cruns = function(x){ var out = [], y = 0; while(y < MH){ if(at(x, y)){ var a = y; while(y < MH && at(x, y)) y++; out.push({ a: a, b: y - 1, c: (a + y - 1) / 2, w: y - a }); } else y++; } return out; };
+    var img = function(p){ return { x: p.x * sx, y: p.y * sy }; };
+    var march = function(p, d, maxL){ var q = null; for(var t = 0; t < maxL; t += 0.5){ var x = p.x + d.x * t, y = p.y + d.y * t; if(!at(x, y)) return q; q = { x: x, y: y }; } return q; };
+    var nrm = function(v){ var l = Math.hypot(v.x, v.y) || 1; return { x: v.x / l, y: v.y / l }; };
+    // ① 고관절 외·내회전
+    if(J.k === "hip" && (mv.k === "er" || mv.k === "ir")){
+      var top = -1; for(var y = 0; y < MH && top < 0; y++){ if(runs(y).some(function(r){ return r.w < MW * 0.25; })) top = y; }
+      if(top < 0) return null;
+      var r0 = runs(top).filter(function(r){ return r.w < MW * 0.25; })[0], rows = [], cx = r0.c, pw = r0.w;
+      for(var yy = top; yy < MH; yy++){
+        var rr = runs(yy), best = null, bd = 1e9;
+        rr.forEach(function(r){ var d = Math.abs(r.c - cx); if(r.a - 2 <= cx + pw * 0.6 && r.b + 2 >= cx - pw * 0.6 && d < bd){ bd = d; best = r; } });
+        if(!best || best.w > MW * 0.3) break;
+        rows.push({ y: yy, c: best.c, w: best.w }); cx = best.c; pw = Math.max(best.w, 4);
+      }
+      if(rows.length < MH * 0.12) return null;
+      // 아래다리 축 = 위에서 15~70% 구간 중심선 · 축을 따라 내려가며 '축에 수직인 폭'을 잼 (다리가 기울어도 정확)
+      var n = rows.length, seg = rows.slice(Math.round(n * 0.15), Math.max(Math.round(n * 0.15) + 3, Math.round(n * 0.7)));
+      var my = seg.reduce(function(t, r){ return t + r.y; }, 0) / seg.length, mc = seg.reduce(function(t, r){ return t + r.c; }, 0) / seg.length, num = 0, den = 0;
+      seg.forEach(function(r){ num += (r.y - my) * (r.c - mc); den += (r.y - my) * (r.y - my); });
+      var u = nrm({ x: den ? num / den : 0, y: 1 }), nv = { x: -u.y, y: u.x }, prof = [], c = { x: rows[0].c, y: rows[0].y };
+      for(var k = 0; k < MH * 0.75; k++){
+        var pp = k ? { x: c.x + u.x * 2, y: c.y + u.y * 2 } : c;
+        var e1 = march(pp, nv, MW * 0.3), e2 = march(pp, { x: -nv.x, y: -nv.y }, MW * 0.3);
+        if(!e1 || !e2){ if(k > 3) break; c = pp; continue; }
+        var wv = Math.hypot(e1.x - e2.x, e1.y - e2.y), mid = { x: (e1.x + e2.x) / 2, y: (e1.y + e2.y) / 2 };
+        if(prof.length > 10){ var mxw = 0; for(var z = 0; z < Math.max(1, prof.length >> 1); z++) mxw = Math.max(mxw, prof[z].w); if(wv > mxw * 2.5) break; }
+        prof.push({ p: mid, w: wv }); c = mid;
+      }
+      var m2 = prof.length; if(m2 < 12) return null;
+      var lo = Math.max(1, Math.round(m2 * 0.08)), hi2 = Math.max(lo + 1, Math.round(m2 * 0.45)), ai = lo;
+      for(var i = lo; i < Math.min(hi2, m2); i++) if(prof[i].w < prof[ai].w) ai = i;   // 발목 = 발과 다리 사이 가장 가는 곳
+      var A0 = prof[ai].p, ws = prof.slice(ai, ai + Math.max(5, Math.round(m2 / 3))).map(function(q){ return q.w; }).sort(function(a, b){ return a - b; }), cw = ws[ws.length >> 1] || 6;
+      var kEdge = march(A0, u, MH * 1.2); if(!kEdge) return null;
+      var K = { x: kEdge.x - u.x * cw * 0.3, y: kEdge.y - u.y * cw * 0.3 };   // 무릎 = 아래다리 축 끝에서 조금 안쪽 (슬개골 정중앙)
+      if(Math.hypot(K.x - A0.x, K.y - A0.y) < MH * 0.08) return null;
+      return [img(K), img(A0)];
+    }
+    // ② 발목 배측·저측굴곡
+    if(J.k === "ankle" && pn[0] === "sole"){
+      var hp = [L && L[23], L && L[24]].filter(function(q){ return q && q.v > 0.5; });
+      var colsAll = []; for(var x = 0; x < MW; x++){ if(cruns(x).length) colsAll.push(x); }
+      if(colsAll.length < MW * 0.2) return null;
+      var mx0 = colsAll[0], mx1 = colsAll[colsAll.length - 1], midX = (mx0 + mx1) / 2;
+      var dirF = hp.length ? (hp.reduce(function(t, q){ return t + q.x; }, 0) / hp.length / sx > midX ? -1 : 1) : (side === "R" ? 1 : -1);   // 발 쪽 = 고관절 반대쪽
+      var x0 = dirF < 0 ? mx0 : mx1, cols = [], cy = null, pw2 = null;
+      for(var k = 0; k < colsAll.length; k++){
+        var xx = x0 - dirF * k; if(xx < 0 || xx >= MW) break;
+        var rs = cruns(xx); if(!rs.length) break;
+        var bst = null, bd2 = 1e9;
+        rs.forEach(function(r){ var d = cy == null ? -r.w : Math.abs(r.c - cy); if(cy == null || (r.a - 2 <= cy + pw2 * 0.7 && r.b + 2 >= cy - pw2 * 0.7)){ if(d < bd2){ bd2 = d; bst = r; } } });
+        if(!bst) break;
+        if(cols.length > MW * 0.15){ var ws2 = cols.slice(-Math.round(MW * 0.08)).map(function(q){ return q.w; }).sort(function(a, b){ return a - b; }); if(bst.w > ws2[ws2.length >> 1] * 1.7) break; }   // 반대쪽 다리·몸과 겹치기 시작하면 멈춤
+        cols.push({ x: xx, a: bst.a, b: bst.b, c: bst.c, w: bst.w }); cy = bst.c; pw2 = Math.max(bst.w, 4);
+      }
+      var nc = cols.length; if(nc < MW * 0.2) return null;
+      // 발뒤꿈치~발 = 앞쪽 25% 안에서 가장 두꺼운 곳, 발목 = 그 뒤 가장 가는 곳
+      var hi = 0; for(var q1 = 0; q1 < Math.round(nc * 0.25); q1++) if(cols[q1].w > cols[hi].w) hi = q1;
+      var ak = Math.min(nc - 1, hi + 1); for(var q2 = hi + 1; q2 < Math.min(nc, hi + Math.round(nc * 0.25)); q2++) if(cols[q2].w < cols[ak].w) ak = q2;
+      // 무릎 = 발목에서 멀어지며 다리 윗선이 가장 높은 곳 (발목~끝 사이)
+      var kn = ak; for(var q3 = ak + Math.round(nc * 0.1); q3 < nc; q3++) if(cols[q3].a < cols[kn].a) kn = q3;
+      if(kn - ak < nc * 0.15) kn = Math.min(nc - 1, ak + Math.round(nc * 0.45));
+      var fi = Math.max(ak + 1, kn - Math.round((kn - ak) * 0.08)), fc = cols[fi];
+      // 비골두 후면: 무릎에서 발 쪽으로 조금 내려온 곳의 다리 뒤쪽(아래쪽) 윤곽에서 다리 두께의 20% 안쪽
+      var lax = nrm({ x: cols[ak].x - fc.x, y: cols[ak].c - fc.c }), pd = { x: -lax.y, y: lax.x }; if(pd.y < 0) pd = { x: -pd.x, y: -pd.y };
+      var fb = march({ x: fc.x, y: fc.c }, pd, fc.w * 1.5) || { x: fc.x, y: fc.b };
+      var Fib = { x: fb.x - pd.x * fc.w * 0.2, y: fb.y - pd.y * fc.w * 0.2 };
+      var ac = cols[ak], Mal = { x: ac.x, y: ac.a + ac.w * 0.72 };     // 외측 복사뼈 후면
+      var ul = nrm({ x: Mal.x - Fib.x, y: Mal.y - Fib.y });
+      var Sole = march(Mal, ul, MW); if(!Sole) return null;
+      // 발끝: 발 영역에서 발목과 가장 먼 점(발가락 끝) → 발바닥에서 그쪽으로 75% (제5 MTP), 발바닥 윤곽까지
+      var Tip = null, td = -1;
+      for(var q4 = 0; q4 <= hi + Math.round(nc * 0.06) && q4 < nc; q4++){ [cols[q4].a, cols[q4].b].forEach(function(yv){ var d = Math.hypot(cols[q4].x - ac.x, yv - ac.c); if(d > td){ td = d; Tip = { x: cols[q4].x, y: yv }; } }); }
+      if(!Tip) return null;
+      var Pm = { x: Sole.x + (Tip.x - Sole.x) * 0.75, y: Sole.y + (Tip.y - Sole.y) * 0.75 }, fd = nrm({ x: Tip.x - Sole.x, y: Tip.y - Sole.y });
+      var pn2 = { x: -fd.y, y: fd.x }; if(pn2.x * dirF + pn2.y * 0.6 < 0) pn2 = { x: -pn2.x, y: -pn2.y };   // 발바닥 쪽 = 발끝 방향·아래쪽
+      var T5 = march(Pm, pn2, MW * 0.2) || Pm;
+      return [img(Sole), img(T5), img(Fib)];
+    }
+    // ③ 어깨 외·내회전: 팔꿈치·손목
+    if(J.k === "shoulder" && (mv.k === "er" || mv.k === "ir") && L){
+      var si = side === "R" ? 1 : 0, e = L[13 + si], w = L[15 + si]; if(!e || !w) return null;
+      var E = { x: e.x / sx, y: e.y / sy }, Wr = { x: w.x / sx, y: w.y / sy }, fa = Math.hypot(E.x - Wr.x, E.y - Wr.y); if(fa < 4) return null;
+      var uf = nrm({ x: E.x - Wr.x, y: E.y - Wr.y }), out2 = [null, null];
+      var ee = march(E, uf, fa * 1.6);
+      if(ee){
+        var nv = { x: -uf.y, y: uf.x }, p1 = march(E, nv, fa), p2 = march(E, { x: -nv.x, y: -nv.y }, fa), fw = (p1 && p2) ? Math.hypot(p1.x - p2.x, p1.y - p2.y) : fa * 0.25;
+        var El = { x: ee.x - uf.x * fw * 0.4, y: ee.y - uf.y * fw * 0.4 };
+        if(Math.hypot(El.x - Wr.x, El.y - Wr.y) > fa * 0.7) out2[0] = img(El);
+      }
+      var kx = [L[17 + si], L[19 + si]].filter(function(q){ return q && q.v > 0.3; });
+      if(kx.length){ var Kn = { x: kx.reduce(function(t, q){ return t + q.x; }, 0) / kx.length / sx, y: kx.reduce(function(t, q){ return t + q.y; }, 0) / kx.length / sy }, hl = Math.hypot(Kn.x - Wr.x, Kn.y - Wr.y);
+        out2[1] = img({ x: Wr.x + uf.x * hl * 0.35, y: Wr.y + uf.y * hl * 0.35 }); }   // 손목 = 아래팔과 손바닥 사이 (손가락 쪽으로 넘어가지 않게)
+      else out2[1] = img({ x: Wr.x + uf.x * fa * 0.05, y: Wr.y + uf.y * fa * 0.05 });
+      return out2;
+    }
+    return null;
   }
   // 임의 사진 → 인물만 남긴 캔버스 (격자 배경용)
   // 저장된 기록 사진의 격자 배경: 인물 분리 + (v135) 측정점 기반 영역으로 보완 — 측정 화면(v133·v134)과 같은 방식
@@ -10524,7 +10645,7 @@
   function romGdPrep(){
     romCam.gd = null;
     var J = romJoint(), mv = romMove(); if(!mv || !ROM_GD[J.k + "|" + mv.k]) return;
-    var sd = romSd(J, mv), src = "guide/rom/" + J.k + "_" + sd + "_" + mv.k + ".jpg?v=205", im = new Image();   // v205 흑백 가이드
+    var sd = romSd(J, mv), src = "guide/rom/" + J.k + "_" + sd + "_" + mv.k + ".jpg?v=220", im = new Image();   // v205 흑백 가이드
     im.onload = function(){ if(romCam.gd && romCam.gd.src === src) romCam.gd.ok = true; };
     romCam.gd = { src: src, im: im, ok: false }; im.src = src;
   }
@@ -10786,7 +10907,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v219";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v220";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -12722,7 +12843,7 @@
     var G = PT_GUIDE[state.mode === "side" ? "side" : "front"];
     $("ptGuideTitle").textContent = G.title; $("ptGuideSub").textContent = G.sub;
     $("ptGuideBody").innerHTML = '<div class="pg-pose"><b>측정 자세</b> · ' + G.pose + '</div>' +
-      '<div class="pg-pics">' + G.imgs.map(function(src, i){ return '<figure><img src="' + src + '?v=205" alt="표시점 위치 예시 ' + (i + 1) + '"></figure>'; }).join("") + '</div>' +
+      '<div class="pg-pics">' + G.imgs.map(function(src, i){ return '<figure><img src="' + src + '?v=220" alt="표시점 위치 예시 ' + (i + 1) + '"></figure>'; }).join("") + '</div>' +
       '<ul class="pg-list">' + G.pts.map(function(p){ return '<li><i style="background:' + p[1] + '"></i><b>' + p[0] + '</b><span>' + p[2] + '</span></li>'; }).join("") + '</ul>' +
       '<p class="pg-tip">사진을 누르면 크게 볼 수 있어요.</p>';
     $("ptGuideBody").querySelectorAll(".pg-pics figure").forEach(function(f){ f.addEventListener("click", function(){ f.classList.toggle("big"); }); });
@@ -12801,7 +12922,7 @@
     var G = ROM_GD[J.k + "|" + mv.k]; if(!G) return;
     var sd = romSd(J, mv), lr = sd !== "C";
     if(romGdSide == null || !lr) romGdSide = lr ? sd : "C";
-    var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=205";   // v202 새 기준 실루엣 사진으로 교체
+    var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=220";   // v202 새 기준 실루엣 사진으로 교체
     $("ptGuideTitle").textContent = "측정가이드 · " + J.n + " " + mv.n;
     $("ptGuideSub").textContent = (lr ? (romGdSide === "R" ? "우측" : "좌측") + " 예시 · " : "") + "측정점 3개 · 측정선 2개";
     var pts = romPts(), nm = function(i){ return ROM_PART[pts[i]] || ROM_PTNAME[pts[i]] || ""; };

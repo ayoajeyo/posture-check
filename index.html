@@ -835,7 +835,7 @@
   /* v186 공유 링크 얼굴 모자이크 · 미리 보기 */
   .sh-blur{display:flex; gap:10px; align-items:center; margin:0 0 8px; font-size:13.5px; font-weight:600; cursor:pointer;}
   .sh-blur input{width:20px; height:20px; margin:0; accent-color:var(--navy);}
-  .sh-prev{max-height:260px; overflow-y:auto; border-radius:12px; border:1px solid var(--line); background:var(--surface-2); margin:0 0 8px; min-height:80px; display:grid; place-items:center;}
+  .sh-prev{max-height:320px; overflow-y:auto; border-radius:12px; border:1px solid var(--line); background:var(--surface-2); margin:0 0 8px; min-height:80px; display:grid; place-items:start center;}
   .sh-prev img{display:block; width:100%; height:auto;}
   .sh-prev em{font-style:normal; font-size:12.5px; color:var(--ink-soft); padding:20px;}
   .sh-fst{font-size:12px; line-height:1.5; margin:0 2px 12px; color:var(--ink-soft);}
@@ -2547,7 +2547,7 @@
       <label class="sh-days">링크 사용 기간
         <select id="shDays"><option value="7">7일</option><option value="30" selected>30일</option><option value="90">90일</option></select>
       </label>
-      <label class="sh-blur"><input type="checkbox" id="shBlur" checked><span>얼굴 자동 모자이크 <small style="font-weight:500;color:var(--ink-soft)">(권장)</small></span></label>
+      <label class="sh-blur" hidden><input type="checkbox" id="shBlur"><span>얼굴 자동 모자이크 <small style="font-weight:500;color:var(--ink-soft)">(권장)</small></span></label>
       <div class="sh-prev" id="shPrev"><em>미리 보기를 만드는 중…</em></div>
       <p class="sh-fst" id="shFst"></p>
       <label class="sh-agree"><input type="checkbox" id="shAgree"><span>회원에게 <b>사진·측정 결과를 링크로 보내는 것에 대해 동의</b>를 받았어요</span></label>
@@ -6036,23 +6036,13 @@
     $("shPrev").innerHTML = '<img alt="공유될 리포트 미리 보기" src="' + t.toDataURL("image/jpeg", 0.8) + '">';
   }
   function shFst(t, cls){ $("shFst").textContent = t; $("shFst").className = "sh-fst" + (cls ? " " + cls : ""); }
+  // v208 공유 링크 = [리포트 이미지 저장]과 같은 '모든 항목' 긴 이미지 (회원 본인에게만 보내므로 얼굴 모자이크 없음)
   function shPrep(){
-    var my = ++shPrepN, blur = $("shBlur").checked;
-    shCanvas = null; $("btnShMake").disabled = true;
-    $("shPrev").innerHTML = "<em>" + (blur ? "얼굴을 찾아 모자이크하는 중…" : "미리 보기를 만드는 중…") + "</em>"; shFst("");
-    (typeof romLoad === "function" ? romLoad() : Promise.resolve()).then(function(){ return shBuild(blur); }).then(function(res){
-      if(my !== shPrepN) return;
-      shCanvas = res.c; shPreview(res.c);
-      if(!blur) shFst("얼굴이 그대로 보여요. 회원 동의를 꼭 확인해 주세요.", "warn");
-      else if(!res.n) shFst("리포트에 사진이 없어요.", "");
-      else if(!res.miss) shFst("사진 " + res.n + "장의 얼굴을 모자이크했어요. 미리 보기로 확인해 주세요.", "ok");
-      else shFst("사진 " + res.n + "장 중 " + res.miss + "장은 얼굴을 찾지 못했어요. 미리 보기를 꼭 확인해 주세요.", "warn");
-    }).catch(function(e){
-      if(my !== shPrepN) return;
-      console.warn("[share blur]", e);
-      shCanvas = blur ? null : shRaw; if(shCanvas) shPreview(shCanvas);
-      shFst(blur ? "얼굴 처리를 하지 못했어요. 잠시 뒤 다시 시도하거나 모자이크를 끄고 미리 보기를 확인해 주세요." : "", "warn");
-    }).then(function(){ if(my === shPrepN) $("btnShMake").disabled = !shCanvas || shBusy; });
+    shPrepN++;
+    shCanvas = shRaw || null;
+    if(shCanvas){ shPreview(shCanvas); shFst("저장 이미지와 같은 전체 리포트예요. 회원 본인에게만 보내 주세요.", "ok"); }
+    else { $("shPrev").innerHTML = "<em>미리 보기를 만들지 못했어요.</em>"; shFst("리포트 이미지를 만들지 못했어요. 다시 시도해 주세요.", "warn"); }
+    $("btnShMake").disabled = !shCanvas || shBusy;
   }
   function shBase(){ return location.origin + location.pathname.replace(/[^\/]*$/, "") + "r.html?k="; }
   function shToken(){   // 추측할 수 없는 24자 키
@@ -6086,7 +6076,7 @@
   function shReset(){
     $("shMake").hidden = false; $("shDone").hidden = true; $("shAgree").checked = false; shUrlNow = "";
     var st = getSettings(); $("shTip").hidden = !!(st.phone || st.book);
-    $("btnShMake").disabled = true; $("btnShMake").textContent = "링크 만들기"; $("shBlur").checked = true;
+    $("btnShMake").disabled = true; $("btnShMake").textContent = "링크 만들기"; $("shBlur").checked = false;
   }
   function openShare(){
     if(!isPro()){ openProGate("report"); return; }
@@ -6175,7 +6165,6 @@
   });
   $("btnLinkReport").addEventListener("click", openShare);
   $("btnShMake").addEventListener("click", shMake);
-  $("shBlur").addEventListener("change", shPrep);
   $("btnShSend").addEventListener("click", function(){ if(shUrlNow) shSend(shUrlNow); });
   $("btnShCopy").addEventListener("click", function(){ if(shUrlNow) shCopy(shUrlNow); });
   $("shUrl").addEventListener("focus", function(){ this.select(); });
@@ -10564,7 +10553,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v207";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v208";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

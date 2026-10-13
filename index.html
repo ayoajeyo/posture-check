@@ -556,7 +556,7 @@
   .cmp-table td{padding:8px 4px; border-bottom:1px solid var(--line); text-align:right; font-family:var(--font-num);}
   .cmp-table td:first-child{font-family:var(--font-body); font-weight:600;}
   .up-good{color:var(--good); font-weight:700;} .up-bad{color:var(--crit); font-weight:700;} .up-same{color:var(--ink-soft);}
-  .rep-gridsw{display:flex; align-items:center; gap:10px; margin:0 0 12px; padding:10px 14px; background:var(--surface); border:1px solid var(--line); border-radius:14px; cursor:pointer;}
+  .rep-gridsw{display:flex; align-items:center; gap:10px; margin:0; padding:10px 14px; background:var(--surface); border:1px solid var(--line); border-radius:14px; cursor:pointer;}
   .rep-gridsw input{position:absolute; opacity:0; width:1px; height:1px;}
   .rep-gridsw .sw{flex:0 0 auto; width:42px; height:24px; border-radius:100px; background:var(--line); position:relative; transition:background .2s;}
   .rep-gridsw .sw::after{content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:left .2s;}
@@ -587,10 +587,11 @@
   }
   body{padding:0;}
   .wrap.app{max-width:none; margin:0; display:block; gap:0; min-height:100vh;}
-  .main{max-width:560px; margin:0 auto; padding:18px 16px calc(92px + env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:16px;}
-  .view{display:flex; flex-direction:column; gap:16px;}
+  :root{--gap:12px;}   /* v227 화면 블록 사이 간격 통일 */
+  .main{max-width:560px; margin:0 auto; padding:14px 16px calc(70px + env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:var(--gap);}
+  .view{display:flex; flex-direction:column; gap:var(--gap);}
   .view[hidden]{display:none!important;}
-  .an-grid, .an-col{display:flex; flex-direction:column; gap:16px; min-width:0;}
+  .an-grid, .an-col{display:flex; flex-direction:column; gap:var(--gap); min-width:0;}
   .card h2{font-family:var(--font-body); font-weight:700;}
   button.btn.primary{background:var(--blue); box-shadow:0 8px 18px -10px rgba(47,107,255,.8);}
   button.btn.wide{width:100%;}
@@ -666,7 +667,7 @@
   .rep-empty{border:1.5px dashed var(--line); border-radius:12px; padding:28px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center;}
   .rep-empty p{margin:0; font-size:13.5px; color:var(--ink-soft); font-weight:600;}
   .rep-empty[hidden]{display:none!important;}
-  .rep-bottom{display:grid; gap:14px;}
+  .rep-bottom{display:grid; gap:var(--gap);}
   .score-card, .sum-card{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px 20px; box-shadow:var(--shadow);}
   .cap{margin:0 0 6px; font-size:13.5px; font-weight:700; color:var(--ink-soft);}
   .score{display:flex; align-items:baseline; gap:6px;}
@@ -723,7 +724,7 @@
   .mb-backup .sub b{color:var(--ink);}
 
   /* ===================== v45 현황 대시보드 ===================== */
-  .ds-kpis{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;}
+  .ds-kpis{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--gap);}
   @media (max-width:759px){ .ds-kpis .kpi:first-child{grid-column:span 2;} }
   .kpi{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px 16px;}
   .kpi .k{font-size:12.5px; font-weight:700; color:var(--ink-soft);}
@@ -731,7 +732,7 @@
   .kpi .v small{font-family:var(--font-body); font-size:13px; font-weight:600; color:var(--ink-soft); margin-left:3px;}
   .kpi .d{font-size:11.5px; margin-top:4px; color:var(--ink-soft);}
   .kpi .d b{font-weight:800;}
-  .ds-grid{display:grid; gap:16px;}
+  .ds-grid{display:grid; gap:var(--gap);}
   .ds-card h2 small{font-size:12px; font-weight:600; color:var(--ink-soft); margin-left:4px;}
   .ds-card svg{display:block; width:100%; height:auto;}
   .st-bar{display:flex; height:16px; border-radius:6px; overflow:hidden; gap:2px; margin:6px 0 14px; background:var(--surface-2);}
@@ -922,7 +923,9 @@
   .gs-empty{font-size:13px; color:var(--ink-soft); text-align:center; padding:18px 0;}
   .sel-search{font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:9px; padding:9px 10px; background:var(--bg); color:var(--ink); width:100%; box-sizing:border-box; margin-bottom:6px;}
   .no-auto{font-style:normal; font-size:11px; font-weight:800; color:var(--blue); margin-left:6px;}
-  .no-fix{display:flex; align-items:center; gap:10px; padding:10px 14px; margin:0 0 10px; border-radius:12px; background:rgba(240,180,76,.10); border:1px solid rgba(240,180,76,.35); font-size:13px;}
+  #mbListWrap{display:flex; flex-direction:column; gap:var(--gap);} #mbListWrap > [hidden]{display:none!important;} #mbItems:empty{display:none;}   /* v227 회원 화면 간격 통일 */
+  #mbListWrap .mb-empty{margin:0;} #mbListWrap > .card{margin:0;}
+  .no-fix{display:flex; align-items:center; gap:10px; padding:10px 14px; margin:0; border-radius:12px; background:rgba(240,180,76,.10); border:1px solid rgba(240,180,76,.35); font-size:13px;}
   .no-fix .btn{margin-left:auto; flex:0 0 auto; width:auto; white-space:nowrap;}
   /* v50 측정 저장 · 기록 수정 · 리포트 PRO */
   .sess-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px; padding:10px 12px; border-radius:14px; background:var(--surface); border:1px solid var(--line);}
@@ -1404,7 +1407,7 @@
   @media (min-width:900px){ .msr-tabs{display:none!important;} }
 
   /* ===================== v114 현재 회원 바 고정 · 반복 카드/배너 정리 ===================== */
-  .msr-head{position:sticky; top:0; z-index:30; display:flex; flex-direction:column; gap:8px; margin:-6px -16px 0; padding:6px 16px 8px; background:var(--bg);}
+  .msr-head{position:sticky; top:0; z-index:30; display:flex; flex-direction:column; gap:var(--gap); margin:-6px -16px 0; padding:6px 16px 0; background:var(--bg);}
   .msr-head[hidden]{display:none!important;}
   .cur-bar{display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:8px 8px 8px 10px; cursor:pointer; text-align:left; font-family:inherit; color:var(--ink); width:100%;}
   .cur-bar .mb-avatar{width:36px; height:36px;}
@@ -1499,7 +1502,7 @@
   .home-quick{display:flex; flex-direction:column; gap:10px;}
   .home-quick h2{margin:0; font-size:17px; font-weight:800;}
   /* v178 워크플로 홈: 회원 → 측정 → 리포트 */
-  .hqh{display:flex; align-items:center; justify-content:space-between; margin:0 0 10px;}
+  .hqh{display:flex; align-items:center; justify-content:space-between; margin:0;}
   .hqh h2{margin:0;}
   .btn-theme{font-family:inherit; font-size:12.5px; font-weight:700; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:999px; padding:6px 12px; cursor:pointer;}
   .wf-step{display:block; width:100%; text-align:left; font-family:inherit; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px; box-shadow:var(--shadow); margin-bottom:10px; color:var(--ink);}
@@ -10922,7 +10925,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v226";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v227";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

@@ -2212,6 +2212,7 @@
     </div>
     <div class="rom-rounds" id="fhpRounds" role="group" aria-label="회차 선택" hidden></div>
     <div class="rom-grid" id="fhpGrid"></div>
+    <button type="button" class="rom-gd-btn" id="btnFhpGuide">📍 측정가이드</button>
     <details class="scol-info shoot-man"><summary>📖 촬영 매뉴얼</summary><div class="sm-body">
       <b>거북목 측정 (두개척추각 · CVA)</b> · 편안하게 선 자세에서 정면의 눈높이를 바라본 채, 몸의 <b>정확한 옆쪽</b>에서 C7 높이로 촬영 → <b>C7 극돌기</b>(목젖 아랫부분 높이에서 가로선을 그었을 때 목 뒤 끝)와 <b>귀의 이주</b>(귓구멍 앞 작은 연골)를 이은 선 ↔ C7을 지나는 <b>수평선</b>의 각도를 계산해요. 각도가 낮을수록 머리가 앞으로 나온 자세예요. 참고 기준: <b>55° 이상</b> 정상 · <b>50–55°</b> 경계 · <b>50° 미만</b> 거북목 · <b>45° 미만</b> 심한 전방머리자세 (연구마다 기준이 조금씩 달라요).<br>촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며, 정확한 판단은 전문가와 상담하세요.
     </div></details>
@@ -7839,7 +7840,7 @@
   // v70 메뉴 순서: 목 · 허리 · 어깨 · 무릎 · 고관절 · 발목 · 팔꿈치
   (function(){ var ord = ["neck", "trunk", "shoulder", "knee", "hip", "ankle", "elbow"]; ROM_JOINTS.sort(function(a, b){ return ord.indexOf(a.k) - ord.indexOf(b.k); }); })();
   var SCOL_JOINT = { k:"scol", n:"척추 균형", single:true, kind:"tilt", pts:["scL","scR"], moves:[
-    { k:"atr", n:"척추 균형 측정", normal:0, grade:"atr", guide:"<b>뒤(등 쪽)에서 등 높이로</b> 촬영 (좌·우는 등 뒤에서 본 기준) · 무릎을 펴고 양팔을 모아 <b>허리를 앞으로 숙인</b> 자세 · <b>좌측 허리(등)의 가장 높은 곳</b>과 <b>우측 허리(등)의 가장 높은 곳</b> 두 점을 이은 선 ↔ <b>바닥 수평선</b> 각도 · 수평계를 초록으로 맞춰 촬영" }
+    { k:"atr", n:"척추 균형 측정", normal:0, grade:"atr", guide:"<b>뒤(등 쪽)에서 등 높이로</b> 촬영 (좌·우는 등 뒤에서 본 기준) · 무릎을 펴고 양팔을 모아 <b>다리 앞쪽을 쓸어내리면서 허리를 앞으로 숙인</b> 자세 · <b>좌측 허리(등)의 가장 높은 곳</b>과 <b>우측 허리(등)의 가장 높은 곳</b> 두 점을 이은 선 ↔ <b>바닥 수평선</b> 각도 · 수평계를 초록으로 맞춰 촬영<br><br>※ 촬영자는 대상자가 허리를 숙이는 전체 범위 중 <b>좌·우 한쪽이 가장 높아지는 지점에서 멈추라고 한 뒤</b> 그 자세에서 촬영하세요 (보통 숙이는 범위의 중간쯤이에요)." }
   ]};
   /* v147 거북목: 두개척추각(CVA) = C7 극돌기 → 귀 이주 선 ↔ C7을 지나는 수평선 */
   var FHP_JOINT = { k:"fhp", n:"거북목", single:true, kind:"cva", pts:["c7","tragus"], moves:[
@@ -10785,7 +10786,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v218";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v219";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -12730,6 +12731,7 @@
   $("btnPtGuide").addEventListener("click", openPtGuide);
   /* ===== v103 ROM 측정가이드 (측정 기준표 예시 사진 · 얼굴은 흐리게 처리) ===== */
   var ROM_GD = {
+    "fhp|cva": { V:"C7 극돌기 · 목젖 아랫부분 높이에서 가로선을 그었을 때 목 뒤 윤곽과 만나는 끝 지점 (목 뒤 가장 튀어나온 뼈)", D:"귀 이주 · 귓구멍 앞 작은 돌기(이주) 중앙 (귀 표식보다 조금 아래)", A:"수평선 · C7에서 얼굴 쪽으로 그은 가로선 (자동)", tip:"C7을 목 앞쪽이나 어깨 위에 찍지 마세요. 귀 이주는 귓바퀴 가운데가 아니라 귓구멍 바로 앞 작은 돌기예요. 일부러 턱을 당기거나 고개를 들지 않은 편한 자세로 찍어요.", fhp: true },
     "scol|atr": { V:"좌측 높은 점 · 좌측 허리(등)의 가장 높은 곳", D:"우측 높은 점 · 우측 허리(등)의 가장 높은 곳", A:"바닥 수평선 · 좌측 높은 점을 지나는 가로선 (자동)", tip:"두 점은 척추(등 가운데 골)에서 양옆으로 같은 거리에 찍으세요. 옷·허리띠·바지선이 아니라 맨 등의 가장 높은 곳이에요. 좌·우는 등 뒤에서 본 기준이에요.", scol: true },
     "neck|flex": { V:"목관절 · 목 가장 아래쪽의 정중앙", D:"정수리 · 머리 정수리 중앙", A:"세로 기준선 · 목관절에서 화면 가장 위쪽", tip:"축(목관절)이 목 앞쪽으로 치우치지 않게, 목의 중앙에 두세요." },
     "neck|ext": { V:"목관절 · 목과 몸통이 만나는 곳의 정중앙 (목젖과 목뒤 주름의 중간)", D:"정수리 · 머리 정수리 중앙", A:"세로 기준선 · 목관절에서 화면 가장 위쪽", tip:"정수리는 머리 윤곽 끝보다 조금 아래, 정수리 중앙에 두세요." },
@@ -12752,6 +12754,26 @@
     "elbow|ext": { V:"팔꿈치 관절 · 팔꿈치 관절 (주두 쪽으로 조금 뒤)", D:"손목 · 손목 앞·뒤 사이 중앙", A:"어깨 관절 · 상완골 근위부", tip:"손목은 손등·손바닥 쪽으로 치우치지 않게 중앙에 두세요." }
   };
   var romGdSide = null;
+  // v219 거북목(CVA) 측정가이드 (점 2개 · C7 수평선)
+  function openFhpGuide(){
+    var G = ROM_GD["fhp|cva"];
+    $("ptGuideTitle").textContent = "측정가이드 · 거북목 두개척추각(CVA)";
+    $("ptGuideSub").textContent = "측정점 2개 · C7 수평선";
+    $("ptGuideBody").innerHTML =
+      '<div class="pg-pose"><b>측정 자세</b> · 편하게 서 있는 자세에서 <b>측면(옆)</b>에서 촬영</div>' +
+      '<div class="pg-pics one"><figure><img src="guide/rom/fhp_C_cva.jpg?v=219" alt="거북목 CVA 측정점 예시" loading="lazy"></figure></div>' +
+      '<ul class="pg-list">' +
+        '<li><i style="background:#F5A623"></i><b>각도축</b><span>' + esc(G.V) + '</span></li>' +
+        '<li><i style="background:#E8508A"></i><b>끝점</b><span>' + esc(G.D) + '</span></li>' +
+        '<li><i style="background:#E0574D"></i><b>기준선</b><span>' + esc(G.A) + '</span></li>' +
+      '</ul>' +
+      '<p class="pg-warn"><b>자주 틀리는 곳</b> · ' + esc(G.tip) + '</p>' +
+      '<p class="pg-tip">각도 = C7 수평선 ↔ C7–귀 이주 선 · 55° 이상 정상 · 50–55° 경계 · 45–50° 목이 앞으로 많이 나옴 · 45° 미만 전문가 상담 권장. 사진 속 얼굴은 흐리게 처리했어요.</p>';
+    var im = $("ptGuideBody").querySelector("img");
+    im.onerror = function(){ im.closest("figure").outerHTML = '<p class="pg-tip">예시 사진을 불러오지 못했어요. 인터넷 연결 후 다시 열어 주세요.</p>'; };
+    $("ptGuide").hidden = false;
+  }
+  $("btnFhpGuide").addEventListener("click", openFhpGuide);
   // v211 척추 균형 측정가이드 (점 2개 · 바닥 수평선)
   function openScolGuide(){
     var mv = SCOL_JOINT.moves[0], G = ROM_GD["scol|atr"];
@@ -12775,6 +12797,7 @@
   function openRomGuide(){
     var J = romJoint(), mv = romMove(); if(!mv) return;
     if(J.k === "scol"){ openScolGuide(); return; }
+    if(J.k === "fhp"){ openFhpGuide(); return; }
     var G = ROM_GD[J.k + "|" + mv.k]; if(!G) return;
     var sd = romSd(J, mv), lr = sd !== "C";
     if(romGdSide == null || !lr) romGdSide = lr ? sd : "C";

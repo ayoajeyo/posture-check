@@ -5847,7 +5847,7 @@
     g.restore();
   }
   function buildReportCanvas(r){
-    var W = 2000, PAD = 48, HEAD = 270, COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3);
+    var W = 2000, PAD = 48, HEAD = 320, COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3);
     var BOARD = 100 + IMGH + 40, BOT = 330, FOOT = 80;
     var H = HEAD + BOARD + 30 + BOT + FOOT;
     var scN = (typeof scolRows === "function") ? scolRows(repRomSrc()).length : 0;
@@ -5863,12 +5863,11 @@
     drawRepHead(g, W, PAD, F, M);   // v239 센터 로고·센터명을 크게 (PRO 브랜딩)
     // 보드
     var by = HEAD;
-    g.fillStyle = "#FFFFFF"; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.fill();
-    g.strokeStyle = "#DDE3E9"; g.lineWidth = 2; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.stroke();
-    ["front", "side"].forEach(function(m, i){
+    ["front", "side"].forEach(function(m, i){   // v240 시안 A: 정면·측면 각각 테두리 카드
       var list = m === "front" ? r.f : r.sd;
-      var x0 = PAD + 24 + i * (COLW + 40);
-      if(i){ g.fillStyle = "#DDE3E9"; g.fillRect(x0 - 32, by + 30, 2, BOARD - 60); }
+      var cx0 = PAD + i * (COLW + 40), x0 = cx0 + 24;
+      g.fillStyle = "#FFFFFF"; rr(g, cx0, by, COLW, BOARD, 36); g.fill();
+      g.strokeStyle = "#DDE3E9"; g.lineWidth = 2.5; rr(g, cx0, by, COLW, BOARD, 36); g.stroke();
       g.fillStyle = "#17212B"; g.font = "800 42px " + F; g.fillText(m === "front" ? "정면" : "측면", x0, by + 70);
       g.fillStyle = "#5B6875"; g.font = "600 24px " + F; g.fillText(m === "front" ? "좌우 높낮이" : "플럼라인", x0 + 96, by + 70);
       var iy = by + 100, ix = x0 + CHIPW + 24;
@@ -5880,52 +5879,58 @@
       var src = repAnnot(m);
       var cr = reportCrop(m);
       var sc = Math.min(IMGW / cr.w, IMGH / cr.h), dw = cr.w * sc, dh = cr.h * sc;
-      g.save(); rr(g, ix, iy, IMGW, IMGH, 20); g.clip(); g.fillStyle = "#E6E9F0"; g.fillRect(ix, iy, IMGW, IMGH);
-      g.drawImage(src, cr.x, cr.y, cr.w, cr.h, ix + (IMGW - dw)/2, iy + (IMGH - dh)/2, dw, dh); g.restore();
+      g.save(); rr(g, ix, iy, IMGW, IMGH, 24); g.clip(); g.fillStyle = "#F4F6F8"; g.fillRect(ix, iy, IMGW, IMGH);
+      g.strokeStyle = "#DDE3E9"; g.lineWidth = 2; g.beginPath();   // v240 연한 격자 바탕
+      for(var gx = ix; gx <= ix + IMGW; gx += 50){ g.moveTo(gx, iy); g.lineTo(gx, iy + IMGH); }
+      for(var gy = iy; gy <= iy + IMGH; gy += 50){ g.moveTo(ix, gy); g.lineTo(ix + IMGW, gy); }
+      g.stroke();
+      g.drawImage(src, cr.x, cr.y, cr.w, cr.h, ix + (IMGW - dw)/2, iy + (IMGH - dh)/2, dw, dh);
+      g.globalAlpha = .7; g.strokeStyle = m === "front" ? "#C03A2B" : "#17304F"; g.lineWidth = 3; if(m !== "front") g.setLineDash([14, 10]);   // 가운데 기준선
+      g.beginPath(); g.moveTo(ix + IMGW / 2, iy); g.lineTo(ix + IMGW / 2, iy + IMGH); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; g.restore();
       var ch = 140, gap = Math.min(22, (IMGH - list.length * ch) / Math.max(1, list.length - 1));
-      list.forEach(function(x, k){
-        var cy = iy + k * (ch + gap), gc = gradeColor(x.grade.cls), d = dirInfo(x.foot);
-        g.save(); rr(g, x0, cy, CHIPW, ch, 18); g.clip();
-        g.fillStyle = "#F1F4F7"; g.fillRect(x0, cy, CHIPW, ch);
-        g.fillStyle = gc; g.fillRect(x0, cy, 8, ch); g.restore();
-        g.fillStyle = "#3D4A57"; g.font = "700 23px " + F; g.fillText(x.title, x0 + 26, cy + 38);
-        // 판정 배지
-        var gl = gradeShort(x.grade.cls); g.font = "800 19px " + F; var gw = g.measureText(gl).width + 18;
-        g.save(); g.globalAlpha = .18; g.fillStyle = gc; rr(g, x0 + CHIPW - 14 - gw, cy + 15, gw, 30, 8); g.fill(); g.restore();
-        g.fillStyle = gc; g.textAlign = "center"; g.fillText(gl, x0 + CHIPW - 14 - gw / 2, cy + 37); g.textAlign = "left";
-        g.fillStyle = "#17212B"; g.font = "700 46px " + M; g.fillText(x.value, x0 + 24, cy + 92);
-        // 방향 알약
-        g.font = "700 21px " + F; var tw = g.measureText(d.tx).width, pw = tw + 58;
-        g.fillStyle = "rgba(23,33,43,.06)"; rr(g, x0 + 22, cy + 104, pw, 30, 15); g.fill();
-        g.fillStyle = gc; g.font = "700 15px " + F; g.fillText(d.ic, x0 + 34, cy + 125);
-        g.fillStyle = "#17212B"; g.font = "700 21px " + F; g.fillText(d.tx, x0 + 58, cy + 126);
+      list.forEach(function(x, k){   // v240 시안 A: 판정 색 바탕 칩 (제목 / 값 / 판정 · 방향)
+        var cy = iy + k * (ch + gap), gc = x.grade.cls === "g-good" ? "#16794A" : x.grade.cls === "g-warn" ? "#A35A00" : "#C03A2B", d = dirInfo(x.foot);
+        g.fillStyle = x.grade.cls === "g-good" ? "#E6F4EE" : x.grade.cls === "g-warn" ? "#FFF4E5" : "#FBE9E7"; rr(g, x0, cy, CHIPW, ch, 22); g.fill();
+        g.fillStyle = "#5B6875"; g.font = "600 24px " + F; g.fillText(x.title, x0 + 22, cy + 38);
+        g.fillStyle = gc; g.font = "700 44px " + M; g.fillText(x.value, x0 + 20, cy + 90);
+        var lab = gradeShort(x.grade.cls) + (d.tx && !/수평|정렬/.test(d.tx) ? " · " + d.tx : ""), lfs = 22;
+        g.font = "600 " + lfs + "px " + F; while(lfs > 16 && g.measureText(lab).width > CHIPW - 44){ lfs--; g.font = "600 " + lfs + "px " + F; }
+        g.fillStyle = gc; g.fillText(lab, x0 + 22, cy + 124);
       });
     });
     // 하단: 점수 + 요약
-    var y2 = HEAD + BOARD + 30, SW = 560;
-    g.fillStyle = "#FFFFFF"; rr(g, PAD, y2, SW, BOT, 24); g.fill(); rr(g, PAD + SW + 30, y2, W - PAD*2 - SW - 30, BOT, 24); g.fill();
-    g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("종합 점수", PAD + 36, y2 + 56);
-    g.fillStyle = "#17212B"; g.font = "700 120px " + M; var sv = r.score === null ? "–" : String(r.score);
-    g.fillText(sv, PAD + 32, y2 + 180); var sw = g.measureText(sv).width;
-    g.fillStyle = "#5B6875"; g.font = "500 40px " + F; g.fillText("/100", PAD + 44 + sw, y2 + 180);
+    var y2 = HEAD + BOARD + 30, SW = 504;   // v240 시안 A: 도넛 링 점수 + 색 막대 요약
+    g.fillStyle = "#FFFFFF"; rr(g, PAD, y2, SW, BOT, 36); g.fill(); g.strokeStyle = "#DDE3E9"; g.lineWidth = 2.5; rr(g, PAD, y2, SW, BOT, 36); g.stroke();
+    rr(g, PAD + SW + 30, y2, W - PAD*2 - SW - 30, BOT, 36); g.fill(); rr(g, PAD + SW + 30, y2, W - PAD*2 - SW - 30, BOT, 36); g.stroke();
+    var bnd = r.score === null ? null : scoreBand(r.score), bc = !bnd ? "#7A8794" : bnd.cls === "st-good" ? "#16794A" : bnd.cls === "st-warn" ? "#A35A00" : "#C03A2B";
+    var rcx = PAD + 36 + 106, rcy = y2 + BOT / 2, R = 106;
+    g.beginPath(); g.arc(rcx, rcy, R, 0, Math.PI * 2); g.fillStyle = "#E6EAEF"; g.fill();
+    if(r.score !== null && r.score > 0){ g.beginPath(); g.moveTo(rcx, rcy); g.arc(rcx, rcy, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, r.score / 100)); g.closePath(); g.fillStyle = bc; g.fill(); }
+    g.beginPath(); g.arc(rcx, rcy, R - 26, 0, Math.PI * 2); g.fillStyle = "#FFFFFF"; g.fill();
+    var sv = r.score === null ? "–" : String(r.score);
+    g.textAlign = "center"; g.fillStyle = "#17212B"; g.font = "700 66px " + M; g.fillText(sv, rcx, rcy + 16);
+    g.fillStyle = "#5B6875"; g.font = "500 22px " + F; g.fillText("/100", rcx, rcy + 48); g.textAlign = "left";
+    var tx0 = rcx + R + 34;
+    g.fillStyle = "#5B6875"; g.font = "600 26px " + F; g.fillText("종합 점수", tx0, rcy - 30);
+    if(bnd){ g.fillStyle = bc; g.font = "800 36px " + F; g.fillText(bnd.label, tx0, rcy + 20); }
     var n = r.score === null ? 0 : Math.round(r.score / 10) / 2;
-    for(var k = 0; k < 5; k++) drawStar(g, PAD + 62 + k * 66, y2 + 240, 28, Math.max(0, Math.min(1, n - k)));
-    if(r.score !== null){ var bnd = scoreBand(r.score); g.fillStyle = bnd.cls === "st-good" ? "#16794A" : bnd.cls === "st-warn" ? "#A35A00" : "#C03A2B"; g.font = "800 28px " + F; g.fillText(bnd.label, PAD + 36, y2 + 304); }
-    var sx = PAD + SW + 30 + 40;
-    g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("주요 분석 항목", sx, y2 + 56);
-    var cw = (W - PAD - 40 - sx) / 4;
+    for(var k = 0; k < 5; k++) drawStar(g, tx0 + 18 + k * 44, rcy + 62, 18, Math.max(0, Math.min(1, n - k)));
+    var sx = PAD + SW + 30 + 36;
+    g.fillStyle = "#5B6875"; g.font = "600 26px " + F; g.fillText("주요 분석 항목", sx, y2 + 56);
+    var cw = (W - PAD - 36 - sx) / 4;
     r.groups.forEach(function(gr, k){
-      var x = sx + k * cw;
-      g.fillStyle = "#17212B"; g.font = "700 30px " + F; g.fillText(gr.name, x, y2 + 140);
-      g.fillStyle = gr.st.cls === "st-good" ? "#16794A" : gr.st.cls === "st-warn" ? "#A35A00" : gr.st.cls === "st-crit" ? "#C03A2B" : "#7A8794";
-      g.font = "800 40px " + F; g.fillText(gr.st.label, x, y2 + 200);
-      g.fillStyle = "#3D4A57"; var dfs = 23; g.font = "600 23px " + F; while(dfs > 16 && g.measureText(gr.detail).width > cw - 20){ dfs--; g.font = "600 " + dfs + "px " + F; } g.fillText(gr.detail.replace(/ ↑\)/, " 높음)"), x, y2 + 246);
+      var x = sx + k * cw, gcol = gr.st.cls === "st-good" ? "#16794A" : gr.st.cls === "st-warn" ? "#A35A00" : gr.st.cls === "st-crit" ? "#C03A2B" : "#7A8794";
+      g.fillStyle = gcol; rr(g, x, y2 + 96, 8, 180, 4); g.fill();
+      g.fillStyle = "#5B6875"; g.font = "600 26px " + F; g.fillText(gr.name, x + 26, y2 + 128);
+      g.fillStyle = gcol; g.font = "800 38px " + F; g.fillText(gr.st.label, x + 26, y2 + 186);
+      g.fillStyle = "#7A8794"; var dfs = 23; g.font = "500 23px " + F; var dt = gr.detail.replace(/ ↑\)/, " 높음)");
+      while(dfs > 15 && g.measureText(dt).width > cw - 50){ dfs--; g.font = "500 " + dfs + "px " + F; } g.fillText(dt, x + 26, y2 + 236);
     });
     if(PH) drawRepPair(g, PAD, y2 + BOT + 30, W - PAD * 2, F);
     if(ROMH - PH) drawRepRom(g, PAD, y2 + BOT + 30 + PH, W - PAD * 2, F, M);
     g.fillStyle = "#7A8794"; g.font = "500 21px " + F;
     g.fillText("촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며 진단을 대신하지 않습니다.", PAD, H - 32);
-    g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandFoot(), W - PAD, H - 32);
+    g.textAlign = "right"; g.fillStyle = "#17304F"; g.font = "700 20px " + M; g.fillText(brandFoot(), W - PAD, H - 32);
     return c;
   }
   /* v207 리포트 저장·공유: 화면 리포트의 모든 내용(체형·점수·ROM 표·ROM 측정 사진·척추 균형/거북목 사진·전후 비교 전체)을
@@ -5971,14 +5976,14 @@
   function buildReportPages(r, cards){
     var W = 2000, PAD = 48, FOOT = 90, F = "'IBM Plex Sans KR', 'IBM Plex Sans', sans-serif", M = "'IBM Plex Mono', monospace";
     var one = buildReportCanvas(r);   // 헤더·체형·점수 부분은 그대로 복사
-    var HEAD = 270, COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3), BOARD = 100 + IMGH + 40, BOT = 330;
+    var HEAD = 320, COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3), BOARD = 100 + IMGH + 40, BOT = 330;
     var topH = HEAD + BOARD + 30 + BOT;
     var blocks = [], cw = W - PAD * 2;
     blocks.push({ h: topH, draw: function(g, y){ g.drawImage(one, 0, 0, W, topH, 0, y, W, topH); } });
     // v210 큰 제목(파트 구분): 왼쪽 색 막대 + 42px — 바로 다음 블록과 같은 쪽에 붙어 다님
     var secTitle = function(t, sub){
       blocks.push({ h: 104, t: true, draw: function(g, y){   // v212 56px로 더 크게
-        g.fillStyle = "#0B7A6B"; rr(g, PAD + 4, y + 24, 12, 66, 6); g.fill();
+        g.fillStyle = "#17304F"; rr(g, PAD + 4, y + 24, 12, 66, 6); g.fill();
         g.fillStyle = "#17212B"; g.font = "800 56px " + F; g.fillText(t, PAD + 34, y + 80);
         if(sub){ var tw = g.measureText(t).width; g.fillStyle = "#5B6875"; g.font = "700 32px " + F; g.fillText(sub, PAD + 58 + tw, y + 78); }
       } });
@@ -6070,7 +6075,7 @@
         g.fillStyle = "#17212B"; g.font = "800 36px " + F; var cn = bB && bB.name ? bB.name : "아요바디요"; g.fillText(cn, hx, 80);
         var cnw = g.measureText(cn).width; g.fillStyle = "#5B6875"; g.font = "600 24px " + F;
         g.fillText("체형 분석 리포트  ·  " + nowText() + ($("ptField").value.trim() ? "  ·  " + $("ptField").value.trim() : ""), hx + cnw + 22, 79);
-        g.fillStyle = bB ? "#17304F" : "#0B7A6B"; g.fillRect(PAD, 120, W - PAD * 2, 4);
+        g.fillStyle = "#17304F"; g.fillRect(PAD, 120, W - PAD * 2, 4);
       }
       var avail = LIM - P.start, k = Math.min(1, avail / P.tot), n = P.groups.length;
       var extra = pn === plan.length - 1 ? 0 : Math.max(0, avail - P.tot * k), per = n > 1 ? Math.min(extra / (n - 1), 200) / k : 0;
@@ -10264,15 +10269,16 @@
   function drawRepRom(g, x, y, w, F, M, sub){
     var RS = repRomSrc(), rows = romLRRows(RS), sc = scolRows(RS); if(!rows.length && !sc.length) return 0;
     var RH = 54, H = 130 + (rows.length + sc.length + (sc.length ? 1 : 0)) * RH + 20;
-    g.fillStyle = "#FFFFFF"; rr(g, x, y, w, H, 24); g.fill();
-    g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText(sub || "ROM 관절가동범위 · 좌우 비교", x + 36, y + 56);
+    g.fillStyle = "#FFFFFF"; rr(g, x, y, w, H, 36); g.fill(); g.strokeStyle = "#DDE3E9"; g.lineWidth = 2.5; rr(g, x, y, w, H, 36); g.stroke();   // v240 시안 A
+    g.fillStyle = "#5B6875"; g.font = "600 26px " + F; g.fillText(sub || "ROM 관절가동범위 · 좌우 비교", x + 36, y + 56);
     var cols = [x + 36, x + w * 0.36, x + w * 0.52, x + w * 0.68, x + w * 0.80];
     g.font = "600 21px " + F; g.fillStyle = "#5B6875";
     ["부위 · 동작", "좌측", "우측", "정상", "좌우"].forEach(function(t, i){ g.fillText(t, cols[i], y + 104); });
+    g.fillStyle = "#DDE3E9"; g.fillRect(x + 20, y + 118, w - 40, 2);
     var col = function(cls){ return cls === "good" ? "#16794A" : cls === "warn" ? "#A35A00" : cls === "crit" ? "#C03A2B" : "#17212B"; };
     rows.forEach(function(r, k){
       var yy = y + 130 + k * RH + 34;
-      if(k % 2 === 0){ g.fillStyle = "rgba(23,33,43,.03)"; g.fillRect(x + 20, yy - 36, w - 40, RH); }
+      if(k % 2 === 0){ g.fillStyle = "#F7F9FB"; rr(g, x + 20, yy - 36, w - 40, RH, 10); g.fill(); }
       g.fillStyle = "#17212B"; g.font = "700 25px " + F; g.fillText(r.J.n + " " + r.mv.n, cols[0], yy);
       if(r.single){ var jd2 = romJudge(r.mv, r.C); g.fillStyle = col(jd2.cls); g.font = "700 27px " + M; g.fillText(r.C + "°", cols[1], yy); g.fillStyle = "#5B6875"; g.font = "500 21px " + F; g.fillText("좌우 공통", cols[2], yy); }
       else [r.L, r.R].forEach(function(v, i){
@@ -11065,7 +11071,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v239";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v240";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -11404,45 +11410,39 @@
   /* v239 리포트 1쪽 머리글: 센터 로고 + 센터명을 크게 — PRO(센터 브랜딩) 차별 포인트
      [로고 플레이트] 센터명(크게) / 체형 분석 리포트 · 연락처        회원명(크게) / 측정일 */
   function drawRepHead(g, W, PAD, F, M){
-    var b = brand(), y = 22, h = 226, x = PAD, w = W - PAD * 2, pt = $("ptField").value.trim();
-    var NAVY = "#17304F", TEAL = "#0B7A6B";
-    g.save();
-    // 카드 + 아래 포인트 띠
-    g.shadowColor = "rgba(23,33,43,.10)"; g.shadowBlur = 24; g.shadowOffsetY = 6;
-    g.fillStyle = "#FFFFFF"; rr(g, x, y, w, h, 30); g.fill(); g.restore();
-    g.save(); rr(g, x, y, w, h, 30); g.clip();
-    g.fillStyle = b ? NAVY : TEAL; g.fillRect(x, y + h - 12, w, 12);
-    g.restore();
-    var lx = x + 40, cy = y + (h - 12) / 2, textX = lx;
-    // 로고 (센터 로고, 없으면 앱 로고)
+    /* v240 시안 A: 화면 폭 전체 네이비 띠 — [흰 로고 판] 센터명 / [리포트 꼬리표] 연락처   ···   체형 분석 결과 / 회원명 님 / 담당자 · 측정일 · 회원번호 */
+    var b = brand(), BH = 280, NAVY = "#17304F", pt = $("ptField").value.trim();
+    g.fillStyle = NAVY; g.fillRect(0, 0, W, BH);
+    var lx = PAD + 24, cy = BH / 2, textX = lx;
     var img = (b && b.logo && brandImg && brandImg.naturalWidth) ? brandImg : null;
     if(!img && !b){ var mk = document.querySelector("header.top .mark"); if(mk && mk.naturalWidth) img = mk; }
     if(img){
-      var LH = 166, LW = Math.min(360, LH * img.naturalWidth / img.naturalHeight), lw = Math.max(LH, LW);
-      g.fillStyle = "#FFFFFF"; rr(g, lx, cy - LH / 2, lw, LH, 26); g.fill(); g.strokeStyle = "#DDE3E9"; g.lineWidth = 2; rr(g, lx, cy - LH / 2, lw, LH, 26); g.stroke();
-      var pd = 14, iw = lw - pd * 2, ih = LH - pd * 2, s2 = Math.min(iw / img.naturalWidth, ih / img.naturalHeight), dw = img.naturalWidth * s2, dh = img.naturalHeight * s2;
+      var LH = 186, LW = Math.min(360, LH * img.naturalWidth / img.naturalHeight), lw = Math.max(LH, LW);
+      g.fillStyle = "#FFFFFF"; rr(g, lx, cy - LH / 2, lw, LH, 30); g.fill();
+      var pd = 16, iw = lw - pd * 2, ih = LH - pd * 2, s2 = Math.min(iw / img.naturalWidth, ih / img.naturalHeight), dw = img.naturalWidth * s2, dh = img.naturalHeight * s2;
       g.drawImage(img, lx + (lw - dw) / 2, cy - dh / 2, dw, dh);
-      textX = lx + lw + 40;
+      textX = lx + lw + 44;
     }
-    // 오른쪽: 회원명 · 날짜
-    var rx = x + w - 44, nm = pt.split(/\s*[·|]\s*/)[0] || "", rest = pt.slice(nm.length).replace(/^\s*[·|]\s*/, "");
+    // 오른쪽: 회원
+    var rx = W - PAD - 24, nm = pt.split(/\s*[·|]\s*/)[0] || "", rest = pt.slice(nm.length).replace(/^\s*[·|]\s*/, "");
+    var staff = (state.member && state.member.staff) ? "담당 " + state.member.staff : "";   // v240 회원 등록의 담당자
+    var meta = [staff, nowText(), rest ? "No." + rest.replace(/^No\.?\s*/i, "") : ""].filter(Boolean).join("  ·  ");
     g.textAlign = "right";
-    g.fillStyle = "#7A8794"; g.font = "700 24px " + F; g.fillText("체형 분석 결과", rx, cy - 44);
-    g.fillStyle = "#17212B"; g.font = "800 50px " + F; g.fillText(nm ? nm + " 님" : "", rx, cy + 14);
-    g.fillStyle = "#5B6875"; g.font = "500 26px " + M; g.fillText(nowText() + (rest ? "  ·  " + rest : ""), rx, cy + 58);
-    var rightW = Math.max(g.measureText(nowText() + (rest ? "  ·  " + rest : "")).width, 320);
+    g.fillStyle = "#C9D3E6"; g.font = "600 26px " + F; g.fillText("체형 분석 결과", rx, cy - 40);
+    g.fillStyle = "#FFFFFF"; g.font = "800 56px " + F; g.fillText(nm ? nm + " 님" : "", rx, cy + 22);
+    g.fillStyle = "#C9D3E6"; g.font = "500 26px " + M; g.fillText(meta, rx, cy + 68);
+    var rightW = Math.max(g.measureText(meta).width, 360);
     g.textAlign = "left";
-    // 가운데: 센터명 (자리에 맞게 글자 크기 자동)
-    var name = b && b.name ? b.name : "아요바디요", maxW = rx - rightW - 60 - textX, fs = 76;
-    g.font = "800 " + fs + "px " + F; while(fs > 40 && g.measureText(name).width > maxW){ fs -= 2; g.font = "800 " + fs + "px " + F; }
-    g.fillStyle = "#17212B"; g.fillText(name, textX, cy + 8);
-    // 센터명 아래: 리포트 꼬리표 + 연락처
-    var tag = "체형 분석 리포트", tx = textX, ty = cy + 38;
-    g.font = "800 24px " + F; var tw = g.measureText(tag).width + 32;
-    g.fillStyle = b ? NAVY : TEAL; rr(g, tx, ty, tw, 42, 21); g.fill();
-    g.fillStyle = "#FFFFFF"; g.fillText(tag, tx + 16, ty + 30);
+    // 가운데: 센터명 (자리에 맞게 자동 축소)
+    var name = b && b.name ? b.name : "아요바디요", maxW = rx - rightW - 70 - textX, fs = 66;
+    g.font = "800 " + fs + "px " + F; while(fs > 36 && g.measureText(name).width > maxW){ fs -= 2; g.font = "800 " + fs + "px " + F; }
+    g.fillStyle = "#FFFFFF"; g.fillText(name, textX, cy + 2);
+    var tag = "체형 분석 리포트", ty = cy + 26;
+    g.font = "700 24px " + F; var tw = g.measureText(tag).width + 36;
+    g.fillStyle = "rgba(255,255,255,.14)"; rr(g, textX, ty, tw, 44, 22); g.fill();
+    g.fillStyle = "#FFFFFF"; g.fillText(tag, textX + 18, ty + 31);
     var ct = b && b.contact ? b.contact : (b ? "" : "POSTURE CHECK PRO");
-    if(ct){ g.fillStyle = "#5B6875"; g.font = "600 26px " + F; g.fillText(ct, tx + tw + 18, ty + 30); }
+    if(ct){ g.fillStyle = "#C9D3E6"; g.font = "500 26px " + F; g.fillText(ct, textX + tw + 20, ty + 31); }
   }
   // 우측 정렬로 흰 바탕 플레이트 위에 로고를 그림 (xr = 우측 끝)
   function drawBrandLogo(g, xr, y, maxW, h){

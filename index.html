@@ -10512,7 +10512,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v203";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v204";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -11511,6 +11511,7 @@
     var J = ROM_ALL.find(function(j){ return j.k === x.joint; }), mv = J ? J.moves.find(function(m){ return m.k === x.move; }) : null;
     var GD = ROM_GD[x.joint + "|" + x.move], sp = function(t){ var i = (t || "").indexOf(" · "); return i < 0 ? [t || "", ""] : [t.slice(0, i), t.slice(i + 3)]; };
     var SC = x.joint === "scol";   // v197 척추 균형: 두 점 선 ↔ 바닥 수평선
+    var FC = x.joint === "fhp";    // v204 거북목(CVA): C7 수평선 ↔ C7–귀 이주 선 (guide/ref/fhp_cva_ref.json 기준)
     var role = SC ? ["시작점", "끝점"] : ["각도축", "2선 끝점", "1선 끝점"], nm = x.names || [];
     (A.pts || []).forEach(function(a, i){
       var b = (B.pts || [])[i] || a, r = (role[i] || "점" + (i + 1)) + "(" + (nm[i] || "") + ")", m2 = dirTxt(b, a, x.h);
@@ -11521,9 +11522,11 @@
     if(vb != null && va != null && vb !== va) lines.push("- 각도 : " + vb + "° → " + va + "° (" + (va > vb ? "+" : "") + (va - vb) + "°)");
     var V = sp(GD && GD.V), D = sp(GD && GD.D), Ar = sp(GD && GD.A);
     return { a: J ? J.n : x.joint, b: (mv ? mv.n : x.move) + (x.side === "L" ? "(좌측)" : x.side === "R" ? "(우측)" : ""),
-      e: SC ? "- 시작점(좌측 높은 점) : 좌측 허리(등)의 가장 높은 곳\n\n- 끝점(우측 높은 점) : 우측 허리(등)의 가장 높은 곳" : GD ? "- 시작점(" + V[0] + ") : " + V[1] + "\n\n- 끝점(" + Ar[0] + ") : " + Ar[1] : "",
-      f: SC ? "바닥 수평선 (좌측 높은 점을 지나는 가로선)" : GD ? "- 시작점(" + V[0] + ") : 1선 시작점\n\n- 끝점(" + D[0] + ") : " + D[1] : "",
-      g: SC ? "좌측 높은 점 (두 점을 이은 선과 바닥 수평선이 만나는 지점)" : GD ? V[0] + "(1선과 2선이 만나는 지점)" : "",
+      e: SC ? "- 시작점(좌측 높은 점) : 좌측 허리(등)의 가장 높은 곳\n\n- 끝점(우측 높은 점) : 우측 허리(등)의 가장 높은 곳"
+        : FC ? "- 시작점(C7 극돌기) : 목젖 아랫부분 높이에서 가로선을 그었을 때 목 뒤 윤곽과 만나는 끝 지점\n\n- 끝점(수평선) : C7에서 얼굴 쪽으로 그은 수평선" : GD ? "- 시작점(" + V[0] + ") : " + V[1] + "\n\n- 끝점(" + Ar[0] + ") : " + Ar[1] : "",
+      f: SC ? "바닥 수평선 (좌측 높은 점을 지나는 가로선)"
+        : FC ? "- 시작점(C7 극돌기) : 1선 시작점\n\n- 끝점(귀 이주) : 귓구멍 앞 작은 돌기(이주) 중앙" : GD ? "- 시작점(" + V[0] + ") : 1선 시작점\n\n- 끝점(" + D[0] + ") : " + D[1] : "",
+      g: SC ? "좌측 높은 점 (두 점을 이은 선과 바닥 수평선이 만나는 지점)" : FC ? "C7 극돌기 (1선 수평선과 2선이 만나는 지점)" : GD ? V[0] + "(1선과 2선이 만나는 지점)" : "",
       h: x.legacy ? (B.regen ? "수정 전 사진: 저장 당시 자료가 없는 예전 기록이라 현재 버전 자동 인식으로 다시 만든 사진\n" + (lines.length ? lines.join("\n") : "수정 없음 (자동 인식과 최종 점이 같음)")
           : "수정 전 자료 없음 (관리자 보관 자료가 없는 기록 · 저장된 최종 결과만 표시)") : lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)",
       ib: x.legacy && !B.regen ? "–" : cb.join("\n"), ia: ca.join("\n"),

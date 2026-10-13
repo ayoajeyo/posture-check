@@ -377,6 +377,19 @@
     padding:20px; padding-block:calc(20px + env(safe-area-inset-top,0px)) calc(20px + env(safe-area-inset-bottom,0px));
   }
   .save-overlay img{max-width:100%; max-height:70vh; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,.5);}
+  /* v209 리포트 A4 여러 쪽 저장 */
+  .pages-overlay{position:fixed; inset:0; z-index:80; background:rgba(6,12,11,.96); overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));}
+  .pages-overlay[hidden]{display:none!important;}
+  .pg-head{position:sticky; top:-14px; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; background:rgba(6,12,11,.96);}
+  .pg-head b{color:#fff; font-size:16px;}
+  .pg-head button{font-family:inherit; font-size:14px; font-weight:600; border-radius:11px; border:1px solid rgba(255,255,255,.3); padding:9px 18px; background:rgba(255,255,255,.1); color:#fff;}
+  .pg-pdf{display:block; width:100%; max-width:520px; margin:4px auto 10px; font-family:inherit; font-size:15.5px; font-weight:800; border:0; border-radius:14px; padding:14px 16px; background:#0B7A6B; color:#fff;}
+  .pg-pdf small{display:block; font-size:12px; font-weight:600; opacity:.8; margin-top:2px;}
+  .pg-tip{color:#C9D6D3; font-size:13px; text-align:center; margin:0 0 12px;}
+  .pg-list{display:flex; flex-direction:column; gap:16px; align-items:center;}
+  .pg-list figure{margin:0; width:100%; max-width:520px;}
+  .pg-list img{display:block; width:100%; height:auto; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.5); background:#fff;}
+  .pg-list figcaption{color:#9FB3AF; font-size:12.5px; text-align:center; margin-top:6px;}
   .save-overlay .msg{color:#fff; font-size:14px; font-weight:600; text-align:center; line-height:1.6;}
   .save-overlay .msg em{display:block; font-style:normal; color:#9FB3AF; font-weight:500; font-size:12.5px; margin-top:4px;}
   .save-overlay button{
@@ -2768,6 +2781,12 @@
   </div>
 </div>
 
+<div class="pages-overlay" id="pagesOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="pgTitle">
+  <div class="pg-head"><b id="pgTitle">리포트</b><button type="button" id="btnPgClose">닫기</button></div>
+  <button type="button" class="pg-pdf" id="btnPgPdf">📄 PDF 한 파일로 저장·공유 <small>출력·회원 전송용</small></button>
+  <p class="pg-tip">쪽 이미지를 하나씩 <b>길게 눌러</b> "이미지 저장"을 누르면 갤러리에 저장돼요.</p>
+  <div class="pg-list" id="pgList"></div>
+</div>
 <div class="save-overlay" id="saveOverlay" hidden>
   <img id="saveOverlayImg" alt="결과 이미지">
   <div class="msg">이미지를 <b>길게 눌러</b> "이미지 저장" 또는 "사진에 추가"를 선택하세요<em>갤러리(사진 앱)에 바로 저장됩니다</em></div>
@@ -3101,6 +3120,7 @@
   var toastEl = $("toast");
   var saveOverlay = $("saveOverlay"), saveOverlayImg = $("saveOverlayImg"), btnCloseOverlay = $("btnCloseOverlay");
   btnCloseOverlay.addEventListener("click", function(){ saveOverlay.hidden = true; saveOverlayImg.src = ""; });
+  $("btnPgClose").addEventListener("click", function(){ $("pagesOverlay").hidden = true; $("pgList").innerHTML = ""; });
 
   var BENCH = { on: false };   // v121 정확도 채점 중에는 안내 문구를 띄우지 않음
   function toast(msg){
@@ -5450,12 +5470,7 @@
     if(Array.isArray(out)){   // v195 리포트 A4 여러 장
       var base = filename.replace(/\.jpg$/, ""), outs = out;
       if(dlNS){ toast("리포트 " + outs.length + "장을 저장해요."); (function next(i){ if(i >= outs.length) return; deliverCanvas(outs[i], base + "_" + (i + 1) + ".jpg"); setTimeout(function(){ next(i + 1); }, 700); })(0); return; }
-      Promise.all(outs.map(function(c){ return new Promise(function(res){ c.toBlob(res, "image/jpeg", 0.92); }); })).then(function(blobs){
-        var files = []; try{ files = blobs.map(function(b, i){ return new File([b], base + "_" + (i + 1) + ".jpg", { type: "image/jpeg" }); }); }catch(e){}
-        if(files.length && navigator.share && navigator.canShare && navigator.canShare({ files: files })){
-          navigator.share({ files: files, title: "아요바디요 결과" }).then(function(){ toast("공유 시트에서 '이미지 저장'을 선택하면 " + outs.length + "장이 갤러리에 저장돼요."); }).catch(function(err){ if(err && err.name === "AbortError") return; deliverCanvas(outs[0], base + "_1.jpg"); });
-        } else { toast("리포트가 " + outs.length + "장이에요. 한 장씩 저장해 주세요."); (function next(i){ if(i >= outs.length) return; deliverCanvas(outs[i], base + "_" + (i + 1) + ".jpg"); setTimeout(function(){ next(i + 1); }, 1200); })(0); }
-      });
+      showPagesOverlay(outs, base);   // v209 모든 쪽을 한 화면에 (쪽마다 길게 눌러 저장 + PDF 한 파일)
       return;
     }
     out.toBlob(function(blob){
@@ -5889,17 +5904,97 @@
         } });
       });
     }
-    // 한 장으로 그리기 (너무 길면 전체를 줄임)
-    var H = 0; blocks.forEach(function(b){ H += b.h + 30; }); H += FOOT;
-    var k = Math.min(1, Math.sqrt(REP_MAXPX / (W * H)));
-    var c = document.createElement("canvas"); c.width = Math.round(W * k); c.height = Math.round(H * k);
-    var g = c.getContext("2d"); g.scale(k, k);
-    g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, H); g.textBaseline = "alphabetic"; g.textAlign = "left";
-    var y = 0; blocks.forEach(function(b){ b.draw(g, y); y += b.h + 30; });
-    g.fillStyle = "#7A8794"; g.font = "500 21px " + F; g.textAlign = "left";
-    g.fillText("촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며 진단을 대신하지 않습니다.", PAD, H - 36);
-    g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandFoot(), W - PAD, H - 36); g.textAlign = "left";
-    return [c];
+    // v209 A4(2000×2828) 여러 쪽으로 나누기 — 블록(카드·비교 한 줄)은 쪽 사이에서 잘리지 않음
+    var PH = 2828, TOPY = 120, pages = [], cur = null, y = 0;
+    var newPage = function(){
+      var cv = document.createElement("canvas"); cv.width = W; cv.height = PH;
+      var g = cv.getContext("2d"); g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, PH); g.textBaseline = "alphabetic"; g.textAlign = "left";
+      cur = { c: cv, g: g }; pages.push(cur);
+      if(pages.length > 1){ g.fillStyle = "#5B6875"; g.font = "700 24px " + F; g.fillText(brandLabel("POSTURE CHECK PRO", "체형 분석 리포트") + " · " + nowText() + ($("ptField").value.trim() ? " · " + $("ptField").value.trim() : ""), PAD, 70); y = TOPY; }
+      else y = 0;
+    };
+    newPage();
+    blocks.forEach(function(b, n){
+      // 제목 블록(h 70)은 다음 블록과 같은 쪽에 오도록
+      var need = b.h + (b.h === 70 && blocks[n + 1] ? blocks[n + 1].h + 30 : 0);
+      if(y + need > PH - FOOT && y > TOPY) newPage();
+      if(b.h > PH - FOOT - y){   // 한 쪽보다 큰 블록(거의 없음)은 줄여서 넣기
+        var k2 = (PH - FOOT - y) / b.h; cur.g.save(); cur.g.translate(0, y); cur.g.scale(k2, k2); b.draw(cur.g, 0); cur.g.restore(); y = PH; return;
+      }
+      b.draw(cur.g, y); y += b.h + 30;
+    });
+    pages.forEach(function(pg, n){
+      var g = pg.g;
+      g.fillStyle = "#7A8794"; g.font = "500 21px " + F; g.textAlign = "left";
+      g.fillText("촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며 진단을 대신하지 않습니다.", PAD, PH - 36);
+      g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandFoot() + (pages.length > 1 ? "   " + (n + 1) + " / " + pages.length : ""), W - PAD, PH - 36); g.textAlign = "left";
+    });
+    return pages.map(function(pg){ return pg.c; });
+  }
+  // v209 여러 쪽 → 한 장으로 이어 붙이기 (공유 링크용: 회원이 폰에서 스크롤로 보기)
+  function stitchPages(pages){
+    if(!Array.isArray(pages)) return pages;
+    if(pages.length === 1) return pages[0];
+    var W = pages[0].width, H = 0; pages.forEach(function(c){ H += c.height; });
+    var k = Math.min(1, Math.sqrt(REP_MAXPX / (W * H))), c = document.createElement("canvas");
+    c.width = Math.round(W * k); c.height = Math.round(H * k);
+    var g = c.getContext("2d"), y = 0;
+    pages.forEach(function(p){ var h = Math.round(p.height * k); g.drawImage(p, 0, y, c.width, h); y += h; });
+    return c;
+  }
+  // v209 JPEG 쪽들 → PDF (A4, 쪽마다 이미지 1장 · 외부 라이브러리 없이)
+  function pagesToPdf(pages){
+    return Promise.all(pages.map(function(c){ return new Promise(function(res){ c.toBlob(function(b){ b ? b.arrayBuffer().then(function(a){ res({ d: new Uint8Array(a), w: c.width, h: c.height }); }) : res(null); }, "image/jpeg", 0.9); }); })).then(function(imgs){
+      imgs = imgs.filter(Boolean); if(!imgs.length) throw new Error("no page");
+      var enc = new TextEncoder(), parts = [], len = 0, offs = [];
+      var add = function(x){ var u = typeof x === "string" ? enc.encode(x) : x; parts.push(u); len += u.length; };
+      var obj = function(n, body){ offs[n] = len; add(n + " 0 obj\n"); body(); add("\nendobj\n"); };
+      var PW = 595.28, PHt = 841.89, N = imgs.length, kids = [];
+      for(var i = 0; i < N; i++) kids.push((3 + i * 3) + " 0 R");
+      add("%PDF-1.4\n%\xE2\xE3\xCF\xD3\n");
+      obj(1, function(){ add("<< /Type /Catalog /Pages 2 0 R >>"); });
+      obj(2, function(){ add("<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + N + " >>"); });
+      imgs.forEach(function(im, i){
+        var pn = 3 + i * 3, xn = pn + 1, cn = pn + 2;
+        var sc = Math.min(PW / im.w, PHt / im.h), dw = (im.w * sc).toFixed(2), dh = (im.h * sc).toFixed(2), dx = ((PW - im.w * sc) / 2).toFixed(2), dy = ((PHt - im.h * sc) / 2).toFixed(2);
+        var cs = "q " + dw + " 0 0 " + dh + " " + dx + " " + dy + " cm /Im0 Do Q";
+        obj(pn, function(){ add("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + PW + " " + PHt + "] /Resources << /XObject << /Im0 " + xn + " 0 R >> >> /Contents " + cn + " 0 R >>"); });
+        obj(xn, function(){ add("<< /Type /XObject /Subtype /Image /Width " + im.w + " /Height " + im.h + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + im.d.length + " >>\nstream\n"); add(im.d); add("\nendstream"); });
+        obj(cn, function(){ add("<< /Length " + cs.length + " >>\nstream\n" + cs + "\nendstream"); });
+      });
+      var total = 3 + N * 3, xref = len, x = "xref\n0 " + total + "\n0000000000 65535 f \n";
+      for(var n = 1; n < total; n++) x += String(offs[n]).padStart(10, "0") + " 00000 n \n";
+      add(x + "trailer\n<< /Size " + total + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF");
+      return new Blob(parts, { type: "application/pdf" });
+    });
+  }
+  // v209 리포트 여러 쪽 저장 화면: 쪽마다 길게 눌러 저장 + PDF 한 파일로 저장·공유
+  function showPagesOverlay(pages, base){
+    var ov = $("pagesOverlay"), list = $("pgList"), n = pages.length;
+    $("pgTitle").textContent = "리포트 " + n + "쪽 (A4)";
+    list.innerHTML = "";
+    pages.forEach(function(c, i){
+      var f = document.createElement("figure"), im = new Image();
+      im.alt = "리포트 " + (i + 1) + "쪽"; im.src = c.toDataURL("image/jpeg", 0.9);
+      var cap = document.createElement("figcaption"); cap.textContent = (i + 1) + " / " + n + "쪽 · 길게 눌러 저장";
+      f.appendChild(im); f.appendChild(cap); list.appendChild(f);
+    });
+    var pdfBlob = null, fname = base + ".pdf";
+    var getPdf = function(){ return pdfBlob ? Promise.resolve(pdfBlob) : pagesToPdf(pages).then(function(b){ pdfBlob = b; return b; }); };
+    $("btnPgPdf").onclick = function(){
+      getPdf().then(function(b){
+        var file = null; try{ file = new File([b], fname, { type: "application/pdf" }); }catch(e){}
+        if(file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })){
+          navigator.share({ files: [file], title: "체형 분석 리포트" }).catch(function(err){ if(!(err && err.name === "AbortError")) dlBlob(b, fname); });
+        } else dlBlob(b, fname);
+      }).catch(function(e){ console.warn("[pdf]", e); toast("PDF를 만들지 못했어요. 쪽 이미지를 길게 눌러 저장해 주세요."); });
+    };
+    ov.hidden = false; ov.scrollTop = 0;
+  }
+  function dlBlob(b, name){
+    var u = URL.createObjectURL(b), a = document.createElement("a"); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(u); }, 60000);
+    toast("PDF를 저장했어요 · 내 파일 → 다운로드에서 열 수 있어요.");
   }
   // v176 리포트를 공유 시트(카톡 등)로 바로 보내기 · 공유를 지원하지 않는 기기는 이미지 저장으로
   function shareCanvas(out, filename, title){
@@ -5926,7 +6021,7 @@
       if(!r.f && !r.sd && !(typeof romLRRows === "function" && (romLRRows(repRomSrc()).length || scolRows(repRomSrc()).length || repPairOk()))){ toast("정면·측면 또는 ROM 측정을 먼저 마쳐주세요."); return; }
       var cards = [];
       var build = function(){
-        var pages = buildReportPages(r, cards), tag0 = fileTag();   // v207 모든 항목을 한 장의 긴 이미지로
+        var pages = buildReportPages(r, cards), tag0 = fileTag();   // v209 모든 항목을 A4 여러 쪽으로
         if(pages.length === 1){ sender(pages[0], "AYO_report_" + tag0 + ".jpg"); return; }
         sender(pages, "AYO_report_" + tag0 + ".jpg");
       };
@@ -6082,7 +6177,7 @@
     if(!isPro()){ openProGate("report"); return; }
     if(!ACC.uid || !sbClient()){ toast("공유 링크는 로그인한 계정에서 만들 수 있어요."); return; }
     if(!navigator.onLine){ toast("인터넷에 연결된 뒤 다시 시도해 주세요."); return; }
-    repGoOut(function(c){ shRaw = c; shReset(); $("shSheet").hidden = false; shPrep(); shList(); });
+    repGoOut(function(c){ shRaw = stitchPages(c); shReset(); $("shSheet").hidden = false; shPrep(); shList(); });
   }
   function shMake(){
     if(shBusy) return;
@@ -10462,7 +10557,7 @@
   };
   try{ history.replaceState({ ayoRoot: 1 }, ""); }catch(e){}
   function openOverlays(){
-    return Array.prototype.filter.call(document.querySelectorAll(".confirm-overlay, .save-overlay"), function(el){ return !el.hidden; });
+    return Array.prototype.filter.call(document.querySelectorAll(".confirm-overlay, .save-overlay, .pages-overlay"), function(el){ return !el.hidden; });
   }
   function topOverlay(){
     var list = openOverlays();
@@ -10493,7 +10588,7 @@
   window.addEventListener("click", function(e){ if(e.isTrusted && !inBack) setTimeout(topUp, 0); }, true);
   window.addEventListener("keydown", function(e){ if(e.isTrusted && !inBack && e.key !== "Escape") setTimeout(topUp, 0); }, true);
   function closeOverlay(el){
-    var closeBtn = { ptGuide: "btnPtGuideClose", mbSess: "btnMbSessClose", proGate: "btnProClose", romSheet: "btnRomClose", saveOverlay: "btnCloseOverlay", gsOverlay: "btnGsClose", moreSheet: "btnMoreClose", themeSheet: "btnThemeClose",
+    var closeBtn = { ptGuide: "btnPtGuideClose", mbSess: "btnMbSessClose", proGate: "btnProClose", romSheet: "btnRomClose", saveOverlay: "btnCloseOverlay", pagesOverlay: "btnPgClose", gsOverlay: "btnGsClose", moreSheet: "btnMoreClose", themeSheet: "btnThemeClose",
       romCmp: "btnRomCmpClose", mbForm: "btnMfCancel", progForm: "btnPfCancel", assignPick: "btnApCancel", csForm: "btnCfCancel", slForm: "btnSfCancel", retakeConfirm: "btnRetakeNo" }[el.id];
     if(el.id === "mbPicker") state.pendingSave = false;
     if(closeBtn && $(closeBtn)) $(closeBtn).click(); else el.hidden = true;
@@ -10553,7 +10648,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v208";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v209";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

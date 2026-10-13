@@ -6043,18 +6043,24 @@
     var abase = base.replace(/[^A-Za-z0-9_\-]/g, "").replace(/_+/g, "_") || "AYO_report";
     // v216 회원에게 보내기: 미리 만든 파일로 '누른 그 순간' 공유 창을 염
     var canFiles = function(fs){ try{ return !!(fs.length && navigator.share && navigator.canShare && navigator.canShare({ files: fs })); }catch(e){ return false; } };
-    var sendFiles = function(fs, what, done){
+    var sendFiles = function(fs, what, done, fail){
       if(!fs){ toast("파일을 준비하는 중이에요. 잠시 뒤 다시 눌러 주세요."); return; }
-      if(!canFiles(fs)){ toast("이 기기는 앱에서 바로 보내기를 지원하지 않아요. [저장하기]로 저장한 뒤 카톡에서 파일·사진을 첨부해 주세요."); return; }
+      if(!canFiles(fs)){ if(fail){ fail(); return; } toast("이 기기는 앱에서 바로 보내기를 지원하지 않아요. [저장하기]로 저장한 뒤 카톡에서 파일·사진을 첨부해 주세요."); return; }
       navigator.share({ files: fs }).then(function(){ if(done) done(); }, function(err){   // v217 파일만 (제목·문구를 같이 넣으면 일부 앱이 거부)
         if(err && err.name === "AbortError") return;
-        console.warn("[send]", err); toast("보내지 못했어요 (" + ((err && err.name) || "오류") + "). 다시 한 번 눌러 주세요.");
+        console.warn("[send]", err);
+        if(fail){ fail(err); return; }
+        toast("보내지 못했어요 (" + ((err && err.name) || "오류") + "). 다시 한 번 눌러 주세요.");
       });
     };
     $("btnPgSendPdf").onclick = function(){
       $("pgSendChoice").hidden = true; selUi();
       var f = null; if(pdfBlob){ try{ f = [new File([pdfBlob], abase + ".pdf", { type: "application/pdf" })]; }catch(e){} }
-      sendFiles(f, "PDF");
+      // v218 일부 폰(삼성 인터넷 기반 앱 등)은 PDF '바로 보내기'를 막음 → PDF를 다운로드 폴더에 저장하고 카톡 첨부 방법 안내
+      sendFiles(f, "PDF", null, function(){
+        dlBlob(pdfBlob, abase + ".pdf");
+        showPdfTip();
+      });
     };
     // v217 폰 공유는 한 번에 파일 10개까지 → 10장씩 나눠 보내기 (11장 이상이면 [다음 사진 보내기] 버튼)
     var sendAt = 0;
@@ -6117,6 +6123,10 @@
     ov.hidden = false; ov.scrollTop = 0;
     if(send) $("pgSendChoice").hidden = false;   // v216 [회원에게 공유]로 열면 보내기 선택을 바로 보여줌
     selUi();
+  }
+  function showPdfTip(){
+    $("pgStep").hidden = false; $("btnPgStep").disabled = true; $("btnPgStep").textContent = "📄 PDF를 폰에 저장했어요";
+    $("pgStepTip").innerHTML = "이 폰은 PDF 바로 보내기를 막고 있어요. <b>카톡 채팅방 → ＋ → 파일 → 다운로드(Download)</b>에서 방금 저장한 PDF를 골라 보내 주세요. 사진으로 보내기는 바로 보낼 수 있어요.";
   }
   function dlBlob(b, name){
     var u = URL.createObjectURL(b), a = document.createElement("a"); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
@@ -10775,7 +10785,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v217";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v218";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

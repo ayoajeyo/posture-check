@@ -1035,7 +1035,9 @@
   .rom-note{font-size:12px; color:var(--ink-soft); margin:14px 2px 0; line-height:1.6;}
   .rom-overlay{align-items:flex-start; overflow-y:auto; padding:12px;}
   .rom-box{max-width:720px; text-align:left; padding:16px; margin:auto;}
-  .cap-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;} .cap-head h2{margin:0;}
+  .cap-head{display:flex; align-items:center; gap:10px; flex-wrap:nowrap; margin-bottom:8px; min-height:38px;} .cap-head h2{margin:0;}
+  .cap-tools{display:flex; margin:0 0 8px;} .cap-tools .pt-guide-btn{margin-left:0;}   /* v225 정면·측면 같은 배치 */
+  #capture-sub{min-height:3.1em;}
   .app-ver{text-align:center; font-size:11px; color:var(--ink-soft); opacity:.6; margin:14px 0 4px; letter-spacing:.02em;}   /* v194 홈 버전 표시 */
   /* v192 측면 촬영 방향(좌측/우측) 선택 — 측정가이드 버튼 왼쪽 */
   .side-dir{margin-left:auto; display:inline-flex; gap:2px; padding:3px; border-radius:100px; background:var(--surface-2); border:1px solid var(--line);}
@@ -1406,6 +1408,10 @@
   .msr-head[hidden]{display:none!important;}
   .cur-bar{display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:8px 8px 8px 10px; cursor:pointer; text-align:left; font-family:inherit; color:var(--ink); width:100%;}
   .cur-bar .mb-avatar{width:36px; height:36px;}
+  .cur-row{display:flex; gap:8px; align-items:stretch;}
+  .cur-row .cur-bar{flex:1; min-width:0;}
+  .cb-add{flex:0 0 auto; font-family:inherit; font-size:13px; font-weight:800; color:var(--blue); background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:0 14px; cursor:pointer; white-space:nowrap;}
+  html[data-skin="vivid"] .cb-add{background:#fff; border-color:#9FDCC6; color:var(--p-mint-i);}
   .cur-bar.on{border-color:var(--blue);}
   .cur-bar.on .mb-avatar{background:var(--blue); color:#fff;}
   .cur-bar .cb-txt{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;}
@@ -1696,17 +1702,20 @@
     <div class="bk-acts"><button type="button" class="btn primary sm" id="btnBkNow">지금 백업</button><button type="button" class="btn line sm" id="btnBkLater">내일 다시</button></div>
   </div>
   <div class="msr-head" id="msrHead">
+  <div class="cur-row">   <!-- v225 회원 선택을 맨 위로 · 같은 줄에 회원 등록 -->
+    <button type="button" class="cur-bar" id="curBar" aria-label="측정할 회원 선택">
+      <span class="mb-avatar" id="cbAv">?</span>
+      <span class="cb-txt"><b id="cbName">회원 미선택</b><em id="cbMeta"></em></span>
+      <span class="cb-go" id="cbGo">회원 선택</span>
+    </button>
+    <button type="button" class="cb-add" id="cbAdd">＋ 회원 등록</button>
+  </div>
   <div class="msr-tabs" id="msrTabs" role="tablist" aria-label="측정 종류">
     <button type="button" role="tab" data-mv="analyze" aria-selected="true">체형</button>
     <button type="button" role="tab" data-mv="rom" aria-selected="false">ROM</button>
     <button type="button" role="tab" data-mv="fhp" aria-selected="false">거북목</button>
     <button type="button" role="tab" data-mv="scol" aria-selected="false">척추 균형</button>
   </div>
-  <button type="button" class="cur-bar" id="curBar" aria-label="측정할 회원 선택">
-    <span class="mb-avatar" id="cbAv">?</span>
-    <span class="cb-txt"><b id="cbName">회원을 선택하세요</b><em id="cbMeta"></em></span>
-    <span class="cb-go" id="cbGo">회원 선택</span>
-  </button>
   </div>
   <section class="view" id="view-analyze">
   <nav class="tabs" role="tablist">
@@ -1733,7 +1742,7 @@
   <div class="an-grid">
   <div class="an-col">
   <section class="card" id="capture-card">
-    <div class="cap-head"><h2 id="capture-title">1. 정면 사진 촬영</h2><div class="side-dir" id="sideDir" role="group" aria-label="측면 촬영 방향" hidden><button type="button" data-dir="L" aria-pressed="true">좌측</button><button type="button" data-dir="R" aria-pressed="false">우측</button></div><button type="button" class="pt-guide-btn" id="btnPtGuide">📍 측정가이드</button></div>
+    <div class="cap-head"><h2 id="capture-title">1. 정면 사진 촬영</h2><div class="side-dir" id="sideDir" role="group" aria-label="측면 촬영 방향" hidden><button type="button" data-dir="L" aria-pressed="true">좌측</button><button type="button" data-dir="R" aria-pressed="false">우측</button></div></div><div class="cap-tools"><button type="button" class="pt-guide-btn" id="btnPtGuide">📍 측정가이드</button></div>
     <p class="sub" id="capture-sub">정면을 보고 편안히 선 자세에서, 카메라를 배꼽 높이에 두고 수평(가늠자 초록)으로 맞춰 촬영하세요.</p>
 
     <div class="pv-bar" id="bodyPvBar" hidden>
@@ -3073,8 +3082,8 @@
     },
     side: {
       title: "측면 사진 촬영",
-      sub: "몸의 정면이 화면 좌측을 향하도록 옆모습 전신을 한 장 촬영하세요(좌측=전방, 우측=후방 기준). 귀·어깨·고관절·무릎·발목이 화면 안에 들어와야 합니다.",
-      subR: "몸의 정면이 화면 우측을 향하도록 옆모습 전신을 한 장 촬영하세요(우측=전방, 좌측=후방 기준). 귀·어깨·고관절·무릎·발목이 화면 안에 들어와야 합니다.",
+      sub: "몸 정면이 화면 좌측을 향하게 옆모습 전신을 촬영하세요. 귀부터 발목까지 화면에 들어와야 해요.",
+      subR: "몸 정면이 화면 우측을 향하게 옆모습 전신을 촬영하세요. 귀부터 발목까지 화면에 들어와야 해요.",
       hint: "복사뼈(발목)를 빨간 선에 맞추고 몸 전체가 화면 안에",
       facing: "environment",
       type: "chain",
@@ -6517,11 +6526,14 @@
     var m = state.member, bar = $("curBar"); if(!bar) return;
     bar.classList.toggle("on", !!m);
     $("cbAv").textContent = m ? initial(m.name) : "?";
-    $("cbName").textContent = m ? m.name : "회원을 선택하세요";
+    $("cbName").textContent = m ? m.name : "회원 미선택";
     $("cbMeta").textContent = m ? (memberMeta(m) || "회원") : ""; $("cbMeta").hidden = !m;   // v214 설명 문구 삭제 (회원 정보만)
     $("cbGo").textContent = m ? "변경" : "회원 선택";
     if(typeof wfRender === "function") wfRender();   // v178 홈 워크플로 1·2단계도 같이 갱신
   }
+  $("cbAdd").addEventListener("click", function(){   // v225 측정 화면에서 바로 회원 등록 → 등록한 회원으로 선택
+    openForm(null, function(m){ if(m){ setMember(m); toast(m.name + " 회원을 등록하고 선택했어요."); } });
+  });
   $("curBar").addEventListener("click", function(){
     var id = { analyze:"btnMbPick", rom:"btnRomPick", scol:"btnScolPick", report:"btnRepPick" }[state.view] || "btnMbPick";
     $(id).click();
@@ -10910,7 +10922,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v224";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v225";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

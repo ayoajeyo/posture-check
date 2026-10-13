@@ -2078,7 +2078,7 @@
       <div class="lic-row"><span>계정 코드</span><b class="dev-id">AYO-····-····</b></div>
       <div class="lic-row"><span>이용 상태</span><b id="licState">무료</b></div>
       <div class="lic-row"><span>이용 기간</span><b id="licExp">–</b></div>
-      <div class="stage-controls" style="margin-top:10px"><button type="button" class="btn line sm dev-copy">계정 코드 복사</button><button type="button" class="btn primary sm" id="btnLicInput">이용 코드 입력·연장</button></div>
+      <div class="stage-controls" style="margin-top:10px"><button type="button" class="btn line sm dev-copy">계정 코드 복사</button><button type="button" class="btn primary sm" id="btnLicInput">이용 코드 입력</button></div>
     </section>
     <fieldset class="set-fs" id="setFs">
     <section class="card set-form">
@@ -2235,7 +2235,7 @@
           <ol>
             <li>이전 폰에서 <b>지금 백업하기</b> → Google Drive 또는 카톡 나와의 채팅에 저장</li>
             <li>새 폰에서 <b>백업 불러오기</b> (더보기 → 내 데이터 내보내기 · 불러오기에서도 가능)</li>
-            <li>PRO 이용 중이었다면 <b>이용권 이전 요청</b> 메일로 새 기기용 코드를 받으세요</li>
+            <li>PRO는 계정에 연결돼 있어요. <b>같은 계정으로 로그인</b>하면 그대로 이어져요</li>
           </ol>
         </div>
         <p class="bk-tip" hidden>💡 <b>지금 백업하기</b>를 누르면 공유 창이 열려요 → <b>Google Drive</b> 또는 <b>카카오톡 '나와의 채팅'</b>을 고르면 폰을 바꾸거나 앱을 지워도 안전하게 보관돼요. 새 폰에서는 <b>백업 불러오기</b>로 그대로 복원돼요.</p>
@@ -2508,28 +2508,11 @@
       <button type="button" class="btn primary" onclick="window.open('https://play.google.com/store/apps/details?id=com.physiomaster.posture','_blank','noopener')">Google Play에서 받기</button>
       <p class="sub-note">앱에서 구독한 계정으로 이 웹에 로그인하면 여기서도 PRO가 바로 켜져요.</p>
     </div>
-    <div class="price-grid pay-off" aria-label="PRO 요금">
-      <div><span>1개월</span><b>8,900원</b><em>월 8,900원<br><u>기본</u></em></div>
-      <div><span>3개월</span><b>23,900원</b><em>월 7,967원<br><u>10% 할인</u></em></div>
-      <div><span>6개월</span><b>42,900원</b><em>월 7,150원<br><u>20% 할인</u></em></div>
-      <div class="best"><i>추천</i><span>12개월</span><b>69,900원</b><em>월 5,825원<br><u>35% 할인</u></em></div>
-    </div>
-    <div class="pay-steps pay-off" id="paySteps">
-      <h4>💳 결제 방법 · 계좌 이체</h4>
-      <div class="ps-row"><i>1</i><span><b>메일로 신청</b> · 아래 <b>메일로 결제 신청</b>을 누르면 계정 코드가 자동으로 들어가요. 희망 기간과 입금자명만 적어 보내주세요.</span></div>
-      <div class="ps-row"><i>2</i><span><b>입금</b> · 답장 메일로 안내받은 계좌로 입금해 주세요.</span></div>
-      <div class="ps-row"><i>3</i><span><b>이용 코드 입력</b> · 입금 확인 후 이 계정 전용 이용 코드를 메일로 보내드려요. 아래 칸에 붙여넣으면 바로 PRO가 켜져요.</span></div>
-    </div>
-    <div class="pro-ask pay-off">
-      <span>결제 신청 · 문의</span>
-      <b id="proMailAddr">aesonge26@gmail.com</b>
-      <div class="pro-ask-btns"><button type="button" class="btn primary sm" id="btnProMail">메일로 결제 신청</button><button type="button" class="btn line sm" id="btnProCopy">주소 복사</button></div>
-    </div>
     <div class="pro-code on" id="proCodeRow">
       <h4 class="pro-code-h">🔑 이용 코드 입력</h4>
       <div class="dev-box"><div><span>계정 코드</span><b class="dev-id">AYO-····-····</b></div><button type="button" class="btn line sm dev-copy">복사</button></div>
-      <p>PRO 이용 코드가 있으면 아래에 붙여넣어 주세요. 이용 코드는 위 <b>계정 코드</b> 전용으로 발급돼요.</p>
-      <textarea id="proCode" rows="3" placeholder="받은 이용 코드를 붙여넣으세요 (AYO1-로 시작)" autocomplete="off" spellcheck="false"></textarea>
+      <p><b>초대·이용 코드</b>가 있으면 아래에 붙여넣어 주세요. 코드는 위 <b>계정 코드</b> 전용이에요.</p>
+      <textarea id="proCode" rows="3" placeholder="받은 코드를 붙여넣으세요 (AYO1-로 시작)" autocomplete="off" spellcheck="false"></textarea>
       <p class="lic-msg" id="proCodeMsg" hidden></p>
       <button type="button" class="btn primary sm" id="btnProCode">이용 코드 적용</button>
     </div>
@@ -2546,7 +2529,7 @@
 <div class="confirm-overlay" id="trialEnd" hidden role="dialog" aria-modal="true" aria-labelledby="teTitle">
   <div class="confirm-box te-box">
     <div class="te-ic" aria-hidden="true">🎁</div>
-    <h3 id="teTitle">가입 후 7일 PRO 무료 체험이 끝났어요</h3>
+    <h3 id="teTitle">가입 후 한 달 PRO 무료 체험이 끝났어요</h3>
     <p>지금부터는 <b>무료 버전</b>으로 이용돼요.<br>체험 기간에 저장한 <b>회원·측정 기록은 그대로</b> 남아 있어요.<br><span class="play-hide">PRO를 계속 쓰시려면 Google Play 앱에서 <b>월 구독</b>을 시작해 주세요.</span><span class="play-only bill-only">PRO를 계속 쓰시려면 <b>월 구독</b>을 시작해 주세요.</span><span class="play-only nobill-only">PRO 이용 코드가 있으면 입력해 주세요.</span></p>
     <div class="te-acts">
       <button type="button" class="btn primary" id="btnTePay"><span class="play-hide">⭐ PRO 구독 안내 보기</span><span class="play-only bill-only">⭐ PRO 구독 보기</span><span class="play-only nobill-only">🔑 이용 코드 입력</span></button>
@@ -2591,7 +2574,7 @@
       <ol>
         <li>이전 폰에서 <b>지금 백업하기</b> → <b>Google Drive</b> 또는 <b>카톡 나와의 채팅</b>에 저장</li>
         <li>새 폰에 아요바디요 설치 → <b>더보기 → 내 데이터 내보내기 · 불러오기 → 파일 불러오기</b></li>
-        <li>PRO 이용 중이었다면 불러온 뒤 나오는 <b>이용권 이전 요청</b> 메일을 보내주세요. 남은 기간 그대로 새 기기용 코드를 보내드려요.</li>
+        <li>PRO는 계정에 연결돼 있어요. 새 폰에서도 <b>같은 계정으로 로그인</b>하면 남은 기간 그대로 이어져요.</li>
       </ol>
     </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnBkSClose">닫기</button></div>
@@ -10512,7 +10495,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v205";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v206";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -10526,8 +10509,8 @@
   }
   var IS_PLAY = isPlayApp();
   document.body.classList.toggle("is-play", IS_PLAY);
-  /* v106 PRO 무료 체험 = 회원가입 후 7일 (계정 생성 시각 기준, 기기를 바꾸거나 앱을 지워도 그대로) */
-  var TRIAL_DAYS = 7;
+  /* v206 PRO 무료 체험 = 회원가입 후 30일 (v106~v205: 7일) (계정 생성 시각 기준, 기기를 바꾸거나 앱을 지워도 그대로) */
+  var TRIAL_DAYS = 30;
   function trialStart(){
     var u = null; try{ u = (typeof ACC !== "undefined" && ACC && ACC.user) || cachedUser(); }catch(e){}
     var t = u && Date.parse(u.created_at || "");
@@ -10817,7 +10800,7 @@
       applyBrand(); syncRepLock(); updateLicUI();
       if(state.view === "settings") renderSettings(false);
       if(state.view === "rom") renderRom();
-      if(!licValid()) toast("PRO 이용 기간이 끝났어요 (" + fmtYmd(p.exp) + "). 연장하려면 설정에서 이용 코드를 입력해주세요.");
+      if(!licValid()) toast("PRO 이용 기간이 끝났어요 (" + fmtYmd(p.exp) + "). 계속 쓰시려면 PRO 구독을 이용해 주세요.");
       else if(daysLeft(p.exp) <= 7) toast("PRO 이용 기간이 " + daysLeft(p.exp) + "일 남았어요 (" + fmtYmd(p.exp) + "까지).");
     });
   }
@@ -11040,7 +11023,7 @@
   var proPrevView = "dash";
   var proKind = "settings";
   var PRO_COPY = {
-    trial: { d: '설치 후 <b>7일 무료 체험</b> 동안 PRO 기능을 모두 쓸 수 있어요. 체험이 끝나도 <b>체형분석·ROM·척추 균형 측정과 결과 저장은 무료</b>로 계속 쓸 수 있고, 아래 기능은 PRO에서 이어서 쓸 수 있어요.',
+    trial: { d: '가입 후 <b>한 달(30일) 무료 체험</b> 동안 PRO 기능을 모두 쓸 수 있어요. 체험이 끝나도 <b>체형분석·ROM·척추 균형 측정과 결과 저장은 무료</b>로 계속 쓸 수 있고, 아래 기능은 PRO에서 이어서 쓸 수 있어요.',
       l: ["회원 관리 · 회원별 회차 기록 (체형·ROM·척추 균형)", "종합 리포트 이미지 저장·카톡 공유", "ROM·척추 균형 회차별 비교 · 좌우 비교 분석", "센터명·로고·연락처가 들어간 결과 이미지"] },
     settings: { d: '설정 메뉴는 <b>아요바디요 PRO</b> 플랜 전용 기능이에요. 센터만의 브랜드로 회원에게 결과를 전달해 보세요.',
       l: ["센터명·로고를 리포트·운동 카드·비교 이미지에 표시", "연락처·안내 문구를 결과 이미지 하단에 표시", "앱 상단을 센터 브랜드로 변경", "자주 쓰는 결제 항목·금액 기본값 저장"] },
@@ -11108,20 +11091,6 @@
       toast("PRO가 활성화됐어요. " + fmtYmd(r.exp) + "까지 이용할 수 있어요.");
     });
   }
-  // ---- 유료 플랜 문의 ----
-  var PRO_MAIL = "aesonge26@gmail.com";
-  function proMailHref(){
-    var st = getSettings();
-    var body = "아요바디요 PRO 결제를 신청합니다.\n\n- 계정 코드: " + deviceCode() + "\n- 로그인 이메일: " + ((typeof ACC !== "undefined" && ACC.user && ACC.user.email) || "") + "\n- 희망 기간(하나만 남겨주세요): 1개월(8,900원) / 3개월(23,900원) / 6개월(42,900원) / 12개월(69,900원)\n- 입금자명: \n- 센터명: " + (st.name || "") + "\n- 연락처: " + (st.contact || "") + "\n- 문의 내용: \n\n※ 답장으로 입금 계좌를 안내해 드리고, 입금 확인 후 이 계정 전용 이용 코드를 보내드려요.";
-    return "mailto:" + PRO_MAIL + "?subject=" + encodeURIComponent("[아요바디요] PRO 결제 신청") + "&body=" + encodeURIComponent(body);
-  }
-  $("btnProMail").addEventListener("click", function(){ /* v187 계좌이체 판매 중단 */ });
-  
-  $("btnProCopy").addEventListener("click", function(){
-    var done = function(){ toast("메일 주소를 복사했어요: " + PRO_MAIL); };
-    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(PRO_MAIL).then(done, function(){ window.prompt("아래 주소를 길게 눌러 복사하세요", PRO_MAIL); });
-    else window.prompt("아래 주소를 길게 눌러 복사하세요", PRO_MAIL);
-  });
   $("btnProCode").addEventListener("click", tryCode);
   $("proCode").addEventListener("keydown", function(e){ if(e.key === "Enter") tryCode(); });
   applyBrand(); fillSaleItems();

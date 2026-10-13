@@ -9277,12 +9277,14 @@
     if(J.k === "hip" && (mv.k === "er" || mv.k === "ir")){
       var top = -1; for(var y = 0; y < MH && top < 0; y++){ if(runs(y).some(function(r){ return r.w < MW * 0.25; })) top = y; }
       if(top < 0) return null;
-      var r0 = runs(top).filter(function(r){ return r.w < MW * 0.25; })[0], rows = [], cx = r0.c, pw = r0.w;
+      // v224 발가락 사이·그림자로 윤곽이 갈라져도 놓치지 않게: 최근 12줄의 최대 폭 범위와 겹치는 구간 중 가장 넓은 것을 따라감
+      var r0 = runs(top).filter(function(r){ return r.w < MW * 0.25; })[0], rows = [], pa = r0.a, pb = r0.b;
       for(var yy = top; yy < MH; yy++){
-        var rr = runs(yy), best = null, bd = 1e9;
-        rr.forEach(function(r){ var d = Math.abs(r.c - cx); if(r.a - 2 <= cx + pw * 0.6 && r.b + 2 >= cx - pw * 0.6 && d < bd){ bd = d; best = r; } });
+        if(rows.length){ var rw = 0; for(var z0 = Math.max(0, rows.length - 12); z0 < rows.length; z0++) rw = Math.max(rw, rows[z0].w); var cc0 = rows[rows.length - 1].c; pa = cc0 - rw / 2; pb = cc0 + rw / 2; }
+        var dl = Math.max(4, (pb - pa) * 0.8), best = null;
+        runs(yy).forEach(function(r){ if(r.b >= pa - dl && r.a <= pb + dl && (!best || r.w > best.w)) best = r; });
         if(!best || best.w > MW * 0.3) break;
-        rows.push({ y: yy, c: best.c, w: best.w }); cx = best.c; pw = Math.max(best.w, 4);
+        rows.push({ y: yy, c: best.c, w: best.w });
       }
       if(rows.length < MH * 0.12) return null;
       // 아래다리 축 = 위에서 15~70% 구간 중심선 · 축을 따라 내려가며 '축에 수직인 폭'을 잼 (다리가 기울어도 정확)
@@ -10908,7 +10910,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v223";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v224";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

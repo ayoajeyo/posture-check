@@ -5847,7 +5847,7 @@
     g.restore();
   }
   function buildReportCanvas(r){
-    var W = 2000, PAD = 48, HEAD = 150, COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3);
+    var W = 2000, PAD = 48, HEAD = 270, COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3);
     var BOARD = 100 + IMGH + 40, BOT = 330, FOOT = 80;
     var H = HEAD + BOARD + 30 + BOT + FOOT;
     var scN = (typeof scolRows === "function") ? scolRows(repRomSrc()).length : 0;
@@ -5860,11 +5860,7 @@
     var g = c.getContext("2d"), F = "'IBM Plex Sans KR', 'IBM Plex Sans', sans-serif", M = "'IBM Plex Mono', monospace";
     g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, H);
     g.textBaseline = "alphabetic"; g.textAlign = "left";
-    g.fillStyle = "#0B7A6B"; g.font = "700 22px " + F; g.fillText(brandLabel("POSTURE CHECK PRO", "체형 분석 리포트"), PAD, 62); drawBrandLogo(g, W - PAD, 18, 260, 64);
-    g.fillStyle = "#17212B"; g.font = "800 50px " + F; g.fillText("체형 분석 결과", PAD, 120);
-    var pt = $("ptField").value.trim();
-    g.fillStyle = "#5B6875"; g.font = "500 26px " + M; g.textAlign = "right";
-    g.fillText(nowText() + (pt ? "  ·  " + pt : ""), W - PAD, 120); g.textAlign = "left";
+    drawRepHead(g, W, PAD, F, M);   // v239 센터 로고·센터명을 크게 (PRO 브랜딩)
     // 보드
     var by = HEAD;
     g.fillStyle = "#FFFFFF"; rr(g, PAD, by, W - PAD*2, BOARD, 28); g.fill();
@@ -5975,7 +5971,7 @@
   function buildReportPages(r, cards){
     var W = 2000, PAD = 48, FOOT = 90, F = "'IBM Plex Sans KR', 'IBM Plex Sans', sans-serif", M = "'IBM Plex Mono', monospace";
     var one = buildReportCanvas(r);   // 헤더·체형·점수 부분은 그대로 복사
-    var HEAD = 150, COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3), BOARD = 100 + IMGH + 40, BOT = 330;
+    var HEAD = 270, COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3), BOARD = 100 + IMGH + 40, BOT = 330;
     var topH = HEAD + BOARD + 30 + BOT;
     var blocks = [], cw = W - PAD * 2;
     blocks.push({ h: topH, draw: function(g, y){ g.drawImage(one, 0, 0, W, topH, 0, y, W, topH); } });
@@ -6051,7 +6047,7 @@
     }
     // v210 A4(2000×2828) 여러 쪽 — 블록은 쪽 사이에서 잘리지 않음.
     //  다음 블록이 조금 넘치면 그 쪽 전체를 고르게 줄여(최대 80%까지) 함께 넣고, 남는 칸은 블록 사이 간격으로 나눔 (아래가 텅 비지 않게)
-    var PH = 2828, TOPY = 120, LIM = PH - FOOT - 10, GAP = 30, MINK = 0.8, plan = [], P = null;
+    var PH = 2828, TOPY = 150, LIM = PH - FOOT - 10, GAP = 30, MINK = 0.8, plan = [], P = null;
     var open = function(){ P = { groups: [], start: plan.length ? TOPY : 0, tot: 0 }; plan.push(P); };
     open();
     var gi = 0;
@@ -6067,7 +6063,15 @@
     plan.forEach(function(P, pn){
       var cv = document.createElement("canvas"); cv.width = W; cv.height = PH;
       var g = cv.getContext("2d"); g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, PH); g.textBaseline = "alphabetic"; g.textAlign = "left";
-      if(pn > 0){ g.fillStyle = "#5B6875"; g.font = "700 24px " + F; g.fillText(brandLabel("POSTURE CHECK PRO", "체형 분석 리포트") + " · " + nowText() + ($("ptField").value.trim() ? " · " + $("ptField").value.trim() : ""), PAD, 70); }
+      if(pn > 0){   // v239 2쪽부터: 작은 로고 + 센터명 머리글
+        var bB = brand(), hx = PAD, im2 = (bB && bB.logo && brandImg && brandImg.naturalWidth) ? brandImg : null;
+        if(im2){ var LH2 = 76, LW2 = Math.min(200, Math.max(LH2, LH2 * im2.naturalWidth / im2.naturalHeight)); g.fillStyle = "#FFFFFF"; rr(g, hx, 28, LW2, LH2, 14); g.fill();
+          var s3 = Math.min((LW2 - 12) / im2.naturalWidth, (LH2 - 12) / im2.naturalHeight); g.drawImage(im2, hx + (LW2 - im2.naturalWidth * s3) / 2, 28 + (LH2 - im2.naturalHeight * s3) / 2, im2.naturalWidth * s3, im2.naturalHeight * s3); hx += LW2 + 22; }
+        g.fillStyle = "#17212B"; g.font = "800 36px " + F; var cn = bB && bB.name ? bB.name : "아요바디요"; g.fillText(cn, hx, 80);
+        var cnw = g.measureText(cn).width; g.fillStyle = "#5B6875"; g.font = "600 24px " + F;
+        g.fillText("체형 분석 리포트  ·  " + nowText() + ($("ptField").value.trim() ? "  ·  " + $("ptField").value.trim() : ""), hx + cnw + 22, 79);
+        g.fillStyle = bB ? "#17304F" : "#0B7A6B"; g.fillRect(PAD, 120, W - PAD * 2, 4);
+      }
       var avail = LIM - P.start, k = Math.min(1, avail / P.tot), n = P.groups.length;
       var extra = pn === plan.length - 1 ? 0 : Math.max(0, avail - P.tot * k), per = n > 1 ? Math.min(extra / (n - 1), 200) / k : 0;
       g.save(); g.translate(W * (1 - k) / 2, P.start); if(k < 1) g.scale(k, k);
@@ -11061,7 +11065,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v238";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v239";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -11397,6 +11401,49 @@
   function brandLabel(def, kind){ var b = brand(); return b && b.name ? b.name + "  ·  " + kind : "아요바디요  ·  " + def; }
   function brandContact(){ var b = brand(); return b && b.contact ? b.contact : ""; }
   function brandFoot(){ var b = brand(); return (b && b.contact ? b.contact + "   |   " : "") + "made by AYOAJEYO"; }
+  /* v239 리포트 1쪽 머리글: 센터 로고 + 센터명을 크게 — PRO(센터 브랜딩) 차별 포인트
+     [로고 플레이트] 센터명(크게) / 체형 분석 리포트 · 연락처        회원명(크게) / 측정일 */
+  function drawRepHead(g, W, PAD, F, M){
+    var b = brand(), y = 22, h = 226, x = PAD, w = W - PAD * 2, pt = $("ptField").value.trim();
+    var NAVY = "#17304F", TEAL = "#0B7A6B";
+    g.save();
+    // 카드 + 아래 포인트 띠
+    g.shadowColor = "rgba(23,33,43,.10)"; g.shadowBlur = 24; g.shadowOffsetY = 6;
+    g.fillStyle = "#FFFFFF"; rr(g, x, y, w, h, 30); g.fill(); g.restore();
+    g.save(); rr(g, x, y, w, h, 30); g.clip();
+    g.fillStyle = b ? NAVY : TEAL; g.fillRect(x, y + h - 12, w, 12);
+    g.restore();
+    var lx = x + 40, cy = y + (h - 12) / 2, textX = lx;
+    // 로고 (센터 로고, 없으면 앱 로고)
+    var img = (b && b.logo && brandImg && brandImg.naturalWidth) ? brandImg : null;
+    if(!img && !b){ var mk = document.querySelector("header.top .mark"); if(mk && mk.naturalWidth) img = mk; }
+    if(img){
+      var LH = 166, LW = Math.min(360, LH * img.naturalWidth / img.naturalHeight), lw = Math.max(LH, LW);
+      g.fillStyle = "#FFFFFF"; rr(g, lx, cy - LH / 2, lw, LH, 26); g.fill(); g.strokeStyle = "#DDE3E9"; g.lineWidth = 2; rr(g, lx, cy - LH / 2, lw, LH, 26); g.stroke();
+      var pd = 14, iw = lw - pd * 2, ih = LH - pd * 2, s2 = Math.min(iw / img.naturalWidth, ih / img.naturalHeight), dw = img.naturalWidth * s2, dh = img.naturalHeight * s2;
+      g.drawImage(img, lx + (lw - dw) / 2, cy - dh / 2, dw, dh);
+      textX = lx + lw + 40;
+    }
+    // 오른쪽: 회원명 · 날짜
+    var rx = x + w - 44, nm = pt.split(/\s*[·|]\s*/)[0] || "", rest = pt.slice(nm.length).replace(/^\s*[·|]\s*/, "");
+    g.textAlign = "right";
+    g.fillStyle = "#7A8794"; g.font = "700 24px " + F; g.fillText("체형 분석 결과", rx, cy - 44);
+    g.fillStyle = "#17212B"; g.font = "800 50px " + F; g.fillText(nm ? nm + " 님" : "", rx, cy + 14);
+    g.fillStyle = "#5B6875"; g.font = "500 26px " + M; g.fillText(nowText() + (rest ? "  ·  " + rest : ""), rx, cy + 58);
+    var rightW = Math.max(g.measureText(nowText() + (rest ? "  ·  " + rest : "")).width, 320);
+    g.textAlign = "left";
+    // 가운데: 센터명 (자리에 맞게 글자 크기 자동)
+    var name = b && b.name ? b.name : "아요바디요", maxW = rx - rightW - 60 - textX, fs = 76;
+    g.font = "800 " + fs + "px " + F; while(fs > 40 && g.measureText(name).width > maxW){ fs -= 2; g.font = "800 " + fs + "px " + F; }
+    g.fillStyle = "#17212B"; g.fillText(name, textX, cy + 8);
+    // 센터명 아래: 리포트 꼬리표 + 연락처
+    var tag = "체형 분석 리포트", tx = textX, ty = cy + 38;
+    g.font = "800 24px " + F; var tw = g.measureText(tag).width + 32;
+    g.fillStyle = b ? NAVY : TEAL; rr(g, tx, ty, tw, 42, 21); g.fill();
+    g.fillStyle = "#FFFFFF"; g.fillText(tag, tx + 16, ty + 30);
+    var ct = b && b.contact ? b.contact : (b ? "" : "POSTURE CHECK PRO");
+    if(ct){ g.fillStyle = "#5B6875"; g.font = "600 26px " + F; g.fillText(ct, tx + tw + 18, ty + 30); }
+  }
   // 우측 정렬로 흰 바탕 플레이트 위에 로고를 그림 (xr = 우측 끝)
   function drawBrandLogo(g, xr, y, maxW, h){
     var b = brand(); if(!b || !b.logo || !brandImg || !brandImg.naturalWidth) return;

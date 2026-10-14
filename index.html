@@ -1290,6 +1290,10 @@
   .rp-two figcaption{font-size:12px; font-weight:700; padding:6px 8px; color:#E8EEF7;}
   .rp-two figure:active{transform:translateY(1px);}
   .rp-two figure.rp-body{cursor:default; background:#FFFFFF; border:1px solid var(--line);} .rp-two figure.rp-body img{object-fit:contain; background:#FFFFFF;} .rp-two figure.rp-body figcaption{background:#0B1222;}
+  .rp-vals{list-style:none; margin:0; padding:6px 8px 8px; display:flex; flex-direction:column; gap:3px; background:#FFFFFF;}
+  .rp-vals li{display:flex; justify-content:space-between; gap:6px; font-size:11.5px; line-height:1.35; padding:3px 7px; border-radius:7px; background:#FBE9E7; color:#5B6875;}
+  .rp-vals li.g-good{background:#E6F4EE;} .rp-vals li.g-warn{background:#FFF4E5;}
+  .rp-vals li b{font-family:var(--font-num); font-weight:700; color:#C03A2B; white-space:nowrap;} .rp-vals li.g-good b{color:#16794A;} .rp-vals li.g-warn b{color:#A35A00;}
   .rom-manual{display:flex; align-items:center; gap:8px; margin:8px 0 0; background:var(--surface-2); border-radius:12px; padding:8px 12px;}
   .rom-manual label{font-size:13px; font-weight:800; color:var(--ink-soft); margin-right:auto;}
   .rom-manual input{width:90px; font-family:var(--font-num); font-size:20px; font-weight:700; text-align:right; border:1px solid var(--line); border-radius:10px; padding:6px 10px; background:var(--surface); color:var(--ink);}
@@ -6064,10 +6068,25 @@
           g.fillStyle = "#FFFFFF"; rr(g, PAD, y, cw, H, 24); g.fill();
           g.fillStyle = "#17212B"; g.font = "800 30px " + F; g.fillText(p.title, PAD + 36, y + 56);
           g.fillStyle = !p.t ? "#17212B" : p.t > 0 ? "#16794A" : "#C03A2B"; g.font = "800 30px " + F; g.textAlign = "right"; g.fillText(p.delta, PAD + cw - 36, y + 56); g.textAlign = "left";
-          [[p.cvA, p.labA], [p.cvB, p.labB]].forEach(function(q, i){
-            var ix = PAD + 36 + i * (iw2 + gap2), dw = q[0].width * sc, dh = q[0].height * sc;
+          [[p.cvA, p.labA, p.chipsA], [p.cvB, p.labB, p.chipsB]].forEach(function(q, i){
+            var ix = PAD + 36 + i * (iw2 + gap2), dw = q[0].width * sc, dh = q[0].height * sc, chips = q[2] || [];
             g.save(); rr(g, ix, y + 80, iw2, ih, 16); g.clip(); g.fillStyle = "#EEF1F5"; g.fillRect(ix, y + 80, iw2, ih);
-            g.drawImage(q[0], ix + (iw2 - dw) / 2, y + 80 + (ih - dh) / 2, dw, dh); g.restore();
+            if(chips.length){   // v251 체형: 사진 왼쪽에 그 회차의 수치 칩 (1쪽과 같은 모양)
+              var CW = 250, aw = iw2 - CW - 32, s2 = Math.min(1, aw / dw), cw2 = dw * s2, ch2 = dh * s2;
+              g.drawImage(q[0], ix + CW + 24 + (aw - cw2) / 2, y + 80 + (ih - ch2) / 2, cw2, ch2);
+              var n = chips.length, cg = 10, chH = Math.min(118, (ih - 24 - cg * (n - 1)) / n), cy0 = y + 80 + (ih - (chH * n + cg * (n - 1))) / 2;
+              chips.forEach(function(c, k){
+                var cyk = cy0 + k * (chH + cg), cls = c.cls || "", gc = cls === "g-good" ? "#16794A" : cls === "g-warn" ? "#A35A00" : "#C03A2B", dd = dirInfo(c.foot);
+                g.fillStyle = cls === "g-good" ? "#E6F4EE" : cls === "g-warn" ? "#FFF4E5" : "#FBE9E7"; rr(g, ix + 12, cyk, CW, chH, 18); g.fill();
+                var ks = chH / 118;
+                g.fillStyle = "#5B6875"; g.font = "600 " + Math.round(21 * ks) + "px " + F; g.fillText(c.title || c.name || "", ix + 30, cyk + 32 * ks);
+                g.fillStyle = gc; g.font = "700 " + Math.round(38 * ks) + "px " + M; g.fillText(String(c.value), ix + 28, cyk + 76 * ks);
+                var lab = gradeShort(cls) + (dd.tx && !/수평|정렬/.test(dd.tx) ? " · " + dd.tx : ""), lfs = Math.round(19 * ks);
+                g.font = "600 " + lfs + "px " + F; while(lfs > 13 && g.measureText(lab).width > CW - 36){ lfs--; g.font = "600 " + lfs + "px " + F; }
+                g.fillStyle = gc; g.fillText(lab, ix + 30, cyk + 104 * ks);
+              });
+            } else g.drawImage(q[0], ix + (iw2 - dw) / 2, y + 80 + (ih - dh) / 2, dw, dh);
+            g.restore();
             g.fillStyle = "#17212B"; g.font = "700 26px " + F; g.fillText((i ? "후 · " : "전 · ") + q[1], ix, y + 80 + ih + 42);
           });
         } });
@@ -9893,7 +9912,8 @@
     var dTxt = function(x){ var d = x.b.value - x.a.value, tr = trendOf(x.g.mv, x.a.value, x.b.value); return { d: d, t: tr.t, s: d === 0 ? "변화 없음" : (d > 0 ? "+" : "") + d + "° (" + tr.lab + ")" }; };
     var bodyRows = [["front", "체형 정면"], ["side", "체형 측면"]].map(function(v){ var a = repPairBodyAt(repPair.ra, v[0]), b = repPairBodyAt(repPair.rb, v[0]); return (a && b) ? { m: v[0], label: v[1], a: a, b: b } : null; }).filter(Boolean);
     var bodyHtml = bodyRows.map(function(x){
-      var fig = function(r, n){ return '<figure class="rp-body"><img src="' + safeSrc(r.thumbs[x.m]) + '" alt="" loading="lazy"><figcaption>' + n + '차 · ' + fmtDate(r.at).slice(0, 10) + '</figcaption></figure>'; };
+      var vals = function(r){ var L = (x.m === "front" ? r.f : r.sd) || []; return L.length ? '<ul class="rp-vals">' + L.map(function(v){ return '<li class="' + esc(v.cls || "") + '"><span>' + esc(v.title || v.name || "") + '</span><b>' + esc(v.value) + '</b></li>'; }).join("") + '</ul>' : ''; };   // v251 그 회차의 체형 수치
+      var fig = function(r, n){ return '<figure class="rp-body"><img src="' + safeSrc(r.thumbs[x.m]) + '" alt="" loading="lazy">' + vals(r) + '<figcaption>' + n + '차 · ' + fmtDate(r.at).slice(0, 10) + '</figcaption></figure>'; };
       var ds = (x.a.score != null && x.b.score != null) ? x.b.score - x.a.score : null;
       return '<div class="rp-row"><div class="rp-h"><b>' + x.label + '</b>' + (ds != null ? '<span class="rp-d ' + (ds > 0 ? "up" : ds < 0 ? "down" : "") + '">종합 ' + (ds > 0 ? "+" + ds + "점" : ds < 0 ? ds + "점" : "변화 없음") + '</span>' : '') + '</div>' +
         '<div class="rp-two">' + fig(x.a, repPair.ra) + fig(x.b, repPair.rb) + '</div></div>';
@@ -9932,7 +9952,7 @@
     if(repPair.rows && repPair.rowsTag === td.tag) return Promise.resolve();
     var out = [], i = 0;
     var loadC = function(src){ return new Promise(function(r){ if(!src){ r(null); return; } var im = new Image(); im.onload = function(){ var c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0); r(c); }; im.onerror = function(){ r(null); }; im.src = src; }); };
-    var bodyP = Promise.all((repPair.bodyRows || []).map(function(x){ return Promise.all([loadC(x.a.thumbs[x.m]), loadC(x.b.thumbs[x.m])]).then(function(cs){ return (cs[0] && cs[1]) ? { title: x.label, cvA: cs[0], cvB: cs[1], labA: td.ra + "차 · " + fmtDate(x.a.at).slice(0, 10), labB: td.rb + "차 · " + fmtDate(x.b.at).slice(0, 10), delta: (x.a.score != null && x.b.score != null) ? "종합 " + (x.b.score - x.a.score > 0 ? "+" + (x.b.score - x.a.score) + "점" : x.b.score - x.a.score < 0 ? (x.b.score - x.a.score) + "점" : "변화 없음") : "", t: (x.a.score != null && x.b.score != null) ? Math.sign(x.b.score - x.a.score) : 0 } : null; }); }));
+    var bodyP = Promise.all((repPair.bodyRows || []).map(function(x){ return Promise.all([loadC(x.a.thumbs[x.m]), loadC(x.b.thumbs[x.m])]).then(function(cs){ return (cs[0] && cs[1]) ? { title: x.label, cvA: cs[0], cvB: cs[1], labA: td.ra + "차 · " + fmtDate(x.a.at).slice(0, 10), labB: td.rb + "차 · " + fmtDate(x.b.at).slice(0, 10), chipsA: (x.m === "front" ? x.a.f : x.a.sd) || [], chipsB: (x.m === "front" ? x.b.f : x.b.sd) || [], delta: (x.a.score != null && x.b.score != null) ? "종합 " + (x.b.score - x.a.score > 0 ? "+" + (x.b.score - x.a.score) + "점" : x.b.score - x.a.score < 0 ? (x.b.score - x.a.score) + "점" : "변화 없음") : "", t: (x.a.score != null && x.b.score != null) ? Math.sign(x.b.score - x.a.score) : 0 } : null; }); }));
     return bodyP.then(function(bl){ bl.forEach(function(b){ if(b) out.push(b); }); }).then(function(){ return new Promise(function(res){
       (function next(){
         if(repPair.tag !== td.tag){ res(); return; }   // 그사이 회원·회차가 바뀜
@@ -11250,7 +11270,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v250";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v251";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -11588,6 +11608,14 @@
   function brandFoot(){ var b = brand(); return (b && b.contact ? b.contact + "   |   " : "") + "made by AYOAJEYO"; }
   /* v239 리포트 1쪽 머리글: 센터 로고 + 센터명을 크게 — PRO(센터 브랜딩) 차별 포인트
      [로고 플레이트] 센터명(크게) / 체형 분석 리포트 · 연락처        회원명(크게) / 측정일 */
+  function repRoundLabel(){   // v251 이번 체형 측정 회차: 정면·측면이 같으면 "2차", 다르면 "정면 2차 · 측면 3차"
+    if(!state.member || !state.rnd) return "";
+    var R = state.rnd, ms = ["front", "side"].filter(function(m){ return state.byMode[m] && state.byMode[m].img; });
+    if(!ms.length) return "";
+    var ns = ms.map(function(m){ return m === "front" ? R.f : R.s; });
+    if(ns.every(function(n){ return n === ns[0]; })) return ns[0] ? ns[0] + "차" : "";
+    return sessRndTxt(" · ");
+  }
   function drawRepHead(g, W, PAD, F, M){
     /* v240 시안 A: 화면 폭 전체 네이비 띠 — [흰 로고 판] 센터명 / [리포트 꼬리표] 연락처   ···   체형 분석 결과 / 회원명 님 / 담당자 · 측정일 · 회원번호 */
     var b = brand(), BH = 280, NAVY = "#17304F", pt = $("ptField").value.trim();
@@ -11608,7 +11636,9 @@
     var meta = [staff, nowText(), rest ? "No." + rest.replace(/^No\.?\s*/i, "") : ""].filter(Boolean).join("  ·  ");
     g.textAlign = "right";
     g.fillStyle = "#C9D3E6"; g.font = "600 26px " + F; g.fillText("체형 분석 결과", rx, cy - 40);
-    g.fillStyle = "#FFFFFF"; g.font = "800 56px " + F; g.fillText(nm ? nm + " 님" : "", rx, cy + 22);
+    var rlab = nm ? repRoundLabel() : "", rw = 0;   // v251 이름 오른쪽에 이번 측정 회차 (이름보다 작게)
+    if(rlab){ g.fillStyle = "#C9D3E6"; g.font = "700 36px " + F; rw = g.measureText(rlab).width + 16; g.fillText(rlab, rx, cy + 22); }
+    g.fillStyle = "#FFFFFF"; g.font = "800 56px " + F; g.fillText(nm ? nm + " 님" : "", rx - rw, cy + 22);
     g.fillStyle = "#C9D3E6"; g.font = "500 26px " + M; g.fillText(meta, rx, cy + 68);
     var rightW = Math.max(g.measureText(meta).width, 360);
     g.textAlign = "left";

@@ -837,6 +837,18 @@
   /* v176 회원 촬영·보관 동의 체크 */
   .mf-consent{display:flex; align-items:center; gap:8px; margin:4px 0 2px; font-size:13px; color:var(--ink); cursor:pointer;}
   .mf-consent input{width:18px; height:18px; accent-color:var(--blue); flex:none;}
+  /* v252 동의 서명 */
+  .mf-sign{display:flex; align-items:center; gap:10px; margin:2px 0 6px; padding:6px 10px; border:1px solid var(--line); border-radius:12px; background:#FFFFFF;}
+  .mf-sign[hidden]{display:none;}
+  .mf-sign img{height:44px; max-width:60%; object-fit:contain;}
+  .mf-sign .btn{margin-left:auto; flex:none;}
+  .sign-overlay{z-index:400;}
+  .sign-box{max-width:520px; width:calc(100% - 32px);}
+  .sign-desc{font-size:13px; line-height:1.55; color:var(--ink-soft); margin:4px 0 10px;}
+  .sign-wrap{position:relative; border:2px dashed #B9C2CF; border-radius:14px; background:#FFFFFF; height:200px; overflow:hidden;}
+  #signCv{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair;}
+  .sign-ph{position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); text-align:center; color:#B9C2CF; font-size:18px; font-weight:700; pointer-events:none;}
+  .sign-clear{position:absolute; right:8px; top:8px; font:inherit; font-size:12.5px; font-weight:700; padding:6px 12px; border-radius:100px; border:1px solid var(--line); background:#FFFFFF; color:var(--ink); cursor:pointer;}
   /* v175 서버에 안 올라간 기록 알림: 더보기 메뉴 뱃지 + 하단 탭 빨간 점 */
   .more-list .ml-b{background:var(--crit); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; margin-right:6px;}
   .nav-item{position:relative;}
@@ -2553,10 +2565,23 @@
     </div>
     <!-- v176 촬영·보관 동의 기록: 체크한 날짜를 회원 정보에 보관 -->
     <label class="mf-consent"><input id="mfConsent" type="checkbox"><span id="mfConsentD">신체 사진 촬영·보관에 동의함 (체크한 날짜를 기록)</span></label>
+    <div class="mf-sign" id="mfSignView" hidden><img id="mfSignImg" alt="회원 서명"><button type="button" class="btn line sm" id="btnMfResign">다시 서명</button></div>   <!-- v252 동의 서명 -->
     <label>메모<textarea id="mfMemo" rows="2" placeholder="예: 목·어깨 긴장, 주 2회 수업"></textarea></label>
     <div class="confirm-btns">
       <button type="button" class="no" id="btnMfCancel">취소</button>
       <button type="button" class="yes ok" id="btnMfSave">저장</button>
+    </div>
+  </div>
+</div>
+<!-- v252 신체 사진 촬영·보관 동의 서명 (회원 본인이 손가락으로) -->
+<div class="confirm-overlay sign-overlay" id="signPad" hidden role="dialog" aria-modal="true" aria-labelledby="signTitle">
+  <div class="confirm-box sign-box">
+    <h3 id="signTitle">촬영·보관 동의 서명</h3>
+    <p class="sign-desc" id="signDesc">신체 사진 촬영·보관에 동의하시면 아래 칸에 회원님이 직접 서명해 주세요. 서명은 이 회원의 리포트 첫 장에 작게 표시돼요.</p>
+    <div class="sign-wrap"><canvas id="signCv" aria-label="서명 칸"></canvas><span class="sign-ph" id="signPh">여기에 서명</span><button type="button" class="sign-clear" id="btnSignClear">지우기</button></div>
+    <div class="confirm-btns">
+      <button type="button" class="no" id="btnSignCancel">취소</button>
+      <button type="button" class="yes ok" id="btnSignOk">서명 완료</button>
     </div>
   </div>
 </div>
@@ -6890,6 +6915,7 @@
   /* ---- 현재 측정 회원 ---- */
   state.member = null; state.sessionId = null;
   function setMember(m){
+    if(m) signImgOf(m);   // v252 리포트 1쪽 서명 미리 불러오기
     state.member = m || null; state.sessionId = null;
     var bar = $("memberBar");
     bar.classList.toggle("on", !!m);
@@ -6951,6 +6977,58 @@
 
   /* ---- 회원 등록·수정 폼 ---- */
   var formEditing = null, formAfter = null;
+  /* ===== v252 신체 사진 촬영·보관 동의 서명: 체크하면 서명 팝업 → 회원 정보에 서명 이미지 보관 → 리포트 1쪽 회원 이름 아래 ===== */
+  var mfSign = null, signInk = false, signDone = null;
+  function mfSignSync(){
+    var on = !!(mfSign && $("mfConsent").checked);
+    $("mfSignView").hidden = !on; if(on) $("mfSignImg").src = mfSign;
+  }
+  function signOpen(cb){
+    signDone = cb; $("signPad").hidden = false;
+    var cv = $("signCv"), r = cv.getBoundingClientRect(), dpr = Math.min(3, window.devicePixelRatio || 1);
+    cv.width = Math.max(10, Math.round(r.width * dpr)); cv.height = Math.max(10, Math.round(r.height * dpr));
+    var g = cv.getContext("2d"); g.clearRect(0, 0, cv.width, cv.height);
+    g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = "#111827"; g.lineWidth = 3.2 * dpr;
+    signInk = false; $("signPh").hidden = false;
+  }
+  function signClose(val){ $("signPad").hidden = true; var cb = signDone; signDone = null; if(cb) cb(val); }
+  (function(){
+    var cv = $("signCv"), last = null;
+    var pt = function(e){ var r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height }; };
+    cv.addEventListener("pointerdown", function(e){ e.preventDefault(); try{ cv.setPointerCapture(e.pointerId); }catch(er){} last = pt(e); var g = cv.getContext("2d"); g.beginPath(); g.arc(last.x, last.y, g.lineWidth / 2, 0, Math.PI * 2); g.fillStyle = g.strokeStyle; g.fill(); signInk = true; $("signPh").hidden = true; });
+    cv.addEventListener("pointermove", function(e){ if(!last) return; e.preventDefault(); var p = pt(e), g = cv.getContext("2d"); g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke(); last = p; });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(function(t){ cv.addEventListener(t, function(){ last = null; }); });
+  })();
+  function signExport(){   // 서명 부분만 잘라 작은 PNG (가로 최대 480px)
+    var cv = $("signCv"), w = cv.width, h = cv.height, d = cv.getContext("2d").getImageData(0, 0, w, h).data, x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for(var y = 0; y < h; y += 2) for(var x = 0; x < w; x += 2){ if(d[(y * w + x) * 4 + 3] > 20){ if(x < x0) x0 = x; if(x > x1) x1 = x; if(y < y0) y0 = y; if(y > y1) y1 = y; } }
+    if(x1 < 0) return null;
+    var pd = Math.round(Math.min(w, h) * 0.04); x0 = Math.max(0, x0 - pd); y0 = Math.max(0, y0 - pd); x1 = Math.min(w, x1 + pd); y1 = Math.min(h, y1 + pd);
+    var sw = x1 - x0, sh = y1 - y0, k = Math.min(1, 480 / sw, 180 / sh), o = document.createElement("canvas");
+    o.width = Math.max(1, Math.round(sw * k)); o.height = Math.max(1, Math.round(sh * k));
+    o.getContext("2d").drawImage(cv, x0, y0, sw, sh, 0, 0, o.width, o.height);
+    return o.toDataURL("image/png");
+  }
+  $("btnSignClear").addEventListener("click", function(){ var cv = $("signCv"); cv.getContext("2d").clearRect(0, 0, cv.width, cv.height); signInk = false; $("signPh").hidden = false; });
+  $("btnSignCancel").addEventListener("click", function(){ signClose(null); });
+  $("btnSignOk").addEventListener("click", function(){ if(!signInk){ toast("서명 칸에 서명해 주세요."); return; } signClose(signExport()); });
+  $("signPad").addEventListener("click", function(e){ if(e.target === $("signPad")) signClose(null); });
+  function mfAskSign(){
+    signOpen(function(v){
+      if(v){ mfSign = v; $("mfConsent").checked = true; $("mfConsentD").textContent = "신체 사진 촬영·보관에 동의함 · 서명 완료 (저장하면 오늘 날짜로 기록)"; }
+      else if(!mfSign){ $("mfConsent").checked = false; toast("서명하지 않아 동의 체크를 해제했어요."); }
+      mfSignSync();
+    });
+  }
+  $("mfConsent").addEventListener("change", function(){ if(this.checked) mfAskSign(); else mfSignSync(); });
+  $("btnMfResign").addEventListener("click", mfAskSign);
+  // 리포트 1쪽용 서명 이미지 (미리 불러 둠)
+  var signImgCache = { src: null, img: null };
+  function signImgOf(m){
+    var src = m && m.consentSign; if(!src) return null;
+    if(signImgCache.src !== src){ var im = new Image(); im.src = src; signImgCache = { src: src, img: im }; }
+    var im2 = signImgCache.img; return (im2.complete && im2.naturalWidth) ? im2 : null;
+  }
   function openForm(m, after){
     formEditing = m || null; formAfter = after || null;
     $("mbFormTitle").textContent = m ? "회원 정보 수정" : "회원 등록";
@@ -6960,6 +7038,7 @@
     $("mfBirth").value = m && m.birth ? m.birth : "";
     $("mfStaff").value = m ? (m.staff || "") : "";   // v238 담당자
     $("mfConsent").checked = !!(m && m.consentAt);
+    mfSign = m && m.consentSign ? m.consentSign : null; mfSignSync();   // v252 동의 서명
     $("mfConsentD").textContent = m && m.consentAt ? fmtDate(m.consentAt).slice(0, 10) + "에 신체 사진 촬영·보관 동의함" : "신체 사진 촬영·보관에 동의함 (체크한 날짜를 기록)";
     $("mfNoTag").hidden = !!m;
     if(!m) dbAll("members").then(function(L){ if(!formEditing && !$("mfNo").value) $("mfNo").value = nextMemberNo(L); });
@@ -6977,6 +7056,8 @@
     var by = parseInt($("mfBirth").value, 10); m.birth = (by >= 1920 && by <= new Date().getFullYear()) ? by : null;
     m.staff = $("mfStaff").value.trim();   // v238 담당자
     m.consentAt = $("mfConsent").checked ? (m.consentAt || Date.now()) : null;   // v176 처음 체크한 날짜 유지, 해제하면 지움
+    m.consentSign = $("mfConsent").checked ? (mfSign || null) : null;   // v252 동의 서명 (해제하면 지움)
+    if(m.consentSign && m.consentSign !== (formEditing && formEditing.consentSign)) m.consentSignAt = Date.now(); else if(!m.consentSign) m.consentSignAt = null;
     dbAll("members").then(function(L){
       if(!m.no && !formEditing) m.no = nextMemberNo(L);
       var dup = m.no && L.find(function(x){ return x.id !== m.id && (x.no || "").toLowerCase() === m.no.toLowerCase(); });
@@ -11270,7 +11351,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v251";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v252";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -11640,6 +11721,15 @@
     if(rlab){ g.fillStyle = "#C9D3E6"; g.font = "700 36px " + F; rw = g.measureText(rlab).width + 16; g.fillText(rlab, rx, cy + 22); }
     g.fillStyle = "#FFFFFF"; g.font = "800 56px " + F; g.fillText(nm ? nm + " 님" : "", rx - rw, cy + 22);
     g.fillStyle = "#C9D3E6"; g.font = "500 26px " + M; g.fillText(meta, rx, cy + 68);
+    var sImg = state.member ? signImgOf(state.member) : null;   // v252 회원 동의 서명 (흰 잉크로 작게)
+    if(sImg){
+      var SH = 46, SW = Math.min(230, SH * sImg.naturalWidth / sImg.naturalHeight), sh2 = SW * sImg.naturalHeight / sImg.naturalWidth;
+      var tc = document.createElement("canvas"); tc.width = Math.round(SW * 2); tc.height = Math.round(sh2 * 2);
+      var tg = tc.getContext("2d"); tg.drawImage(sImg, 0, 0, tc.width, tc.height); tg.globalCompositeOperation = "source-in"; tg.fillStyle = "#FFFFFF"; tg.fillRect(0, 0, tc.width, tc.height);
+      var sy = cy + 82 + (SH - sh2) / 2;
+      g.drawImage(tc, rx - SW, sy, SW, sh2);
+      g.fillStyle = "#9FB0CC"; g.font = "600 20px " + F; g.fillText("동의 서명", rx - SW - 14, cy + 82 + SH / 2 + 7);
+    }
     var rightW = Math.max(g.measureText(meta).width, 360);
     g.textAlign = "left";
     // 가운데: 센터명 (자리에 맞게 자동 축소)

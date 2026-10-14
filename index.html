@@ -8000,7 +8000,7 @@
   ]});
   ROM_JOINTS.push({ k:"ankle", n:"발목", kind:"d90", pts:["sole","toe5","fibula"], moves:[
     { k:"dorsi", n:"배측굴곡", normal:20, sgn:-1, kind:"aux", pts:["malleolus","fibhead","heelsole","mtp5"], guide:"<b>바깥쪽 옆에서</b> 촬영 · 발끝을 정강이 쪽으로 <b>최대한 당긴</b> 자세 · ①선: 외측 복사뼈 정 중앙 → 비골두 정 중앙 · ②선: 발바닥 면의 발뒤꿈치 끝 → 발바닥 면의 제5 MTP 관절 · <b>파란 보조선</b> = ②선과 평행하게 외측 복사뼈를 지나는 선(자동) · 각도 = ①선 ↔ 보조선 · 직각(90°)이 0°" },
-    { k:"plantar", n:"저측굴곡", normal:50, sgn:1, guide:"<b>바깥쪽 옆에서</b> 촬영 · 발끝을 <b>최대한 아래로 민</b> 자세 · ①선: 발바닥(비골 후면·외측 복사뼈 후면 일직선이 발바닥과 만나는 곳) → 비골(비골두·비골 근위부) · ②선: 발바닥 → 발끝(발바닥 쪽 제5 MTP 관절 끝) · 축 = 발바닥 · ①선에 수직(90°)이 0°" },
+    { k:"plantar", n:"저측굴곡", normal:50, sgn:1, kind:"aux", pts:["malleolus","fibhead","heelsole","mtp5"], guide:"<b>바깥쪽 옆에서</b> 촬영 · 발끝을 <b>최대한 아래로 민</b> 자세 · ①선: 외측 복사뼈 정 중앙 → 비골두 정 중앙 · ②선: 발바닥 면의 발뒤꿈치 끝 → 발바닥 면의 제5 MTP 관절 · <b>파란 보조선</b> = ②선과 평행하게 외측 복사뼈를 지나는 선(자동) · 각도 = ①선 ↔ 보조선 · 직각(90°)이 0°" },
   ]});
   // v70 메뉴 순서: 목 · 허리 · 어깨 · 무릎 · 고관절 · 발목 · 팔꿈치
   (function(){ var ord = ["neck", "trunk", "shoulder", "knee", "hip", "ankle", "elbow"]; ROM_JOINTS.sort(function(a, b){ return ord.indexOf(a.k) - ord.indexOf(b.k); }); })();
@@ -11204,7 +11204,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v244";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v245";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -13204,7 +13204,7 @@
     "hip|er": { V:"무릎 관절 · 슬개골 정중앙", D:"발목 · 내측·외측 복사뼈 사이 중앙", A:"세로 기준선 · 무릎에서 화면 가장 위쪽", tip:"세로 기준선은 화면 위쪽으로 향해요. 발목은 측정하는 다리의 복사뼈 사이에 찍어요." },
     "hip|ir": { V:"무릎 관절 · 슬개골 정중앙", D:"발목 · 내측·외측 복사뼈 사이 중앙", A:"세로 기준선 · 무릎에서 화면 가장 위쪽", tip:"발목을 정강이 쪽(위쪽)에 찍지 말고 복사뼈 사이에 두세요." },
     "ankle|dorsi": { V:"외측 복사뼈 · 바깥쪽 복사뼈의 정 중앙 (①선 시작점 · 파란 보조선이 지나는 점)", D:"비골두 · 무릎 바깥쪽 아래 비골두의 정 중앙 (①선 끝점)", A:"발뒤꿈치 · 발바닥 면에서 발뒤꿈치 끝 (②선 시작점)", E:"제5 MTP · 발바닥 면에서 새끼발가락 쪽 5번째 MTP 관절 (②선 끝점)", tip:"②선의 두 점은 발등이 아니라 발바닥 면에 찍으세요. 파란 보조선은 ②선과 평행하게 외측 복사뼈를 지나도록 자동으로 그려져요." },
-    "ankle|plantar": { V:"발바닥 · 비골 후면·외측 복사뼈 후면 일직선이 발바닥과 만나는 곳", D:"발끝 · 발바닥 쪽 제5 MTP 관절 끝", A:"비골 · 비골두 또는 화면에 보이는 비골 근위부", tip:"점 3개를 발등 쪽에 찍지 마세요. 모두 발바닥·비골 라인 기준이에요." },
+    "ankle|plantar": { V:"외측 복사뼈 · 바깥쪽 복사뼈의 정 중앙 (①선 시작점 · 파란 보조선이 지나는 점)", D:"비골두 · 무릎 바깥쪽 아래 비골두의 정 중앙 (①선 끝점)", A:"발뒤꿈치 · 발바닥 면에서 발뒤꿈치 끝 (②선 시작점)", E:"제5 MTP · 발바닥 면에서 새끼발가락 쪽 5번째 MTP 관절 (②선 끝점)", tip:"②선의 두 점은 발등이 아니라 발바닥 면에 찍으세요. 발끝을 아래로 민 자세라 발바닥이 비스듬해도 보조선이 ②선과 평행하게 자동으로 따라가요." },
     "elbow|flex": { V:"팔꿈치 관절 · 팔꿈치 관절 (주두 쪽으로 조금 뒤)", D:"손목 · 손목 앞·뒤 사이 중앙", A:"어깨 관절 · 상완골 근위부", tip:"팔꿈치 관절을 앞쪽에 찍지 말고 주두 쪽으로 조금 뒤에 두세요." },
     "elbow|ext": { V:"팔꿈치 관절 · 팔꿈치 관절 (주두 쪽으로 조금 뒤)", D:"손목 · 손목 앞·뒤 사이 중앙", A:"어깨 관절 · 상완골 근위부", tip:"손목은 손등·손바닥 쪽으로 치우치지 않게 중앙에 두세요." }
   };
@@ -13273,7 +13273,7 @@
           '<li><i style="background:#2F6BFF"></i><b>보조선</b><span>자동 · ②선과 같은 방향으로 외측 복사뼈를 지나는 파란 점선</span></li>' +
         '</ul>' +
         '<p class="pg-warn"><b>자주 틀리는 곳</b> · ' + esc(G.tip) + '</p>' +
-        '<p class="pg-tip">각도 = ①선(외측 복사뼈 → 비골두) ↔ 파란 보조선 사이각 · 측정값 = 90° − 사이각 (정강이와 발바닥이 직각이면 0°).</p>';
+        '<p class="pg-tip">각도 = ①선(외측 복사뼈 → 비골두) ↔ 파란 보조선 사이각 · 측정값 = ' + ((mv.sgn || 1) < 0 ? '90° − 사이각' : '사이각 − 90°') + ' (정강이와 발바닥이 직각이면 0°).</p>';
       $("ptGuideBody").querySelectorAll("[data-gs]").forEach(function(b){ b.addEventListener("click", function(){ romGdSide = b.getAttribute("data-gs"); openRomGuide(); }); });
       $("ptGuide").hidden = false; return;   // (예전 3점 예시 사진은 새 기준과 달라 보여주지 않음)
     }

@@ -1446,6 +1446,8 @@
   .gd-row > .gd-man > summary{height:50px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; gap:6px; padding:0 10px; border-radius:14px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font-size:14px; font-weight:800;}
   .gd-row > .gd-man > summary::after{content:"+"; font-size:16px; font-weight:400; color:var(--ink-soft);}
   .gd-row > .gd-man[open] > summary::after{content:"–";}
+  /* v246 측정 시작 버튼 카메라 아이콘 */
+  .btn .cam-ic{display:inline-block; flex:none; vertical-align:-0.22em; margin-right:5px;}
   /* v244 ROM 측정 시트: 촬영 버튼 아래 한 줄 · 한쪽이 숨겨지면 남은 버튼이 한 줄 전체 */
   .rom-gdrow{margin-top:10px;}
   .gd-row > .gd-btn[hidden], .gd-row > .gd-man[hidden]{display:none!important;}
@@ -1891,7 +1893,7 @@
     </div>
 
     <div class="stage-controls" id="camControls">
-      <button class="btn primary shoot-big" id="btnStartCam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg><span>촬영하기</span></button>
+      <button class="btn primary shoot-big" id="btnStartCam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg><span>측정</span></button>
       <button class="btn ghost icon shoot-up" id="btnUpload" title="앨범에서 사진 선택" aria-label="앨범에서 사진 선택">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
       </button>
@@ -2011,7 +2013,7 @@
         </div>
         <div class="rep-empty" id="repEmpty-front">
           <p>정면 측정이 아직 없어요</p>
-          <button type="button" class="btn primary" data-goto="front">정면 촬영하기</button>
+          <button type="button" class="btn primary" data-goto="front"><svg class="cam-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg>측정</button>
         </div>
       </div>
       <div class="rep-col" id="rep-side">
@@ -2022,7 +2024,7 @@
         </div>
         <div class="rep-empty" id="repEmpty-side">
           <p>측면 측정이 아직 없어요</p>
-          <button type="button" class="btn primary" data-goto="side">측면 촬영하기</button>
+          <button type="button" class="btn primary" data-goto="side"><svg class="cam-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg>측정</button>
         </div>
       </div>
       <div class="rep-col" id="rep-rom">
@@ -2032,7 +2034,7 @@
         <div class="rep-shots" id="repRomShots"></div><!-- v186 측정 사진 -->
         <div class="rep-empty" id="repEmpty-rom">
           <p>ROM 측정이 아직 없어요</p>
-          <button type="button" class="btn primary" data-goview="rom">ROM 측정하기</button>
+          <button type="button" class="btn primary" data-goview="rom"><svg class="cam-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg>측정</button>
         </div>
       </div>
       <div class="rep-col" id="rep-scol">
@@ -2042,7 +2044,7 @@
         <div class="rep-shots" id="repScolShots"></div><!-- v186 측정 사진 -->
         <div class="rep-empty" id="repEmpty-scol">
           <p>척추 균형·거북목 측정이 아직 없어요</p>
-          <button type="button" class="btn primary" data-goview="scol">척추 균형 측정하기</button>
+          <button type="button" class="btn primary" data-goview="scol"><svg class="cam-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg>측정</button>
         </div>
       </div>
     </div>
@@ -2356,7 +2358,7 @@
         <div class="mb-avatar lg" id="mbDAvatar"></div>
         <div class="mb-txt"><b id="mbDName"></b><em id="mbDMeta"></em><em id="mbDMemo"></em></div>
         <div class="mb-head-actions">
-          <button type="button" class="btn primary" id="btnMbMeasure">측정하기</button>
+          <button type="button" class="btn primary" id="btnMbMeasure"><svg class="cam-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg>측정</button>
           <button type="button" class="btn line sm" id="btnMbEdit">정보 수정</button>
         </div>
       </section>
@@ -2781,7 +2783,7 @@
       <div class="rom-lvl" id="romLvl" hidden></div>
       <div class="rom-pts" id="romPtsChip" hidden></div>
       <div class="rom-gtag" id="romGTag" hidden></div>
-      <div class="rom-empty" id="romEmpty"><b>아래 [촬영하기]를 눌러 촬영하세요</b><span id="romEmptyTip"></span></div>
+      <div class="rom-empty" id="romEmpty"><b>아래 [측정]을 눌러 촬영하세요</b><span id="romEmptyTip"></span></div>
       <div class="rom-busy" id="romBusy" hidden>관절 위치 인식 중…</div>
       <div class="rom-zoom" id="romZoom" hidden><button aria-label="확대" type="button" id="btnRomZIn" title="확대">+</button><span id="romZoomVal">100%</span><button aria-label="축소" type="button" id="btnRomZOut" title="축소">−</button><button aria-label="전체 보기" type="button" id="btnRomZFit" title="전체 보기">⤢</button></div>
     </div>
@@ -2816,7 +2818,7 @@
       <button type="button" class="btn line sm" id="btnRomOutline" aria-pressed="true">테두리</button>
     </div>
     <div class="rom-btns" id="romBtns1">
-      <button type="button" class="btn rom-shot-btn" id="btnRomShot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg><span>촬영하기</span></button>
+      <button type="button" class="btn rom-shot-btn" id="btnRomShot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg><span>측정</span></button>
       <button type="button" class="btn line sm" id="btnRomFile" hidden>앨범에서</button>
       <button type="button" class="btn line rom-auto-btn" id="btnRomAuto" disabled>↻ 다시 인식</button>
       <button type="button" class="btn line sm" id="btnRomSwap" hidden title="인식이 반대쪽 팔·다리를 잡았을 때">⇄ 반대쪽</button>
@@ -3156,6 +3158,7 @@
 <script>
 (function(){
   "use strict";
+  var CAM_IC = '<svg class="cam-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.6"/></svg>';   // v246 측정 시작 버튼 = 카메라 아이콘 + "측정" 으로 통일
 
   /* ---------- config ---------- */
   var MODES = {
@@ -7015,7 +7018,7 @@
       dbAll("roms").then(function(RL){
       var S = mbBuildSessions(rs, RL.filter(function(x){ return x.memberId === m.id; })), PR = poseRounds(rs);
       S.forEach(function(ss, si){ ss.round = S.length - si; }); mbSessions = S;
-      if(!S.length){ box.innerHTML = '<p class="mb-empty">아직 측정 기록이 없어요. <b>측정하기</b>를 눌러 시작하세요.</p>'; }
+      if(!S.length){ box.innerHTML = '<p class="mb-empty">아직 측정 기록이 없어요. <b>측정</b>을 눌러 시작하세요.</p>'; }
       else box.innerHTML = S.map(function(ss, si){
         var r = ss.rec, nS = ss.roms.filter(function(x){ return x.joint === "scol"; }).length, nF = ss.roms.filter(function(x){ return x.joint === "fhp"; }).length, nR = ss.roms.length - nS - nF;
         var pr = r ? PR[r.id] : null, views = [pr && pr.f ? "정면 " + pr.f + "번째" : "", pr && pr.s ? "측면 " + pr.s + "번째" : "", nR ? "ROM " + nR + "항목" : "", nS ? "척추 균형" : "", nF ? "거북목" : ""].filter(Boolean).join(" · ");
@@ -8396,7 +8399,7 @@
           '<div class="rc-v">' + (val == null ? '<span class="none">미측정</span>' : '<strong>' + val + '°</strong>') + '<span class="judge">' + (val == null ? '' : jd.txt) + '</span></div>' +
           '<div class="rom-bar"><i style="width:' + (val == null ? 0 : Math.min(100, jd.pct)) + '%"></i></div>' +
           (r ? '<div class="rc-meta">' + (r.memberId ? romRoundOf(r) + "차 · " : "") + fmtDate(r.at).slice(0, 10) + (r.memberId ? "" : " · 회원 미지정") + '</div>' : '') + (!r && pv ? '<div class="rc-prev">지난 회차(' + romRoundOf(pv) + '차) ' + pv.value + '°</div>' : '') + dt + '</div>' +
-          '<div class="rc-acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-mv="' + mv.k + '">' + (r ? "재측정" : "측정") + '</button>' +
+          '<div class="rc-acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-mv="' + mv.k + '">' + CAM_IC + '측정</button>' +
           (r ? '<button type="button" class="btn line sm rom-cmp-btn" data-cmp="' + mv.k + '">' + (isPro() ? "비교" : "🔒비교") + '</button>' : '') + '</div></div>';
       }).join("");
       romSyncRound();
@@ -8488,7 +8491,7 @@
     $("btnRomGuide").hidden = !ROM_GD[J.k + "|" + mv.k];
     if(!$("romTip").dataset.def) $("romTip").dataset.def = $("romTip").innerHTML;   // v244 배측굴곡(점 4개) 안내
     $("romTip").innerHTML = mv.kind === "aux" ? "✋ <b>점</b>을 끌면 위치 수정(확대경 표시) · <b>선</b>을 끌면 선 전체 이동 · 점을 누른 뒤 ◀▲▼▶로 미세조정. 측정점 4개: 주황 = 외측 복사뼈, 분홍 = 비골두(①선), 하늘색 = 발뒤꿈치, 초록 = 제5 MTP(②선) · <b>파란 점선</b> = 자동 보조선." : $("romTip").dataset.def;
-    $("romEmptyTip").textContent = "[촬영하기]를 누르면 후면 카메라가 켜져요. 수평계를 초록으로 맞추고, 측정할 쪽 팔·다리가 카메라를 향하게 해서 관절 점이 초록일 때 촬영하세요.";
+    $("romEmptyTip").textContent = "[측정]을 누르면 후면 카메라가 켜져요. 수평계를 초록으로 맞추고, 측정할 쪽 팔·다리가 카메라를 향하게 해서 관절 점이 초록일 때 촬영하세요.";
     romCv.hidden = true; $("romEmpty").hidden = false; $("romLive").hidden = true; $("romTip").hidden = true; $("romQ").hidden = true;
     ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = true; });
     $("romSheet").hidden = false;
@@ -9747,7 +9750,7 @@
         $("romLive").hidden = false; $("romVal").textContent = rec.value + "°"; $("romNorm").textContent = romNormTxt(romMove());
         var jd = romJudge(romMove(), rec.value); $("romJudge").textContent = jd.txt;
         $("romQ").hidden = false; $("romQ").className = "rom-q mid";
-        $("romQ").textContent = (no > 0 ? no + "차 · " : "") + fmtDate(rec.at).slice(0, 10) + " 기록 · 원본 사진이 없는 예전 기록이에요. 각도를 직접 고치거나 [촬영하기]로 다시 찍으면 이 회차가 바뀌어요";
+        $("romQ").textContent = (no > 0 ? no + "차 · " : "") + fmtDate(rec.at).slice(0, 10) + " 기록 · 원본 사진이 없는 예전 기록이에요. 각도를 직접 고치거나 [측정]으로 다시 찍으면 이 회차가 바뀌어요";
       };
       tim.onerror = function(){ if(!stale()) toast("이 기록의 사진을 불러오지 못했어요."); };
       if(rec.thumb) tim.src = rec.thumb; else tim.onerror();
@@ -9949,7 +9952,7 @@
           (dl != null ? (isPro() ? (function(){ var tr = trendOf(mv, H[H.length - 2].value, H[H.length - 1].value); return '<div class="rom-delta ' + (tr.t > 0 ? "up" : tr.t < 0 ? "down" : "same") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl < 0 ? "▼ " : "▲ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "° (" + tr.lab + ")") + ' · 총 ' + H.length + '회</div>'; })() : '<div class="rom-delta lock">🔒 이전 회차와의 비교는 PRO에서 볼 수 있어요</div>') : '') +
           (r && r.thumb ? '<img class="thumb rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">' : '') +
           (hist && isPro() ? '<ul class="scol-hist">' + hist + '</ul>' : '') +
-          '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-scol="' + mv.k + '">' + (r ? "다시 측정" : "측정하기") + '</button>' +
+          '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-scol="' + mv.k + '">' + CAM_IC + '측정</button>' +
           (r ? '<button type="button" class="btn line sm" data-scolcmp="' + mv.k + '">' + (isPro() ? "📊 이전 회차 비교" : "🔒 이전 회차 비교") + ' <small>' + H.length + '회</small></button>' : '') + '</div></div>';
       }).join("");
       $("scolGrid").querySelectorAll("[data-scol]").forEach(function(b){ b.addEventListener("click", function(){ openScolSheet(b.getAttribute("data-scol")); }); });
@@ -9998,7 +10001,7 @@
           (dl != null ? (isPro() ? (function(){ var tr = trendOf(mv, H[H.length - 2].value, H[H.length - 1].value); return '<div class="rom-delta ' + (tr.t > 0 ? "up" : tr.t < 0 ? "down" : "same") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl > 0 ? "▲ " : "▼ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "° (" + tr.lab + ")") + ' · 총 ' + H.length + '회</div>'; })() : '<div class="rom-delta same">🔒 회차별 변화는 PRO</div>') : '') +
           (r && r.thumb ? '<img class="thumb rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">' : '') +
           (hist && isPro() ? '<ul class="scol-hist">' + hist + '</ul>' : '') +
-          '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-fhp="' + mv.k + '">' + (r ? "다시 측정" : "측정하기") + '</button>' +
+          '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-fhp="' + mv.k + '">' + CAM_IC + '측정</button>' +
           (r ? '<button type="button" class="btn line sm" data-fhpcmp="' + mv.k + '">' + (isPro() ? "📊 이전 회차 비교" : "🔒 이전 회차 비교") + ' <small>' + H.length + '회</small></button>' : '') + '</div></div>';
       }).join("");
       $("fhpGrid").querySelectorAll("[data-fhp]").forEach(function(b){ b.addEventListener("click", function(){ openFhpSheet(b.getAttribute("data-fhp")); }); });
@@ -11204,7 +11207,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v245";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v246";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

@@ -248,9 +248,9 @@
   .rot-bar[hidden]{display:none!important;}
   /* v137 수평 보정 잠금: '수평 보정' 버튼을 눌러야 조정 도구가 나타남 (실수로 돌아가는 것 방지) */
   .rot-bar.locked .adj{display:none!important;}
-  .rot-bar button.lock{margin-right:auto; white-space:nowrap; font-size:12px; font-weight:700; border-color:var(--accent, #0B7A6B); color:var(--accent, #0B7A6B); padding:4px 10px;}
+  .rot-bar button.lock{margin-right:auto; white-space:nowrap; font-size:12px; font-weight:700; border-color:var(--accent, #1E2A4A); color:var(--accent, #1E2A4A); padding:4px 10px;}
   .rot-bar button.lock::before{content:"🔒 ";}
-  .rot-bar:not(.locked) button.lock{background:var(--accent, #0B7A6B); color:#fff;}
+  .rot-bar:not(.locked) button.lock{background:var(--accent, #1E2A4A); color:#fff;}
   .rot-bar:not(.locked) button.lock::before{content:"✓ ";}
   .rot-bar .row{display:flex; align-items:center; gap:6px; min-width:0;}
   .rot-bar .ttl{font-size:12px; font-weight:700; flex:1;}
@@ -397,7 +397,7 @@
   .pg-head{position:sticky; top:-14px; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; background:rgba(6,12,11,.96);}
   .pg-head b{color:#fff; font-size:16px;}
   .pg-head button{font-family:inherit; font-size:14px; font-weight:600; border-radius:11px; border:1px solid rgba(255,255,255,.3); padding:9px 18px; background:rgba(255,255,255,.1); color:#fff;}
-  .pg-pdf{display:block; width:100%; max-width:520px; margin:4px auto 10px; font-family:inherit; font-size:15.5px; font-weight:800; border:0; border-radius:14px; padding:14px 16px; background:#0B7A6B; color:#fff;}
+  .pg-pdf{display:block; width:100%; max-width:520px; margin:4px auto 10px; font-family:inherit; font-size:15.5px; font-weight:800; border:0; border-radius:14px; padding:14px 16px; background:#1E2A4A; color:#fff;}
   .pg-pdf small{display:block; font-size:12px; font-weight:600; opacity:.8; margin-top:2px;}
   .pg-top2{display:grid; grid-template-columns:1fr 1fr; gap:8px; max-width:520px; margin:4px auto 10px;}
   .pg-top2 .pg-pdf{margin:0;}
@@ -581,7 +581,7 @@
   .rep-gridsw input{position:absolute; opacity:0; width:1px; height:1px;}
   .rep-gridsw .sw{flex:0 0 auto; width:42px; height:24px; border-radius:100px; background:var(--line); position:relative; transition:background .2s;}
   .rep-gridsw .sw::after{content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:left .2s;}
-  .rep-gridsw input:checked + .sw{background:var(--good);}
+  .rep-gridsw input:checked + .sw{background:var(--blue);}
   .rep-gridsw input:checked + .sw::after{left:21px;}
   .rep-gridsw input:focus-visible + .sw{outline:2px solid var(--good); outline-offset:2px;}
   .rep-gridsw .tx b{display:block; font-size:13.5px; white-space:nowrap;} .rep-gridsw .tx small{display:block; font-size:12px; color:var(--ink-soft); font-weight:500;}
@@ -1364,7 +1364,7 @@
   .pro-jump{display:block; width:100%; margin:6px 0 10px; font-family:inherit; font-size:13px; font-weight:700; color:#fff; background:rgba(47,107,255,.22); border:1px solid rgba(47,107,255,.6); border-radius:10px; padding:9px 10px; cursor:pointer; text-align:center;}
   .pro-code-h{margin:4px 0 0; font-size:15px;}
   /* v158 Google Play 월 구독 */
-  .pro-sub{border:1px solid rgba(11,122,107,.3); background:var(--accent-soft); border-radius:14px; padding:14px; margin:0 0 14px; text-align:center;}
+  .pro-sub{border:1px solid rgba(30,42,74,.3); background:var(--accent-soft); border-radius:14px; padding:14px; margin:0 0 14px; text-align:center;}
   .pro-sub .sub-price{display:flex; align-items:baseline; justify-content:center; gap:6px; margin-bottom:4px;}
   .pro-sub .sub-price span{font-size:12px; font-weight:700; color:var(--ink-soft);}
   .pro-sub .sub-price b{font-size:22px; color:var(--ink);}
@@ -1383,15 +1383,15 @@
      html[data-ui="dark"] 이면 기존 다크 네이비 유지 (더보기 › 화면 테마) */
   :root:root:root:not([data-ui="dark"]){
     --bg:#F4F6F8; --surface:#FFFFFF; --surface-2:#EEF1F4; --ink:#17212B; --ink-soft:#5B6875;
-    --navy:#0B7A6B; --navy-ink:#FFFFFF; --gold:#8A5A00; --gold-soft:#FFF4D6;
-    --accent:#0B7A6B; --accent-ink:#075A4F; --accent-soft:#E3F3F0; --line:#DDE3E9;
+    --navy:#1E2A4A; --navy-ink:#FFFFFF; --gold:#8A5A00; --gold-soft:#FFF4D6;
+    --accent:#1E2A4A; --accent-ink:#141C33; --accent-soft:#E6E9F1; --line:#DDE3E9;
     --good:#16794A; --good-soft:#E3F4EA; --warn:#A35A00; --warn-soft:#FDF0DC; --crit:#C03A2B; --crit-soft:#FBE7E4;
-    --blue:#0B7A6B; --blue-soft:rgba(11,122,107,.12); --side:#FFFFFF;
+    --blue:#1E2A4A; --blue-soft:rgba(30,42,74,.12); --side:#FFFFFF;
     --shadow:0 1px 2px rgba(23,33,43,.05), 0 8px 24px -14px rgba(23,33,43,.18);
     color-scheme:light;
   }
   html:not([data-ui="dark"]) body{background:var(--bg); color:var(--ink);}
-  html:not([data-ui="dark"]) button.btn.primary{box-shadow:0 8px 18px -12px rgba(11,122,107,.7);}
+  html:not([data-ui="dark"]) button.btn.primary{box-shadow:0 8px 18px -12px rgba(30,42,74,.7);}
   html:not([data-ui="dark"]) .bottom-nav{background:rgba(255,255,255,.97); border-top:1px solid var(--line);}
   html:not([data-ui="dark"]) .bottom-nav .nav-item[aria-current="page"]{color:var(--blue); font-weight:800;}
   html:not([data-ui="dark"]) .side .nav-item:hover{background:var(--surface-2);}
@@ -1403,7 +1403,7 @@
   html:not([data-ui="dark"]) .side .nav-item em.pro-tag{background:var(--gold-soft); color:var(--gold);}
 
   /* 밝은 테마: 파랑·보라 그라데이션을 청록 계열로 정리 */
-  html:not([data-ui="dark"]) .trial-bar{background:var(--accent-soft); border:1px solid rgba(11,122,107,.22);}
+  html:not([data-ui="dark"]) .trial-bar{background:var(--accent-soft); border:1px solid rgba(30,42,74,.22);}
   html:not([data-ui="dark"]) .trial-bar b u{color:var(--accent-ink);}
   html:not([data-ui="dark"]) .trial-bar.last{background:var(--warn-soft); border-color:rgba(163,90,0,.35);}
   html:not([data-ui="dark"]) .trial-bar.last b u{color:var(--warn);}
@@ -1416,10 +1416,10 @@
   html:not([data-ui="dark"]) .pt-guide-btn{background:var(--accent-soft); color:var(--accent-ink);}
   html:not([data-ui="dark"]) nav.tabs button[aria-selected="true"]{background:var(--accent-soft); color:var(--accent-ink);}
   html:not([data-ui="dark"]) .pro-badge, html:not([data-ui="dark"]) .price-grid .best i, html:not([data-ui="dark"]) .rom-all-cmp i{background:var(--blue);}
-  html:not([data-ui="dark"]) .set-lock, html:not([data-ui="dark"]) .rep-lock, html:not([data-ui="dark"]) .pro-ask{background:var(--accent-soft); border-color:rgba(11,122,107,.25);}
+  html:not([data-ui="dark"]) .set-lock, html:not([data-ui="dark"]) .rep-lock, html:not([data-ui="dark"]) .pro-ask{background:var(--accent-soft); border-color:rgba(30,42,74,.25);}
   html:not([data-ui="dark"]) .price-grid .best{background:var(--accent-soft); border-color:var(--blue);}
   html:not([data-ui="dark"]) .rom-all-cmp{background:var(--surface); border-color:var(--line);}
-  html:not([data-ui="dark"]) .rom-shot-btn{background:var(--blue); box-shadow:0 10px 22px -12px rgba(11,122,107,.8);}
+  html:not([data-ui="dark"]) .rom-shot-btn{background:var(--blue); box-shadow:0 10px 22px -12px rgba(30,42,74,.8);}
   /* 하단 메뉴 5개 */
   .bottom-nav .nav-item{min-height:56px; font-size:11.5px;}
   /* 측정 하위 탭 (체형 · ROM · 척추 균형) — 폰에서만 */
@@ -6115,7 +6115,7 @@
       var g = pg.g;
       g.fillStyle = "#7A8794"; g.font = "500 21px " + F; g.textAlign = "left";
       g.fillText("촬영 조건에 따라 달라질 수 있는 스크리닝 참고값이며 진단을 대신하지 않습니다.", PAD, PH - 36);
-      g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandFoot() + (pages.length > 1 ? "   " + (n + 1) + " / " + pages.length : ""), W - PAD, PH - 36); g.textAlign = "left";
+      g.textAlign = "right"; g.fillStyle = "#1E2A4A"; g.font = "700 20px " + F; g.fillText(brandFoot() + (pages.length > 1 ? "   " + (n + 1) + " / " + pages.length : ""), W - PAD, PH - 36); g.textAlign = "left";
     });
     return pages.map(function(pg){ return pg.c; });
   }
@@ -7214,7 +7214,7 @@
     var step = Math.ceil(pts.length / 6);
     pts.forEach(function(p, i){
       var lastPt = i === pts.length - 1, sc = comp(p) === lc;
-      g += '<circle cx="' + X(i) + '" cy="' + Y(p.score) + '" r="' + (lastPt ? 6 : 4.5) + '" fill="' + (lastPt ? "#0B7A6B" : sc ? "#FFFFFF" : "#C9D0DC") + '" style="stroke:' + (sc ? "var(--blue)" : "#97A3BC") + '" stroke-width="2.5"><title>' + fmtDate(p.at) + " · " + p.score + "점 · " + compNm[comp(p)] + '</title></circle>' +
+      g += '<circle cx="' + X(i) + '" cy="' + Y(p.score) + '" r="' + (lastPt ? 6 : 4.5) + '" fill="' + (lastPt ? "#1E2A4A" : sc ? "#FFFFFF" : "#C9D0DC") + '" style="stroke:' + (sc ? "var(--blue)" : "#97A3BC") + '" stroke-width="2.5"><title>' + fmtDate(p.at) + " · " + p.score + "점 · " + compNm[comp(p)] + '</title></circle>' +
            '<text x="' + X(i) + '" y="' + (Y(p.score) - 11) + '" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ink)">' + p.score + '</text>';
       if(i % step === 0 || lastPt) g += '<text x="' + X(i) + '" y="' + (H - 20) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + fmtDate(p.at).slice(5, 10) + '</text>' +
         '<text x="' + X(i) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + compTag[comp(p)] + '</text>';
@@ -7240,7 +7240,7 @@
       var c = document.createElement("canvas"); c.width = W; c.height = H;
       var g = c.getContext("2d");
       g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, H);
-      g.fillStyle = "#0B7A6B"; g.font = "700 20px " + F; g.fillText(brandLabel("전후 비교", "전후 비교"), PAD, 58); drawBrandLogo(g, W - PAD, 14, 200, 52);
+      g.fillStyle = "#1E2A4A"; g.font = "700 20px " + F; g.fillText(brandLabel("전후 비교", "전후 비교"), PAD, 58); drawBrandLogo(g, W - PAD, 14, 200, 52);
       g.fillStyle = "#17212B"; g.font = "800 44px " + F; g.fillText(m.name + (m.no ? "  " : ""), PAD, 112);
       if(m.no){ var nw = g.measureText(m.name + "  ").width; g.fillStyle = "#5B6875"; g.font = "500 24px " + F; g.fillText("No." + m.no, PAD + nw, 112); }
       g.fillStyle = "#5B6875"; g.font = "500 22px " + F;
@@ -7283,7 +7283,7 @@
       g.fillStyle = "#7A8794"; g.font = "500 18px " + F;
       g.fillText("촬영 조건에 따라 달라질 수 있는 참고값입니다. 같은 장소·거리·복장으로 촬영해 비교하세요.", PAD, H - 30 - (brandContact() ? 34 : 0));
       if(brandContact()){ g.fillStyle = "#3D4A57"; g.font = "600 18px " + F; g.fillText(brandContact(), PAD, H - 30); }
-      g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 18px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 30); g.textAlign = "left";
+      g.textAlign = "right"; g.fillStyle = "#1E2A4A"; g.font = "700 18px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 30); g.textAlign = "left";
       var tag = (m.name + (m.no ? "_" + m.no : "")).replace(/[^a-zA-Z0-9가-힣_-]/g, "");
       deliverCanvas(c, "AYO_compare_" + tag + "_" + fmtDate(B.at).slice(0, 10).replace(/\./g, "") + ".jpg");
     });
@@ -7413,7 +7413,7 @@
     });
     rows.forEach(function(r, i){
       var x = L + step * i + (step - bw) / 2, y = Y(r.value), h = Y(0) - y;
-      if(h > 0) g += '<path d="M' + x + ' ' + Y(0) + 'V' + (y + 4) + 'q0 -4 4 -4h' + (bw - 8) + 'q4 0 4 4V' + Y(0) + 'Z" fill="' + (r.hi ? "#0B7A6B" : "rgba(11,122,107,.40)") + '"><title>' + r.title + '</title></path>';
+      if(h > 0) g += '<path d="M' + x + ' ' + Y(0) + 'V' + (y + 4) + 'q0 -4 4 -4h' + (bw - 8) + 'q4 0 4 4V' + Y(0) + 'Z" fill="' + (r.hi ? "#1E2A4A" : "rgba(30,42,74,.40)") + '"><title>' + r.title + '</title></path>';
       g += '<rect x="' + (L + step * i) + '" y="' + T + '" width="' + step + '" height="' + (H - T - B) + '" fill="transparent"><title>' + r.title + '</title></rect>';
       if(r.value > 0 && (opt.labelAll || r.hi)) g += '<text x="' + (x + bw / 2) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ink)">' + r.value + (opt.unit || "") + '</text>';
       g += '<text x="' + (x + bw / 2) + '" y="' + (H - 10) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + r.label + '</text>';
@@ -7460,7 +7460,7 @@
       var tot = members.length || 1;
       var cats = [
         { k:"fresh", n:"신규 회원", e:"등록 30일 이내", c:"#3B82C4" },
-        { k:"active", n:"관리 중", e:"최근 30일 안에 측정", c:"#0B7A6B" },
+        { k:"active", n:"관리 중", e:"최근 30일 안에 측정", c:"#1E2A4A" },
         { k:"due", n:"재측정 필요", e:"30~60일 미측정", c:"#F0B44C" },
         { k:"dormant", n:"휴면", e:"60일 이상 미측정", c:"#7D879C" },
         { k:"none", n:"측정 기록 없음", e:"등록 30일 경과", c:"#4A5570" }
@@ -9164,7 +9164,7 @@
     var g = c.getContext("2d"), F = "'IBM Plex Sans KR', sans-serif", s2 = HEAD / 150;
     g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, H + HEAD);
     g.save(); g.translate(0, HEAD); g.scale(k, k); g.beginPath(); g.rect(0, 0, romS.w, romS.h); g.clip(); romPaint(g, 1.6 / k * (W / 1200), true); g.restore();
-    g.fillStyle = "#0B7A6B"; g.font = "700 " + Math.round(18 * s2) + "px " + F;
+    g.fillStyle = "#1E2A4A"; g.font = "700 " + Math.round(18 * s2) + "px " + F;
     g.fillText(brandLabel(J.k === "scol" ? "척추 균형 체크" : J.k === "fhp" ? "거북목 (CVA)" : "ROM 관절가동범위", J.k === "scol" ? "척추 균형 체크" : J.k === "fhp" ? "거북목 (CVA)" : "ROM 관절가동범위") + (state.member ? "  ·  " + state.member.name : ""), 24 * s2, 38 * s2);
     g.fillStyle = "#17212B"; g.font = "800 " + Math.round(36 * s2) + "px " + F;
     g.fillText((J.k === "scol" || J.k === "fhp" ? (J.k === "fhp" ? "거북목 · " : "") + mv.n : J.n + " " + mv.n + (romSideTxt(mv) ? " (" + romSideTxt(mv) + ")" : "")) + "  " + val + "°", 24 * s2, 88 * s2);
@@ -10451,9 +10451,9 @@
     var g = "";
     [0, Math.round(maxV / 2), Math.round(maxV)].forEach(function(v){ g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="rgba(151,163,188,.16)"/><text x="' + (L - 6) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" style="fill:var(--ink-soft)">' + v + '</text>'; });
     if(mv.normal) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(mv.normal) + '" y2="' + Y(mv.normal) + '" stroke="#16794A" stroke-width="1.5" stroke-dasharray="6 5"/><text x="' + (W - R) + '" y="' + (Y(mv.normal) - 6) + '" text-anchor="end" font-size="11" fill="#16794A">정상 ' + mv.normal + '°</text>';
-    g += '<polyline fill="none" stroke="#0B7A6B" stroke-width="2.5" stroke-linejoin="round" points="' + H.map(function(r, i){ return X(i) + "," + Y(r.value); }).join(" ") + '"/>';
+    g += '<polyline fill="none" stroke="#1E2A4A" stroke-width="2.5" stroke-linejoin="round" points="' + H.map(function(r, i){ return X(i) + "," + Y(r.value); }).join(" ") + '"/>';
     H.forEach(function(r, i){
-      g += '<circle cx="' + X(i) + '" cy="' + Y(r.value) + '" r="5" fill="#0B7A6B" style="stroke:var(--surface)" stroke-width="2"><title>' + romRoundOf(r) + '차 ' + fmtDate(r.at).slice(0, 10) + ' ' + r.value + '°</title></circle>' +
+      g += '<circle cx="' + X(i) + '" cy="' + Y(r.value) + '" r="5" fill="#1E2A4A" style="stroke:var(--surface)" stroke-width="2"><title>' + romRoundOf(r) + '차 ' + fmtDate(r.at).slice(0, 10) + ' ' + r.value + '°</title></circle>' +
         '<text x="' + X(i) + '" y="' + (Y(r.value) - 10) + '" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ink)">' + r.value + '°</text>' +
         '<text x="' + X(i) + '" y="' + (Ht - 10) + '" text-anchor="middle" font-size="11" style="fill:var(--ink-soft)">' + romRoundOf(r) + '차</text>';
     });
@@ -11216,7 +11216,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v248";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v249";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -12824,19 +12824,19 @@
       var H = 260 + blocks.reduce(function(a, b){ return a + 110 + b.lines.length * 38; }, 0) + 90 + (brandContact() ? 34 : 0);
       c.width = W; c.height = H; g = c.getContext("2d");
       g.fillStyle = "#EEF3FA"; g.fillRect(0, 0, W, H);
-      g.fillStyle = "#0B7A6B"; g.fillRect(0, 0, W, 210);
+      g.fillStyle = "#1E2A4A"; g.fillRect(0, 0, W, 210);
       g.fillStyle = "#CDEDE7"; g.font = "700 24px " + F; g.fillText(brandLabel("운동 카드", "운동 카드"), PAD, 64); drawBrandLogo(g, W - PAD, 92, 220, 80);
       g.fillStyle = "#FFFFFF"; g.font = "800 52px " + F; g.fillText(m.name + " 님", PAD, 128);
-      g.fillStyle = "#E3F3F0"; g.font = "500 26px " + F; g.fillText(title.length > 34 ? title.slice(0, 33) + "…" : title, PAD, 176);
+      g.fillStyle = "#E6E9F1"; g.font = "500 26px " + F; g.fillText(title.length > 34 ? title.slice(0, 33) + "…" : title, PAD, 176);
       g.textAlign = "right"; g.fillText(fmtDate(Date.now()).slice(0, 10), W - PAD, 64); g.textAlign = "left";
       var y = 250;
       blocks.forEach(function(b, i){
         var h = 90 + b.lines.length * 38;
         g.fillStyle = "#FFFFFF"; rr(g, PAD, y, W - PAD * 2, h, 22); g.fill();
-        g.fillStyle = "#0B7A6B"; g.beginPath(); g.arc(PAD + 50, y + 50, 26, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#1E2A4A"; g.beginPath(); g.arc(PAD + 50, y + 50, 26, 0, Math.PI * 2); g.fill();
         g.fillStyle = "#FFFFFF"; g.font = "800 28px " + F; g.textAlign = "center"; g.fillText(String(i + 1), PAD + 50, y + 60); g.textAlign = "left";
         g.fillStyle = "#0F1A33"; g.font = "800 32px " + F; g.fillText(b.e.name, PAD + 96, y + 52);
-        g.fillStyle = "#0B7A6B"; g.font = "700 26px " + F; g.textAlign = "right"; g.fillText(b.e.dose, W - PAD - 28, y + 52); g.textAlign = "left";
+        g.fillStyle = "#1E2A4A"; g.font = "700 26px " + F; g.textAlign = "right"; g.fillText(b.e.dose, W - PAD - 28, y + 52); g.textAlign = "left";
         g.fillStyle = "#4A5A7A"; g.font = "500 26px " + F;
         b.lines.forEach(function(l, k){ g.fillText(l, PAD + 96, y + 96 + k * 38); });
         y += h + 20;
@@ -12844,7 +12844,7 @@
       g.fillStyle = "#6A7488"; g.font = "500 21px " + F;
       g.fillText("통증이 있거나 불편하면 중단하고 담당 강사와 상의하세요.", PAD, H - 36 - (brandContact() ? 34 : 0));
       if(brandContact()){ g.fillStyle = "#0F1A33"; g.font = "700 22px " + F; g.fillText(brandContact(), PAD, H - 36); }
-      g.textAlign = "right"; g.fillStyle = "#0B7A6B"; g.font = "700 21px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 36);
+      g.textAlign = "right"; g.fillStyle = "#1E2A4A"; g.font = "700 21px " + F; g.fillText("made by AYOAJEYO", W - PAD, H - 36);
       deliverCanvas(c, "AYO_exercise_" + m.name.replace(/[^a-zA-Z0-9가-힣_-]/g, "") + "_" + toDateInput(Date.now()).replace(/-/g, "") + ".jpg");
     });
   });

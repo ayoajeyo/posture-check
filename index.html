@@ -10099,7 +10099,7 @@
           '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-scol="' + mv.k + '">' + CAM_IC + '측정</button>' +
           (r ? '<button type="button" class="btn line sm" data-scolcmp="' + mv.k + '">' + (isPro() ? "📊 이전 회차 비교" : "🔒 이전 회차 비교") + ' <small>' + H.length + '회</small></button>' : '') + '</div></div>';
       }).join("");
-      $("scolGrid").querySelectorAll("[data-scol]").forEach(function(b){ b.addEventListener("click", function(){ openScolSheet(b.getAttribute("data-scol")); }); });
+      $("scolGrid").querySelectorAll("[data-scol]").forEach(function(b){ b.addEventListener("click", function(){ openScolSheet(b.getAttribute("data-scol")); romDirectShot(); }); });   // v254 바로 촬영 화면
       $("scolGrid").querySelectorAll("[data-scolcmp]").forEach(function(b){ b.addEventListener("click", function(){ openScolCompare(b.getAttribute("data-scolcmp")); }); });
     });
   }
@@ -10123,6 +10123,10 @@
   }
   $("btnScolPick").addEventListener("click", function(){ $("btnMbPick").click(); });
   /* ===================== v147 거북목 탭 (두개척추각 CVA) ===================== */
+  /* v254 거북목·척추 균형: [측정]을 누르면 측정 팝업을 거치지 않고 바로 촬영 화면
+     (촬영 없이 취소·뒤로가기 하면 팝업도 함께 닫아 원래 화면으로) */
+  function romDirectShot(){ if($("romSheet").hidden) return; romCam.direct = true; $("btnRomShot").click(); }
+  function romCamAbort(){ var d = romCam.direct; romCam.direct = false; romCamStop(); if(d && !romS.img) $("btnRomClose").click(); }
   function openFhpSheet(mk){
     if(rom.joint !== "scol" && rom.joint !== "fhp") scolPrevJoint = rom.joint;
     rom.joint = "fhp"; openRomSheet(mk);
@@ -10148,7 +10152,7 @@
           '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-fhp="' + mv.k + '">' + CAM_IC + '측정</button>' +
           (r ? '<button type="button" class="btn line sm" data-fhpcmp="' + mv.k + '">' + (isPro() ? "📊 이전 회차 비교" : "🔒 이전 회차 비교") + ' <small>' + H.length + '회</small></button>' : '') + '</div></div>';
       }).join("");
-      $("fhpGrid").querySelectorAll("[data-fhp]").forEach(function(b){ b.addEventListener("click", function(){ openFhpSheet(b.getAttribute("data-fhp")); }); });
+      $("fhpGrid").querySelectorAll("[data-fhp]").forEach(function(b){ b.addEventListener("click", function(){ openFhpSheet(b.getAttribute("data-fhp")); romDirectShot(); }); });   // v254 바로 촬영 화면
       $("fhpGrid").querySelectorAll("[data-fhpcmp]").forEach(function(b){ b.addEventListener("click", function(){ openFhpCompare(b.getAttribute("data-fhpcmp")); }); });
     });
   }
@@ -11159,7 +11163,7 @@
     var photoP = romPhoto(track, vw, vh, fit);
     $("romBusy").hidden = false;
     photoP.then(function(pc){
-      romCam.snapping = false;
+      romCam.snapping = false; romCam.direct = false;
       romCamStop();
       var c = pc || frame;
       var im = new Image();
@@ -11231,7 +11235,7 @@
     romSnap();
   });
   $("btnRomTimer").addEventListener("click", function(){ timerNext(); timerBtnSync($("btnRomTimer"), romCam.facing === "user"); timerBtnSync($("btnTimer"), state.facingMode === "user"); });
-  $("btnRomCamCancel").addEventListener("click", romCamStop);
+  $("btnRomCamCancel").addEventListener("click", function(){ romCamAbort(); });
   $("btnRomFlip").addEventListener("click", function(){ romCdStop(); romCam.facing = romCam.facing === "environment" ? "user" : "environment"; romCamStart(); });
   $("btnRomClose").addEventListener("click", romCamStop);
   ["romShotIn", "romFileIn"].forEach(function(id){ $(id).addEventListener("change", function(){ romS.liveL = null; romS.roll = null; }); });
@@ -11296,7 +11300,7 @@
   function bodyCamOn(){ return state.phase === "live" || $("capture-card").classList.contains("cam-full"); }
   function handleBack(){
     // v242 촬영 화면(카메라)에서 뒤로가기 = 촬영 바로 전 화면으로만 (다른 측정 화면·앱 종료로 가지 않게)
-    if(typeof romCam !== "undefined" && romCam.on){ romCamStop(); return true; }   // ROM 카메라 켜져 있으면 카메라만 끄기
+    if(typeof romCam !== "undefined" && romCam.on){ romCamAbort(); return true; }   // ROM 카메라 켜져 있으면 카메라만 끄기 (v254 바로 촬영으로 열었으면 팝업도 닫기)
     var ov = topOverlay();
     if(ov){ closeOverlay(ov); return true; }
     if(bodyCamOn()){ try{ if(typeof shootCdStop === "function") shootCdStop(); }catch(e){} btnCancelShoot.click(); return true; }
@@ -11351,7 +11355,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v253";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v254";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

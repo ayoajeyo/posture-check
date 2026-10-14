@@ -2208,10 +2208,10 @@
           <input type="file" id="stLogoFile" accept="image/*" hidden>
         </div>
       </div>
-      <label>센터명<input id="stName" type="text" maxlength="24" placeholder="예: 바른자세 필라테스 서면점"></label>
-      <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 051-000-0000 · @barun_pilates"></label>
+      <label>센터명<input id="stName" type="text" maxlength="24" placeholder="예: 아요 필라테스"></label>
+      <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 070-5220-0919 · aesonge26@gmail.com"></label>
       <!-- v185 리포트 공유 링크를 받은 회원 화면에 [전화하기] [예약하기] 버튼으로 표시 -->
-      <label>전화번호 (선택) · 공유 링크의 [전화하기]<input id="stPhone" type="tel" inputmode="tel" maxlength="20" placeholder="예: 051-000-0000"></label>
+      <label>전화번호 (선택) · 공유 링크의 [전화하기]<input id="stPhone" type="tel" inputmode="tel" maxlength="20" placeholder="예: 010-0000-0000"></label>
       <label>예약 링크 (선택) · 공유 링크의 [예약하기]<input id="stBook" type="url" inputmode="url" maxlength="300" placeholder="예: 네이버 예약·카카오톡 채널 주소"></label>
       <label class="chk"><input id="stApply" type="checkbox" checked>결과 이미지에 센터명·로고 표시</label>
     </section>
@@ -11216,7 +11216,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v247";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v248";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

@@ -1289,6 +1289,7 @@
   .rp-two img{display:block; width:100%; aspect-ratio:1/1; object-fit:cover;}
   .rp-two figcaption{font-size:12px; font-weight:700; padding:6px 8px; color:#E8EEF7;}
   .rp-two figure:active{transform:translateY(1px);}
+  .rp-two figure.rp-body{cursor:default; background:#FFFFFF; border:1px solid var(--line);} .rp-two figure.rp-body img{object-fit:contain; background:#FFFFFF;} .rp-two figure.rp-body figcaption{background:#0B1222;}
   .rom-manual{display:flex; align-items:center; gap:8px; margin:8px 0 0; background:var(--surface-2); border-radius:12px; padding:8px 12px;}
   .rom-manual label{font-size:13px; font-weight:800; color:var(--ink-soft); margin-right:auto;}
   .rom-manual input{width:90px; font-family:var(--font-num); font-size:20px; font-weight:700; text-align:right; border:1px solid var(--line); border-radius:10px; padding:6px 10px; background:var(--surface); color:var(--ink);}
@@ -2073,7 +2074,7 @@
     </div>
 
     <section class="card rep-pair" id="repPair" hidden>
-      <h2>ROM·척추 균형 전후 비교 <small>회차 선택</small></h2>
+      <h2>회차별 비교 <small>회차 선택</small></h2>
       <div class="rp-sel">
         <div class="rp-ab"><label>전<select id="rpA"></select></label><label>후<select id="rpB"></select></label></div>
       </div>
@@ -6055,7 +6056,7 @@
     // 3) 전후 비교 — 모든 항목 (화면과 동일)
     var rows = (repPair.rows && repPair.rowsMid === (state.member ? state.member.id : null)) ? repPair.rows : (repPairOk() ? [{ title: repPair.title, cvA: repPair.cvA, cvB: repPair.cvB, labA: repPair.labA, labB: repPair.labB, delta: repPair.delta, t: repPair.t }] : []);
     if(rows.length){
-      secTitle("ROM · 척추 균형 전후 비교", repPair.ra && repPair.rb ? repPair.ra + "차 → " + repPair.rb + "차" : "");
+      secTitle("회차별 비교", repPair.ra && repPair.rb ? repPair.ra + "차 → " + repPair.rb + "차" : "");
       var gap2 = 24, iw2 = (cw - 72 - gap2) / 2;
       rows.forEach(function(p){
         var sc = Math.min(iw2 / p.cvA.width, iw2 / p.cvB.width, 620 / Math.max(p.cvA.height, p.cvB.height)), ih = Math.max(p.cvA.height, p.cvB.height) * sc, H = 100 + ih + 60;
@@ -6301,7 +6302,7 @@
       // v201 전후 비교 · v207 항목별 측정 사진은 이때 한 장씩 준비 (오래 걸리면 진행 상황 안내)
       var shown = false, t0 = Date.now();
       var step = function(lab){ return function(k, n){ if(n > 2 && (shown || Date.now() - t0 > 600)){ shown = true; toast("리포트 이미지 준비 중… " + lab + " " + k + "/" + n); } }; };
-      var pairs = (typeof repPairAll === "function" && repPair.todo && repPair.todo.list.length) ? repPairAll(step("전후 비교")) : Promise.resolve();
+      var pairs = (typeof repPairAll === "function" && repPair.todo && (repPair.todo.list.length || (repPair.bodyRows || []).length)) ? repPairAll(step("회차별 비교")) : Promise.resolve();
       pairs.then(null, function(){}).then(function(){ return repCardsAll(step("측정 사진")); }).then(function(l){ cards = l || []; }, function(){}).then(build);
     };
     if(typeof romLoad === "function") romLoad().then(go, go); else go();
@@ -9254,7 +9255,7 @@
     var W = img.naturalWidth || img.width, H = img.naturalHeight || img.height, mw = m.w, mh = m.h, n = mw * mh, i, x, y, k;
     var a = new Float32Array(n);
     for(i = 0; i < n; i++){ var v = m.data[i]; a[i] = v < 0.12 ? 0 : v > 0.4 ? 1 : (v - 0.12) / 0.28; }
-    var r = Math.max(1, Math.round(Math.max(mw, mh) * 0.007)), t = new Float32Array(n), b = new Float32Array(n);
+    var r = Math.round(Math.max(mw, mh) * 0.0016), t = new Float32Array(n), b = new Float32Array(n);   // v250 넓히기 0.7% → 약 1칸 (배경이 회색 띠로 남지 않게)
     for(y = 0; y < mh; y++) for(x = 0; x < mw; x++){ var mx = 0; for(k = Math.max(0, x - r); k <= Math.min(mw - 1, x + r); k++) if(a[y * mw + k] > mx) mx = a[y * mw + k]; t[y * mw + x] = mx; }
     for(y = 0; y < mh; y++) for(x = 0; x < mw; x++){ var my = 0; for(k = Math.max(0, y - r); k <= Math.min(mh - 1, y + r); k++) if(t[k * mw + x] > my) my = t[k * mw + x]; b[y * mw + x] = my; }
     var mc = document.createElement("canvas"); mc.width = mw; mc.height = mh;
@@ -9367,7 +9368,7 @@
     var Bn = null;
     if(pm){
       var B0 = new Uint8Array(n); for(y = 0; y < h; y++) for(x = 0; x < w; x++) if(at(base, x, y) >= 0.3) B0[y * w + x] = 1;
-      var rd = Math.max(2, Math.round(Math.max(w, h) * 0.012)), T1 = new Uint8Array(n); Bn = new Uint8Array(n);
+      var rd = Math.max(1, Math.round(Math.max(w, h) * 0.003)), T1 = new Uint8Array(n); Bn = new Uint8Array(n);   // v250 1.2% → 0.3% (사람 윤곽 밖 회색 띠 방지)
       for(y = 0; y < h; y++){ var run = -1e9; for(x = 0; x < w; x++){ if(B0[y * w + x]) run = x; if(x - run <= rd) T1[y * w + x] = 1; } run = 1e9; for(x = w - 1; x >= 0; x--){ if(B0[y * w + x]) run = x; if(run - x <= rd) T1[y * w + x] = 1; } }
       for(x = 0; x < w; x++){ var rn = -1e9; for(y = 0; y < h; y++){ if(T1[y * w + x]) rn = y; if(y - rn <= rd) Bn[y * w + x] = 1; } rn = 1e9; for(y = h - 1; y >= 0; y--){ if(T1[y * w + x]) rn = y; if(rn - y <= rd) Bn[y * w + x] = 1; } }
     }
@@ -9855,9 +9856,31 @@
     (rom.all || []).forEach(function(r){ var n = romRoundOf(r); if(n) rs[n] = 1; });
     return Object.keys(rs).map(Number).sort(function(a, b){ return a - b; });
   }
-  function renderRepPair(){
+  // v250 체형(정면·측면) 기록도 회차별 비교에 포함 — 회원의 체형 기록을 읽어 두고 바뀌었을 때만 다시 그림
+  function repPairBodyLoad(){
+    var mid = state.member ? state.member.id : null;
+    if(!mid){ repPair.body = []; repPair.bodySig = ""; return; }
+    dbAll("records").then(function(all){
+      if(!state.member || state.member.id !== mid) return;
+      var L = (all || []).filter(function(r){ return r.memberId === mid; });
+      var sig = mid + "|" + L.map(function(r){ return r.id + ":" + (r.editedAt || r.at) + ":" + (r.rf || "") + ":" + (r.rs || ""); }).join(",");
+      if(sig === repPair.bodySig) return;
+      repPair.body = L; repPair.bodySig = sig; renderRepPair(true);
+    }, function(){});
+  }
+  function repPairBodyAt(n, m){   // n차 체형 기록(정면 m="front" · 측면 m="side") 중 사진이 있는 가장 최근 것
+    var BR = repPair.body || [], PR = poseRounds(BR), best = null;
+    BR.forEach(function(r){ var q = PR[r.id]; if(q && q[m === "front" ? "f" : "s"] === n && r.thumbs && r.thumbs[m] && (!best || r.at > best.at)) best = r; });
+    return best;
+  }
+  function renderRepPair(fromBody){
     var box = $("repPair"); if(!box) return;
+    if(!fromBody) repPairBodyLoad();
+    if(!state.member || (repPair.bodySig && repPair.bodySig.split("|")[0] !== state.member.id)){ repPair.body = []; if(!state.member) repPair.bodySig = ""; }
     var rounds = repPairRounds(), G = repPairGroups();
+    (function(){ var BR = repPair.body || [], PR = poseRounds(BR), u = {}; rounds.forEach(function(n){ u[n] = 1; });
+      BR.forEach(function(r){ var q = PR[r.id]; if(!q || !r.thumbs) return; if(q.f && r.thumbs.front) u[q.f] = 1; if(q.s && r.thumbs.side) u[q.s] = 1; });
+      rounds = Object.keys(u).map(Number).filter(function(n){ return n > 0; }).sort(function(a, b){ return a - b; }); })();
     box.hidden = rounds.length < 2;
     if(rounds.length < 2){ repPair.cvA = repPair.cvB = null; repPair.tag = null; return; }
     if(rounds.indexOf(repPair.ra) < 0) repPair.ra = rounds[0];
@@ -9868,17 +9891,26 @@
     var MA = pick(repPair.ra), MB = pick(repPair.rb), rows = [];
     G.forEach(function(g){ var a = MA[g.key], b = MB[g.key]; if(a && b && a.value != null && b.value != null) rows.push({ g: g, a: a, b: b }); });
     var dTxt = function(x){ var d = x.b.value - x.a.value, tr = trendOf(x.g.mv, x.a.value, x.b.value); return { d: d, t: tr.t, s: d === 0 ? "변화 없음" : (d > 0 ? "+" : "") + d + "° (" + tr.lab + ")" }; };
-    $("rpList").innerHTML = rows.length ? rows.map(function(x){
-      var dt = dTxt(x), fig = function(r, n){ return '<figure data-rshot="' + esc(r.id) + '">' + (r.thumb ? '<img src="' + safeSrc(r.thumb) + '" alt="" loading="lazy">' : '<span class="ph" data-need="' + esc(r.id) + '">사진 불러오는 중…</span>') + '<figcaption>' + n + '차 · ' + r.value + '°</figcaption></figure>'; };
+    var bodyRows = [["front", "체형 정면"], ["side", "체형 측면"]].map(function(v){ var a = repPairBodyAt(repPair.ra, v[0]), b = repPairBodyAt(repPair.rb, v[0]); return (a && b) ? { m: v[0], label: v[1], a: a, b: b } : null; }).filter(Boolean);
+    var bodyHtml = bodyRows.map(function(x){
+      var fig = function(r, n){ return '<figure class="rp-body"><img src="' + safeSrc(r.thumbs[x.m]) + '" alt="" loading="lazy"><figcaption>' + n + '차 · ' + fmtDate(r.at).slice(0, 10) + '</figcaption></figure>'; };
+      var ds = (x.a.score != null && x.b.score != null) ? x.b.score - x.a.score : null;
+      return '<div class="rp-row"><div class="rp-h"><b>' + x.label + '</b>' + (ds != null ? '<span class="rp-d ' + (ds > 0 ? "up" : ds < 0 ? "down" : "") + '">종합 ' + (ds > 0 ? "+" + ds + "점" : ds < 0 ? ds + "점" : "변화 없음") + '</span>' : '') + '</div>' +
+        '<div class="rp-two">' + fig(x.a, repPair.ra) + fig(x.b, repPair.rb) + '</div></div>';
+    }).join("");
+    $("rpList").innerHTML = (rows.length || bodyRows.length) ? bodyHtml + rows.map(function(x){
+      // v250 사진은 원본에서 다시 그림 (예전 저장본의 회색 테두리 없이) · 다 그릴 때까지는 저장된 미리보기
+      var dt = dTxt(x), fig = function(r, n){ var fresh = !!(r.img || r.blob); return '<figure data-rshot="' + esc(r.id) + '">' + (r.thumb ? '<img src="' + safeSrc(r.thumb) + '" alt="" loading="lazy"' + (fresh ? ' data-need="' + esc(r.id) + '"' : '') + '>' : '<span class="ph" data-need="' + esc(r.id) + '">사진 불러오는 중…</span>') + '<figcaption>' + n + '차 · ' + r.value + '°</figcaption></figure>'; };
       return '<div class="rp-row"><div class="rp-h"><b>' + esc(x.g.label) + '</b><span class="rp-d ' + (dt.t > 0 ? "up" : dt.t < 0 ? "down" : "") + '">' + esc(dt.s) + '</span></div>' +
         '<div class="rp-two">' + fig(x.a, repPair.ra) + fig(x.b, repPair.rb) + '</div></div>';
     }).join("") : '<p class="sub">선택한 두 회차에 같이 측정한 항목이 없어요.</p>';
     $("rpList").querySelectorAll("[data-rshot]").forEach(function(el){
       el.onclick = function(){ var id = el.getAttribute("data-rshot"), rec = (rom.all || []).find(function(r){ return r.id === id; }); if(rec) openRomRecord(rec); };
     });
-    if(rows.length) repShotFill(repRomSrc());   // v202 사진이 없는 기록은 한 장씩 채움
+    if(rows.length) repShotFill(repRomSrc());   // v202 사진이 없는 기록은 한 장씩 채움 (v250 저장된 미리보기도 원본으로 다시)
     // 리포트 이미지에는 맨 위 항목만 (사진 2장 자리)
-    if(!rows.length){ repPair.cvA = repPair.cvB = null; repPair.tag = null; return; }
+    repPair.bodyRows = bodyRows;
+    if(!rows.length){ repPair.cvA = repPair.cvB = null; repPair.tag = (state.member ? state.member.id : "") + "|" + repPair.ra + "|" + repPair.rb + "|body"; repPair.rows = null; repPair.todo = bodyRows.length ? { tag: repPair.tag, mid: state.member ? state.member.id : null, ra: repPair.ra, rb: repPair.rb, list: [] } : null; return; }
     var first = rows[0], ra = first.a, rb = first.b, grp = first.g;
     var dt0 = dTxt(first);
     var labA = repPair.ra + "차 · " + fmtDate(ra.at).slice(0, 10) + " · " + ra.value + "°";
@@ -9899,7 +9931,9 @@
     if(!td || td.tag !== repPair.tag) return Promise.resolve();
     if(repPair.rows && repPair.rowsTag === td.tag) return Promise.resolve();
     var out = [], i = 0;
-    return new Promise(function(res){
+    var loadC = function(src){ return new Promise(function(r){ if(!src){ r(null); return; } var im = new Image(); im.onload = function(){ var c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0); r(c); }; im.onerror = function(){ r(null); }; im.src = src; }); };
+    var bodyP = Promise.all((repPair.bodyRows || []).map(function(x){ return Promise.all([loadC(x.a.thumbs[x.m]), loadC(x.b.thumbs[x.m])]).then(function(cs){ return (cs[0] && cs[1]) ? { title: x.label, cvA: cs[0], cvB: cs[1], labA: td.ra + "차 · " + fmtDate(x.a.at).slice(0, 10), labB: td.rb + "차 · " + fmtDate(x.b.at).slice(0, 10), delta: (x.a.score != null && x.b.score != null) ? "종합 " + (x.b.score - x.a.score > 0 ? "+" + (x.b.score - x.a.score) + "점" : x.b.score - x.a.score < 0 ? (x.b.score - x.a.score) + "점" : "변화 없음") : "", t: (x.a.score != null && x.b.score != null) ? Math.sign(x.b.score - x.a.score) : 0 } : null; }); }));
+    return bodyP.then(function(bl){ bl.forEach(function(b){ if(b) out.push(b); }); }).then(function(){ return new Promise(function(res){
       (function next(){
         if(repPair.tag !== td.tag){ res(); return; }   // 그사이 회원·회차가 바뀜
         if(i >= td.list.length){ repPair.rows = out; repPair.rowsMid = td.mid; repPair.rowsTag = td.tag; res(); return; }
@@ -9911,7 +9945,7 @@
           });
         }).catch(function(e){ console.warn("[repPairAll]", e); }).then(function(){ setTimeout(next, 30); });
       })();
-    });
+    }); });
   }
   $("rpA").addEventListener("change", function(){ repPair.ra = +this.value; renderRepPair(); });
   $("rpB").addEventListener("change", function(){ repPair.rb = +this.value; renderRepPair(); });
@@ -9920,7 +9954,7 @@
     if(!repPairOk()) return 0;
     var gap = 24, iw = (w - 72 - gap) / 2, sc = Math.min(iw / repPair.cvA.width, iw / repPair.cvB.width), ih = Math.max(repPair.cvA.height, repPair.cvB.height) * sc, H = 110 + ih + 60;
     g.fillStyle = "#FFFFFF"; rr(g, x, y, w, H, 24); g.fill();
-    g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("전후 비교 · " + repPair.title, x + 36, y + 56);
+    g.fillStyle = "#5B6875"; g.font = "700 26px " + F; g.fillText("회차별 비교 · " + repPair.title, x + 36, y + 56);
     g.fillStyle = !repPair.t ? "#17212B" : repPair.t > 0 ? "#16794A" : "#C03A2B"; g.font = "800 28px " + F; g.textAlign = "right"; g.fillText(repPair.delta, x + w - 36, y + 56); g.textAlign = "left";
     [[repPair.cvA, repPair.labA], [repPair.cvB, repPair.labB]].forEach(function(p, i){
       var ix = x + 36 + i * (iw + gap), dw = p[0].width * sc, dh = p[0].height * sc;
@@ -10274,7 +10308,7 @@
   /* ---- v66 리포트에 ROM 결과 ---- */
   // v202 사진(thumb)이 없는 기록은 측정 사진을 한 장씩 차례로 그려 넣음 (한꺼번에 그리면 폰이 멈춤)
   var repShotSeq = 0;
-  function noPic(el){ var f = el.closest && el.closest(".rep-mfig"); if(f) f.remove(); else el.textContent = "사진 없음"; }   // v210 사진 없는 측정 카드는 숨김
+  function noPic(el){ if(el.tagName === "IMG") return; var f = el.closest && el.closest(".rep-mfig"); if(f) f.remove(); else el.textContent = "사진 없음"; }   // v250 저장된 미리보기는 그대로 둠   // v210 사진 없는 측정 카드는 숨김
   function repShotFill(RS){
     var my = ++repShotSeq, els = [].slice.call(document.querySelectorAll("#repRomShots [data-need], #repScolShots [data-need], #rpList [data-need]")), pool = (RS.all || []).concat(rom.all || []);
     (function next(){
@@ -11216,7 +11250,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v249";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v250";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

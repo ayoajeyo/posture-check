@@ -1,10 +1,10 @@
-# ADR (설계 결정 기록): {프로젝트명}
+# ADR (설계 결정 기록): 아요바디요
 
 > "**왜** 그렇게 정했나"를 남긴다. 나중에 "이걸 왜 이렇게 했지?" 할 때 다시 논의하지 않기 위해서다.
 > 한 번 정한 것은 바꾸지 않는 게 아니라, **바꿀 때 새 ADR을 추가**하고 옛것에 "대체됨"을 적는다.
 
 ## 철학
-{한 줄. 기본: 작게 만들어 빨리 써 보고 고친다. 외부 의존성은 최소. 사용자의 개인정보는 기본값부터 보호.}
+작게 만들어 빨리 써 보고 고친다. 외부 의존성은 최소. 사용자의 개인정보는 기본값부터 보호.
 
 ---
 
@@ -49,11 +49,60 @@
 
 ## 이 프로젝트의 ADR
 
-### ADR-001: {결정 제목 — 예: 회원 데이터 서버 동기화 도입}
-**상태**: {제안 / 채택 / 대체됨(→ ADR-00N)}
-**배경**: {어떤 문제가 있었나}
-**결정**: {뭘 선택했는지}
-**이유**: {왜}
-**대안**: {고려했지만 안 고른 것과 그 이유}
-**트레이드오프**: {포기한 것}
-**영향받는 파일**: {예: js/store.js, docs/DATA.md}
+> 아래는 `/adopt`(2026-10-15) 때 코드에서 확인한 **기존 결정**이다. 근거는 코드·주석이고, "이유" 중 추측이 섞인 것은 `{확인 필요}` 로 남겼다.
+
+### ADR-001: 앱 전체를 index.html 한 파일에 둔다
+**상태**: 채택됨(기존) — 공통 ADR-000-1 의 `js/` 분리 구조와 다름
+**결정**: CSS·JS 를 모두 index.html 에 인라인(약 14,400줄). 로컬 `<script src>` 없음.
+**이유**: {확인 필요: 한 파일 업로드로 배포하려는 의도였는지}
+**트레이드오프**: 계산 로직 자동 테스트 불가, 파일이 커서 수정 위험이 큼. 분리는 BACKLOG "다음".
+**영향받는 파일**: index.html
+
+### ADR-002: 자세 인식은 MediaPipe Pose (브라우저 안에서)
+**상태**: 채택됨(기존)
+**결정**: `@mediapipe/tasks-vision@0.10.14` + pose_landmarker(full/lite/heavy). 자동 점 → 손으로 수정.
+**이유**: 사진을 서버로 보내지 않고 폰 안에서 인식. 모델은 서비스워커 ASSETS 캐시로 오프라인 재사용(약 25MB).
+**영향받는 파일**: index.html, sw.js
+
+### ADR-003: 서버는 Supabase — 기기 저장 구조를 그대로 `ayo_items` 한 표로 동기화
+**상태**: 채택됨(기존)
+**결정**: IndexedDB store 이름·id 를 그대로 `ayo_items(store, id, data jsonb, deleted)` 에 올린다. 삭제는 `deleted=true` 표시로 다른 기기에 전달. 사진은 비공개 버킷 `photos/{uid}/…`.
+**이유**: 기기 우선 구조(ADR-000-3)를 유지하면서 여러 기기 사용. RLS 로 본인 데이터만.
+**트레이드오프**: 삭제된 기록의 id 행이 서버에 남는다.
+**영향받는 파일**: index.html(sync*), supabase/schema.sql
+
+### ADR-004: 사진은 기록에서 분리 저장 (v156 "사진 저장 방식 2")
+**상태**: 채택됨(기존) — 공통 ADR-000-4 와 일부 다름
+**결정**: 체형 사진 긴 변 1600px·JPEG 0.86, ROM 1440px·0.86. 무거운 필드는 IndexedDB `blobs`, 서버는 WebP 0.85 파일 + 작은 JSON. 썸네일(300/400px)은 기록 본문에 둔다.
+**영향받는 파일**: index.html(dbPut/HEAVY, blobPut*), schema.sql 4)
+
+### ADR-005: 로그인 = 이메일 + 구글·카카오(OAuth) + 네이버(Edge Function)
+**상태**: 채택됨(기존)
+**결정**: 네이버는 Supabase 기본 지원이 없어 `naver-auth` 함수가 토큰 교환 후 magiclink 토큰을 돌려준다. 다른 방법으로 이미 인증된 계정엔 자동 연결하지 않는다(v150).
+**영향받는 파일**: supabase/functions/naver-auth
+
+### ADR-006: 수익 = 30일 체험 → Google Play 월 구독, 서버 검증
+**상태**: 채택됨(기존)
+**결정**: Digital Goods API 로 `ayo_pro_monthly` 구매 → `play-verify` 가 Google 에 확인·acknowledge → `ayo_subs`. 구독 1개 = 계정 1개. 별도로 오프라인 이용 코드(ECDSA 서명, `license-pub.json`).
+**영향받는 파일**: index.html, supabase/functions/play-verify, license-pub.json
+
+### ADR-007: 패키지 이름 `com.physiomaster.posture` 고정
+**상태**: 채택됨(기존) — **변경 금지**
+**이유**: Play 스토어 앱 식별자. 바꾸면 새 앱이 되고 기존 설치·구독·`play-verify` 검증이 모두 끊긴다.
+**영향받는 파일**: index.html(PLAY_PKG, Play 링크), play-verify/index.ts
+
+### ADR-008: 리포트 공유는 비공개 이미지 + 서버 함수 경유 링크 (v185)
+**상태**: 채택됨(기존)
+**결정**: 리포트 JPEG 를 비공개 `shares` 버킷에 두고, r.html 이 `share-view` 로 10분짜리 서명 주소를 받는다. 링크 기간 최대 100일, 중지 즉시 차단.
+**영향받는 파일**: supabase/v185_share.sql, share-view, r.html
+
+### ADR-009: PDF 는 라이브러리 없이 직접 생성
+**상태**: 채택됨(기존)
+**결정**: 캔버스로 A4 쪽을 그린 뒤 `pagesToPdf()` 가 PDF 를 만든다(`window.print` 안 씀).
+**이유**: {확인 필요: 안드로이드 TWA 에서 인쇄 대화상자가 안 되기 때문인지}
+
+### ADR-010: Supabase 일시정지 방지 keepalive
+**상태**: 채택됨(기존)
+**결정**: GitHub Actions 가 매일 공개 키로 가벼운 조회(RLS 로 빈 결과).
+**이유**: 무료 플랜 7일 미접속 시 일시정지.
+**영향받는 파일**: .github/workflows/keepalive.yml

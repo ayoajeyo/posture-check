@@ -1,6 +1,6 @@
-# 프로젝트: {프로젝트명}
+# 프로젝트: 아요바디요 (체형·ROM·척추 균형 측정)
 
-> 빈칸 `{ }`은 `/start` 명령으로 대화하며 채운다. "AYOAJEYO 공통 규칙"은 모든 프로젝트에 그대로 쓴다.
+> `/adopt` 로 기존 코드에서 역으로 채웠다(2026-10-15). `{확인 필요}` 는 사용자 답을 받아 채운다.
 
 ## AYOAJEYO 공통 규칙 (수정하지 않음)
 
@@ -34,13 +34,17 @@
 - 요청하지 않은 기능은 만들지 않고 `docs/BACKLOG.md` 에 적는다.
 
 ## 기술 스택
-- {화면 (기본: HTML + CSS + 순수 JavaScript — `mobile-webapp` 스킬 참고)}
-- {배포 (기본: GitHub Pages)}
-- {서버·DB (기본: 필요할 때만 Supabase / 없으면 "없음")}
+- 화면: HTML + CSS + 순수 JavaScript, 빌드 없음. **앱 전체가 `index.html` 한 파일(약 14,400줄)** 안에 들어 있다 (`js/` 폴더 없음).
+- 자세 인식: MediaPipe `@mediapipe/tasks-vision@0.10.14` (jsDelivr) + pose_landmarker 모델 (storage.googleapis.com)
+- 배포: GitHub Pages (https://ayoajeyo.github.io/posture-check/) + 안드로이드 앱(TWA) 패키지 `com.physiomaster.posture`
+- 서버·DB: Supabase (프로젝트 `ayobodyyo`) — 로그인(이메일·구글·카카오·네이버), DB `ayo_*` 표, 비공개 버킷 `photos`·`shares`, Edge Function 4개 (`supabase/functions/`)
+- 결제: Google Play 월 구독 `ayo_pro_monthly` (Digital Goods API) + 오프라인 이용 코드(ECDSA, `license-pub.json`)
 
 ## 이 프로젝트만의 규칙
-- CRITICAL: {절대 지켜야 할 규칙 (예: 측정 원본 사진은 기기 밖으로 보내지 않는다)}
-- {일반 규칙 (예: 계산 로직은 js/logic/ 폴더에 분리)}
+- CRITICAL: 안드로이드 패키지 이름 `com.physiomaster.posture` 는 **절대 바꾸지 않는다** (바꾸면 Play 스토어에서 다른 앱이 되고 구독이 끊긴다). 쓰이는 곳: `index.html`(PLAY_PKG·Play 링크), `supabase/functions/play-verify/index.ts`.
+- CRITICAL: 기기 저장소 이름 `ayo-posture`(IndexedDB) 와 store 이름(members·records·roms…), Supabase `ayo_items.store` 값은 바꾸지 않는다 — 바꾸면 기존 회원 데이터가 안 보인다.
+- 앱 버전은 `index.html` 의 `APP_VER = "v262"` 형식(정수 증가). 서비스워커 `sw.js` 의 `VERSION = "pma-v211"` 은 별도 카운터로 배포마다 +1 한다.
+- 코드 주석에도 실제 회원 이름을 쓰지 않는다 (index.html 은 공개 저장소에 그대로 올라간다).
 
 ## 개발 프로세스
 - 계산·변환처럼 결과가 정해진 로직은 `js/logic/` 에 두고 테스트를 먼저 작성한다 (TDD, `docs/TESTING.md`).
@@ -48,7 +52,7 @@
 - 버전은 네 곳(APP_VERSION · manifest · sw.js CACHE_VERSION · CHANGELOG)을 `/ship` 이 함께 올린다.
 
 ## 명령어
-{프로젝트에 맞게 채움. 예:
-- 미리보기: index.html을 브라우저로 열기 (또는 `python -m http.server 8000` 후 http://localhost:8000)
-- 테스트: `npm test`
-- 배포: `/ship`}
+- 미리보기: `python -m http.server 8000` 후 http://localhost:8000 (카메라·서비스워커 때문에 파일 더블클릭보다 서버로 연다. 로그인·공유는 Edge Function CORS 가 실제 주소만 허용해 로컬에선 안 된다)
+- 테스트: 앱 자동 테스트 없음 (`package.json` 없음). 하네스 테스트만 `python -m pytest scripts/`
+- 배포: `/ship` (main 에 push = GitHub Pages 반영)
+- 서버 함수 배포: `supabase functions deploy <이름>` — {확인 필요: 지금 어떻게 배포하는지(CLI/대시보드)}

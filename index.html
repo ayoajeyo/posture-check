@@ -2758,7 +2758,7 @@
 <div class="confirm-overlay" id="admSheet" hidden role="dialog" aria-modal="true" aria-labelledby="admTitle">
   <div class="confirm-box">
     <h3 id="admTitle">관리자 모드</h3>
-    <p class="sub" id="admDesc">관리자 코드를 입력하면 측정을 저장할 때 점의 좌표(사진 픽셀 기준)가 엑셀 기록에 자동으로 남아요.</p>
+    <p class="sub" id="admDesc">관리자 코드를 입력하면 측정을 저장할 때 점의 위치 숫자(좌표)가 '측정 수정 기록'에 자동으로 남아요.</p>
     <input type="password" class="adm-in" id="admCode" autocomplete="off" autocapitalize="characters" placeholder="관리자 코드">
     <p class="adm-msg" id="admMsg"></p>
     <div class="adm-xls" id="admXls" hidden>
@@ -12143,7 +12143,7 @@
   ["progForm", "assignPick", "csForm", "slForm", "moreSheet"].forEach(overlayClose);
   $("btnMoreClose").addEventListener("click", function(){ $("moreSheet").hidden = true; });
   /* ===================== v99 관리자 모드 =====================
-     관리자 코드(해시로만 보관)로 켜면: 측정 화면의 점마다 사진 픽셀 좌표 표시 + 좌표 목록 패널(복사 가능). 이 기기에만 저장. */
+     관리자 코드(해시로만 보관)로 켜면: 측정을 저장할 때 점 좌표(사진 픽셀)를 이 기기에 보관해 엑셀에 남김. 화면에는 좌표를 띄우지 않음(v266). */
   var ADM_HASH = "662f5bbd3664bd4b2da29497ddc292a201b958b60dc6b8ff830e2f6baf267d2e";
   function admSync(){
     $("admChip").hidden = !ADM.on;
@@ -12158,7 +12158,7 @@
   function admOpen(){
     $("admMsg").textContent = ""; $("admMsg").className = "adm-msg"; $("admCode").value = "";
     $("admCode").hidden = ADM.on;
-    $("admDesc").textContent = ADM.on ? "관리자 모드를 사용 중이에요. 측정을 저장하면 점의 좌표가 아래 엑셀 기록에 자동으로 남아요." : "관리자 코드를 입력하면 측정을 저장할 때 점의 좌표(사진 픽셀 기준)가 엑셀 기록에 자동으로 남아요.";
+    $("admDesc").textContent = ADM.on ? "관리자 모드를 사용 중이에요. 측정을 저장하면 점의 위치 숫자(좌표)가 아래 '측정 수정 기록'에 자동으로 남아요." : "관리자 코드를 입력하면 측정을 저장할 때 점의 위치 숫자(좌표)가 '측정 수정 기록'에 자동으로 남아요.";
     $("btnAdmGo").textContent = ADM.on ? "관리자 모드 끄기" : "확인";
     $("admXls").hidden = !ADM.on; $("admBench").hidden = !ADM.on; if(ADM.on) admxInfo();
     $("admSheet").hidden = false;

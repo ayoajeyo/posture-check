@@ -1,0 +1,15 @@
+
+# harness
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.jks
+*.keystore
+*.aab
+*.apk
+.mcp.json
+phases/**/step*-output.json
+__pycache__/
+.pytest_cache/

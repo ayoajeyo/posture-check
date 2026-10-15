@@ -1,0 +1,10 @@
+{
+  "_설명": "Claude Code 가 외부 서비스를 직접 다루게 하는 설정. 쓰려면 .mcp.json 으로 복사하고 토큰을 채운다. .mcp.json 은 커밋하지 않는다.",
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase@latest", "--read-only", "--project-ref=<프로젝트 ref>"],
+      "env": { "SUPABASE_ACCESS_TOKEN": "<개인 액세스 토큰>" }
+    }
+  }
+}

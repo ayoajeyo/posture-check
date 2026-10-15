@@ -1121,8 +1121,8 @@
   .rom-gd-btn{display:block; width:100%; margin:-2px 0 10px; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:transparent; color:var(--ink); font:inherit; font-size:13.5px; font-weight:700; cursor:pointer;}
   .rom-gd-btn[hidden]{display:none;}
   .pg-pics.one{grid-template-columns:1fr;}
-  .pg-side{display:flex; gap:6px; margin:4px 0 8px;}
-  .pg-side button{flex:1; padding:8px; border-radius:10px; border:1px solid var(--line); background:transparent; color:var(--ink-soft); font:inherit; font-size:13px; font-weight:700; cursor:pointer;}
+  .pg-side{display:flex; gap:8px; margin:4px 0 8px;}
+  .pg-side button{flex:1; min-height:44px; padding:12px 8px; border-radius:10px; border:1px solid var(--line); background:transparent; color:var(--ink-soft); font:inherit; font-size:13px; font-weight:700; cursor:pointer;}
   .pg-side button[aria-pressed="true"]{background:var(--navy); color:var(--navy-ink); border-color:var(--navy);}
   .pg-warn{margin:10px 0 0; padding:10px 12px; border-radius:10px; background:var(--surface-2); font-size:12.5px; line-height:1.6;}
   .pg-warn b{color:var(--crit);}
@@ -13531,7 +13531,7 @@
     }
     $("ptGuideBody").innerHTML =
       '<div class="pg-pose"><b>측정 자세</b> · ' + mv.guide + '</div>' +
-      (lr ? '<div class="pg-side"><button type="button" data-gs="L" aria-pressed="' + (romGdSide === "L") + '">좌측 예시</button><button type="button" data-gs="R" aria-pressed="' + (romGdSide === "R") + '">우측 예시</button></div>' : '') +
+      (lr ? '<div class="pg-side"><button type="button" data-gs="L" aria-pressed="' + (romGdSide === "L") + '">좌측</button><button type="button" data-gs="R" aria-pressed="' + (romGdSide === "R") + '">우측</button></div>' : '') +
       '<div class="pg-pics one"><figure><img src="' + src + '" alt="' + esc(J.n + " " + mv.n) + ' 측정점 예시" loading="lazy"></figure></div>' +
       '<ul class="pg-list">' +
         '<li><i style="background:' + ROM_COL[0] + '"></i><b>축</b><span>' + esc(G.V) + '</span></li>' +

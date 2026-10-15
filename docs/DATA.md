@@ -26,13 +26,14 @@
 | 사진 동의 날짜 | `members.consentAt` | 날짜(처음 체크한 날, 해제 시 지움) | S2 | ayo_items | 회원 삭제 |
 | 동의 서명 | `members.consentSign` | PNG dataURL ≤480×180 | S3 | ayo_items (본 기록에 포함) | 회원 삭제 |
 | 서명 시각 | `members.consentSignAt` | 날짜 | S2 | ayo_items | 회원 삭제 |
+| 공유 링크 목록 | `members.shareIds` | 문자 배열 (ayo_shares.id) — v264 부터 이 회원 리포트로 만든 링크 | S1 | ayo_items | 회원 삭제 시 이 목록의 링크·이미지도 서버에서 삭제 |
 | 체형 기록 | `records.{memberId, at, score, f[], sd[], groups[], height, rf, rs, tg, editedAt}` | 숫자·객체 | S1 | ayo_items | 회원·기록 삭제 |
 | 체형 썸네일 | `records.thumbs.{front,side}` | JPEG 300px q0.72 | S3 | ayo_items (본 기록에 포함) | 같음 |
 | 체형 사진 | `records.photos.{front,side}.img` + 점 좌표 | JPEG 긴 변 1600px q0.86 → `blobs` 로 분리 | S3 | Storage photos (WebP) | 같음 |
 | ROM 기록 | `roms.{memberId, at, joint, side, move, value, normal, pct, ref, pts[], roll, …}` | 숫자 | S1 | ayo_items | 같음 |
 | ROM 썸네일 / 사진 | `roms.thumb` (400px) / `roms.img` (1440px q0.86 → blobs) | JPEG | S3 | ayo_items / Storage photos | 같음 |
 | 사진 본체 | `blobs` `{id:"records:<id>" \| "roms:<id>", v, at}` | dataURL | S3 | Storage photos | `dbDel` 이 함께 삭제 |
-| 관리자 수정 보관본 | `blobs` `admx:records:<id>:<front\|side>`, `admx:roms:<id>` — 회원 이름 + 수정 전·후 사진 | dataURL | S3 | **안 함(기기만)** | **회원 삭제 시 안 지워짐** |
+| 관리자 수정 보관본 | `blobs` `admx:records:<id>:<front\|side>`, `admx:roms:<id>` — 회원 이름 + 수정 전·후 사진 | dataURL | S3 | **안 함(기기만)** | 회원 삭제 시 함께 (v264). 기록 하나만 지울 때는 남음 |
 | 상담 기록 | `consults.{memberId, at, type, body, next}` | 자유 글 | S3 | ayo_items | 회원 삭제 |
 | 결제 기록 | `sales.{memberId, at, method, item, amount, memo}` | 숫자·글 | S2 | ayo_items | 회원 삭제 |
 | 프로그램 | `programs.{name, desc, exIds}` | | S1 | ayo_items | 직접 삭제 |
@@ -79,7 +80,7 @@ member 1 ─ N records (1 ─ 1 blobs 사진)
 program 1 ─ N assigns
 계정(user) 1 ─ N ayo_items / ayo_shares, 1 ─ 1 ayo_profiles / ayo_subs / ayo_centers  (계정 삭제 시 ON DELETE CASCADE)
 ```
-회원 삭제(`btnMbDelete`) = records·assigns·consults·sales·roms·사진 함께 삭제. 서버엔 `deleted=true, data={}` 행(id만)이 남는다.
+회원 삭제(`btnMbDelete`) = 공유 링크(`shareIds` → ayo_shares 행 + shares 이미지, 먼저·온라인 필요) → records·assigns·consults·sales·roms·사진 → 관리자 보관본(`admx:records:<기록id>:*`, `admx:roms:<기록id>`) 함께 삭제. 서버엔 `deleted=true, data={}` 행(id만)이 남는다. v264 이전에 만든 공유 링크는 회원과 연결 정보가 없어 자동 삭제되지 않는다(링크 목록에서 직접 중지, 최대 100일 뒤 만료). 한계: 다른 기기의 옛 회원 정보로 폼을 저장하면 `shareIds` 가 덮여 사라질 수 있고, 링크를 만든 계정과 다른 계정으로 로그인해 삭제하면 RLS 로 0건이 지워져도 오류 없이 넘어간다.
 계정 삭제(`delete-account` 함수) = photos·shares 파일 전부 → 계정 삭제(표는 CASCADE).
 
 ## 4. 서버 저장 규칙

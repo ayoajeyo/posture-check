@@ -6506,7 +6506,7 @@
     if(!shCanvas){ toast("미리 보기가 준비되면 다시 눌러 주세요."); return; }
     if(!c || !uid){ toast("로그인 상태를 확인한 뒤 다시 시도해 주세요."); return; }
     shBusy = true; $("btnShMake").disabled = true; $("btnShMake").textContent = "링크 만드는 중…";
-    var id = shToken(), path = uid + "/" + id + ".jpg", days = parseInt($("shDays").value, 10) || 30;
+    var id = shToken(), path = uid + "/" + id + ".jpg", days = parseInt($("shDays").value, 10) || 30, memId = state.member && state.member.id;
     shBlob(shCanvas).then(function(blob){
       return c.storage.from("shares").upload(path, blob, { contentType: "image/jpeg", upsert: false, cacheControl: "600" });
     }).then(function(r){
@@ -6518,6 +6518,11 @@
       $("shUrl").value = shUrlNow; $("shMake").hidden = true; $("shDone").hidden = false;
       toast("공유 링크를 만들었어요 · " + days + "일 동안 볼 수 있어요");
       shList();
+      // v264 회원 삭제 때 이 링크도 지우도록 회원에 링크 id 기록
+      if(memId) dbAll("members").then(function(L){
+        var m = L.find(function(x){ return x.id === memId; }); if(!m) return;
+        m.shareIds = (m.shareIds || []).concat(id); return dbPut("members", m);
+      }).catch(function(e){ console.warn("[share] member link", e); toast("회원 기록에 링크를 연결하지 못했어요. 회원 삭제 때 이 링크는 목록에서 직접 중지해 주세요."); });
     }).catch(function(e){
       console.warn("[share]", e); toast(shErr(e));
       $("btnShMake").disabled = false; $("btnShMake").textContent = "링크 만들기";
@@ -6537,6 +6542,14 @@
     if(navigator.share){
       navigator.share({ title: "체형 분석 리포트", text: text, url: url }).catch(function(err){ if(!(err && err.name === "AbortError")) shCopy(url); });
     } else shCopy(url);
+  }
+  function shDelMany(ids){   // v264 회원 삭제: 그 회원의 공유 링크 정보 → 이미지 순서로 삭제 (중지 버튼과 같은 순서)
+    if(!ids.length) return Promise.resolve();
+    var c = sbClient(); if(!c || !ACC.uid || !navigator.onLine) return Promise.reject(new Error("SHARE_OFFLINE"));
+    return c.from("ayo_shares").delete().in("id", ids).then(function(r){
+      if(r.error) throw r.error;
+      return c.storage.from("shares").remove(ids.map(function(id){ return ACC.uid + "/" + id + ".jpg"; }));
+    }).then(function(r){ if(r && r.error) throw r.error; });
   }
   function shDday(exp){ var d = Math.ceil((new Date(exp).getTime() - Date.now()) / 864e5); return d; }
   function shMd(s){ var d = new Date(s); return (d.getMonth() + 1) + "." + d.getDate(); }
@@ -7177,15 +7190,29 @@
   $("btnMbDelete").addEventListener("click", function(){
     var m = mbCurrent; if(!m) return;
     if(!window.confirm(m.name + " 회원과 모든 측정 기록을 삭제할까요? 되돌릴 수 없어요.")) return;
-    dbAll("records").then(function(all){
-      return Promise.all(all.filter(function(r){ return r.memberId === m.id; }).map(function(r){ return dbDel("records", r.id); }));
+    var gone = {};   // v264 지운 기록 id → 관리자 보관본(admx:)도 삭제
+    // v264 공유 링크부터 삭제(온라인 필요) — 실패하면 아무것도 지우지 않고 멈춤(다시 시도 가능)
+    dbAll("members").then(function(L){
+      var cur = L.find(function(x){ return x.id === m.id; }), ids = (cur && cur.shareIds) || [];
+      return shDelMany(ids).then(function(){   // 다음 단계가 실패해도 재시도 때 인터넷이 다시 필요 없게 비움
+        if(ids.length){ cur.shareIds = []; return dbPut("members", cur); }
+      });
+    }).then(function(){ return dbAll("records"); }).then(function(all){
+      return Promise.all(all.filter(function(r){ return r.memberId === m.id; }).map(function(r){ gone["records:" + r.id] = 1; return dbDel("records", r.id); }));
     }).then(function(){
       return Promise.all(["assigns", "consults", "sales", "roms"].map(function(st){
-        return dbAll(st).then(function(L){ return Promise.all(L.filter(function(x){ return x.memberId === m.id; }).map(function(x){ return dbDel(st, x.id); })); });
+        return dbAll(st).then(function(L){ return Promise.all(L.filter(function(x){ return x.memberId === m.id; }).map(function(x){ if(st === "roms") gone["roms:" + x.id] = 1; return dbDel(st, x.id); })); });
       }));
+    }).then(function(){
+      return idbKeys("blobs").then(function(ks){   // admx:records:<id>:<front|side> · admx:roms:<id>
+        return Promise.all(ks.filter(function(k){ var p = String(k).split(":"); return p[0] === "admx" && gone[p[1] + ":" + p[2]]; }).map(function(k){ return rawDel("blobs", k, true); }));
+      });
     }).then(function(){ return dbDel("members", m.id); }).then(function(){
       if(state.member && state.member.id === m.id) setMember(null);
       toast("삭제했어요."); mbShowList();
+    }).catch(function(e){
+      console.warn("[member delete]", e && (e.message || e.error));
+      toast(e && e.message === "SHARE_OFFLINE" ? "이 회원의 공유 링크를 지우려면 로그인·인터넷 연결이 필요해요. 연결 후 다시 삭제해 주세요." : "삭제하지 못했어요. 잠시 뒤 다시 시도해 주세요.");
     });
   });
   $("btnMbMeasure").addEventListener("click", function(){

@@ -4,17 +4,19 @@
 
 ## 1. 버전 번호
 
-### 현재 상태 (`/adopt` 2026-10-15 확인)
+### 현재 상태 (2026-10-15 확인)
 | 위치 | 값 |
 |------|----|
-| `index.html` `APP_VER` | `v262` (현황 화면·`.app-ver-note` 에 표시) |
-| `sw.js` `VERSION` | `pma-v211` (앱 번호와 별도로 배포마다 +1) |
+| `index.html` `APP_VER` | `v267` (홈 맨 아래·`.app-ver-note` 에 표시) |
+| `sw.js` `VERSION` | `pma-v216` (앱 번호와 별도로 배포마다 +1) |
 | `manifest.webmanifest` | version 필드 없음 |
-| `CHANGELOG.md` | v262 이전 요약만 (이번에 작성) |
+| `docs/CHANGELOG.md` 맨 위 | `## v267 — 2026.10.15` |
 | Play `versionCode` | {확인 필요} |
 
+> 이 표는 `/ship` 때마다 갱신한다. 값이 서로 다르면(앱 버전 ≠ CHANGELOG 맨 위) 배포가 덜 끝난 것이다.
+
 ### 이 프로젝트의 규칙 (2026-10-15 결정: vNNN 유지)
-- 버전은 정수 `vNNN` (v262 → v263). 아래 "하네스 표준"의 `주.부.수정` 은 쓰지 않는다.
+- 버전은 정수 `vNNN` (v267 → v268). 아래 "하네스 표준"의 `주.부.수정` 은 쓰지 않는다.
 - `/ship` 이 함께 올리는 곳: `index.html` `APP_VER` = `CHANGELOG.md` 맨 위 `## vNNN`. `sw.js` `VERSION` 은 `pma-v` 뒤 숫자를 +1 하고 주석에 앱 버전을 적는다. manifest 는 version 필드가 없어 건드리지 않는다.
 
 ### 하네스 표준 (참고용)

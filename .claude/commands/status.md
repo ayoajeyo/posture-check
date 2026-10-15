@@ -11,6 +11,7 @@ description: 지금 프로젝트 현황 — 진행 단계, 저장 안 된 변경
 4. `CLAUDE.md`, `docs/PRD.md`, `docs/DATA.md` 의 `{ }` 빈칸 개수.
 5. `docs/BACKLOG.md` "지금" 항목 수.
 6. 버전 네 곳이 같은지(`APP_VERSION`, manifest, sw.js, CHANGELOG).
+7. `docs/PLANS/*.md` 의 `상태:` 줄 — 초안(승인 대기)·승인됨·진행 중 계획을 목록으로(없으면 "없음"). 승인 대기 계획이 있으면 "지금 바로 할 일" 후보.
 
 출력:
 | 항목 | 상태 | 할 일 |

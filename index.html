@@ -12204,7 +12204,7 @@
     // v262 저장된 기록을 열어 고칠 때도 '고치기 직전의 점'(= 열었을 때 저장돼 있던 점)을 수정 전으로 보관 (자동 인식 결과가 아니므로 정확도 채점에서는 제외)
     if(romS.editId){ romS.autoSnap = { pts: romS.pts.map(function(q){ return { x: q.x, y: q.y }; }), ref: romS.refCustom ? JSON.parse(JSON.stringify(romS.refCustom)) : null, val: romAngle(), weak: true, saved: true }; return; }
     // v163 weak = 자동 인식이 실패한 상태의 점. 이걸 '인식 결과'로 채점하면 오차가 아니라 손으로 끌어온 거리가 섞임
-    // 사진 밖 점(좌표계가 어긋난 기록)도 인식 실패로 — 회원 2026.10.11 기록처럼 y가 사진 높이를 넘는 '수정 전'이 채점을 오염시키지 않게
+    // 사진 밖 점(좌표계가 어긋난 기록)도 인식 실패로 — 예전 기록처럼 y가 사진 높이를 넘는 '수정 전'이 채점을 오염시키지 않게
     romS.autoSnap = { pts: romS.pts.map(function(q){ return { x: q.x, y: q.y }; }), ref: romS.refCustom ? JSON.parse(JSON.stringify(romS.refCustom)) : null, val: romAngle(), weak: !romS.autoOk || !romS.pts.every(romIn) };
   }
   // v121 자동 인식에 넣은 사진 그대로(다시 압축하지 않음) → 정확도 채점 때 같은 사진으로 다시 인식

@@ -7131,6 +7131,7 @@
       $("mbDAvatar").textContent = initial(m.name); $("mbDName").textContent = m.name;
       $("mbDMeta").textContent = (memberMeta(m) || "추가 정보 없음") + (m.consentAt ? " · 촬영·보관 동의 " + fmtDate(m.consentAt).slice(0, 10) : ""); $("mbDMemo").textContent = m.memo || "";
       var rs = res[1].filter(function(r){ return r.memberId === m.id; }).sort(function(a, b){ return b.at - a.at; });
+      recThumbUpgradeAll(rs, function(){ if(mbCurrent && mbCurrent.id === m.id && !$("mbDetail").hidden) mbOpenDetail(m.id); });   // v260 예전 기록 사진 → 격자 배경
       var box = $("mbRecords");
       dbAll("roms").then(function(RL){
       var S = mbBuildSessions(rs, RL.filter(function(x){ return x.memberId === m.id; })), PR = poseRounds(rs);
@@ -7742,7 +7743,8 @@
       height: patientHeight() || null,
       thumbs: { front: r.f ? thumbOf("front") : null, side: r.sd ? thumbOf("side") : null },
       photos: { front: packMode("front"), side: packMode("side") } };
-    var RN = state.rnd || {}; if(rec.f && RN.f) rec.rf = RN.f; if(rec.sd && RN.s) rec.rs = RN.s;   // v126 회차 번호를 기록에 고정
+    var RN = state.rnd || {}; if(rec.f && RN.f) rec.rf = RN.f; if(rec.sd && RN.s) rec.rs = RN.s;
+    if(["front", "side"].every(function(m){ var x = state.byMode[m]; return !(rec.thumbs[m] && x.img) || (x.cutout && x.grid); })) rec.tg = 1;   // v260 기록 사진이 격자 배경으로 만들어짐   // v126 회차 번호를 기록에 고정
     if(ADM.on) admxSaveBody(rec);   // v118 관리자 모드: 수정 전·후 자료 보관
     dbAll("records").then(function(all){
       var old = all.find(function(x){ return x.id === rec.id; });
@@ -7771,11 +7773,55 @@
       return dbAll("records").then(function(all){
         var cur0 = all.find(function(x){ return x.id === rec.id; }); if(!cur0) return;
         return dbFull("records", cur0).catch(function(){ return cur0; }).then(function(full){
-          var nx = Object.assign({}, full || cur0, { thumbs: Object.assign({}, (full || cur0).thumbs || {}, rec.thumbs) });
+          var nx = Object.assign({}, full || cur0, { thumbs: Object.assign({}, (full || cur0).thumbs || {}, rec.thumbs), tg: 1 });
           return dbPut("records", nx);
         });
       });
     }).catch(function(e){ console.warn("[thumb grid]", e); });
+  }
+  // v260 예전 기록(격자 없이 저장된 사진)을 저장된 측정 사진·점으로 다시 그려 흰 격자 배경 사진으로 바꿈 (회원 상세를 열면 뒤에서 차례로)
+  var tgTried = {}, tgQ = Promise.resolve();
+  function recThumbUpgrade(rec0){
+    return dbFull("records", rec0).catch(function(){ return rec0; }).then(function(f){
+      f = f || rec0;
+      var ms = ["front", "side"].filter(function(m){ var p = f.photos && f.photos[m]; return p && p.img && p.points && Object.keys(p.points).length && f.thumbs && f.thumbs[m]; });
+      if(!ms.length || !window.__segmentPerson) return false;
+      var out = {}, chain = Promise.resolve();
+      ms.forEach(function(m){ chain = chain.then(function(){
+        var p = f.photos[m];
+        return benchImg(p.img).then(function(im){
+          if(!im) return;
+          return benchWait(window.__segmentPerson(im), 25000).then(function(mask){
+            if(!mask) return;
+            var s2 = { img: im, imgUrl: p.img, w: im.naturalWidth, h: im.naturalHeight, points: {}, history: [], view: { scale: 1, cx: im.naturalWidth / 2, cy: im.naturalHeight / 2 },
+              centerX: p.centerX == null ? undefined : p.centerX, faceSign: p.faceSign == null ? -1 : p.faceSign, sideDir: p.sideDir || null, rot: p.rot || 0,
+              rotPivot: p.rotPivot ? Object.assign({}, p.rotPivot) : null, grid: p.grid ? Object.assign({}, p.grid) : null, captureRoll: p.captureRoll, framed: true, cutout: null, personBox: null };
+            Object.keys(p.points).forEach(function(k){ s2.points[k] = Object.assign({}, p.points[k]); });
+            var keepS = state.byMode[m];
+            state.byMode[m] = s2;
+            try{
+              if(!s2.grid) s2.grid = gridFromPose(s2, null);
+              buildCutout(s2, im, mask);
+              if(s2.cutout && s2.grid) out[m] = thumbOf(m);
+            }catch(e){ console.warn("[thumb up]", e); }
+            finally{ state.byMode[m] = keepS; }
+          });
+        });
+      }); });
+      return chain.then(function(){
+        if(!Object.keys(out).length) return false;
+        var nx = Object.assign({}, f, { thumbs: Object.assign({}, f.thumbs || {}, out), tg: 1 });
+        return dbPut("records", nx).then(function(){ return true; });
+      });
+    }).catch(function(e){ console.warn("[thumb up]", e); return false; });
+  }
+  function recThumbUpgradeAll(rs, done){
+    var L = (rs || []).filter(function(r){ return !r.tg && !tgTried[r.id] && r.thumbs && (r.thumbs.front || r.thumbs.side); });
+    if(!L.length) return;
+    L.forEach(function(r){ tgTried[r.id] = 1; });
+    var any = false;
+    L.forEach(function(r){ tgQ = tgQ.then(function(){ return recThumbUpgrade(r).then(function(ok){ if(ok) any = true; }); }); });
+    tgQ = tgQ.then(function(){ if(any && done) done(); }).catch(function(){});
   }
   $("btnSessSave").addEventListener("click", saveMeasurement);
   $("btnRepSess").addEventListener("click", saveMeasurement);
@@ -11386,7 +11432,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v259";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v260";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

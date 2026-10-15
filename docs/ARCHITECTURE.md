@@ -1,77 +1,94 @@
-# 아키텍처: {프로젝트명}
+# 아키텍처: 아요바디요
 
-> "**어떻게** 짜여 있나"를 적는다. 새 파일을 어디에 둘지, 데이터가 어디로 흐르는지 헷갈릴 때 이 문서가 답이어야 한다.
-> 기본값은 `mobile-webapp` 스킬의 구성이다. 다르게 할 부분만 고친다.
+> `/adopt` 로 기존 코드(v262)에서 역으로 작성. 하네스 기본 구조(`js/` 분리)와 **다르다** — 현재 모든 코드가 `index.html` 한 파일에 있다.
 
 ## 1. 한눈에 보기
 ```
-[폰 브라우저 / 홈 화면 앱]
-   │  index.html + css + js (빌드 없음)
+[폰 브라우저 / 안드로이드 TWA(com.physiomaster.posture) / PC]
+   │  index.html 한 파일 (CSS + JS 인라인, 빌드 없음)
+   │  └ MediaPipe tasks-vision 0.10.14 (jsDelivr) + pose 모델 (storage.googleapis)
    │
-   ├─ 기기 저장: localStorage(설정·소량) / IndexedDB(사진·기록)
+   ├─ 기기 저장: IndexedDB `ayo-posture` v4 (회원·기록·사진) / localStorage `ayo_*` (설정·상태)
    │
-   └─ (필요할 때만) Supabase ── Auth(로그인) · DB(Postgres+RLS) · Storage(사진, 비공개)
-         │
-         └─ GitHub Pages 가 index.html 을 배포 (push = 배포)
+   └─ Supabase (로그인 시) ── Auth(이메일·구글·카카오·네이버)
+         ├ DB: ayo_items(동기화) · ayo_profiles · ayo_subs · ayo_shares · ayo_centers (모두 RLS)
+         ├ Storage: photos(비공개, 사진) · shares(비공개, 공유 리포트 이미지)
+         └ Edge Functions: naver-auth · play-verify · share-view · delete-account
+   GitHub Pages 가 배포 (main push = 배포) · GitHub Actions keepalive 가 매일 Supabase 깨움
 ```
-{이 프로젝트가 다르면 여기 그림을 고친다}
 
 ## 2. 디렉토리 구조
 ```
-index.html            # 첫 화면. 다른 화면은 섹션 전환 또는 pages/*.html
-manifest.json         # 앱 이름·아이콘·테마색 (#1E2A4A)
-sw.js                 # 오프라인 캐시. CACHE_VERSION 을 배포마다 올린다
-css/style.css         # clean-ui 변수로 시작
-js/app.js             # 화면 동작(이벤트·렌더링)만. 계산은 넣지 않는다
-js/logic/*.js         # 순수 계산·변환 (화면을 모름, 테스트 대상)
-js/store.js           # 저장소 접근 (localStorage/IndexedDB/Supabase 를 여기서만 호출)
-js/report.js          # 리포트(A4) 생성
-tests/*.test.js       # node --test
-icons/                # 192·512px
-docs/                 # 이 문서들
-.claude/              # 하네스 도구
+index.html            # 앱 전체 (약 14,400줄). 화면 = <section class="view" id="view-*">
+r.html                # 회원용 공유 리포트 (?k=키) — share-view 함수 호출
+c.html                # 센터 소개 공개 페이지 (?c=slug)
+delete.html           # 계정·데이터 삭제 안내 (Play 정책)
+download.html         # 설치 안내 (Play / APK / 아이폰)
+privacy.html terms.html
+manifest.webmanifest  # 앱 이름·아이콘 (version 필드 없음)
+sw.js                 # 서비스워커. VERSION="pma-vNNN" (화면 캐시) · ASSETS 캐시(모델·글꼴, 버전 무관)
+license-pub.json      # 이용 코드 검증용 공개키 (EC P-256)
+PMA-posture.apk       # 직접 설치용 APK (git 에 올라가 있음)
+guide/                # 측정 가이드 사진(body, rom), 실루엣(sil), 기준 데이터(ref)
+icons/
+supabase/             # schema.sql, v185_share.sql, v186_center.sql, functions/*, SETUP.md
+.github/workflows/keepalive.yml
+docs/  .claude/  scripts/(하네스)
 ```
-규칙: **화면(app.js) → 저장소(store.js) → 외부(Supabase)** 방향으로만 부른다. 거꾸로 부르지 않는다.
+`js/`·`css/`·`tests/` 폴더와 `package.json` 은 없다.
 
 ## 3. 데이터 흐름
 ```
-{예:
-사용자 입력 → app.js(검증) → logic/(계산) → store.js(저장) → app.js(화면 갱신)
-사진 촬영 → canvas 축소(1600px) → IndexedDB → (동기화 켜짐) Supabase Storage(비공개 버킷)
-리포트 → report.js → window.print() → A4 PDF}
+촬영 → MediaPipe 자동 점 → 손으로 점 수정 → 계산(인라인 함수) → dbPut()
+dbPut: 무거운 필드(records.photos, roms.img)는 blobs store 로 분리, 본 기록엔 blob:true
+     → 동기화 큐 localStorage `ayo_sq` 에 "store|id" 기록
+syncPush (로그인 시): 사진 → Storage photos/{uid}/blobs/... (WebP 0.85)
+                    기록 → ayo_items upsert (store,id,data JSON, deleted)
+syncPull: ayo_items 를 updated_at 기준으로 받아 IndexedDB 에 반영 (커서 `ayo_pull`)
+리포트 → 캔버스로 A4 쪽 그림 → pagesToPdf() 로 PDF 직접 생성 / 이미지 저장 / navigator.share
+공유 링크 → 리포트 JPEG 를 shares/{uid}/{키}.jpg + ayo_shares 행 → r.html 이 share-view 로 10분짜리 서명 주소 받아 표시
 ```
 
 ## 4. 저장소 표
 | 데이터 | 어디에 | 민감도 | 보관 기간 | 지울 때 |
 |--------|--------|--------|----------|---------|
-| {회원 기본 정보} | {IndexedDB / Supabase 테이블 members} | 높음 | {회원 삭제 시까지} | {사진·측정 기록도 같이 삭제} |
-| {측정 사진} | {IndexedDB / Storage photos/} | 매우 높음 | | |
-| {앱 설정} | localStorage | 낮음 | | |
+| 회원 정보·서명 | IndexedDB `members` / `ayo_items`(store=members) | S2·S3 | {확인 필요} | 회원 삭제 시 기록·ROM·상담·결제·배정과 함께 삭제. 서버에는 id 만 남은 `deleted=true` 행 |
+| 측정 사진 | IndexedDB `blobs` / Storage `photos` | S3 | {확인 필요} | 회원·기록 삭제 시 함께 (단 관리자 `admx:` 보관본·공유 이미지는 남음 → BACKLOG) |
+| 공유 리포트 이미지 | Storage `shares` + `ayo_shares` | S3 | 최대 100일(링크 기간) | 수동 중지 또는 계정 삭제 |
+| 앱·센터 설정 | localStorage `ayo_settings` / `ayo_profiles.settings` | S1(센터 정보) | 계정 삭제까지 | 계정 삭제 |
 자세한 필드는 `DATA.md`.
 
 ## 5. 외부 서비스
 | 서비스 | 용도 | 키 종류 | 키 위치 |
 |--------|------|---------|---------|
 | GitHub Pages | 배포 | 없음 | — |
-| {Supabase} | {로그인·DB·사진} | anon 키(공개용) | `js/config.js` |
-| | | service_role(비밀) | **코드에 넣지 않음**. 서버 함수·.env 에만 |
+| Supabase | 로그인·DB·사진·서버 함수 | publishable(공개용) | `index.html`·`r.html`·`c.html` 인라인, `keepalive.yml` |
+| | | secret / service_role | Edge Function 환경변수만 (`_cors.ts adminKey()`) — 코드엔 없음 |
+| Google Play | 월 구독 결제·검증 | 서비스 계정 JSON | Edge Function secret `GOOGLE_PLAY_SA_JSON` |
+| 네이버 로그인 | OAuth | client_id(공개) / client_secret | id 는 index.html, secret 은 Edge Function secret |
+| 구글·카카오 로그인 | OAuth | Supabase 대시보드 설정 | — |
+| jsDelivr / storage.googleapis | MediaPipe 라이브러리·모델 | 없음 | — |
+| Google Fonts | 글꼴 | 없음 | — |
 
 ## 6. 오프라인과 동기화
-- 오프라인에서도 {측정·저장}은 된다. {공유·로그인}은 온라인 필요.
-- 충돌 규칙: {예: 같은 회원을 두 기기에서 고치면 마지막 저장이 이김. 사진은 덮어쓰지 않고 추가}
-- 서비스워커 캐시: `CACHE_VERSION` 을 올리면 다음 실행 때 새 파일로 교체.
+- 오프라인에서도 측정·저장 가능(IndexedDB). 로그인·동기화·공유 링크·구독 확인은 온라인 필요.
+- 서비스워커: 앱 화면은 네트워크 우선(4초 넘으면 저장본), 모델·글꼴은 저장본 우선.
+- 충돌 규칙: {확인 필요: 같은 기록을 두 기기에서 고치면 어떻게 되는지 — 코드상 updated_at 기준 pull}
+- 로그아웃 시 기기의 IndexedDB 전체를 비운다.
 
 ## 7. 보안 경계
-- 브라우저 코드는 **누구나 볼 수 있다**. 비밀은 넣지 않는다.
-- Supabase 를 쓰면: 모든 테이블 RLS 켬, 사진 버킷 비공개 + 서명 URL(짧은 만료), 로그인한 본인 데이터만 읽기·쓰기.
-- 공유 링크는 추측 불가능한 ID(UUID) 를 쓴다.
+- 모든 `ayo_*` 표 RLS: 로그인한 본인(`auth.uid() = user_id`) 행만. `ayo_subs` 는 읽기만, 쓰기는 `play-verify` 만.
+- 버킷 `photos`·`shares` 비공개, 첫 폴더 = 사용자 ID.
+- 공유 링크 키: 20~64자 랜덤, 서버 함수만 열람(서명 URL 600초).
+- Edge Function CORS: `https://ayoajeyo.github.io` 만 허용.
+- 관리자 모드: 코드의 SHA-256 해시(`ADM_HASH`)를 브라우저에서 비교 — 서버 검증 아님.
 
 ## 8. 버전과 배포
-- 버전 표기: `APP_VERSION`(js) = `manifest.json` version = `sw.js` CACHE_VERSION = 변경 이력(CHANGELOG.md) 맨 위 항목. 네 곳이 항상 같다.
-- 배포 = `main` 에 push. 되돌리기 = 이전 커밋으로 `git revert` 후 push.
-- 자세한 절차는 `RELEASE.md`.
+- 현재: `APP_VER = "v262"` (index.html), `sw.js VERSION = "pma-v211"`, manifest 에 version 없음, CHANGELOG 는 이번에 작성.
+- 하네스 표준(4곳 동일 번호)과 다름 → `RELEASE.md` 1번 참고.
+- 배포 = `main` push. 되돌리기 = `git revert` 후 push.
 
-## 9. 설계 패턴
-- 화면 상태는 `state` 객체 하나에 모으고, 바뀌면 `render()` 한 번으로 그린다.
-- 긴 작업(사진 처리·업로드)은 진행 표시를 보여주고, 실패하면 사용자가 다시 시도할 수 있게 한다.
-- 함수는 한 가지 일만. 50줄을 넘으면 쪼갠다.
+## 9. 설계 패턴 (현재 코드)
+- 화면 전환: `showView(v)` 가 `hidden` 속성 토글. 뒤로가기는 `history.pushState` 가드 + `popstate`.
+- 저장: `dbPut/dbGet/dbDel` 헬퍼, localStorage 는 `lsGet/lsSet`.
+- 계산 로직이 화면 코드와 섞여 있어 자동 테스트가 없다.

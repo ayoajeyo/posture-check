@@ -1,8 +1,21 @@
-# 출시·배포: {프로젝트명}
+# 출시·배포: 아요바디요
 
 > 배포는 항상 `/ship` 으로. 이 문서는 `/ship` 이 따르는 규칙과, 앱스토어 등록 때 필요한 정보 보관함이다.
 
 ## 1. 버전 번호
+
+### 현재 상태 (`/adopt` 2026-10-15 확인)
+| 위치 | 값 |
+|------|----|
+| `index.html` `APP_VER` | `v262` (현황 화면·`.app-ver-note` 에 표시) |
+| `sw.js` `VERSION` | `pma-v211` (앱 번호와 별도로 배포마다 +1) |
+| `manifest.webmanifest` | version 필드 없음 |
+| `CHANGELOG.md` | v262 이전 요약만 (이번에 작성) |
+| Play `versionCode` | {확인 필요} |
+
+이 앱은 `주.부.수정` 대신 **정수 vNNN** 을 써 왔다. 아래 표준으로 바꿀지는 사용자 결정 → BACKLOG.
+
+### 하네스 표준
 `주.부.수정` (예: 1.4.2)
 - **수정**(1.4.2 → 1.4.3): 버그 수정, 문구 변경
 - **부**(1.4 → 1.5): 기능 추가
@@ -27,17 +40,19 @@
 ## 4. 앱스토어 정보 보관함
 | 항목 | 내용 |
 |------|------|
-| 앱 이름(스토어) | {예: 아요바디요-체형·ROM·측만 측정} |
-| 패키지 이름 | {예: com.physiomaster.posture — **절대 변경 금지**} |
+| 앱 이름(스토어) | {확인 필요: 스토어 표기} (manifest: "아요바디요 - 체형·ROM·척추 균형 측정") |
+| 패키지 이름 | `com.physiomaster.posture` — **절대 변경 금지** |
 | 짧은 설명(80자) | {} |
 | 긴 설명 | {} |
-| 카테고리 | {예: 건강/피트니스} |
-| 개인정보처리방침 URL | {예: https://ayoajeyo.github.io/{repo}/privacy.html} |
+| 카테고리 | {확인 필요} (manifest: health, fitness, lifestyle) |
+| 개인정보처리방침 URL | https://ayoajeyo.github.io/posture-check/privacy.html |
+| 계정 삭제 안내 URL | https://ayoajeyo.github.io/posture-check/delete.html |
 | 스크린샷 규격 | 폰 1080×1920 이상 2~8장, 태블릿은 선택 |
 | 아이콘 | 512×512 PNG, 둥근 모서리 없이 |
 | 테스트 계정 | {심사용 — 비밀번호는 여기 적지 않고 Play Console 에만} |
-| 결제 | {예: PRO 월 구독 ₩8,900 / 없음} |
-| 서명 키 | {Play 앱 서명 사용 여부. 키 파일 위치는 적지 않음} |
+| 결제 | PRO 월 구독 `ayo_pro_monthly` (30일 체험) — 가격 {확인 필요} |
+| 서명 키 | {확인 필요: Play 앱 서명 사용 여부} |
+| 직접 설치 APK | `PMA-posture.apk` (저장소 루트, download.html 에서 받음) |
 
 ## 5. 출시 전 최종 확인
 - [ ] 개인정보처리방침 페이지가 실제로 열린다 (PRIVACY.md → `privacy.html`)

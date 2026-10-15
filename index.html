@@ -12589,7 +12589,10 @@
   // 실제로 고쳤는지: 자동 인식 실패(손으로 찍음)이거나, 점이 1px 이상 움직였거나, 각도가 달라졌을 때만
   function admxEdited(x){
     var B = x.before, A = x.after;
-    if(x.legacy || !B || !A || B.same) return false;   // 보관 자료 없음 · 수정 전이 따로 없음(= 그대로 저장)
+    // v268 same(= 처음 저장 때 자동 인식 점을 안 옮김) 은 여기서 끝내지 않는다.
+    //      끝내 버리면 그 기록을 나중에 다시 열어 고쳐도 아래 각도·좌표 비교에 못 가 엑셀이 계속 "수정 없음"으로 나왔다.
+    //      진짜 안 고친 기록은 수정 전·후 값이 같아 아래 비교에서 그대로 false 가 된다.
+    if(x.legacy || !B || !A) return false;   // 보관 자료 없음
     if(B.fail) return true;
     if(B.val != null && A.val != null && B.val !== A.val) return true;
     var bp = B.pts, ap = A.pts; if(!bp || !ap) return false;

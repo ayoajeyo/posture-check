@@ -101,3 +101,31 @@ for (const move of ["dorsi", "plantar"]) {
     assert.ok(r.ib.includes("2선 시작점(발뒤꿈치 · 발바닥 면)") && r.ib.includes("2선 끝점(제5 MTP · 발바닥 면)"));
   });
 }
+
+// v267 버그: 처음 저장 때 점을 한 번도 안 옮기면 '수정 전 = 수정 후'(same) 표시가 붙고,
+// 나중에 다시 열어 점을 고쳐 저장해도 그 표시를 물려받아 엑셀이 계속 '수정 없음'으로 나옴
+test("처음엔 점을 안 옮겼다가 나중에 다시 열어 고친 기록 — 엑셀에 수정 내용이 나옴", async () => {
+  const x = await prep(rom({ before: { same: true, img: "B", pts: [P(100, 100), P(200, 200)], val: 51 },
+    after: { img: "A", pts: [P(100, 100), P(260, 240)], val: 47 } }));
+  assert.notEqual(x.noEdit, true, "고친 기록인데 '수정 없음'으로 처리됨");
+  assert.equal(x.after.img, "A");                     // 수정후 사진이 비지 않음
+  const r = ctx.admxRow(x);
+  assert.equal(r.k, "51° → 47°");
+  assert.notEqual(r.ia, "– (수정 없음)");             // 수정후 좌표 칸이 비지 않음
+  assert.match(r.ia, /\(260, 240\)/);
+});
+
+test("다시 열어 고친 기록: 각도는 그대로여도 점을 옮겼으면 수정으로 잡음", async () => {
+  const x = await prep(rom({ before: { same: true, pts: [P(10, 10)], val: 40 }, after: { pts: [P(14, 10)], val: 40 } }));
+  assert.notEqual(x.noEdit, true, "점을 4px 옮겼는데 '수정 없음'으로 처리됨");
+  const r = ctx.admxRow(x);
+  assert.match(r.h, /오른쪽 4px/);
+  assert.notEqual(r.ia, "– (수정 없음)");
+});
+
+test("정말 한 번도 안 고친 기록은 그대로 '수정 없음' (기존 동작 유지)", async () => {
+  const x = await prep(rom({ before: { same: true, img: "B", pts: [P(1, 2)], val: 33 }, after: { img: "A", pts: [P(1, 2)], val: 33 } }));
+  assert.equal(x.noEdit, true);
+  assert.equal(x.after.img, null);
+  assert.equal(ctx.admxRow(x).k, "33° (수정 없음)");
+});

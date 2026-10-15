@@ -16,30 +16,26 @@
 > 이 표는 `/ship` 때마다 갱신한다. 값이 서로 다르면(앱 버전 ≠ CHANGELOG 맨 위) 배포가 덜 끝난 것이다.
 
 ### 이 프로젝트의 규칙 (2026-10-15 결정: vNNN 유지)
-- 버전은 정수 `vNNN` (v267 → v268). 아래 "하네스 표준"의 `주.부.수정` 은 쓰지 않는다.
-- `/ship` 이 함께 올리는 곳: `index.html` `APP_VER` = `CHANGELOG.md` 맨 위 `## vNNN`. `sw.js` `VERSION` 은 `pma-v` 뒤 숫자를 +1 하고 주석에 앱 버전을 적는다. manifest 는 version 필드가 없어 건드리지 않는다.
-
-### 하네스 표준 (참고용)
-`주.부.수정` (예: 1.4.2)
-- **수정**(1.4.2 → 1.4.3): 버그 수정, 문구 변경
-- **부**(1.4 → 1.5): 기능 추가
-- **주**(1 → 2): 데이터 형식이 바뀌어 이전 버전과 호환 안 됨 → 가져오기 변환 코드 필수
-
-네 곳을 동시에 올린다: `js/app.js` 의 `APP_VERSION`, `manifest.json` 의 `version`, `sw.js` 의 `CACHE_VERSION`, `CHANGELOG.md` 맨 위.
-안드로이드 앱(TWA/PWABuilder)이면 Play Console 의 `versionCode` 도 +1.
+- 버전은 정수 `vNNN` (v267 → v268). `1.4.2` 같은 소수점 방식은 쓰지 않는다.
+- `/ship` 이 올리는 곳은 **두 곳 + CHANGELOG** 뿐이다:
+  1. `index.html` `APP_VER` — `docs/CHANGELOG.md` 맨 위 `## vNNN` 과 **같은 번호**
+  2. `sw.js` `VERSION` — `pma-v` 뒤 숫자만 +1 (앱 번호와 별개 카운터), 주석에 그때의 앱 버전을 적는다
+- `manifest.webmanifest` 는 version 필드가 없어 건드리지 않는다.
+- 안드로이드 앱(TWA)을 새로 올릴 때만 Play Console 의 `versionCode` 도 +1 한다. 웹 배포만 할 때는 필요 없다.
+- 번호는 되돌릴 때도 내리지 않고 올린다 (3번 참고). 내리면 폰에 남은 예전 화면이 안 바뀐다.
 
 ## 2. 배포 절차 (`/ship` 이 자동으로 진행)
 1. `git pull` → 저장 안 된 변경 확인
 2. 자동 테스트 + 문법 검사
 3. `privacy-guard` 점검 (🔴 있으면 중단)
 4. `ui-checker` 점검 (보고만)
-5. 버전 네 곳 갱신 + CHANGELOG 작성
+5. 버전 두 곳(`index.html`·`sw.js`) 갱신 + CHANGELOG 맨 위 작성
 6. 사용자에게 **폰 수동 점검표**(TESTING.md 3번) 확인 요청
-7. 커밋 `release: v1.4.3` → `main` push → GitHub Pages 반영(1~2분)
+7. 커밋 `release: vNNN` (예: `release: v268`) → `main` push → GitHub Pages 반영(1~2분)
 8. 폰에서 새 버전 번호 확인
 
 ## 3. 되돌리기
-문제가 생기면: `git revert HEAD` → push. 버전은 다시 올린다(1.4.3 → 1.4.4). 이전 번호로 내리면 캐시가 안 바뀐다.
+문제가 생기면: `git revert HEAD` → push. 버전은 다시 올린다(v267 → v268). 이전 번호로 내리면 캐시가 안 바뀐다.
 
 ## 4. 앱스토어 정보 보관함
 | 항목 | 내용 |

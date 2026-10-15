@@ -1,7 +1,7 @@
 /* AYO체형분석 — 서비스워커
    - 화면(index.html): 네트워크 우선 → GitHub에 올린 최신 버전이 바로 반영되고, 인터넷이 끊기면 저장본으로 열림
    - 인식 모델·라이브러리(MediaPipe)·글꼴: 한 번 받으면 폰에 저장해 두고 재사용 → 두 번째부터 빠르고 오프라인에서도 동작 */
-const VERSION = "pma-v218";   // v269 관리자 엑셀: 환산된 기록의 1px 반올림 차이를 수정으로 보지 않음
+const VERSION = "pma-v219";   // v270 발목 측정가이드에 4점 기준 예시 사진 추가
 const SHELL = "pma-shell-" + VERSION;
 const ASSETS = "pma-assets-v1";   // 모델 파일은 버전과 무관하게 유지(약 25MB 재다운로드 방지)
 const SHELL_FILES = ["./", "./index.html", "./manifest.webmanifest", "./js/logic/judge.js",

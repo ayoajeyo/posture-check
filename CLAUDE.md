@@ -49,7 +49,7 @@
 ## 개발 프로세스
 - 계산·변환처럼 결과가 정해진 로직은 `js/logic/` 에 두고 테스트를 먼저 작성한다 (TDD, `docs/TESTING.md`).
 - 설계는 `architect`, 테스트는 `tester`, 원인 분석은 `debugger`, 검토는 `reviewer`, 개인정보는 `privacy-guard`, 화면은 `ui-checker`, 문서 동기화는 `docs-keeper` 에이전트.
-- 버전은 네 곳(APP_VERSION · manifest · sw.js CACHE_VERSION · CHANGELOG)을 `/ship` 이 함께 올린다.
+- 버전은 정수 `vNNN`. `/ship` 이 `index.html` `APP_VER` 와 `CHANGELOG.md` 맨 위 번호를 같이 올리고, `sw.js` `VERSION` 은 `pma-v` 뒤 숫자만 +1 한다. manifest 는 version 칸이 없어 건드리지 않는다 (`docs/RELEASE.md` 1번).
 
 ## 명령어
 - 미리보기: `python -m http.server 8000` 후 http://localhost:8000 (카메라·서비스워커 때문에 파일 더블클릭보다 서버로 연다. 로그인·공유는 Edge Function CORS 가 실제 주소만 허용해 로컬에선 안 된다)

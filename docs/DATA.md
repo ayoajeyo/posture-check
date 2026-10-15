@@ -80,7 +80,7 @@ member 1 ─ N records (1 ─ 1 blobs 사진)
 program 1 ─ N assigns
 계정(user) 1 ─ N ayo_items / ayo_shares, 1 ─ 1 ayo_profiles / ayo_subs / ayo_centers  (계정 삭제 시 ON DELETE CASCADE)
 ```
-회원 삭제(`btnMbDelete`) = 공유 링크(`shareIds` → ayo_shares 행 + shares 이미지, 먼저·온라인 필요) → records·assigns·consults·sales·roms·사진 → 관리자 보관본(`admx:records:<기록id>:*`, `admx:roms:<기록id>`) 함께 삭제. 서버엔 `deleted=true, data={}` 행(id만)이 남는다. v264 이전에 만든 공유 링크는 회원과 연결 정보가 없어 자동 삭제되지 않는다(링크 목록에서 직접 중지, 최대 100일 뒤 만료). 한계: 다른 기기의 옛 회원 정보로 폼을 저장하면 `shareIds` 가 덮여 사라질 수 있고, 링크를 만든 계정과 다른 계정으로 로그인해 삭제하면 RLS 로 0건이 지워져도 오류 없이 넘어간다.
+회원 삭제(`btnMbDelete`) = 공유 링크(`shareIds` → ayo_shares 행 + shares 이미지, 먼저·온라인 필요) → 관리자 보관본(`admx:records:<기록id>:*`, `admx:roms:<기록id>`, 기록보다 먼저 — 중간 실패 후 재시도해도 찾을 수 있게) → records·assigns·consults·sales·roms·사진 → 회원 순서로 삭제. 서버엔 `deleted=true, data={}` 행(id만)이 남는다. v264 이전에 만든 공유 링크는 회원과 연결 정보가 없어 자동 삭제되지 않는다(링크 목록에서 직접 중지, 최대 100일 뒤 만료). 한계: 다른 기기의 옛 회원 정보로 폼을 저장하면 `shareIds` 가 덮여 사라질 수 있고, 링크를 만든 계정과 다른 계정으로 로그인해 삭제하면 RLS 로 0건이 지워져도 오류 없이 넘어간다.
 계정 삭제(`delete-account` 함수) = photos·shares 파일 전부 → 계정 삭제(표는 CASCADE).
 
 ## 4. 서버 저장 규칙

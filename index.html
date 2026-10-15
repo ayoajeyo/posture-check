@@ -3195,6 +3195,7 @@
   };
 </script>
 
+<script src="js/logic/judge.js"></script>   <!-- 판정 기준(계산만) · 테스트 tests/judge.test.js -->
 <script>
 (function(){
   "use strict";
@@ -10169,12 +10170,7 @@
   }
 
   /* ===================== v68 척추 균형 탭 ===================== */
-  function scolJudge(mv, v){
-    if(v == null) return { cls:"", txt:"미측정", pct:0 };
-    if(mv.grade === "cva") return v >= 55 ? { cls:"good", txt:"정상 범위 (55° 이상)", pct:100 } : v >= 50 ? { cls:"warn", txt:"경계 (50–55°) · 목이 조금 앞으로 나와 있어요", pct:70 } : v >= 45 ? { cls:"crit", txt:"목이 앞으로 많이 나와 있어요 (50° 미만)", pct:45 } : { cls:"crit", txt:"목이 앞으로 매우 많이 나와 있어요 (45° 미만) · 전문가와 상담해 보세요", pct:25 };
-    if(mv.grade === "atr") return v < 5 ? { cls:"good", txt:"정상 범위 (5° 미만)", pct:100 } : v < 7 ? { cls:"warn", txt:"관찰 필요 (5–7°) · 정기 재측정 권장", pct:60 } : { cls:"crit", txt:"7° 이상 · 전문가와 상담해 보세요", pct:30 };
-    return v < 10 ? { cls:"good", txt:"정상 범위 (10° 미만)", pct:100 } : v < 25 ? { cls:"warn", txt:"기울기 약간 (10–25°)", pct:60 } : v < 40 ? { cls:"crit", txt:"기울기 큼 (25–40°) · 전문가와 상담해 보세요", pct:35 } : { cls:"crit", txt:"40° 이상 · 전문가와 상담해 보세요", pct:15 };
-  }
+  function scolJudge(mv, v){ return AYO_LOGIC.scolJudge(mv, v); }   // 판정 기준은 js/logic/judge.js
   var scolPrevJoint = null;
   function openScolSheet(mk){
     if(rom.joint !== "scol" && rom.joint !== "fhp") scolPrevJoint = rom.joint;

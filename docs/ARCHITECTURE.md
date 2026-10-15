@@ -20,6 +20,9 @@
 ## 2. 디렉토리 구조
 ```
 index.html            # 앱 전체 (약 14,400줄). 화면 = <section class="view" id="view-*">
+js/logic/judge.js     # 판정 기준 순수 함수(ADR-011) — 브라우저 window.AYO_LOGIC / Node require
+tests/*.test.js       # node --test (npm test)
+package.json          # 테스트 명령만 (앱 실행·배포엔 불필요)
 r.html                # 회원용 공유 리포트 (?k=키) — share-view 함수 호출
 c.html                # 센터 소개 공개 페이지 (?c=slug)
 delete.html           # 계정·데이터 삭제 안내 (Play 정책)
@@ -35,7 +38,7 @@ supabase/             # schema.sql, v185_share.sql, v186_center.sql, functions/*
 .github/workflows/keepalive.yml
 docs/  .claude/  scripts/(하네스)
 ```
-`js/`·`css/`·`tests/` 폴더와 `package.json` 은 없다.
+`css/` 폴더는 없다. `js/` 에는 계산 로직(`js/logic/`)만 있다.
 
 ## 3. 데이터 흐름
 ```
@@ -91,4 +94,4 @@ syncPull: ayo_items 를 updated_at 기준으로 받아 IndexedDB 에 반영 (커
 ## 9. 설계 패턴 (현재 코드)
 - 화면 전환: `showView(v)` 가 `hidden` 속성 토글. 뒤로가기는 `history.pushState` 가드 + `popstate`.
 - 저장: `dbPut/dbGet/dbDel` 헬퍼, localStorage 는 `lsGet/lsSet`.
-- 계산 로직이 화면 코드와 섞여 있어 자동 테스트가 없다.
+- 계산 로직은 대부분 아직 index.html 안에 섞여 있다. `js/logic/` 로 하나씩 옮기며 테스트를 붙인다(ADR-011, 현재 `scolJudge` 1개).

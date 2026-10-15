@@ -1,0 +1,8 @@
+{
+  "name": "posture-check",
+  "private": true,
+  "description": "아요바디요 — 계산 로직 자동 테스트용 (앱 실행·배포에는 필요 없음)",
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.js\""
+  }
+}

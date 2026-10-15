@@ -3195,6 +3195,7 @@
   };
 </script>
 
+<script src="js/logic/judge.js"></script>   <!-- 판정 기준(계산만) · 테스트 tests/judge.test.js -->
 <script>
 (function(){
   "use strict";
@@ -6506,7 +6507,7 @@
     if(!shCanvas){ toast("미리 보기가 준비되면 다시 눌러 주세요."); return; }
     if(!c || !uid){ toast("로그인 상태를 확인한 뒤 다시 시도해 주세요."); return; }
     shBusy = true; $("btnShMake").disabled = true; $("btnShMake").textContent = "링크 만드는 중…";
-    var id = shToken(), path = uid + "/" + id + ".jpg", days = parseInt($("shDays").value, 10) || 30;
+    var id = shToken(), path = uid + "/" + id + ".jpg", days = parseInt($("shDays").value, 10) || 30, memId = state.member && state.member.id;
     shBlob(shCanvas).then(function(blob){
       return c.storage.from("shares").upload(path, blob, { contentType: "image/jpeg", upsert: false, cacheControl: "600" });
     }).then(function(r){
@@ -6518,6 +6519,11 @@
       $("shUrl").value = shUrlNow; $("shMake").hidden = true; $("shDone").hidden = false;
       toast("공유 링크를 만들었어요 · " + days + "일 동안 볼 수 있어요");
       shList();
+      // v264 회원 삭제 때 이 링크도 지우도록 회원에 링크 id 기록
+      if(memId) dbAll("members").then(function(L){
+        var m = L.find(function(x){ return x.id === memId; }); if(!m) return;
+        m.shareIds = (m.shareIds || []).concat(id); return dbPut("members", m);
+      }).catch(function(e){ console.warn("[share] member link", e); toast("링크는 만들었어요. 회원 삭제 때는 공유 링크 목록에서 직접 중지해 주세요."); });
     }).catch(function(e){
       console.warn("[share]", e); toast(shErr(e));
       $("btnShMake").disabled = false; $("btnShMake").textContent = "링크 만들기";
@@ -6537,6 +6543,14 @@
     if(navigator.share){
       navigator.share({ title: "체형 분석 리포트", text: text, url: url }).catch(function(err){ if(!(err && err.name === "AbortError")) shCopy(url); });
     } else shCopy(url);
+  }
+  function shDelMany(ids){   // v264 회원 삭제: 그 회원의 공유 링크 정보 → 이미지 순서로 삭제 (중지 버튼과 같은 순서)
+    if(!ids.length) return Promise.resolve();
+    var c = sbClient(); if(!c || !ACC.uid || !navigator.onLine) return Promise.reject(new Error("SHARE_OFFLINE"));
+    return c.from("ayo_shares").delete().in("id", ids).then(function(r){
+      if(r.error) throw r.error;
+      return c.storage.from("shares").remove(ids.map(function(id){ return ACC.uid + "/" + id + ".jpg"; }));
+    }).then(function(r){ if(r && r.error) throw r.error; });
   }
   function shDday(exp){ var d = Math.ceil((new Date(exp).getTime() - Date.now()) / 864e5); return d; }
   function shMd(s){ var d = new Date(s); return (d.getMonth() + 1) + "." + d.getDate(); }
@@ -7177,15 +7191,28 @@
   $("btnMbDelete").addEventListener("click", function(){
     var m = mbCurrent; if(!m) return;
     if(!window.confirm(m.name + " 회원과 모든 측정 기록을 삭제할까요? 되돌릴 수 없어요.")) return;
-    dbAll("records").then(function(all){
-      return Promise.all(all.filter(function(r){ return r.memberId === m.id; }).map(function(r){ return dbDel("records", r.id); }));
+    var gone = {};   // v264 이 회원의 기록 id → 관리자 보관본(admx:)도 삭제
+    // v264 공유 링크부터 삭제(온라인 필요) — 실패하면 아무것도 지우지 않고 멈춤(다시 시도 가능)
+    dbAll("members").then(function(L){
+      var cur = L.find(function(x){ return x.id === m.id; }), ids = (cur && cur.shareIds) || [];
+      return shDelMany(ids).then(function(){   // 다음 단계가 실패해도 재시도 때 인터넷이 다시 필요 없게 비움
+        if(ids.length){ cur.shareIds = []; return dbPut("members", cur); }
+      });
+    }).then(function(){ return Promise.all([dbAll("records"), dbAll("roms"), idbKeys("blobs")]); }).then(function(a){
+      // 관리자 보관본(admx:records:<id>:<front|side> · admx:roms:<id>)을 기록보다 먼저 삭제 — 중간에 실패해도 다시 시도하면 찾을 수 있게
+      a[0].forEach(function(r){ if(r.memberId === m.id) gone["records:" + r.id] = 1; });
+      a[1].forEach(function(r){ if(r.memberId === m.id) gone["roms:" + r.id] = 1; });
+      return Promise.all(a[2].filter(function(k){ var p = String(k).split(":"); return p[0] === "admx" && gone[p[1] + ":" + p[2]]; }).map(function(k){ return rawDel("blobs", k, true); }));
     }).then(function(){
-      return Promise.all(["assigns", "consults", "sales", "roms"].map(function(st){
+      return Promise.all(["records", "assigns", "consults", "sales", "roms"].map(function(st){
         return dbAll(st).then(function(L){ return Promise.all(L.filter(function(x){ return x.memberId === m.id; }).map(function(x){ return dbDel(st, x.id); })); });
       }));
     }).then(function(){ return dbDel("members", m.id); }).then(function(){
       if(state.member && state.member.id === m.id) setMember(null);
       toast("삭제했어요."); mbShowList();
+    }).catch(function(e){
+      console.warn("[member delete]", e && (e.message || e.error));
+      toast(e && e.message === "SHARE_OFFLINE" ? "공유 링크 삭제에 로그인·인터넷이 필요해요. 연결 후 다시 삭제해 주세요." : "삭제하지 못했어요. 잠시 뒤 다시 시도해 주세요.");
     });
   });
   $("btnMbMeasure").addEventListener("click", function(){
@@ -10142,12 +10169,7 @@
   }
 
   /* ===================== v68 척추 균형 탭 ===================== */
-  function scolJudge(mv, v){
-    if(v == null) return { cls:"", txt:"미측정", pct:0 };
-    if(mv.grade === "cva") return v >= 55 ? { cls:"good", txt:"정상 범위 (55° 이상)", pct:100 } : v >= 50 ? { cls:"warn", txt:"경계 (50–55°) · 목이 조금 앞으로 나와 있어요", pct:70 } : v >= 45 ? { cls:"crit", txt:"목이 앞으로 많이 나와 있어요 (50° 미만)", pct:45 } : { cls:"crit", txt:"목이 앞으로 매우 많이 나와 있어요 (45° 미만) · 전문가와 상담해 보세요", pct:25 };
-    if(mv.grade === "atr") return v < 5 ? { cls:"good", txt:"정상 범위 (5° 미만)", pct:100 } : v < 7 ? { cls:"warn", txt:"관찰 필요 (5–7°) · 정기 재측정 권장", pct:60 } : { cls:"crit", txt:"7° 이상 · 전문가와 상담해 보세요", pct:30 };
-    return v < 10 ? { cls:"good", txt:"정상 범위 (10° 미만)", pct:100 } : v < 25 ? { cls:"warn", txt:"기울기 약간 (10–25°)", pct:60 } : v < 40 ? { cls:"crit", txt:"기울기 큼 (25–40°) · 전문가와 상담해 보세요", pct:35 } : { cls:"crit", txt:"40° 이상 · 전문가와 상담해 보세요", pct:15 };
-  }
+  function scolJudge(mv, v){ return AYO_LOGIC.scolJudge(mv, v); }   // 판정 기준은 js/logic/judge.js
   var scolPrevJoint = null;
   function openScolSheet(mk){
     if(rom.joint !== "scol" && rom.joint !== "fhp") scolPrevJoint = rom.joint;
@@ -11433,7 +11455,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v263";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v264";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

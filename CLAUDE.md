@@ -34,7 +34,7 @@
 - 요청하지 않은 기능은 만들지 않고 `docs/BACKLOG.md` 에 적는다.
 
 ## 기술 스택
-- 화면: HTML + CSS + 순수 JavaScript, 빌드 없음. **앱 전체가 `index.html` 한 파일(약 14,400줄)** 안에 들어 있다 (`js/` 폴더 없음).
+- 화면: HTML + CSS + 순수 JavaScript, 빌드 없음. **앱 대부분이 `index.html` 한 파일(약 14,400줄)** 안에 있다. 계산 로직만 `js/logic/` 로 하나씩 분리 중(ADR-011).
 - 자세 인식: MediaPipe `@mediapipe/tasks-vision@0.10.14` (jsDelivr) + pose_landmarker 모델 (storage.googleapis.com)
 - 배포: GitHub Pages (https://ayoajeyo.github.io/posture-check/) + 안드로이드 앱(TWA) 패키지 `com.physiomaster.posture`
 - 서버·DB: Supabase (프로젝트 `ayobodyyo`) — 로그인(이메일·구글·카카오·네이버), DB `ayo_*` 표, 비공개 버킷 `photos`·`shares`, Edge Function 4개 (`supabase/functions/`)
@@ -53,6 +53,6 @@
 
 ## 명령어
 - 미리보기: `python -m http.server 8000` 후 http://localhost:8000 (카메라·서비스워커 때문에 파일 더블클릭보다 서버로 연다. 로그인·공유는 Edge Function CORS 가 실제 주소만 허용해 로컬에선 안 된다)
-- 테스트: 앱 자동 테스트 없음 (`package.json` 없음). 하네스 테스트만 `python -m pytest scripts/`
+- 테스트: `npm test` (계산 로직, `tests/*.test.js`) · 하네스 테스트 `python -m pytest scripts/`
 - 배포: `/ship` (main 에 push = GitHub Pages 반영)
 - 서버 함수 배포: `supabase functions deploy <이름>` (저장소에 `supabase/config.toml`·연결 정보가 있어 CLI 방식으로 보임. 이전 배포 방법은 사용자도 모름 — 배포 전 확인받기)

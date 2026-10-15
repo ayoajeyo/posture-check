@@ -4,13 +4,13 @@
 
 ## 1. 버전 번호
 
-### 현재 상태 (2026-10-15 확인 · v270)
+### 현재 상태 (2026-10-16 확인 · v271)
 | 위치 | 값 |
 |------|----|
-| `index.html` `APP_VER` | `v270` (홈 맨 아래·`.app-ver-note` 에 표시) |
-| `sw.js` `VERSION` | `pma-v219` (앱 번호와 별도로 배포마다 +1) |
+| `index.html` `APP_VER` | `v271` (홈 맨 아래·`.app-ver-note` 에 표시) |
+| `sw.js` `VERSION` | `pma-v220` (앱 번호와 별도로 배포마다 +1) |
 | `manifest.webmanifest` | version 필드 없음 |
-| `docs/CHANGELOG.md` 맨 위 | `## v270 — 2026.10.16` |
+| `docs/CHANGELOG.md` 맨 위 | `## v271 — 2026.10.16` |
 | Play `versionCode` | {확인 필요} |
 
 > 이 표는 `/ship` 때마다 갱신한다. 값이 서로 다르면(앱 버전 ≠ CHANGELOG 맨 위) 배포가 덜 끝난 것이다.

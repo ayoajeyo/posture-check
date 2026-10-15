@@ -499,16 +499,6 @@
   .acc-ask .row{display:flex; gap:8px; margin-top:8px;}
   .acc-ask .row button{flex:1;}
   button.btn.acc-danger{color:var(--crit); border-color:var(--crit);}
-  #admPanel{position:fixed; right:8px; bottom:calc(84px + env(safe-area-inset-bottom, 0px)); z-index:120; width:min(330px, calc(100vw - 16px)); max-height:42vh; display:flex; flex-direction:column; background:rgba(11,18,34,.94); color:#E9EEF8; border:1px solid #FFB547; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.4); font-size:12px;}
-  #admPanel .ap-h{display:flex; align-items:center; gap:6px; padding:8px 10px; border-bottom:1px solid rgba(255,181,71,.35);}
-  #admPanel .ap-h b{flex:1; min-width:0; font-size:12px; color:#FFB547; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  #admPanel .ap-h button{font-family:inherit; font-size:11.5px; font-weight:700; border:1px solid rgba(255,255,255,.25); background:transparent; color:#E9EEF8; border-radius:7px; padding:4px 8px; cursor:pointer;}
-  #admPanel .ap-b{overflow:auto; padding:6px 10px 8px; font-family:var(--font-num), ui-monospace, monospace; font-variant-numeric:tabular-nums;}
-  #admPanel .ap-r{display:flex; gap:8px; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,.08);}
-  #admPanel .ap-r span:first-child{font-family:inherit; color:#B9C4DA; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  #admPanel .ap-r span:last-child{white-space:nowrap;}
-  #admPanel .ap-m{color:#97A3BC; padding:2px 0 4px;}
-  #admPanel.min .ap-b{display:none;}
   .confirm-btns button{flex:1; font-family:inherit; font-size:14.5px; font-weight:700; border-radius:11px; padding:12px; cursor:pointer; border:1px solid var(--line); background:var(--surface-2); color:var(--ink);}
   .confirm-btns button.yes{background:var(--crit); border-color:var(--crit); color:#fff;}
   .inapp-banner{
@@ -2768,7 +2758,7 @@
 <div class="confirm-overlay" id="admSheet" hidden role="dialog" aria-modal="true" aria-labelledby="admTitle">
   <div class="confirm-box">
     <h3 id="admTitle">관리자 모드</h3>
-    <p class="sub" id="admDesc">관리자 코드를 입력하면 측정 화면에서 찍은 점의 좌표(사진 픽셀 기준)가 보여요.</p>
+    <p class="sub" id="admDesc">관리자 코드를 입력하면 측정을 저장할 때 점의 좌표(사진 픽셀 기준)가 엑셀 기록에 자동으로 남아요.</p>
     <input type="password" class="adm-in" id="admCode" autocomplete="off" autocapitalize="characters" placeholder="관리자 코드">
     <p class="adm-msg" id="admMsg"></p>
     <div class="adm-xls" id="admXls" hidden>
@@ -2794,7 +2784,6 @@
     <div class="confirm-btns"><button type="button" class="no" id="btnAdmClose">닫기</button><button type="button" class="yes ok" id="btnAdmGo">확인</button></div>
   </div>
 </div>
-<div id="admPanel" hidden><div class="ap-h"><b id="admPanelT">측정점 좌표</b><button type="button" id="btnAdmCopy">복사</button><button type="button" id="btnAdmMin">접기</button></div><div class="ap-b" id="admPanelB"></div></div>
 <div class="confirm-overlay" id="gsOverlay" hidden role="dialog" aria-modal="true" aria-label="회원 검색">
   <div class="confirm-box gs-box">
     <div class="gs-input"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input id="gsInput" type="search" placeholder="이름·회원번호·전화번호·초성(ㄱㅇㄱ)" autocomplete="off" enterkeyhint="search"></div>
@@ -5246,18 +5235,6 @@
     ctx.beginPath(); ctx.arc(p.x, p.y, 1*px, 0, Math.PI*2);
     ctx.fillStyle = "#fff"; ctx.fill();
   }
-  // v99 관리자 모드: 점 옆에 사진 픽셀 좌표 표시 (편집 화면에서만)
-  function admCoord(g, p, u){
-    if(!ADM.on) return;
-    var t = Math.round(p.x) + ", " + Math.round(p.y);
-    g.save();
-    g.font = "700 " + (10.5 * u) + "px ui-monospace, monospace";
-    var w = g.measureText(t).width + 8 * u, x = p.x - w / 2, y = p.y + 9 * u;
-    g.fillStyle = "rgba(255,181,71,.92)"; rr(g, x, y, w, 15 * u, 4 * u); g.fill();
-    g.fillStyle = "#0B1222"; g.textBaseline = "middle"; g.textAlign = "left"; g.fillText(t, x + 4 * u, y + 7.8 * u);
-    g.restore();
-  }
-
   // 이미지 좌표계로 변환된 ctx 위에 사진 + 선 + 점을 그린다. px = 화면 1px(CSS)에 해당하는 이미지 좌표 길이
   function drawScene(s, px, showLabels){
     if(state.bgView === "raw"){ ctx.drawImage(s.bmp || s.img, 0, 0, s.w, s.h); return; }   // v135 원본: 측정선·격자·수평 보정 없이 사진 그대로
@@ -5306,7 +5283,6 @@
         var p = s.points[cp.key];
         if(!p) return;
         drawPoint(p, cp.color, px, dragKey === cp.key);
-        if(showLabels) admCoord(ctx, p, px);
         if(showLabels){
           var dv = null;
           if(devs){ devs.forEach(function(d){ if(d.point.key === cp.key) dv = d; }); }
@@ -5365,7 +5341,6 @@
           var p = s.points[k];
           if(!p) return;
           drawPoint(p, pair.color, px, dragKey === k);
-          if(showLabels) admCoord(ctx, p, px);
           if(showLabels && !(p0 && p1)) drawLabel(p.x, p.y, pair.label, px);
         });
       });
@@ -9054,7 +9029,6 @@
       if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 13 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
       g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 2 * u; g.beginPath(); g.arc(p.x, p.y, (i === 0 ? 6 : 5.5) * u, 0, Math.PI * 2); g.fill(); g.stroke();
       g.fillStyle = "#fff"; g.beginPath(); g.arc(p.x, p.y, 1.3 * u, 0, Math.PI * 2); g.fill();
-      if(live) admCoord(g, p, u);
       var nm = (ROM_PTNAME[pn[i]] || "").replace(/\(.*\)/, "");
       g.font = "700 " + (13 * u) + "px 'IBM Plex Sans KR', sans-serif";
       var tw = g.measureText(nm).width + 12 * u, tx = p.x + 16 * u, ty = p.y - 26 * u;
@@ -9176,7 +9150,6 @@
       if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 13 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
       g.lineWidth = 2 * u; g.beginPath(); g.arc(p.x, p.y, (i === 0 ? 6 : 5.5) * u, 0, Math.PI * 2); g.fill(); g.stroke();
       g.fillStyle = "#fff"; g.beginPath(); g.arc(p.x, p.y, 1.3 * u, 0, Math.PI * 2); g.fill();
-      if(romS._live !== false) admCoord(g, p, u);
       var nm = ROM_PTNAME[romPts()[i]].replace(/\(.*\)/, "");
       g.font = "700 " + (13 * u) + "px 'IBM Plex Sans KR', sans-serif";
       var tw = g.measureText(nm).width + 12 * u, tx = p.x + 16 * u, ty = p.y - 26 * u;
@@ -10385,7 +10358,6 @@
       if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 13 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
       g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 2 * u; g.beginPath(); g.arc(p.x, p.y, 6 * u, 0, Math.PI * 2); g.fill(); g.stroke();
       g.fillStyle = "#fff"; g.beginPath(); g.arc(p.x, p.y, 1.3 * u, 0, Math.PI * 2); g.fill();
-      if(romS._live !== false) admCoord(g, p, u);
       g.font = "700 " + (13 * u) + "px 'IBM Plex Sans KR', sans-serif";
       var nm = names[i], w2 = g.measureText(nm).width + 12 * u, tx = i === 0 ? p.x - 16 * u - w2 : p.x + 16 * u, ty = p.y - 34 * u;
       tx = Math.max(2 * u, Math.min(romS.w - w2 - 2 * u, tx));
@@ -10423,7 +10395,6 @@
       if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 13 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
       g.fillStyle = "#FFFFFF"; g.strokeStyle = "#17212B"; g.lineWidth = 2.5 * u; g.beginPath(); g.arc(p.x, p.y, 7 * u, 0, Math.PI * 2); g.fill(); g.stroke();
       g.fillStyle = ROM_COL[i]; g.beginPath(); g.arc(p.x, p.y, 3 * u, 0, Math.PI * 2); g.fill();
-      if(romS._live !== false) admCoord(g, p, u);
       g.font = "700 " + (13 * u) + "px 'IBM Plex Sans KR', sans-serif";
       var nm = names[i], w2 = g.measureText(nm).width + 12 * u, tx = sg > 0 ? p.x - 16 * u - w2 : p.x + 16 * u, ty = p.y - 30 * u;
       tx = Math.max(2 * u, Math.min(romS.w - w2 - 2 * u, tx));
@@ -12181,14 +12152,13 @@
     admSync._was = ADM.on;
     $("btnMoreAdmT").textContent = ADM.on ? "관리자 모드 (사용 중)" : "관리자 모드";
     $("btnMoreAdm").hidden = false;   // v122: 더보기 메뉴에 항상 표시 (v110~v121은 숨김)
-    if(!ADM.on) $("admPanel").hidden = true;
     if(typeof requestDraw === "function") requestDraw();
     if(romS && romS.img && !$("romSheet").hidden) romDraw();
   }
   function admOpen(){
     $("admMsg").textContent = ""; $("admMsg").className = "adm-msg"; $("admCode").value = "";
     $("admCode").hidden = ADM.on;
-    $("admDesc").textContent = ADM.on ? "관리자 모드를 사용 중이에요. 측정 화면에서 점의 좌표가 보여요." : "관리자 코드를 입력하면 측정 화면에서 찍은 점의 좌표(사진 픽셀 기준)가 보여요.";
+    $("admDesc").textContent = ADM.on ? "관리자 모드를 사용 중이에요. 측정을 저장하면 점의 좌표가 아래 엑셀 기록에 자동으로 남아요." : "관리자 코드를 입력하면 측정을 저장할 때 점의 좌표(사진 픽셀 기준)가 엑셀 기록에 자동으로 남아요.";
     $("btnAdmGo").textContent = ADM.on ? "관리자 모드 끄기" : "확인";
     $("admXls").hidden = !ADM.on; $("admBench").hidden = !ADM.on; if(ADM.on) admxInfo();
     $("admSheet").hidden = false;
@@ -12925,59 +12895,6 @@
     ws.eachRow(function(row, rn){ row.eachCell({ includeEmpty: true }, function(c){ c.font = rn === 1 ? Object.assign({ bold: true }, font) : font; c.alignment = { vertical: "middle", horizontal: "center", wrapText: true }; }); });
     ws.getRow(1).height = 34;
   }
-  $("btnAdmMin").addEventListener("click", function(){ var p = $("admPanel"); p.classList.toggle("min"); this.textContent = p.classList.contains("min") ? "펼치기" : "접기"; });
-  // 지금 보이는 측정 화면의 점 목록 (사진 픽셀 좌표)
-  function admData(){
-    var r2 = function(v){ return Math.round(v * 10) / 10; };
-    if(!$("romSheet").hidden && romS.img && romS.pts){
-      var J = romJoint(), mv = romMove(), nm = romPts(), val = null;
-      try{ val = romAngle(); }catch(e){}
-      return { screen: J.k === "scol" ? "척추 균형" : "ROM", title: (J.n || "") + (mv && mv.n && J.k !== "scol" ? " " + mv.n : "") + (rom.side && rom.side !== "C" && J.k !== "scol" ? " (" + (rom.side === "R" ? "우측" : "좌측") + ")" : ""),
-        image: { w: romS.w, h: romS.h }, rotate: romS.roll || 0, value: val == null ? null : val + "°",
-        points: romS.pts.map(function(p, i){ var k = nm && nm[i]; return { name: (i + 1) + " " + ((k && ROM_PTNAME[k]) || k || "점"), x: r2(p.x), y: r2(p.y) }; }) };
-    }
-    if(state.view === "analyze"){
-      var s = cur(), c = cfg();
-      if(!s.img) return null;
-      var pts = [];
-      flatSteps().forEach(function(st, i){
-        var p = s.points[st.key]; if(!p) return;
-        var nm2 = st.kind === "chain" ? st.num + " " + st.short : st.short + (st.idx === 0 ? " ①" : " ②");
-        pts.push({ name: nm2, x: r2(p.x), y: r2(p.y) });
-      });
-      if(c.type !== "chain" && isFinite(frontCenterX(s))) pts.push({ name: "기준선(세로)", x: r2(frontCenterX(s)), y: null });
-      return { screen: "체형분석", title: c.type === "chain" ? "측면 · 플럼라인" : "정면 · 좌우 높낮이", image: { w: s.w, h: s.h }, rotate: s.rot || 0, value: null, points: pts };
-    }
-    return null;
-  }
-  var admLast = null;
-  function admRender(){
-    var pn = $("admPanel");
-    if(!ADM.on){ pn.hidden = true; return; }
-    var d = admData();
-    if(!d || !d.points.length){ pn.hidden = true; admLast = null; return; }
-    var key = JSON.stringify(d);
-    pn.hidden = false;
-    if(key === admLast) return;
-    admLast = key;
-    $("admPanelT").textContent = "좌표 · " + d.screen + " · " + d.title;
-    var h = '<div class="ap-m">사진 ' + d.image.w + ' × ' + d.image.h + 'px' + (d.rotate ? ' · 회전 ' + d.rotate + '°' : '') + (d.value ? ' · 측정값 ' + d.value : '') + '</div>';
-    d.points.forEach(function(p){
-      var pc = d.image.w && d.image.h && p.y != null ? ' <span style="opacity:.55">(' + (p.x / d.image.w * 100).toFixed(1) + '%, ' + (p.y / d.image.h * 100).toFixed(1) + '%)</span>' : '';
-      h += '<div class="ap-r"><span>' + esc(p.name) + '</span><span>' + (p.y == null ? 'x ' + p.x : p.x + ', ' + p.y) + pc + '</span></div>';
-    });
-    $("admPanelB").innerHTML = h;
-  }
-  $("btnAdmCopy").addEventListener("click", function(){
-    var d = admData(); if(!d) return;
-    d.app = "아요바디요"; d.version = "v99"; d.at = new Date().toISOString();
-    var t = JSON.stringify(d, null, 2);
-    var done = function(){ toast("좌표를 복사했어요"); };
-    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, function(){ window.prompt("복사해서 쓰세요", t); });
-    else window.prompt("복사해서 쓰세요", t);
-  });
-  setInterval(function(){ if(!document.hidden && ADM.on) admRender(); }, 400);
-  var _admOn = null; setInterval(function(){ if(_admOn !== ADM.on){ _admOn = ADM.on; admRender(); } }, 1000);   // 관리자 모드를 끄면 패널 한 번 숨김
   admSync();
   document.querySelectorAll("#moreSheet [data-go]").forEach(function(b){ b.addEventListener("click", function(){ $("moreSheet").hidden = true; showView(b.getAttribute("data-go")); }); });
 

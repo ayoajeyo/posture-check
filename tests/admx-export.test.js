@@ -65,3 +65,11 @@ test("엑셀 회차 선택은 회차 번호만 봄 — 같은 날 1차·2차 거
 test("가짜 '수정 전'을 만들던 admxRomRegen 이 다시 생기지 않음", () => {
   assert.doesNotMatch(html, /admxRomRegen|regen: true/);
 });
+
+test("관리자 모드: 화면에 좌표를 띄우지 않고(창·점 옆 라벨), 엑셀용 좌표 저장은 유지", () => {
+  assert.doesNotMatch(html, /admPanel|admCoord|admRender/);
+  assert.match(html, /if\(ADM\.on\) admxSaveBody\(rec\)/);
+  assert.match(html, /if\(ADM\.on\) admxSaveRom\(rec, val\)/);
+  assert.match(html, /pts: admxRound\(romS\.pts\)/);                  // ROM 점 좌표 보관
+  assert.match(html, /var pts = function\(\)\{ var o = \{\}; Object\.keys\(s\.points\)/);   // 체형분석 점 좌표 보관
+});

@@ -207,6 +207,27 @@ def test_html_comments_and_scripts_ignored(tmp_path, html):
     assert post_write(f).returncode == 0
 
 
+@pytest.mark.skipif(not __import__("shutil").which("node"), reason="node 없음")
+def test_html_inline_script_error_blocked_with_html_line(tmp_path):
+    f = tmp_path / "index.html"
+    f.write_text("<!-- 여러\n줄\n주석 -->\n<div>a</div>\n<script>\nvar ok = 1;\nfunction (\n</script>", encoding="utf-8")
+    r = post_write(f)
+    err = r.stderr.decode("utf-8")
+    assert r.returncode == 2 and "줄 7" in err   # HTML 파일 기준 줄 번호 (앞 주석의 줄도 셈)
+
+
+@pytest.mark.skipif(not __import__("shutil").which("node"), reason="node 없음")
+@pytest.mark.parametrize("html", [
+    '<script>var a = 1;</script>',
+    '<script type="module">import x from "https://cdn.example/x.js"; export const y = x;</script>',
+    '<script type="application/ld+json">{"a": 1}</script>',
+    '<script src="x.js"></script>',
+])
+def test_html_inline_script_ok(tmp_path, html):
+    f = tmp_path / "index.html"; f.write_text(html, encoding="utf-8")
+    assert post_write(f).returncode == 0
+
+
 def test_missing_file_ignored(tmp_path):
     assert post_write(tmp_path / "nope.js").returncode == 0
 

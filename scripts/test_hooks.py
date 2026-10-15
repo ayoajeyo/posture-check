@@ -293,6 +293,59 @@ def test_clean_commit_allowed(tmp_path):
     assert guard('git add -A && git commit -m "feat: 추가"', r).returncode == 0
 
 
+FAKE_GH = "ghp_" + "a1B2" * 9   # 가짜 GitHub 토큰 모양
+
+
+def test_secret_in_staged_content_blocks(tmp_path):
+    r = repo(tmp_path); (r / "run.sh").write_text(f"TOKEN={FAKE_GH}\n", encoding="utf-8")
+    git(r, "add", "run.sh")   # Write/Edit 를 안 거치고(셸로) 만든 파일
+    res = guard('git commit -m "x"', r)
+    assert res.returncode == 2 and "GitHub 토큰" in res.stderr.decode("utf-8")
+
+
+def test_secret_in_untracked_file_blocks_add_all(tmp_path):
+    r = repo(tmp_path); (r / "app.js").write_text(f'const t = "{FAKE_GH}";', encoding="utf-8")
+    assert guard('git add -A && git commit -m "x"', r).returncode == 2
+
+
+def test_secret_in_modified_tracked_file_blocks_commit_a(tmp_path):
+    r = repo(tmp_path); f = r / "app.js"; f.write_text("const a = 1;", encoding="utf-8")
+    git(r, "add", "app.js"); git(r, "commit", "-qm", "init")
+    f.write_text(f'const t = "{FAKE_GH}";', encoding="utf-8")
+    assert guard('git commit -am "x"', r).returncode == 2
+
+
+def names_file(r, *names):
+    (r / ".claude").mkdir(exist_ok=True)
+    (r / ".claude" / "pii-names.local.txt").write_text("# 실제 회원 이름\n" + "\n".join(names), encoding="utf-8")
+
+
+def test_pii_name_in_content_blocks_and_is_masked(tmp_path):
+    r = repo(tmp_path); names_file(r, "가나다")
+    (r / "app.js").write_text("// 가나다 기록처럼", encoding="utf-8"); git(r, "add", "app.js")
+    res = guard('git commit -m "x"', r)
+    err = res.stderr.decode("utf-8")
+    assert res.returncode == 2 and "가○○" in err and "가나다" not in err
+
+
+def test_pii_name_in_commit_message_blocks(tmp_path):
+    r = repo(tmp_path); names_file(r, "가나다")
+    (r / "app.js").write_text("const a = 1;", encoding="utf-8"); git(r, "add", "app.js")
+    assert guard('git commit -m "fix: 가나다 회원 오류"', r).returncode == 2
+
+
+def test_pii_removed_line_allowed(tmp_path):
+    r = repo(tmp_path); names_file(r, "가나다"); f = r / "app.js"
+    f.write_text("// 가나다\n", encoding="utf-8"); git(r, "add", "app.js"); git(r, "commit", "-qm", "init")
+    f.write_text("// 회원\n", encoding="utf-8"); git(r, "add", "app.js")   # 이름을 지우는 커밋은 통과
+    assert guard('git commit -m "fix: 실명 삭제"', r).returncode == 0
+
+
+def test_no_names_file_is_fine(tmp_path):
+    r = repo(tmp_path); (r / "app.js").write_text("// 홍길동", encoding="utf-8"); git(r, "add", "app.js")
+    assert guard('git commit -m "x"', r).returncode == 0
+
+
 # --- stop_check.py: scripts 에 없는 명령은 건너뜀, 실패는 exit 2 ---------------
 
 def test_stop_skips_missing_scripts(tmp_path):

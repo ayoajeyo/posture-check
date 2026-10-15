@@ -13,3 +13,7 @@
 phases/**/step*-output.json
 __pycache__/
 .pytest_cache/
+
+# 이 PC 전용 (개인정보·도구 임시 파일)
+.claude/pii-names.local.txt
+supabase/.temp/

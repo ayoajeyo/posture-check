@@ -42,20 +42,25 @@ def find_secret(text: str):
     return None
 
 
-sys.stdin.reconfigure(encoding="utf-8")
-sys.stderr.reconfigure(encoding="utf-8")
-data = json.load(sys.stdin)
-tool_input = data.get("tool_input", {})
-path = tool_input.get("file_path", "")
-if SAFE_FILES.search(path) and not Path(path).name.endswith(".example"):
-    sys.exit(0)
+def main():
+    sys.stdin.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+    data = json.load(sys.stdin)
+    tool_input = data.get("tool_input", {})
+    path = tool_input.get("file_path", "")
+    if SAFE_FILES.search(path) and not Path(path).name.endswith(".example"):
+        sys.exit(0)
 
-texts = [tool_input.get("content", ""), tool_input.get("new_string", "")]
-texts += [e.get("new_string", "") for e in tool_input.get("edits", [])]
-label = find_secret("\n".join(t for t in texts if t))
-if label:
-    print(f"BLOCKED: {Path(path).name}에 {label}로 보이는 값이 들어가려 해서 막았습니다.\n"
-          f"브라우저 코드에는 비밀키를 넣을 수 없습니다. 서버 쪽(Supabase Edge Function 환경변수)이나 "
-          f"로컬 스크립트용 .env 에 두세요. (Supabase anon 키는 공개용이라 js/config.js 에 넣어도 됩니다)",
-          file=sys.stderr)
-    sys.exit(2)
+    texts = [tool_input.get("content", ""), tool_input.get("new_string", "")]
+    texts += [e.get("new_string", "") for e in tool_input.get("edits", [])]
+    label = find_secret("\n".join(t for t in texts if t))
+    if label:
+        print(f"BLOCKED: {Path(path).name}에 {label}로 보이는 값이 들어가려 해서 막았습니다.\n"
+              f"브라우저 코드에는 비밀키를 넣을 수 없습니다. 서버 쪽(Supabase Edge Function 환경변수)이나 "
+              f"로컬 스크립트용 .env 에 두세요. (Supabase anon 키는 공개용이라 js/config.js 에 넣어도 됩니다)",
+              file=sys.stderr)
+        sys.exit(2)
+
+
+if __name__ == "__main__":   # commit_guard 가 find_secret 만 가져다 쓴다
+    main()

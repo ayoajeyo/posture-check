@@ -3994,7 +3994,7 @@
 
   function releaseImage(s){
     s.cutout = null; s.grid = null;
-    s.segMask = null; s.autoPos = null; s.pendingDetect = null;   // v123 이전 사진의 인물 윤곽·자동 점이 새 사진에 쓰이지 않게
+    s.segMask = null; s.autoPos = null; s.recPos = null; s.pendingDetect = null;   // v123 이전 사진의 인물 윤곽·자동 점이 새 사진에 쓰이지 않게
     if(s.bmp){ try{ s.bmp.close(); }catch(e){} s.bmp = null; }
     if(s.imgUrl && s.imgUrl.indexOf("blob:") === 0){ try{ URL.revokeObjectURL(s.imgUrl); }catch(e){} }
     s.imgUrl = null;
@@ -7924,6 +7924,7 @@
     if(rec.height){ $("htField").value = rec.height; }
     Promise.all([restoreMode("front", rec.photos.front, tok), restoreMode("side", rec.photos.side, tok)]).then(function(){
       if(tok !== state.openSeq) return;
+      ["front", "side"].forEach(function(m){ var x = state.byMode[m], o = null; if(x.img){ o = {}; Object.keys(x.points).forEach(function(k){ o[k] = { x: x.points[k].x, y: x.points[k].y }; }); } x.recPos = o; });   // v262 불러온 기록의 점 = 이번 수정의 '수정 전' (관리자 보관용)
       $("htField").dispatchEvent(new Event("input"));
       showView("analyze");
       var want = rec.photos.front ? "front" : "side";
@@ -11432,7 +11433,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v261";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v262";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -12199,7 +12200,9 @@
   function admxRound(P){ return (P || []).map(function(q){ return { x: Math.round(q.x), y: Math.round(q.y) }; }); }
   // ROM: 손으로 처음 고치기 직전의 점 = 자동 인식 결과
   function admxSnap(){
-    if(!ADM.on || romS.autoSnap || !romS.pts || romS.editId) return;
+    if(!ADM.on || romS.autoSnap || !romS.pts) return;
+    // v262 저장된 기록을 열어 고칠 때도 '고치기 직전의 점'(= 열었을 때 저장돼 있던 점)을 수정 전으로 보관 (자동 인식 결과가 아니므로 정확도 채점에서는 제외)
+    if(romS.editId){ romS.autoSnap = { pts: romS.pts.map(function(q){ return { x: q.x, y: q.y }; }), ref: romS.refCustom ? JSON.parse(JSON.stringify(romS.refCustom)) : null, val: romAngle(), weak: true, saved: true }; return; }
     // v163 weak = 자동 인식이 실패한 상태의 점. 이걸 '인식 결과'로 채점하면 오차가 아니라 손으로 끌어온 거리가 섞임
     // 사진 밖 점(좌표계가 어긋난 기록)도 인식 실패로 — 회원 2026.10.11 기록처럼 y가 사진 높이를 넘는 '수정 전'이 채점을 오염시키지 않게
     romS.autoSnap = { pts: romS.pts.map(function(q){ return { x: q.x, y: q.y }; }), ref: romS.refCustom ? JSON.parse(JSON.stringify(romS.refCustom)) : null, val: romAngle(), weak: !romS.autoOk || !romS.pts.every(romIn) };
@@ -12238,7 +12241,7 @@
       if(romS.autoSnap){
         var kp = romS.pts, kr = romS.refCustom;
         romS.pts = romS.autoSnap.pts.map(function(q){ return { x: q.x, y: q.y }; }); romS.refCustom = romS.autoSnap.ref;
-        try{ before = { img: shot(), pts: admxRound(romS.pts), val: romS.autoSnap.val, weak: !!romS.autoSnap.weak }; } finally { romS.pts = kp; romS.refCustom = kr; }
+        try{ before = { img: shot(), pts: admxRound(romS.pts), val: romS.autoSnap.val, weak: !!romS.autoSnap.weak, saved: !!romS.autoSnap.saved }; } finally { romS.pts = kp; romS.refCustom = kr; }
       }
       romS.sel = sel;
       var names = romPts().map(function(n){ return ROM_PTNAME[n] || n; });
@@ -12265,7 +12268,8 @@
   function admxSaveBody(rec){
     var jobs = ["front", "side"].map(function(m){
       var s = state.byMode[m]; if(!s.img) return null;
-      var img = s.img, snap = {}, A = JSON.parse(JSON.stringify(s.autoPos || {})), editOld = state.editingOld, mName = state.member ? state.member.name : "";
+      var img = s.img, snap = {}, editOld = state.editingOld, mName = state.member ? state.member.name : "";
+      var A = JSON.parse(JSON.stringify((editOld && s.recPos) || s.autoPos || {})), fromRec = !!(editOld && s.recPos);   // v262 지난 기록 수정: 불러왔을 때의 점이 '수정 전'
       Object.keys(s.points).forEach(function(k){ snap[k] = { x: s.points[k].x, y: s.points[k].y }; });   // 저장 순간의 점 (분리를 기다리는 동안 점을 옮겨도 그대로)
       if(!s.grid) s.grid = gridFromPose(s, null);
       return admxCutReady(m).then(function(){
@@ -12280,7 +12284,7 @@
         state.gridBg = true; state.bgView = "grid";   // 수정 전·후 모두 흰 격자 배경으로
         try{
           setPts(snap); after = { img: shot(), pts: pts() };
-          if(Object.keys(A).length){ setPts(A); before = { img: shot(), pts: pts() }; }
+          if(Object.keys(A).length){ setPts(A); before = { img: shot(), pts: pts(), saved: fromRec || undefined, weak: fromRec || undefined }; }
         } finally { setPts(bak); state.gridBg = sv.g; state.bgView = sv.v; }
         if(!before && !editOld) before = { fail: true };   // v123 자동 인식 실패 → 손으로 찍은 기록
         return admxStore(ADMX + "records:" + rec.id + ":" + m, { kind: "body", mode: m, at: rec.at, member: mName,
@@ -12490,7 +12494,7 @@
         cb.push(a.label + ": (" + b.x + ", " + b.y + ")"); ca.push(a.label + ": (" + a.x + ", " + a.y + ")");
         if(mv) lines.push("- " + a.label + " : " + mv);
       });
-      return { a: "체형분석", b: x.mode === "front" ? "정면" : "측면", e: "X", f: "X", g: "X", h: x.legacy ? "수정 전 자료 없음 (관리자 보관 자료가 없는 기록 · 저장된 최종 점만 표시)" : lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)",
+      return { a: "체형분석", b: x.mode === "front" ? "정면" : "측면", e: "X", f: "X", g: "X", h: x.legacy ? "수정 전 자료 없음 (관리자 보관 자료가 없는 기록 · 저장된 최종 점만 표시)" : (B.saved ? "수정 전 = 저장된 기록을 열었을 때의 점 (처음 측정 때 보관 자료가 없어 자동 인식 결과 대신 사용)\n" : "") + (lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)"),
         ib: x.legacy ? "–" : cb.join("\n"), ia: ca.join("\n"), k: "–" };
     }
     var J = ROM_ALL.find(function(j){ return j.k === x.joint; }), mv = J ? J.moves.find(function(m){ return m.k === x.move; }) : null;
@@ -12513,7 +12517,7 @@
         : FC ? "- 시작점(C7 극돌기) : 1선 시작점\n\n- 끝점(귀 이주) : 귓구멍 앞 작은 돌기(이주) 중앙" : GD ? "- 시작점(" + V[0] + ") : 1선 시작점\n\n- 끝점(" + D[0] + ") : " + D[1] : "",
       g: SC ? "좌측 높은 점 (두 점을 이은 선과 바닥 수평선이 만나는 지점)" : FC ? "C7 극돌기 (1선 수평선과 2선이 만나는 지점)" : GD ? V[0] + "(1선과 2선이 만나는 지점)" : "",
       h: x.legacy ? (B.regen ? "수정 전 사진: 저장 당시 자료가 없는 예전 기록이라 현재 버전 자동 인식으로 다시 만든 사진\n" + (lines.length ? lines.join("\n") : "수정 없음 (자동 인식과 최종 점이 같음)")
-          : "수정 전 자료 없음 (관리자 보관 자료가 없는 기록 · 저장된 최종 결과만 표시)") : lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)",
+          : "수정 전 자료 없음 (관리자 보관 자료가 없는 기록 · 저장된 최종 결과만 표시)") : (B.saved ? "수정 전 = 저장된 기록을 열었을 때의 점 (처음 측정 때 보관 자료가 없어 자동 인식 결과 대신 사용)\n" : "") + (lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)"),
       ib: x.legacy && !B.regen ? "–" : cb.join("\n"), ia: ca.join("\n"),
       k: (vb == null ? "–" : vb + "°") + " → " + (va == null ? "–" : va + "°") };
   }

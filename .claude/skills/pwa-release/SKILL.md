@@ -28,8 +28,13 @@ self.addEventListener("fetch", e => {
 ```
 앱에서 새 버전 감지 → "새 버전이 있습니다 [새로고침]" 토스트: `registration.addEventListener("updatefound", …)`.
 
-## 버전 네 곳 (RELEASE.md)
-`APP_VERSION`(js) = `manifest.version` = `CACHE_VERSION`(sw.js) = CHANGELOG 맨 위. `/ship` 이 한 번에 올린다. 화면 하단 "v1.0.0 · made by AYOAJEYO" 로 표시해 폰에서 확인.
+## 버전 두 곳 (이 프로젝트 · `docs/RELEASE.md` 1번)
+위 코드는 일반 PWA 예시이고, **이 프로젝트의 실제 이름은 다르다**:
+- `index.html` 의 `APP_VER`(`"v267"` 형식) = `docs/CHANGELOG.md` 맨 위 `## vNNN` — 같은 번호
+- `sw.js` 의 `VERSION`(`"pma-v216"` 형식) — 앱 번호와 별개 카운터로 배포마다 +1
+- `manifest.webmanifest` 는 version 칸이 없어 건드리지 않는다
+
+`/ship` 이 이 두 곳과 CHANGELOG 를 한 번에 올린다. 화면 하단 "아요바디요 v267 · made by AYOAJEYO" 로 표시해 폰에서 확인.
 
 ## GitHub Pages
 - 저장소 Settings → Pages → Branch `main` / root. 주소 `https://{계정}.github.io/{저장소}/`.
@@ -48,4 +53,4 @@ self.addEventListener("fetch", e => {
 App Store 는 TWA 불가. 홈 화면 추가(사파리 공유 → 홈 화면에 추가)로 배포하거나, 네이티브 래퍼(Capacitor) + Mac 필요. 별도 ADR.
 
 ## "예전 화면이 남아요"
-1. `CACHE_VERSION` 올렸는지 → 2. 사용자 폰: 앱 완전 종료 후 다시 열기 → 3. 그래도면 설정 → 사이트 데이터 삭제. `/ship` 이 1번을 강제한다.
+1. `sw.js` 의 `VERSION`(`pma-v…`) 올렸는지 → 2. 사용자 폰: 앱 완전 종료 후 다시 열기 → 3. 그래도면 설정 → 사이트 데이터 삭제. `/ship` 이 1번을 강제한다.

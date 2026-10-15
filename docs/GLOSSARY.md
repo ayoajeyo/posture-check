@@ -9,7 +9,7 @@
 | 충돌(conflict) | 두 PC 에서 같은 줄을 다르게 고쳐 git 이 못 합치는 상태 | `/sync` 가 풀어 준다 |
 | 배포 | 사용자가 실제로 쓰는 곳에 올리기. 여기선 `main` 에 push | `/ship` |
 | PWA | 폰 홈 화면에 앱처럼 추가되는 웹사이트 | `manifest.json`, `sw.js` |
-| 서비스워커(sw.js) | 오프라인·캐시를 담당하는 파일. 버전을 올려야 새 화면이 보임 | `CACHE_VERSION` |
+| 서비스워커(sw.js) | 오프라인·캐시를 담당하는 파일. 버전을 올려야 새 화면이 보임 | `VERSION`(`pma-vNNN`) |
 | localStorage / IndexedDB | 폰 브라우저 안의 작은 저장 공간 / 큰 저장 공간 | 설정 / 사진 |
 | Supabase | 로그인·DB·파일 저장을 빌려주는 서비스 | 서버가 필요할 때 |
 | RLS | DB 에서 "자기 데이터만 보게" 하는 잠금 | Supabase 테이블 |

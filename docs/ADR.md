@@ -36,6 +36,7 @@
 **트레이드오프**: 개성 있는 비주얼은 포기.
 
 ### ADR-000-6: 버전은 네 곳 동시 갱신, 배포는 `/ship` 으로만
+**상태**: 일부 대체됨(→ ADR-012: 이 프로젝트는 **두 곳 + CHANGELOG**). 배포를 `/ship` 으로만 하는 부분은 그대로 유효하다.
 **결정**: APP_VERSION · manifest · sw.js CACHE_VERSION · CHANGELOG 를 `/ship` 이 함께 올린다.
 **이유**: 하나라도 빠지면 사용자 폰에 이전 화면이 남는 사고가 반복됐다.
 **트레이드오프**: 급한 수정도 `/ship` 절차를 거쳐야 한다(약 2분).
@@ -116,3 +117,15 @@
 **대안**: 전체 모듈 분리·번들러 도입 — 빌드 없음 원칙(ADR-000-1)과 위험 때문에 안 함.
 **트레이드오프**: 파일이 하나 늘어 네트워크 요청 1회 추가. 새 index.html 만 받고 judge.js 를 못 받은 순간(새 서비스워커 설치 전 불안정한 연결)에는 판정 화면에서 오류가 날 수 있다.
 **영향받는 파일**: js/logic/judge.js, tests/judge.test.js, package.json, index.html, sw.js
+
+### ADR-012: 버전은 두 곳 + CHANGELOG — 앱 번호와 서비스워커 번호를 따로 센다
+**상태**: 채택 (2026-10-15) — 공통 ADR-000-6 의 "네 곳" 을 이 프로젝트에서 대체
+**배경**: 공통 ADR-000-6 은 `js/app.js` 의 `APP_VERSION`, `manifest.json` 의 `version`, `sw.js` 의 `CACHE_VERSION`, CHANGELOG 네 곳을 올리라고 한다. 이 프로젝트에는 그 중 **세 곳이 실제로 없다**(버전은 `index.html` 안의 `APP_VER`, manifest 는 `manifest.webmanifest` 이고 version 칸이 없고, 서비스워커 변수 이름은 `VERSION`). 문서·명령어가 없는 파일을 가리켜 배포 때 혼동이 생겼다.
+**결정**: 올리는 곳은 두 곳 + CHANGELOG 로 한다.
+1. `index.html` 의 `APP_VER`(`"v267"`) = `docs/CHANGELOG.md` 맨 위 `## vNNN` — 같은 번호
+2. `sw.js` 의 `VERSION`(`"pma-v216"`) — 앱 번호와 **별개 카운터**로 배포마다 +1, 주석에 그때의 앱 버전을 적는다
+`manifest.webmanifest` 는 version 칸이 없어 건드리지 않는다. 안드로이드 앱(TWA)을 새로 올릴 때만 Play `versionCode` 도 +1.
+**이유**: 두 번호의 역할이 다르다. 앱 번호는 사용자가 화면에서 보고 말할 수 있는 번호, 서비스워커 번호는 폰에 남은 캐시를 버리게 하는 스위치다.
+**대안**: 두 번호를 같은 값으로 통일 — 지금 번호가 이미 벌어져 있어(v267 vs pma-v216) 맞추는 과정에서 캐시가 꼬일 위험이 있어 안 함.
+**트레이드오프**: 올릴 숫자가 두 개라 손으로 하면 빠뜨리기 쉽다 → `/ship` 이 둘을 함께 올리고 `/status` 가 일치를 점검한다.
+**영향받는 파일**: docs/RELEASE.md, .claude/commands/ship.md, .claude/commands/status.md, .claude/commands/rollback.md, .claude/skills/pwa-release/SKILL.md, docs/GLOSSARY.md

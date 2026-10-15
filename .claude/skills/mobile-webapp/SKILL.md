@@ -30,7 +30,8 @@ icons/              # 192px, 512px 아이콘
 ```
 
 ## 꼭 지킬 것
-- **버전 갱신**: 배포할 때마다 `sw.js`의 `CACHE_VERSION`을 올린다. 안 올리면 사용자 폰에 이전 화면이 남는다.
+- **버전 갱신**: 배포할 때마다 `sw.js`의 캐시 버전을 올린다. 안 올리면 사용자 폰에 이전 화면이 남는다.
+  - 위 구조와 이름(`manifest.json`·`CACHE_VERSION`)은 **새 프로젝트용 일반 예시**다. 아요바디요에서는 `index.html` 의 `APP_VER` 와 `sw.js` 의 `VERSION`(`pma-vNNN`), `manifest.webmanifest` 를 쓴다 (ADR-012 · `docs/RELEASE.md` 1번).
 - **Supabase 키**: 화면 코드에는 anon(publishable) 키만 넣는다. service_role 키는 절대 넣지 않는다. 모든 테이블에 RLS를 켠다.
 - **사진**: 업로드 전 긴 변을 1600px 정도로 줄여 저장 공간을 아낀다. 민감한 사진은 비공개 버킷 + 서명된 URL로 연다.
 - **카메라·위치**: HTTPS(GitHub Pages는 기본 HTTPS)에서만 동작한다. 권한 거부 시 안내 문구를 보여준다.

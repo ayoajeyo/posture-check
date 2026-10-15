@@ -13505,7 +13505,7 @@
     var G = ROM_GD[J.k + "|" + mv.k]; if(!G) return;
     var sd = romSd(J, mv), lr = sd !== "C";
     if(romGdSide == null || !lr) romGdSide = lr ? sd : "C";
-    var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=220";   // v202 새 기준 실루엣 사진으로 교체
+    var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=270";   // v270 발목은 4점 기준 사진으로 교체 (v202 새 기준 실루엣 사진)
     $("ptGuideTitle").textContent = "측정가이드 · " + J.n + " " + mv.n;
     var aux = mv.kind === "aux";
     $("ptGuideSub").textContent = (lr ? (romGdSide === "R" ? "우측" : "좌측") + " 예시 · " : "") + (aux ? "측정점 4개 · 측정선 2개 + 파란 보조선" : "측정점 3개 · 측정선 2개");
@@ -13514,6 +13514,7 @@
       $("ptGuideBody").innerHTML =
         '<div class="pg-pose"><b>측정 자세</b> · ' + mv.guide + '</div>' +
         (lr ? '<div class="pg-side"><button type="button" data-gs="L" aria-pressed="' + (romGdSide === "L") + '">좌측</button><button type="button" data-gs="R" aria-pressed="' + (romGdSide === "R") + '">우측</button></div>' : '') +
+        '<div class="pg-pics one"><figure><img src="' + src + '" alt="' + esc(J.n + " " + mv.n) + ' 측정점 예시" loading="lazy"></figure></div>' +   // v270 4점 기준으로 다시 찍은 예시 사진
         '<ul class="pg-list">' +
           '<li><i style="background:' + ROM_COL[0] + '"></i><b>①선 시작</b><span>' + esc(G.V) + '</span></li>' +
           '<li><i style="background:' + ROM_COL[1] + '"></i><b>①선 끝</b><span>' + esc(G.D) + '</span></li>' +
@@ -13524,7 +13525,9 @@
         '<p class="pg-warn"><b>자주 틀리는 곳</b> · ' + esc(G.tip) + '</p>' +
         '<p class="pg-tip">각도 = ①선(외측 복사뼈 → 비골두) ↔ 파란 보조선 사이각 · 측정값 = ' + ((mv.sgn || 1) < 0 ? '90° − 사이각' : '사이각 − 90°') + ' (정강이와 발바닥이 직각이면 0°).</p>';
       $("ptGuideBody").querySelectorAll("[data-gs]").forEach(function(b){ b.addEventListener("click", function(){ romGdSide = b.getAttribute("data-gs"); openRomGuide(); }); });
-      $("ptGuide").hidden = false; return;   // (예전 3점 예시 사진은 새 기준과 달라 보여주지 않음)
+      var imA = $("ptGuideBody").querySelector("img");
+      imA.onerror = function(){ imA.closest("figure").outerHTML = '<p class="pg-tip">예시 사진을 불러오지 못했어요. 인터넷 연결 후 다시 열어 주세요.</p>'; };
+      $("ptGuide").hidden = false; return;
     }
     $("ptGuideBody").innerHTML =
       '<div class="pg-pose"><b>측정 자세</b> · ' + mv.guide + '</div>' +

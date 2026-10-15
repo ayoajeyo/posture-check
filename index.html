@@ -6940,7 +6940,13 @@
   };
 
   function thumbOf(m){
-    var src = withMode(m, function(){ return buildAnnotated({ footer:false, labels:false }); });
+    // v259 기록 사진은 보고 있던 화면(원본·측정·격자)과 상관없이 항상 흰 격자 배경으로 (격자가 아직 없으면 측정 화면 → 저장 후 격자가 생기면 다시 만듦)
+    var sm = state.byMode[m], sv = { g: state.gridBg, v: state.bgView }, src;
+    try{
+      if(sm && sm.img && !sm.grid && typeof gridFromPose === "function"){ try{ sm.grid = gridFromPose(sm, null); }catch(e){} }
+      state.gridBg = true; state.bgView = "grid";
+      src = withMode(m, function(){ return buildAnnotated({ footer:false, labels:false }); });
+    } finally { state.gridBg = sv.g; state.bgView = sv.v; }
     var cr = reportCrop(m), W = 300, H = Math.round(W * cr.h / cr.w);
     var c = document.createElement("canvas"); c.width = W; c.height = H;
     var g = c.getContext("2d"); g.imageSmoothingQuality = "high";
@@ -7744,6 +7750,7 @@
       return dbPut("records", rec);
     }).then(function(){
       state.savedSig = sig;
+      thumbGridLater(rec);
       return refreshRound();
     }).then(function(){
       var el = $("repSaved"); el.hidden = false;
@@ -7751,6 +7758,24 @@
       toast(state.member.name + " 회원 " + sessRndTxt() + " 측정을 " + (first ? "저장했어요." : "수정 저장했어요."));
       updateSessBar();
     }).catch(function(e){ console.warn(e); toast("저장하지 못했어요. 저장 공간을 확인해주세요."); });
+  }
+  // v259 저장할 때 사람 분리(격자 배경)가 덜 끝났으면 → 끝난 뒤 기록 사진을 격자로 다시 만들어 저장
+  function thumbGridLater(rec){
+    var ms = ["front", "side"].filter(function(m){ var x = state.byMode[m]; return x.img && rec.thumbs && rec.thumbs[m] && !(x.cutout && x.grid); });
+    if(!ms.length || typeof admxCutReady !== "function") return;
+    var imgs = {}; ms.forEach(function(m){ imgs[m] = state.byMode[m].img; });
+    Promise.all(ms.map(function(m){ return admxCutReady(m); })).then(function(){
+      var ch = false;
+      ms.forEach(function(m){ var x = state.byMode[m]; if(x.img === imgs[m] && x.cutout && x.grid){ try{ rec.thumbs[m] = thumbOf(m); ch = true; }catch(e){} } });
+      if(!ch || state.sessionId !== rec.id) return;
+      return dbAll("records").then(function(all){
+        var cur0 = all.find(function(x){ return x.id === rec.id; }); if(!cur0) return;
+        return dbFull("records", cur0).catch(function(){ return cur0; }).then(function(full){
+          var nx = Object.assign({}, full || cur0, { thumbs: Object.assign({}, (full || cur0).thumbs || {}, rec.thumbs) });
+          return dbPut("records", nx);
+        });
+      });
+    }).catch(function(e){ console.warn("[thumb grid]", e); });
   }
   $("btnSessSave").addEventListener("click", saveMeasurement);
   $("btnRepSess").addEventListener("click", saveMeasurement);
@@ -11361,7 +11386,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v258";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v259";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

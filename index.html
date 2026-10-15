@@ -12509,7 +12509,8 @@
     var GD = ROM_GD[x.joint + "|" + x.move], sp = function(t){ var i = (t || "").indexOf(" · "); return i < 0 ? [t || "", ""] : [t.slice(0, i), t.slice(i + 3)]; };
     var SC = x.joint === "scol";   // v197 척추 균형: 두 점 선 ↔ 바닥 수평선
     var FC = x.joint === "fhp";    // v204 거북목(CVA): C7 수평선 ↔ C7–귀 이주 선 (guide/ref/fhp_cva_ref.json 기준)
-    var role = SC ? ["시작점", "끝점"] : ["각도축", "2선 끝점", "1선 끝점"], nm = x.names || [];
+    var AUX = !!(mv && mv.kind === "aux" && (A.pts || []).length === 4);   // v266 발목 배측·저측굴곡: 1선(복사뼈→비골두) · 2선(뒤꿈치→제5 MTP) + 파란 보조선
+    var role = SC ? ["시작점", "끝점"] : AUX ? ["1선 시작점", "1선 끝점", "2선 시작점", "2선 끝점"] : ["각도축", "2선 끝점", "1선 끝점"], nm = x.names || [];
     (A.pts || []).forEach(function(a, i){
       var b = (B.pts || [])[i] || a, r = (role[i] || "점" + (i + 1)) + "(" + (nm[i] || "") + ")", m2 = dirTxt(b, a, x.h);
       cb.push(r + ": (" + b.x + ", " + b.y + ")"); ca.push(r + ": (" + a.x + ", " + a.y + ")");
@@ -12518,6 +12519,17 @@
     var vb = B.val, va = A.val;
     if(vb != null && va != null && vb !== va) lines.push("- 각도 : " + vb + "° → " + va + "° (" + (va > vb ? "+" : "") + (va - vb) + "°)");
     var V = sp(GD && GD.V), D = sp(GD && GD.D), Ar = sp(GD && GD.A);
+    if(AUX && GD){   // 앱 안내용 "(①선 시작점 …)" 괄호는 빼고 점 이름·설명만
+      var cut = function(t){ var q = sp(t); return [q[0], q[1].replace(/\s*\([①②][^)]*\)\s*$/, "")]; };
+      V = cut(GD.V); D = cut(GD.D); Ar = cut(GD.A); var Ee = cut(GD.E);
+      return { a: J.n, b: mv.n + (x.side === "L" ? "(좌측)" : x.side === "R" ? "(우측)" : ""),
+        e: "- 시작점(" + V[0] + ") : " + V[1] + "\n\n- 끝점(" + D[0] + ") : " + D[1],
+        f: "- 시작점(" + Ar[0] + ") : " + Ar[1] + "\n\n- 끝점(" + Ee[0] + ") : " + Ee[1],
+        g: "1선과 생성된 보조선 (보조선은 2선과 평행하게 1선 시작점을 지남)",
+        h: x.legacy ? ADMX_LEG : x.noEdit ? "수정 없음" : B.fail ? "자동 인식 실패 — 점을 손으로 찍어 저장 (수정 전 사진 없음)" : (B.saved ? "수정 전 = 저장된 기록을 열었을 때의 점 (처음 측정 때 보관 자료가 없어 자동 인식 결과 대신 사용)\n" : "") + (lines.length ? lines.join("\n") : "수정 없음"),
+        ib: B.fail ? "–" : cb.join("\n"), ia: x.legacy ? "–" : x.noEdit ? "– (수정 없음)" : ca.join("\n"),
+        k: x.legacy ? (vb == null ? "–" : vb + "°") : x.noEdit ? (vb == null ? "–" : vb + "° (수정 없음)") : (vb == null ? "–" : vb + "°") + " → " + (va == null ? "–" : va + "°") };
+    }
     return { a: J ? J.n : x.joint, b: (mv ? mv.n : x.move) + (x.side === "L" ? "(좌측)" : x.side === "R" ? "(우측)" : ""),
       e: SC ? "- 시작점(좌측 높은 점) : 좌측 허리(등)의 가장 높은 곳\n\n- 끝점(우측 높은 점) : 우측 허리(등)의 가장 높은 곳"
         : FC ? "- 시작점(C7 극돌기) : 목젖 아랫부분 높이에서 가로선을 그었을 때 목 뒤 윤곽과 만나는 끝 지점\n\n- 끝점(수평선) : C7에서 얼굴 쪽으로 그은 수평선" : GD ? "- 시작점(" + V[0] + ") : " + V[1] + "\n\n- 끝점(" + Ar[0] + ") : " + Ar[1] : "",

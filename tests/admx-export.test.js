@@ -73,3 +73,29 @@ test("관리자 모드: 화면에 좌표를 띄우지 않고(창·점 옆 라벨
   assert.match(html, /pts: admxRound\(romS\.pts\)/);                  // ROM 점 좌표 보관
   assert.match(html, /var pts = function\(\)\{ var o = \{\}; Object\.keys\(s\.points\)/);   // 체형분석 점 좌표 보관
 });
+
+// 발목 배측·저측굴곡 = 점 4개(1선 시작·끝, 2선 시작·끝) + 파란 보조선 — 엑셀 1선·2선 문구가 이 순서와 맞아야 함
+ctx.ROM_ALL.push({ k: "ankle", n: "발목", moves: ["dorsi", "plantar"].map((k) => ({ k, n: k, kind: "aux" })) });
+for (const move of ["dorsi", "plantar"]) {
+  test("발목 " + move + ": 엑셀 1선·2선·각도축 문구와 좌표 이름표가 4점 방식과 맞음", async () => {
+    const g = html.match(new RegExp('"ankle\\|' + move + '": (\\{.*?\\}),\\r?\\n'));
+    assert.ok(g, "ROM_GD 발목 문구를 못 찾음");
+    ctx.ROM_GD["ankle|" + move] = vm.runInContext("(" + g[1] + ")", ctx);
+    const names = ["외측 복사뼈", "비골두", "발뒤꿈치(발바닥 면)", "제5 MTP(발바닥 면)"];
+    const x = await prep(rom({ joint: "ankle", move, side: "R", names,
+      before: { img: "B", pts: [P(1, 1), P(2, 2), P(3, 3), P(4, 4)], val: 10 }, after: { img: "A", pts: [P(1, 1), P(2, 2), P(3, 3), P(5, 4)], val: 12 } }));
+    const r = ctx.admxRow(x);
+    assert.match(r.e, /시작점\(외측 복사뼈\)/);              // 1선
+    assert.match(r.e, /끝점\(비골두\)/);
+    assert.doesNotMatch(r.e, /발뒤꿈치/);
+    assert.match(r.f, /시작점\(발뒤꿈치/);                    // 2선
+    assert.match(r.f, /끝점\(제5 MTP\)/);
+    assert.doesNotMatch(r.f, /비골두|외측 복사뼈/);
+    assert.match(r.g, /1선과 생성된 보조선/);                 // 각도축
+    assert.doesNotMatch(r.e + r.f, /①선|②선/);               // 앱 안내용 괄호 설명은 엑셀에 안 넣음
+    for (const lab of ["1선 시작점(외측 복사뼈)", "1선 끝점(비골두)", "2선 시작점(발뒤꿈치", "2선 끝점(제5 MTP"]) {
+      assert.ok(r.ib.includes(lab) && r.ia.includes(lab), "좌표 이름표 없음: " + lab);
+    }
+    assert.doesNotMatch(r.ib + r.ia, /점4|각도축\(|2선 끝점\(비골두/);
+  });
+}

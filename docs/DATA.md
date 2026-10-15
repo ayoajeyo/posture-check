@@ -68,6 +68,9 @@ sessionStorage: `ayo_view`(화면 상태), `4pm_ext_tried`.
 | 버킷 `shares` | `{uid}/{키}.jpg` 리포트 이미지(회원 이름·사진 포함) | S3 | 비공개, share-view 서명 URL 600초 |
 | auth.users | 이메일, 네이버 이름(user_metadata) | S2 | Supabase 관리 |
 
+## 2-4. 보관 기간
+회원 사진·측정 기록·서명은 **센터가 회원을 삭제할 때까지** 보관한다(2026-10-15 결정). 계정을 삭제하면 전부 삭제. 자동 기간 만료 삭제는 없다.
+
 ## 3. 관계
 ```
 member 1 ─ N records (1 ─ 1 blobs 사진)

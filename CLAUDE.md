@@ -55,4 +55,4 @@
 - 미리보기: `python -m http.server 8000` 후 http://localhost:8000 (카메라·서비스워커 때문에 파일 더블클릭보다 서버로 연다. 로그인·공유는 Edge Function CORS 가 실제 주소만 허용해 로컬에선 안 된다)
 - 테스트: 앱 자동 테스트 없음 (`package.json` 없음). 하네스 테스트만 `python -m pytest scripts/`
 - 배포: `/ship` (main 에 push = GitHub Pages 반영)
-- 서버 함수 배포: `supabase functions deploy <이름>` — {확인 필요: 지금 어떻게 배포하는지(CLI/대시보드)}
+- 서버 함수 배포: `supabase functions deploy <이름>` (저장소에 `supabase/config.toml`·연결 정보가 있어 CLI 방식으로 보임. 이전 배포 방법은 사용자도 모름 — 배포 전 확인받기)

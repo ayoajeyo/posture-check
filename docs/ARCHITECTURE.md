@@ -52,8 +52,8 @@ syncPull: ayo_items 를 updated_at 기준으로 받아 IndexedDB 에 반영 (커
 ## 4. 저장소 표
 | 데이터 | 어디에 | 민감도 | 보관 기간 | 지울 때 |
 |--------|--------|--------|----------|---------|
-| 회원 정보·서명 | IndexedDB `members` / `ayo_items`(store=members) | S2·S3 | {확인 필요} | 회원 삭제 시 기록·ROM·상담·결제·배정과 함께 삭제. 서버에는 id 만 남은 `deleted=true` 행 |
-| 측정 사진 | IndexedDB `blobs` / Storage `photos` | S3 | {확인 필요} | 회원·기록 삭제 시 함께 (단 관리자 `admx:` 보관본·공유 이미지는 남음 → BACKLOG) |
+| 회원 정보·서명 | IndexedDB `members` / `ayo_items`(store=members) | S2·S3 | 센터가 회원을 삭제할 때까지 (계정 삭제 시 전부) | 회원 삭제 시 기록·ROM·상담·결제·배정과 함께 삭제. 서버에는 id 만 남은 `deleted=true` 행 |
+| 측정 사진 | IndexedDB `blobs` / Storage `photos` | S3 | 회원 삭제 시까지 | 회원·기록 삭제 시 함께 (단 관리자 `admx:` 보관본·공유 이미지는 남음 → BACKLOG) |
 | 공유 리포트 이미지 | Storage `shares` + `ayo_shares` | S3 | 최대 100일(링크 기간) | 수동 중지 또는 계정 삭제 |
 | 앱·센터 설정 | localStorage `ayo_settings` / `ayo_profiles.settings` | S1(센터 정보) | 계정 삭제까지 | 계정 삭제 |
 자세한 필드는 `DATA.md`.

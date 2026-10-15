@@ -85,5 +85,5 @@ if names_file.exists():
 
 if problems:
     print("BLOCKED: 커밋을 멈췄습니다.\n- " + "\n- ".join(problems) +
-          "\n해당 파일을 .gitignore 에 추가하거나 옮긴 뒤 다시 커밋하세요.", file=sys.stderr)
+          "\n위 항목을 고친 뒤(파일이면 .gitignore 에 추가하거나 옮긴 뒤) 다시 커밋하세요.", file=sys.stderr)
     sys.exit(2)

@@ -12490,9 +12490,9 @@
   var ADMX_LEG = "수정 여부 알 수 없음 (이 기기에 관리자 보관 자료 없음) · 저장된 측정 결과를 수정 전 칸에 표시";
   function admxRow(x){
     var dirTxt = function(a, b, H){
-      var dx = b.x - a.x, dy = b.y - a.y, t = [];
-      if(Math.abs(dx) >= 1) t.push((dx > 0 ? "오른쪽 " : "왼쪽 ") + Math.abs(dx) + "px");
-      if(Math.abs(dy) >= 1) t.push((dy > 0 ? "아래 " : "위 ") + Math.abs(dy) + "px");
+      var dx = b.x - a.x, dy = b.y - a.y, t = [], min = (x.before && x.before.scaled) ? 2 : 1;   // v269 환산 기록의 1px 반올림 차이는 이동으로 쓰지 않음
+      if(Math.abs(dx) >= min) t.push((dx > 0 ? "오른쪽 " : "왼쪽 ") + Math.abs(dx) + "px");
+      if(Math.abs(dy) >= min) t.push((dy > 0 ? "아래 " : "위 ") + Math.abs(dy) + "px");
       return t.length ? t.join(" · ") + " 이동 (사진 높이의 " + (Math.hypot(dx, dy) / H * 100).toFixed(1) + "%)" : "";
     };
     var B = x.before || {}, A = x.after || {}, lines = [], cb = [], ca = [];
@@ -12596,7 +12596,10 @@
     if(B.fail) return true;
     if(B.val != null && A.val != null && B.val !== A.val) return true;
     var bp = B.pts, ap = A.pts; if(!bp || !ap) return false;
-    return Object.keys(ap).some(function(k){ var a = ap[k], b = bp[k]; return a && b && (Math.round(a.x) !== Math.round(b.x) || Math.round(a.y) !== Math.round(b.y)); });
+    // v269 scaled = 처음 측정(원본 해상도)과 지금(저장 사진)의 좌표 크기가 달라 환산한 '수정 전'.
+    //      환산 비율과 사진 축소 비율의 반올림 차이로 점을 안 옮겨도 1px 어긋나므로 1px 는 수정으로 보지 않는다.
+    var tol = B.scaled ? 1 : 0;
+    return Object.keys(ap).some(function(k){ var a = ap[k], b = bp[k]; return a && b && (Math.abs(Math.round(a.x) - Math.round(b.x)) > tol || Math.abs(Math.round(a.y) - Math.round(b.y)) > tol); });
   }
   function admxPrep(L, onStep){
     var i = 0;

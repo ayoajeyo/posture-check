@@ -129,3 +129,28 @@ test("정말 한 번도 안 고친 기록은 그대로 '수정 없음' (기존 �
   assert.equal(x.after.img, null);
   assert.equal(ctx.admxRow(x).k, "33° (수정 없음)");
 });
+
+// v269 환산(scaled) 기록: 처음 측정(원본 해상도)과 저장 사진의 비율 반올림 차이로
+// 점을 안 옮겨도 좌표가 1px 어긋난다 (세로 사진 기준 y좌표의 43%) → 1px 는 수정으로 보지 않음
+test("환산된 기록을 안 고치고 다시 저장: 1px 반올림 차이는 '수정 없음'", async () => {
+  const x = await prep(rom({ before: { same: true, scaled: 0.5684, img: "B", pts: [P(571, 822), P(300, 1400)], val: 33 },
+    after: { img: "A", pts: [P(572, 823), P(300, 1401)], val: 33 } }));
+  assert.equal(x.noEdit, true, "1px 반올림 차이를 수정으로 잘못 봄");
+  assert.equal(x.after.img, null);
+  assert.equal(ctx.admxRow(x).k, "33° (수정 없음)");
+});
+
+test("환산된 기록이라도 2px 이상 옮겼으면 수정으로 잡음", async () => {
+  const x = await prep(rom({ before: { same: true, scaled: 0.5684, img: "B", pts: [P(571, 822)], val: 33 },
+    after: { img: "A", pts: [P(571, 830)], val: 33 } }));
+  assert.notEqual(x.noEdit, true);
+  assert.equal(x.after.img, "A");
+  assert.match(ctx.admxRow(x).h, /아래 8px/);
+});
+
+test("환산 기록도 각도가 달라지면 수정 (좌표 차이와 무관)", async () => {
+  const x = await prep(rom({ before: { same: true, scaled: 0.5684, pts: [P(571, 822)], val: 51 },
+    after: { pts: [P(572, 823)], val: 47 } }));
+  assert.notEqual(x.noEdit, true);
+  assert.equal(ctx.admxRow(x).k, "51° → 47°");
+});

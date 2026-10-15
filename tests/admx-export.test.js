@@ -97,5 +97,7 @@ for (const move of ["dorsi", "plantar"]) {
       assert.ok(r.ib.includes(lab) && r.ia.includes(lab), "좌표 이름표 없음: " + lab);
     }
     assert.doesNotMatch(r.ib + r.ia, /점4|각도축\(|2선 끝점\(비골두/);
+    assert.doesNotMatch(r.ib + r.ia, /\([^)]*\(/);          // 좌표 이름표에 괄호가 겹치지 않음
+    assert.ok(r.ib.includes("2선 시작점(발뒤꿈치 · 발바닥 면)") && r.ib.includes("2선 끝점(제5 MTP · 발바닥 면)"));
   });
 }

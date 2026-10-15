@@ -6523,7 +6523,7 @@
       if(memId) dbAll("members").then(function(L){
         var m = L.find(function(x){ return x.id === memId; }); if(!m) return;
         m.shareIds = (m.shareIds || []).concat(id); return dbPut("members", m);
-      }).catch(function(e){ console.warn("[share] member link", e); toast("회원 기록에 링크를 연결하지 못했어요. 회원 삭제 때 이 링크는 목록에서 직접 중지해 주세요."); });
+      }).catch(function(e){ console.warn("[share] member link", e); toast("링크는 만들었어요. 회원 삭제 때는 공유 링크 목록에서 직접 중지해 주세요."); });
     }).catch(function(e){
       console.warn("[share]", e); toast(shErr(e));
       $("btnShMake").disabled = false; $("btnShMake").textContent = "링크 만들기";
@@ -7191,29 +7191,28 @@
   $("btnMbDelete").addEventListener("click", function(){
     var m = mbCurrent; if(!m) return;
     if(!window.confirm(m.name + " 회원과 모든 측정 기록을 삭제할까요? 되돌릴 수 없어요.")) return;
-    var gone = {};   // v264 지운 기록 id → 관리자 보관본(admx:)도 삭제
+    var gone = {};   // v264 이 회원의 기록 id → 관리자 보관본(admx:)도 삭제
     // v264 공유 링크부터 삭제(온라인 필요) — 실패하면 아무것도 지우지 않고 멈춤(다시 시도 가능)
     dbAll("members").then(function(L){
       var cur = L.find(function(x){ return x.id === m.id; }), ids = (cur && cur.shareIds) || [];
       return shDelMany(ids).then(function(){   // 다음 단계가 실패해도 재시도 때 인터넷이 다시 필요 없게 비움
         if(ids.length){ cur.shareIds = []; return dbPut("members", cur); }
       });
-    }).then(function(){ return dbAll("records"); }).then(function(all){
-      return Promise.all(all.filter(function(r){ return r.memberId === m.id; }).map(function(r){ gone["records:" + r.id] = 1; return dbDel("records", r.id); }));
+    }).then(function(){ return Promise.all([dbAll("records"), dbAll("roms"), idbKeys("blobs")]); }).then(function(a){
+      // 관리자 보관본(admx:records:<id>:<front|side> · admx:roms:<id>)을 기록보다 먼저 삭제 — 중간에 실패해도 다시 시도하면 찾을 수 있게
+      a[0].forEach(function(r){ if(r.memberId === m.id) gone["records:" + r.id] = 1; });
+      a[1].forEach(function(r){ if(r.memberId === m.id) gone["roms:" + r.id] = 1; });
+      return Promise.all(a[2].filter(function(k){ var p = String(k).split(":"); return p[0] === "admx" && gone[p[1] + ":" + p[2]]; }).map(function(k){ return rawDel("blobs", k, true); }));
     }).then(function(){
-      return Promise.all(["assigns", "consults", "sales", "roms"].map(function(st){
-        return dbAll(st).then(function(L){ return Promise.all(L.filter(function(x){ return x.memberId === m.id; }).map(function(x){ if(st === "roms") gone["roms:" + x.id] = 1; return dbDel(st, x.id); })); });
+      return Promise.all(["records", "assigns", "consults", "sales", "roms"].map(function(st){
+        return dbAll(st).then(function(L){ return Promise.all(L.filter(function(x){ return x.memberId === m.id; }).map(function(x){ return dbDel(st, x.id); })); });
       }));
-    }).then(function(){
-      return idbKeys("blobs").then(function(ks){   // admx:records:<id>:<front|side> · admx:roms:<id>
-        return Promise.all(ks.filter(function(k){ var p = String(k).split(":"); return p[0] === "admx" && gone[p[1] + ":" + p[2]]; }).map(function(k){ return rawDel("blobs", k, true); }));
-      });
     }).then(function(){ return dbDel("members", m.id); }).then(function(){
       if(state.member && state.member.id === m.id) setMember(null);
       toast("삭제했어요."); mbShowList();
     }).catch(function(e){
       console.warn("[member delete]", e && (e.message || e.error));
-      toast(e && e.message === "SHARE_OFFLINE" ? "이 회원의 공유 링크를 지우려면 로그인·인터넷 연결이 필요해요. 연결 후 다시 삭제해 주세요." : "삭제하지 못했어요. 잠시 뒤 다시 시도해 주세요.");
+      toast(e && e.message === "SHARE_OFFLINE" ? "공유 링크 삭제에 로그인·인터넷이 필요해요. 연결 후 다시 삭제해 주세요." : "삭제하지 못했어요. 잠시 뒤 다시 시도해 주세요.");
     });
   });
   $("btnMbMeasure").addEventListener("click", function(){

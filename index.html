@@ -9703,7 +9703,7 @@
       var wr = romGet("wrist", L, side), fg = romGet("finger", L, side);
       if(wr && fg){ var u2 = nrm({ x: fg.x - wr.x, y: fg.y - wr.y }), tip = edge(fg, u2, body * 0.35); if(tip) setPt(1, tip); }
     }
-    // v220 관리자 피드백(회원 1차) 반영: 누워서 찍는 고관절 회전·발목, 팔꿈치 90° 어깨 회전은 관절 인식이 자주 엉뚱한 곳을 잡음 → 사람 윤곽으로 다시 찾기
+    // v220 관리자 피드백(1차) 반영: 누워서 찍는 고관절 회전·발목, 팔꿈치 90° 어깨 회전은 관절 인식이 자주 엉뚱한 곳을 잡음 → 사람 윤곽으로 다시 찾기
     var lf = romLimbFix(m, pn, L, side);
     if(lf) lf.forEach(function(q, i){ if(q) setPt(i, q); });
     if(changed && romS.autoPts) romLearnAdj(moved);   // v203 윤곽으로 새로 놓인 점에도 학습 보정

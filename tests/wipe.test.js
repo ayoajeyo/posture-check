@@ -13,7 +13,7 @@ const grab = (start, end) => {
 };
 const ctx = {};
 vm.createContext(ctx);
-vm.runInContext(grab("  function wipeBodyPhotos(ph){", "  function wipeFresh(){"), ctx);
+vm.runInContext(grab("  function wipeBodyPhotos(ph){", "  function wipeSync(){"), ctx);
 const wipePhotos = vm.runInContext("wipeBodyPhotos", ctx);
 const wipeBody = vm.runInContext("wipeBodyRec", ctx);
 const wipeRom = vm.runInContext("wipeRomRec", ctx);

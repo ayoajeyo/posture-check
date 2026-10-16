@@ -2791,11 +2791,11 @@
     <div class="adm-xls adm-wipe" id="admWipe" hidden>
       <b>🧹 측정 비우기 (사진은 그대로)</b>
       <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한, 한 번만 쓰는 기능이에요. 사진이 없는 예전 기록은 건너뜁니다.</p>
-      <p class="adm-wipe-warn"><b>되돌릴 수 없어요.</b> 30분 안에 받은 백업 파일이 있어야 실행할 수 있어요. 다른 기기(집 PC)가 있으면 먼저 그 기기에서도 앱을 열어 최신으로 맞춰 주세요.</p>
-      <button type="button" class="btn line sm" id="btnWipeBk" style="width:100%">① 지금 백업 파일 저장</button>
+      <p class="adm-wipe-warn"><b>되돌릴 수 없어요.</b> 지난 회차의 각도·점수는 다시 볼 수 없게 됩니다(사진은 남아요). 다른 기기(집 PC)가 있으면 먼저 그 기기에서도 앱을 열어 최신으로 맞춰 주세요.</p>
+      <button type="button" class="btn line sm" id="btnWipeBk" style="width:100%">백업 파일 저장 (선택)</button>
       <p class="adm-wipe-st" id="admWipeSt"></p>
-      <input type="text" class="adm-in" id="admWipeWord" autocomplete="off" placeholder="② 비우기 라고 입력">
-      <button type="button" class="btn primary" id="btnWipeGo" style="width:100%;margin-top:6px" disabled>③ 측정 비우기 실행</button>
+      <input type="text" class="adm-in" id="admWipeWord" autocomplete="off" placeholder="① 비우기 라고 입력">
+      <button type="button" class="btn primary" id="btnWipeGo" style="width:100%;margin-top:6px" disabled>② 측정 비우기 실행</button>
       <p class="adm-wipe-out" id="admWipeOut" hidden></p>
     </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnAdmClose">닫기</button><button type="button" class="yes ok" id="btnAdmGo">확인</button></div>
@@ -12797,14 +12797,13 @@
     c.pts = null; c.value = null; c.pct = null; c.refCustom = null; c.footOff = null; c.ant = null; c.wipedAt = Date.now();
     return c;
   }
-  function wipeFresh(){ var t = +(lsGet("ayo_last_backup") || 0); return !!t && (Date.now() - t) < 30 * 60 * 1000; }
+  // v274 백업은 이 작업의 조건이 아니다(사용자 결정) — 앱의 백업·내보내기·서버 저장 기능은 그대로 쓴다
   function wipeSync(){
-    var done = lsGet(WIPE_LS), fresh = wipeFresh(), word = ($("admWipeWord").value || "").trim() === "비우기";
-    $("btnWipeGo").disabled = !!done || !fresh || !word;
+    var done = lsGet(WIPE_LS), word = ($("admWipeWord").value || "").trim() === "비우기";
+    $("btnWipeGo").disabled = !!done || !word;
     $("admWipeWord").disabled = !!done;
     $("admWipeSt").textContent = done ? "이미 실행했어요 (" + done + ") · 한 번만 쓰는 기능이에요."
-      : !fresh ? "먼저 ① 백업 파일을 저장하세요 (30분 안에 받은 백업만 인정해요)."
-      : word ? "✓ 준비됐어요. ③을 누르면 바로 실행돼요." : "✓ 백업 확인됨 — ②에 비우기 라고 입력하세요.";
+      : word ? "✓ 준비됐어요. ②를 누르면 바로 실행돼요." : "①에 비우기 라고 입력하면 실행 단추가 켜져요.";
   }
   function wipeRun(){
     var n = { rec: 0, rom: 0, admx: 0, skip: 0 }, out = $("admWipeOut");
@@ -12849,7 +12848,7 @@
   $("admWipeWord").addEventListener("input", wipeSync);
   $("btnWipeGo").addEventListener("click", function(){
     if($("btnWipeGo").disabled) return;
-    if(!window.confirm("정말 비울까요?\n\n· 모든 회원의 측정점·각도·점수가 사라집니다\n· 사진은 그대로 남습니다\n· 되돌리려면 방금 받은 백업 파일이 필요합니다")) return;
+    if(!window.confirm("정말 비울까요?\n\n· 모든 회원의 측정점·각도·점수가 사라집니다\n· 사진은 그대로 남습니다\n· 되돌릴 수 없습니다")) return;
     $("btnWipeGo").disabled = true; wipeRun();
   });
 

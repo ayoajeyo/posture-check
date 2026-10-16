@@ -5805,12 +5805,7 @@
       return { x: x, y: y, w: w, h: h };
     });
   }
-  function scoreBand(v){
-    if(v >= 90) return { cls:"st-good", label:"매우 좋음" };
-    if(v >= 75) return { cls:"st-good", label:"양호" };
-    if(v >= 60) return { cls:"st-warn", label:"주의" };
-    return { cls:"st-crit", label:"개선 필요" };
-  }
+  function scoreBand(v){ return AYO_LOGIC.scoreBand(v); }   // 판정 기준은 js/logic/judge.js
   var STAR_PATH = "M12 2.6l2.9 6 6.5.8-4.8 4.5 1.2 6.5L12 17.3l-5.8 3.1 1.2-6.5L2.6 9.4l6.5-.8z";
   function starsHtml(v){
     var n = Math.round(v / 10) / 2, h = "";   // 0~5, 0.5 단위
@@ -8535,20 +8530,7 @@
     var e = 1e-6, t = bb < ba - e ? 1 : bb > ba + e ? -1 : 0, ok = ba <= e && bb <= e;
     return { t: t, ok: ok, lab: t > 0 ? "개선" : t < 0 ? "악화" : (a !== b && ok ? "정상 범위 유지" : "변화 없음") };
   }
-  function romJudge(mv, val){
-    if(mv.grade) return scolJudge(mv, val);
-    if(val == null) return { cls:"", txt:"미측정", pct:0 };
-    if(mv.normal === 0){
-      if(val < 0) return -val <= 10 ? { cls:"good", txt:"정상 (과신전 " + (-val) + "°)", pct:100 }
-        : { cls:"warn", txt:"과신전 " + (-val) + "° · 정상보다 많이 젖혀짐", pct:100 };   // v125
-      return val <= 5 ? { cls:"good", txt:"정상 (완전히 펴짐)", pct:100 }
-        : { cls: val <= 15 ? "warn" : "crit", txt:"완전 신전까지 " + val + "° 부족", pct: Math.max(0, 100 - val / 30 * 100) };
-    }
-    var pct = Math.round(val / mv.normal * 100);
-    if(pct >= 100) return { cls:"good", txt:"정상 범위 (정상의 " + pct + "%)", pct:100 };
-    var lack = 100 - pct;
-    return { cls: pct >= 90 ? "good" : pct >= 70 ? "warn" : "crit", txt:"정상 대비 " + pct + "% · " + lack + "% 부족", pct:pct };
-  }
+  function romJudge(mv, val){ return AYO_LOGIC.romJudge(mv, val); }   // 판정 기준은 js/logic/judge.js
   // v75: 회원별 ROM 기록 캐시 (같은 회원은 즉시 표시, 저장·삭제 시에만 다시 읽음) + 늦게 끝난 이전 회원 조회가 덮어쓰지 않게
   var romLoadSeq = 0, romCache = { mid: null, all: null };
   function romApply(all){

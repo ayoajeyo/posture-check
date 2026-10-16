@@ -2302,7 +2302,7 @@
         </div>
       </div>
       <label>센터명<input id="stName" type="text" maxlength="24" placeholder="예: 남다예 필라테스"></label>
-      <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 070-5220-0919 · aesonge26@gmail.com"></label>   <!-- v248 아요가 일부러 넣은 예시 (회원 정보 아님 — 가짜로 바꾸지 말 것, v285) -->
+      <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 070-5220-0919 · ayobodyyo@gmail.com"></label>   <!-- v248 아요가 일부러 넣은 예시 (회원 정보 아님 — 가짜로 바꾸지 말 것, v285) -->
       <!-- v185 리포트 공유 링크를 받은 회원 화면에 [전화하기] [예약하기] 버튼으로 표시 -->
       <label>전화번호 (선택) · 공유 링크의 [전화하기]<input id="stPhone" type="tel" inputmode="tel" maxlength="20" placeholder="예: 010-0000-0000"></label>
       <label>예약 링크 (선택) · 공유 링크의 [예약하기]<input id="stBook" type="url" inputmode="url" maxlength="300" placeholder="예: 네이버 예약·카카오톡 채널 주소"></label>
@@ -6761,11 +6761,11 @@
   }
   function themeOpen(){ $("moreSheet").hidden = true; $("themeSheet").hidden = false; }
   /* v234 개선·추가 기능 요청: 입력 → 개발자 메일(FormSubmit)로 전송, 실패하면 메일 앱으로 같은 내용 */
-  var FB_MAIL = "aesonge26@gmail.com";
+  var FB_MAIL = "ayobodyyo@gmail.com";   // v287 아요 요청으로 주소 변경 (FormSubmit 은 새 주소로 첫 요청이 오면 확인 메일을 보내 활성화 필요)
   function fbOpen(){
     $("moreSheet").hidden = true;
     var em = ""; try{ em = (ACC && ACC.user && ACC.user.email) || ""; }catch(e){}
-    if(!$("fbContact").value && em) $("fbContact").value = em;
+    if(!$("fbContact").value) $("fbContact").value = lsGet("ayo_fb_contact") || em;   // v287 마지막으로 입력한 연락처를 먼저 (없으면 로그인 이메일)
     try{ if(!$("fbOrg").value && typeof shCenter === "function") $("fbOrg").value = (shCenter() || {}).name || ""; }catch(e){}
     $("fbOverlay").hidden = false;
   }
@@ -6788,6 +6788,7 @@
     var need = ["fbName", "fbContact", "fbSubj", "fbBody"], bad = need.filter(function(id){ var el = $(id); var v = !el.value.trim(); el.classList.toggle("err", v); return v; });
     if(bad.length){ $(bad[0]).focus(); toast("* 표시 항목을 입력해 주세요."); return; }
     var d = fbData(), btn = $("btnFbSend"); btn.disabled = true; btn.textContent = "보내는 중…";
+    lsSet("ayo_fb_contact", d["연락처"]);   // v287 다음에 열 때 같은 연락처로
     var payload = Object.assign({ _subject: "[아요바디요 " + d["요청 종류"] + "] " + d["제목"], _template: "table", _captcha: "false" }, d);
     var done = function(){ btn.disabled = false; btn.textContent = "보내기"; };
     fetch("https://formsubmit.co/ajax/" + FB_MAIL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(payload) })
@@ -14178,7 +14179,7 @@
     });
   }
   // v124 계정마다 다른 값(센터명·로고·관리자 모드·최근 측정 등) → 로그아웃·계정 전환 때 함께 지움
-  var ACCT_KEYS = ["ayo_settings", "ayo_admin", "ayo_last_msr", "ayo_bench", "ayo_bk_dirty", "ayo_bk_snooze", "ayo_last_backup", "ayo_rom_any", "ayo_seen_report", "ayo_license", "ayo_license_v"];
+  var ACCT_KEYS = ["ayo_settings", "ayo_admin", "ayo_last_msr", "ayo_bench", "ayo_bk_dirty", "ayo_bk_snooze", "ayo_last_backup", "ayo_rom_any", "ayo_seen_report", "ayo_license", "ayo_license_v", "ayo_fb_contact"];
   function acctKeysClear(){
     ACCT_KEYS.forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
     try{ ADM.on = false; admSync(); }catch(e){}

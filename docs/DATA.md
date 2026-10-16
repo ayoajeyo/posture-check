@@ -52,6 +52,7 @@
 | `ayo_pull` | 마지막 받은 시각 | S1 |
 | `ayo_sub_<uid>`, `ayo_sub_chk_<uid>`, `ayo_license`, `ayo_license_v`, `ayo_lic_pub`, `ayo_trial_*`, `ayo_play` | 구독·체험·이용 코드 상태 | S1 |
 | `ayo_consent_<uid>` | 약관 동의 확인 표시 | S1 |
+| `ayo_fb_contact` | 개선·추가 기능 요청의 '답변 받을 연락처' 마지막 입력값 (v287 · 다음에 열 때 먼저 채움, 없으면 로그인 이메일) | S2 · 이 기기에만 · 로그아웃·계정 전환 시 삭제(`ACCT_KEYS`) |
 | `ayo_nv_state` | 네이버 로그인 state | S1 |
 | `ayo_bk_*`, `ayo_last_backup` | 백업 알림 주기 | S1 |
 | `ayo_bench` | 정확도 재채점 결과 | S1 {확인 필요: 내용에 회원 정보 포함 여부} |

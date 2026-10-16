@@ -68,3 +68,48 @@ test("같은 자리를 두 번 찍어 선 길이가 0이면 계산하지 않음"
   assert.equal(geo(NECK, [P(100, 400), P(100, 400), P(50, 50), P(60, 60)]), null);
   assert.equal(geo(NECK, [...V1, P(50, 50), P(50, 50)]), null);
 });
+
+// v273 옛 기록 호환: 예전 방식으로 저장한 목 기록(점 3개)은 예전 방식 그대로 열려야 한다
+const ctx2 = {
+  romS: { mv: "flex", pts: null },
+  ROM_LM: {}, ROM_DERIV: {}, ROM_MID: {},
+  NECK_JOINT: { k: "neck", kind: "dir", pts: ["neckj", "headtop", "vup"] },
+  NECK_FLEX: { k: "flex", kind: "aux", vfix: true, off: 0, pts: ["neckj", "vup", "chinf", "headf"] },
+};
+ctx2.romJoint = () => ctx2.NECK_JOINT;
+ctx2.romMove = () => ctx2.NECK_FLEX;
+vm.createContext(ctx2);
+vm.runInContext(grab("  function romAuxLegacy(mv){", "  function romIsLm(n){"), ctx2);
+const pts3 = [{ x: 1, y: 1 }, { x: 2, y: 2 }, { x: 3, y: 3 }];
+const pts4 = [{ x: 1, y: 1 }, { x: 1, y: 0 }, { x: 3, y: 3 }, { x: 4, y: 4 }];
+
+test("옛 목 기록(점 3개): 옛 측정점·옛 계산 방식으로 열린다", () => {
+  ctx2.romS.pts = pts3;
+  assert.deepEqual(vm.runInContext("romPts()", ctx2), ["neckj", "headtop", "vup"]);
+  assert.equal(vm.runInContext("romKind()", ctx2), "dir");       // 보조선 계산을 타지 않음
+});
+
+test("새 목 기록(점 4개): 보조선 방식으로 열린다", () => {
+  ctx2.romS.pts = pts4;
+  assert.deepEqual(vm.runInContext("romPts()", ctx2), ["neckj", "vup", "chinf", "headf"]);
+  assert.equal(vm.runInContext("romKind()", ctx2), "aux");
+});
+
+test("사진만 열고 아직 점이 없을 때도 새 방식으로 본다 (빈 상태에서 깨지지 않음)", () => {
+  ctx2.romS.pts = null;
+  assert.equal(vm.runInContext("romKind()", ctx2), "aux");
+  ctx2.romS.pts = pts4;
+});
+
+// 목 세 동작의 정의가 실제로 index.html 에 들어갔는지 (사람이 실수로 되돌리면 걸린다)
+test("목 세 동작이 모두 보조선 방식 · 정상값 45°", () => {
+  const seg = html.slice(html.indexOf('ROM_JOINTS.unshift({ k:"neck"'), html.indexOf('ROM_JOINTS.splice(3, 0, { k:"trunk"'));
+  for (const [move, p2, p3] of [["flex", "chinf", "headf"], ["ext", "chinf", "headf"], ["lat", "chintip", "headtop"]]) {
+    const line = seg.split("\n").find((l) => l.includes(`k:"${move}"`));
+    assert.ok(line, move + " 동작을 찾지 못함");
+    assert.match(line, /normal:45/, move + ": 정상값 45°");
+    assert.match(line, /kind:"aux"/, move + ": 보조선 방식");
+    assert.match(line, /off:0/, move + ": 바르게 선 자세가 0°");
+    assert.match(line, new RegExp(`pts:\\["neckj","vup","${p2}","${p3}"\\]`), move + ": 측정점");
+  }
+});

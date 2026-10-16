@@ -15,6 +15,10 @@ const BOX = {   // x0, x1, y0, y1 (그림 대비 0~1)
   hip_R_flex:      { x0: 0.000, x1: 0.853, y0: 0.391, y1: 0.797 },
   knee_L_ext:      { x0: 0.100, x1: 1.000, y0: 0.507, y1: 0.730 },
   knee_R_ext:      { x0: 0.000, x1: 1.000, y0: 0.560, y1: 0.805 },
+  elbow_L_ext:     { x0: 0.080, x1: 0.629, y0: 0.278, y1: 1.000 },
+  elbow_R_ext:     { x0: 0.267, x1: 0.869, y0: 0.216, y1: 1.000 },
+  elbow_L_flex:    { x0: 0.309, x1: 0.608, y0: 0.260, y1: 1.000 },
+  elbow_R_flex:    { x0: 0.270, x1: 0.710, y0: 0.285, y1: 1.000 },
 };
 
 // index.html 의 SIL_ADJ 에서 항목별 s·dx·dy 읽기
@@ -56,4 +60,33 @@ test("무릎 신전: 발이 화면 안에 넉넉히 들어온다 (양쪽 10% 여
   const R = drawn("knee_R_ext"), L = drawn("knee_L_ext");
   near(1 - R.x1, 0.10, 0.02, "우측 발 쪽 여백");   // 우측은 오른쪽 끝이 발
   near(L.x0, 0.10, 0.02, "좌측 발 쪽 여백");       // 좌측은 왼쪽 끝이 발
+});
+
+// v282 팔꿈치: 팔이 긴 사람의 손목이 화면 밖으로 나가던 문제 — 손목 쪽 여백을 넓히고 좌·우 크기를 맞춤
+// (그림이 아래에서 잘려 있어 y1 = 1.000 — 몸통은 화면 아래로 이어진다. 크기 비교는 '사람 높이'로 한다)
+test("팔꿈치 신전: 손목 쪽 여백이 양쪽 모두 15% 이상 (팔이 길어도 손목이 화면 안)", () => {
+  const R = drawn("elbow_R_ext"), L = drawn("elbow_L_ext");
+  assert.ok(1 - R.x1 >= 0.15, `우측 손목 쪽 여백 ${(1 - R.x1).toFixed(3)} (0.15 이상이어야)`);
+  assert.ok(L.x0 >= 0.15, `좌측 손목 쪽 여백 ${L.x0.toFixed(3)} (0.15 이상이어야)`);
+});
+
+test("팔꿈치 굴곡: 손목 쪽 여백이 양쪽 모두 15% 이상", () => {
+  const R = drawn("elbow_R_flex"), L = drawn("elbow_L_flex");
+  assert.ok(R.x0 >= 0.15, `우측 여백 ${R.x0.toFixed(3)}`);
+  assert.ok(1 - L.x1 >= 0.15, `좌측 여백 ${(1 - L.x1).toFixed(3)}`);
+});
+
+test("팔꿈치 신전: 좌·우 실루엣의 사람 크기(높이·가로)가 비슷하다", () => {
+  const R = drawn("elbow_R_ext"), L = drawn("elbow_L_ext");
+  near(L.h, R.h, 0.02, "사람 높이");
+  near(L.w, R.w, 0.02, "가로 폭");
+});
+
+test("팔꿈치: 같은 쪽의 굴곡·신전이 비슷한 크기 (설 자리가 달라지지 않게)", () => {
+  near(drawn("elbow_L_ext").h, drawn("elbow_L_flex").h, 0.03, "좌측 굴곡 ↔ 신전 높이");
+  near(drawn("elbow_R_ext").h, drawn("elbow_R_flex").h, 0.03, "우측 굴곡 ↔ 신전 높이");
+});
+
+test("팔꿈치 굴곡: 좌·우 높이가 비슷하다 (가로 폭은 팔 자세가 달라 맞출 수 없음)", () => {
+  near(drawn("elbow_L_flex").h, drawn("elbow_R_flex").h, 0.03, "사람 높이");
 });

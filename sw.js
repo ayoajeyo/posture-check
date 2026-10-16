@@ -1,7 +1,7 @@
 /* AYO체형분석 — 서비스워커
    - 화면(index.html): 네트워크 우선 → GitHub에 올린 최신 버전이 바로 반영되고, 인터넷이 끊기면 저장본으로 열림
    - 인식 모델·라이브러리(MediaPipe)·글꼴: 한 번 받으면 폰에 저장해 두고 재사용 → 두 번째부터 빠르고 오프라인에서도 동작 */
-const VERSION = "pma-v230";   // v281 세로·가로 기준선이 각도축을 따라오지 않아 기울어지던 문제
+const VERSION = "pma-v231";   // v282 팔꿈치 촬영 실루엣: 손목이 화면 밖으로 나가던 문제
 const SHELL = "pma-shell-" + VERSION;
 const ASSETS = "pma-assets-v1";   // 모델 파일은 버전과 무관하게 유지(약 25MB 재다운로드 방지)
 const SHELL_FILES = ["./", "./index.html", "./manifest.webmanifest", "./js/logic/judge.js",

@@ -14,7 +14,8 @@
 - [ ] 측정 비우기 직후 백업 필요 표시(`bkTouch`)가 안 켜진다 — `rawPut` 경로라서. 비운 뒤 백업 알림이 뜨는 게 맞는지 결정 필요
 - [ ] '수평 보정' 슬라이더(`romRotSet`)로 기울기를 바꿔도 기준선은 옛 기울기로 남는다 — v281 과 같은 원인의 다른 입구. `romDraw()` 앞에 `romRefRebuild()` 한 줄이면 닫힌다
 - [ ] `romS.refCustom` 이 사실상 죽은 값 — `romRefDir()` 이 `refCustom` 을 보지 않고 `P[0]→P[2]` 만 쓰고, `romPick()` 이 `{t:"ref"}` 를 반환하지 않아 사용자가 설정할 길도 없다. 기준선을 끌어 돌리는 조작·미세조정의 `ref` 분기를 정리하거나 제대로 살리기 (v281 에서 [기준선 되돌리기] 단추는 `refMoved` 로 뜨게 해 둠)
-- [ ] `romSynthA`·`romLearnAdj`·`romRefReset` 을 `js/logic/rom-ref.js` 로 분리 (ADR-011) — 지금은 index.html 문자열을 잘라 테스트한다
+- [ ] `romSynthA`·`romLearnAdj`·`romRefAuto`/`romRefShift` 를 `js/logic/rom-ref.js` 로 분리 (ADR-011) — 지금은 index.html 문자열을 잘라 테스트한다
+- [ ] 기준선 끝점은 평행 이동 때 경계로 자르지 않는다(자르면 기울어지므로 일부러) — 사진 밖 좌표가 기록에 저장될 수 있다. `romIn` 이 ±3% 까지 허용해 실제 영향은 작지만, 아주 큰 이동이 있었던 기록에서 그림·각도가 괜찮은지 확인 필요
 - [ ] 리포트·전체 비교는 아직 비운 회차를 제외한다(`romHist` 의 `value != null`) — 각도가 없어 집계할 수 없기 때문. 다시 측정하면 자동으로 돌아오지만, 리포트에 '측정 전 N건' 을 알려 주는 편이 친절하다
 - [ ] 되돌릴 수 없는 작업의 확인창을 `window.confirm` 대신 앱 팝업(`.confirm-overlay`)으로 — 측정 비우기·보관한 수정 기록 비우기 2곳 (UI_GUIDE 5번)
 - [ ] `docs/UI_GUIDE.md` 7번 표준 단어에 '비우기' 가 없다 — 비우기/삭제/지우기 단어 체계를 정리하고 화면 문구를 맞추기

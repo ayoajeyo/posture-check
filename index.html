@@ -14182,6 +14182,7 @@
   var ACCT_KEYS = ["ayo_settings", "ayo_admin", "ayo_last_msr", "ayo_bench", "ayo_bk_dirty", "ayo_bk_snooze", "ayo_last_backup", "ayo_rom_any", "ayo_seen_report", "ayo_license", "ayo_license_v", "ayo_fb_contact"];
   function acctKeysClear(){
     ACCT_KEYS.forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
+    ["fbName", "fbOrg", "fbContact"].forEach(function(id){ var el = $(id); if(el) el.value = ""; });   // v287 계정이 바뀌면 요청 폼의 앞 사람 이름·소속·연락처도 비움
     try{ ADM.on = false; admSync(); }catch(e){}
     try{ applyBrand(); }catch(e){}
   }

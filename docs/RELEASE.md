@@ -11,7 +11,7 @@
 | `sw.js` `VERSION` | `pma-v238` (앱 번호와 별도로 배포마다 +1) |
 | `manifest.webmanifest` | version 필드 없음 |
 | `docs/CHANGELOG.md` 맨 위 | `## v289 — 2026.10.16` |
-| Play `versionCode` | `12` (2026-10-16 아요 확인 · 다음에 안드로이드 앱을 새로 올리면 13) |
+| Play `versionCode` | `15` (2026-10-16 아요 확인 · 처음에 12로 잘못 적었다가 정정 · 다음에 안드로이드 앱을 새로 올리면 16) |
 
 > 이 표는 `/ship` 때마다 갱신한다. 값이 서로 다르면(앱 버전 ≠ CHANGELOG 맨 위) 배포가 덜 끝난 것이다.
 

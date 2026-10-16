@@ -5,6 +5,8 @@
 
 ## 지금 (이번 버전)
 - [ ] **Play Console · 데이터 보안(Data safety) 고치기** — v287~v289 에서 '개선·추가 기능 요청' 이 방침에 들어감. 수집 항목에 추가 필요(선택 수집): 개인 정보 > 이름·이메일 주소·전화번호, 메시지 > 기타 메시지(요청 내용), 앱 정보 및 성능 > 기타(앱 버전·기기 정보). 목적: 개발자 커뮤니케이션. 전송 중 암호화: 예. FormSubmit 은 운영자 대신 처리하는 서비스라 '공유' 아닌 '수집' 으로 보는 것이 Google 기준(확인 필요). 이 앱 화면 코드 변경은 없음
+- [ ] 회차 번호를 기록에서 바로 읽는 곳(관리자 엑셀 `admxResolve`·`admxFirstRec`, 체형 실루엣 `rec.rf`)은 v291 의 '겹친 번호 다시 세기' 를 거치지 않는다 — 번호가 겹친 예전 기록은 그 기록을 다시 저장해야 엑셀 회차가 맞는다. `poseRounds` 결과를 쓰게 바꿀지 (v291 debugger)
+- [ ] `poseRounds`·`mbBuildSessions` 를 `js/logic/` 로 분리 (ADR-011) — 지금은 tests/pose-rounds.test.js 가 index.html 문자열을 잘라 실행
 - [ ] 로그아웃해도 폰에 `ayo_sub_<uid>`(PRO 여부·만료일·상태)·`ayo_sub_chk_<uid>` 가 남는다 — 방침 5번 '로그아웃하면 기기 사본 삭제' 와 어긋남. 계정별 키이고 구매 토큰은 없어 위험 낮음. `acctKeysClear` 에서 지우기 (v290 privacy-guard)
 - [ ] 방침 6번 'Google MediaPipe·Google Fonts·jsDelivr … 개인 정보는 전송되지 않으며' — 접속 IP·브라우저 정보는 기술적으로 전달됨. 다음 개정 때 '사진·입력한 정보는 전송되지 않으며(접속에 필요한 통신 정보만)' 로 다듬기 (v290 privacy-guard)
 - [ ] 방침 7번에 Google Play 구독도 국외 이전으로 넣었다(v290 · 보수적으로 적음). 간편 로그인(Google)도 넣어야 하는지와 함께 전문가 확인 권장

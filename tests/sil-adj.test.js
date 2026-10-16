@@ -70,23 +70,24 @@ test("팔꿈치 신전: 손목 쪽 여백이 양쪽 모두 15% 이상 (팔이 �
   assert.ok(L.x0 >= 0.15, `좌측 손목 쪽 여백 ${L.x0.toFixed(3)} (0.15 이상이어야)`);
 });
 
-test("팔꿈치 굴곡: 손목 쪽 여백이 양쪽 모두 15% 이상", () => {
+test("팔꿈치 굴곡: 손목 쪽·몸통 쪽 여백이 모두 15% 이상", () => {
   const R = drawn("elbow_R_flex"), L = drawn("elbow_L_flex");
-  assert.ok(R.x0 >= 0.15, `우측 여백 ${R.x0.toFixed(3)}`);
-  assert.ok(1 - L.x1 >= 0.15, `좌측 여백 ${(1 - L.x1).toFixed(3)}`);
+  assert.ok(1 - R.x1 >= 0.15, `우측 손목 쪽 여백 ${(1 - R.x1).toFixed(3)}`);   // 우측은 오른쪽 끝이 팔
+  assert.ok(L.x0 >= 0.15, `좌측 손목 쪽 여백 ${L.x0.toFixed(3)}`);              // 좌측은 왼쪽 끝이 팔
+  assert.ok(R.x0 >= 0.15, `우측 몸통 쪽 여백 ${R.x0.toFixed(3)}`);              // 옮기면서 줄어드는 쪽
+  assert.ok(1 - L.x1 >= 0.15, `좌측 몸통 쪽 여백 ${(1 - L.x1).toFixed(3)}`);
 });
 
-test("팔꿈치 신전: 좌·우 실루엣의 사람 크기(높이·가로)가 비슷하다", () => {
-  const R = drawn("elbow_R_ext"), L = drawn("elbow_L_ext");
-  near(L.h, R.h, 0.02, "사람 높이");
-  near(L.w, R.w, 0.02, "가로 폭");
+/* v282 사람 크기는 그림 테두리(bbox)로 재면 안 된다 — 팔꿈치 4장은 아래가 잘려 있어
+   테두리 높이 = '머리끝 → 그림 아래 가장자리' 다. 잘리지 않는 머리 폭으로 잰 실측값. */
+const HEAD = { elbow_L_ext: 0.1426, elbow_R_ext: 0.1815, elbow_L_flex: 0.1463, elbow_R_flex: 0.1704 };
+const personSize = (key) => HEAD[key] * adj(key).s;
+
+test("팔꿈치: 같은 쪽의 굴곡·신전이 비슷한 사람 크기 (설 자리가 달라지지 않게)", () => {
+  near(personSize("elbow_L_ext"), personSize("elbow_L_flex"), 0.008, "좌측 굴곡 ↔ 신전 사람 크기");
+  near(personSize("elbow_R_ext"), personSize("elbow_R_flex"), 0.013, "우측 굴곡 ↔ 신전 사람 크기");
 });
 
-test("팔꿈치: 같은 쪽의 굴곡·신전이 비슷한 크기 (설 자리가 달라지지 않게)", () => {
-  near(drawn("elbow_L_ext").h, drawn("elbow_L_flex").h, 0.03, "좌측 굴곡 ↔ 신전 높이");
-  near(drawn("elbow_R_ext").h, drawn("elbow_R_flex").h, 0.03, "우측 굴곡 ↔ 신전 높이");
-});
-
-test("팔꿈치 굴곡: 좌·우 높이가 비슷하다 (가로 폭은 팔 자세가 달라 맞출 수 없음)", () => {
-  near(drawn("elbow_L_flex").h, drawn("elbow_R_flex").h, 0.03, "사람 높이");
+test("팔꿈치: 크기(s)는 건드리지 않는다 — 그림 테두리로 잰 잘못된 기준으로 맞추지 않게", () => {
+  for (const k of Object.keys(HEAD)) assert.equal(adj(k).s, 1, k + " 에 s 가 들어갔다 (머리 폭 기준으로 다시 계산할 것)");
 });

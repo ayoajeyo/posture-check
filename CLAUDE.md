@@ -24,6 +24,7 @@
 - 메뉴·버튼 아래 중복 설명 문구는 넣지 않는다.
 - 인쇄·공유용 리포트는 A4 여러 장으로 나뉘게 만든다.
 - 앱 하단이나 리포트 끝에 제작자 표기 `made by AYOAJEYO`를 작게 넣는다.
+- 이 저장소의 화면 작업은 `docs/UI_GUIDE.md`·`docs/TASTE.md`와 `clean-ui`·`ui-polish`·`measure-viz` 스킬만 따른다. 사용자 계정에 있는 일반 디자인 스킬(design-taste-frontend, frontend-taste, frontend-design-guideline, frontend-component-collection, design-md-reference, ui-ux-pro-max, image-to-code, frontend-design 등)은 이 저장소에서 쓰지 않는다. 방향이 서로 달라 결과가 흔들리기 때문이다.
 - 화면을 만들기 전에 `docs/TASTE.md`(사용자 디자인 취향)를 읽는다. 이 앱은 자기 CSS 가 있으므로 `design-system/tokens.css` 를 통째로 걸지 않고 앱의 기존 모양을 따른다(견본은 참고, `clean-ui` "기존 앱").
 - 사용자가 디자인에 대해 "좋다·싫다·이렇게" 라고 말하면 그 자리에서 `docs/TASTE.md` 에 기록한다.
 

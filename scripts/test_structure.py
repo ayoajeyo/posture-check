@@ -144,3 +144,9 @@ def test_tokens_have_no_forbidden_styles():
     body = css.split("/* ── 기본", 1)[1]               # :root 밖에서는 숫자 대신 변수
     assert not re.findall(r"font-size:\s*\d+px", body), "글자 크기는 --fs-* 변수로"
     assert not re.findall(r"#[0-9a-f]{3,6}\b", body), "색은 변수로"
+
+
+def test_account_design_skills_blocked():
+    # 계정에 동기화된 일반 디자인 스킬이 하네스 디자인 규칙과 부딪히지 않게
+    text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "일반 디자인 스킬" in text and "design-taste-frontend" in text

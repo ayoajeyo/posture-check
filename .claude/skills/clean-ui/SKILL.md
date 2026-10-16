@@ -5,7 +5,7 @@ description: 화면(UI)을 새로 만들거나 고칠 때 심플하고 깔끔한
 
 # 심플·깔끔 UI
 
-기준 문서는 `docs/UI_GUIDE.md`다. 이 스킬은 그 규칙을 코드로 옮기는 방법이다. 둘이 다르면 UI_GUIDE를 따른다.
+기준 문서는 `docs/UI_GUIDE.md`다. 계정에 있는 다른 디자인 스킬(design-taste-frontend, frontend-taste, ui-ux-pro-max 등)은 이 저장소에서 쓰지 않는다 — 이 스킬과 `ui-polish` 만 쓴다. 이 스킬은 그 규칙을 코드로 옮기는 방법이다. 둘이 다르면 UI_GUIDE를 따른다.
 
 ## 원칙 3가지
 1. **덜어낸다** — 장식보다 여백. 한 화면에 강조는 하나.

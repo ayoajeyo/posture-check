@@ -19,7 +19,7 @@ $dirty = git -C $Target status --porcelain
 if ($dirty) { Write-Error "저장(커밋)하지 않은 변경이 있습니다. 먼저 커밋한 뒤 실행하세요 (문제 생기면 git checkout 으로 되돌릴 수 있게)." }
 
 $items = @(".claude\hooks", ".claude\commands", ".claude\agents", ".claude\skills", ".claude\settings.json",
-           "scripts\execute.py", "scripts\test_execute.py", "scripts\test_hooks.py", "scripts\test_structure.py", "scripts\screenshot.py", "scripts\test_screenshot.py", "scripts\update-harness.ps1")
+           "scripts\execute.py", "scripts\test_execute.py", "scripts\test_hooks.py", "scripts\test_structure.py", "scripts\screenshot.py", "scripts\test_screenshot.py", "scripts\app_capture.py", "scripts\test_app_capture.py", "scripts\update-harness.ps1")
 foreach ($rel in $items) {
     $src = Join-Path $template $rel; $dst = Join-Path $Target $rel
     if (Test-Path $dst) { Remove-Item $dst -Recurse -Force }

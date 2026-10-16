@@ -9,6 +9,7 @@ tools: Read, Grep, Glob, Bash
 ## 순서
 1. 읽기: `docs/UI_GUIDE.md`(기본 규칙), `docs/TASTE.md`(사용자 취향 — 둘이 부딪히면 "규칙 변경 제안" 으로 사용자 결정에 넘김), `.claude/skills/ui-polish/SKILL.md`, 측정 데이터 화면이면 `.claude/skills/measure-viz/SKILL.md`, 있으면 `design-system/styleguide.html`.
 2. 캡처: 호출한 쪽이 사진 경로(.shots/…png)를 줬으면 그것을 Read 로 본다. 없으면 `python scripts/screenshot.py {화면 파일} [--hash "#화면"]` 로 첫 화면을 찍고, 긴 화면은 `--full`(한 화면 높이씩 여러 장으로 저장됨). 필요하면 `--width 360` 도. **사진을 직접 본다.**
+   - **로그인해야 보이는 화면**(회원 목록·결과·리포트)은 `app-capture` 스킬대로 `python scripts/app_capture.py shot --text "회원" --name members` 처럼 찍는다. 준비가 안 됐다고 나오면(끝 번호 3) 로그인 전 화면만 보고, 보고에 "로그인 화면은 준비 필요" 라고 적는다. 끝 번호 5(실제 회원 이름)면 즉시 멈추고 보고.
    - 끝나는 번호 2 = 찍었지만 문제(가로 스크롤·스크립트 오류) 발견 → 보고에 포함. "글꼴 CDN 에 연결되지 않아" 참고 문구는 화면 문제가 아니다. 캡처 도구가 없다고 나오면 그 사실을 보고 첫 줄에 쓰고 코드만으로 판단한다.
    - Bash 는 캡처와 읽기용 명령(`ls`, `git diff`)에만 쓴다. 파일을 만들거나 고치지 않는다(.shots/ 의 사진 제외).
 3. 판단: 아래 8가지 눈으로 본다.

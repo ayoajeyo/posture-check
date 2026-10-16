@@ -162,6 +162,26 @@ def test_session_start_reports_behind(tmp_path):
     assert "git pull" in out and "1개" in out
 
 
+def test_session_start_shows_handoff_in_progress(tmp_path):
+    git(tmp_path, "init", "-q")
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "HANDOFF.md").write_text(
+        "# 인수인계\n상태: 진행 중\n갱신: 2026-10-17 00:40\n\n## 지금 하던 일\n삭제 기능\n\n"
+        "## 다음 할 일 (순서대로)\n1. 계획 승인받기\n2. /fix 실행\n\n## 이번에 끝낸 것\n- 없음\n", encoding="utf-8")
+    out = run_hook("session_start.py", "{}", {"CLAUDE_PROJECT_DIR": str(tmp_path)}).stdout.decode("utf-8")
+    assert "인수인계" in out and "1. 계획 승인받기" in out and "2026-10-17" in out
+    assert "이번에 끝낸 것" not in out            # 다음 할 일만 짧게
+
+
+def test_session_start_ignores_finished_handoff(tmp_path):
+    git(tmp_path, "init", "-q")
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "HANDOFF.md").write_text("상태: 완료\n## 다음 할 일\n1. 없음\n", encoding="utf-8")
+    (tmp_path / ".gitignore").write_text("docs/\n.gitignore\n", encoding="utf-8")
+    out = run_hook("session_start.py", "{}", {"CLAUDE_PROJECT_DIR": str(tmp_path)}).stdout.decode("utf-8")
+    assert "인수인계" not in out
+
+
 # --- syntax_check.py ---------------------------------------------------------
 
 def post_write(path):

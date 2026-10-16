@@ -35,6 +35,7 @@
 - 작업 시작 전 `git pull`, 끝나면 커밋 (병원·집 PC를 오가며 작업한다). 되돌릴 수 없는 git 명령은 쓰지 않는다.
 - 커밋 메시지는 conventional commits 형식(feat:, fix:, docs:, refactor:, release:)에 한국어 설명.
 - 요청하지 않은 기능은 만들지 않고 `docs/BACKLOG.md` 에 적는다.
+- 대화가 길어졌거나 작업을 멈출 때는 `/handoff` 로 `docs/HANDOFF.md` 에 인수인계를 남긴다. 새 대화는 이 문서부터 읽고 이어간다.
 
 ## 기술 스택
 - 화면: HTML + CSS + 순수 JavaScript, 빌드 없음. **앱 대부분이 `index.html` 한 파일(약 14,400줄)** 안에 있다. 계산 로직만 `js/logic/` 로 하나씩 분리 중(ADR-011).

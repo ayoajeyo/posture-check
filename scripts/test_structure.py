@@ -150,3 +150,16 @@ def test_account_design_skills_blocked():
     # 계정에 동기화된 일반 디자인 스킬이 하네스 디자인 규칙과 부딪히지 않게
     text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     assert "일반 디자인 스킬" in text and "design-taste-frontend" in text
+
+
+def test_handoff_wired():
+    assert (CLAUDE / "commands" / "handoff.md").exists()
+    assert "HANDOFF" in (CLAUDE / "hooks" / "session_start.py").read_text(encoding="utf-8")
+    assert "HANDOFF" in (ROOT / "scripts" / "execute.py").read_text(encoding="utf-8")   # 실행기 step 에는 안 넣음
+
+
+def test_agent_models_are_valid():
+    for f in (CLAUDE / "agents").glob("*.md"):
+        model = _frontmatter(f).get("model")
+        assert model in (None, "sonnet", "opus", "haiku", "inherit"), f"{f.name}: {model}"
+    assert _frontmatter(CLAUDE / "agents" / "privacy-guard.md").get("model") is None   # 개인정보 점검은 낮추지 않음

@@ -70,7 +70,34 @@
     return s + '</svg>';
   }
 
-  var api = { CHART_COLOR: COLOR, STATUS_COLOR: STATUS, STATUS_BG: STATUS_BG, sparkGeom: sparkGeom, sparkSvg: sparkSvg, dumbbellGeom: dumbbellGeom, dumbbellRowSvg: dumbbellRowSvg };
+  /* ===== 문서형 리포트(v292) 좌표 — 화면 SVG 와 공유 이미지 캔버스가 같이 쓴다 ===== */
+  /* 02 회차별 변화: 작은 꺾은선. s = { values[], min, max, ok:[lo,hi] } */
+  function trendGeom(s, o){
+    o = o || {}; var w = o.w || 170, h = o.h || 92, pl = o.pl != null ? o.pl : 26, pr = o.pr != null ? o.pr : 30, pt = o.pt != null ? o.pt : 10, pb = o.pb != null ? o.pb : 6;
+    var n = s.values.length, x = function(i){ return n < 2 ? (pl + w - pr) / 2 : sc(i, 0, n - 1, pl, w - pr); }, y = function(v){ return sc(clamp(v, s.min, s.max), s.min, s.max, h - pb, pt); };
+    var segs = [], cur = [], pts = [];
+    s.values.forEach(function(v, i){ if(v == null){ if(cur.length) segs.push(cur); cur = []; return; } var p = { x: r1(x(i)), y: r1(y(v)), v: v, i: i }; cur.push(p); pts.push(p); });
+    if(cur.length) segs.push(cur);
+    return { w: w, h: h, x0: pl, x1: w - pr, yMin: r1(y(s.min)), yMax: r1(y(s.max)), band: [r1(y(s.ok[1])), r1(y(s.ok[0]))], okY: r1(y(s.ok[0])), segs: segs, pts: pts, last: pts.length ? pts[pts.length - 1] : null, xs: s.values.map(function(v, i){ return r1(x(i)); }) };
+  }
+  /* 03 체형 정렬: 0 기준 양방향 막대 한 줄. row = { v, dir } · o = { w, max, t1, t2 } */
+  function divergingGeom(row, o){
+    var w = o.w || 200, X = function(v){ return r1(sc(clamp(v, -o.max, o.max), -o.max, o.max, 0, w)); }, v = row.v * (row.dir < 0 ? -1 : 1);
+    return { w: w, xc: X(0), band: [X(-o.t1), X(o.t1)], t2: [X(-o.t2), X(o.t2)], barX: row.v > 0 ? Math.min(X(0), X(v)) : X(0), barW: row.v > 0 ? Math.abs(X(v) - X(0)) : 0, xv: X(v) };
+  }
+  /* 04 ROM: 정상 대비 % 막대. side = { pct, aPct } */
+  function romBarGeom(side, o){
+    var w = (o && o.w) || 300, X = function(p){ return r1(sc(clamp(p, 0, 100), 0, 100, 0, w)); };
+    return { w: w, xb: X(side.pct), xa: side.aPct == null ? null : X(side.aPct), ticks: [X(70), X(90)] };
+  }
+  /* 05 구간 띠. spec = { min, max, zones:[{from,to,cls,label}] } */
+  function zoneGeom(spec, prev, cur, o){
+    var w = (o && o.w) || 340, X = function(v){ return r1(sc(clamp(v, spec.min, spec.max), spec.min, spec.max, 0, w)); };
+    return { w: w, zones: spec.zones.map(function(z){ return { x0: X(z.from), x1: X(z.to), cls: z.cls, label: z.label, from: z.from, to: z.to }; }), xa: prev == null ? null : X(prev), xb: X(cur) };
+  }
+
+  var api = { CHART_COLOR: COLOR, STATUS_COLOR: STATUS, STATUS_BG: STATUS_BG, sparkGeom: sparkGeom, sparkSvg: sparkSvg, dumbbellGeom: dumbbellGeom, dumbbellRowSvg: dumbbellRowSvg,
+              trendGeom: trendGeom, divergingGeom: divergingGeom, romBarGeom: romBarGeom, zoneGeom: zoneGeom };
   if(typeof module !== "undefined" && module.exports) module.exports = api;
   else root.AYO_LOGIC = Object.assign(root.AYO_LOGIC || {}, api);
 })(this);

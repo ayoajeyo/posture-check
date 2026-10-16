@@ -70,3 +70,23 @@ test("상태색은 UI_GUIDE 값 그대로 (판정에만 쓴다)", () => {
   assert.equal(C.STATUS_COLOR.warn, "#B45309");
   assert.equal(C.STATUS_COLOR.crit, "#B91C1C");
 });
+
+// ---- v292 문서형 리포트 좌표 ----
+test("trendGeom: 정상 띠·점·끊김이 축 범위 안에 놓인다", () => {
+  const g = C.trendGeom({ values: [44, null, 52], min: 35, max: 65, ok: [55, 65] }, { w: 170, h: 92 });
+  assert.equal(g.pts.length, 2); assert.equal(g.segs.length, 2, "가운데가 비면 선이 끊긴다");
+  assert.ok(g.band[0] < g.band[1] && g.band[0] >= g.yMax && g.band[1] <= g.yMin, "띠는 위(65)에서 아래(55) 사이");
+  assert.equal(g.last.v, 52); assert.equal(g.xs.length, 3);
+});
+test("divergingGeom: 좌는 가운데 왼쪽, 우는 오른쪽, 0 은 막대 없음", () => {
+  const o = { w: 200, max: 4, t1: 1.5, t2: 3 };
+  const L = C.divergingGeom({ v: 2, dir: -1 }, o), R = C.divergingGeom({ v: 2, dir: 1 }, o), Z = C.divergingGeom({ v: 0, dir: 0 }, o);
+  assert.equal(L.xc, 100); assert.equal(L.barX, 50); assert.equal(L.barW, 50); assert.equal(R.barX, 100); assert.equal(R.barW, 50); assert.equal(Z.barW, 0);
+  assert.deepEqual(L.band, [62.5, 137.5]);
+});
+test("romBarGeom·zoneGeom: % 와 구간이 폭에 비례하고 범위를 넘지 않는다", () => {
+  const b = C.romBarGeom({ pct: 88, aPct: 120 }, { w: 300 });
+  assert.equal(b.xb, 264); assert.equal(b.xa, 300, "100% 상한"); assert.deepEqual(b.ticks, [210, 270]);
+  const z = C.zoneGeom({ min: 0, max: 12, zones: [{ from: 0, to: 5, cls: "good", label: "정상" }, { from: 5, to: 12, cls: "crit", label: "상담" }] }, 8, 4, { w: 120 });
+  assert.deepEqual(z.zones.map((q) => [q.x0, q.x1]), [[0, 50], [50, 120]]); assert.equal(z.xa, 80); assert.equal(z.xb, 40);
+});

@@ -6117,7 +6117,6 @@
     var HEAD = 320, COLW = (W - PAD*2 - 40) / 2, CHIPW = 250, IMGW = COLW - CHIPW - 24 - 48, IMGH = Math.round(IMGW * 4 / 3), BOARD = 100 + IMGH + 40, BOT = 330;
     var topH = HEAD + BOARD + 30 + BOT;
     var blocks = [], cw = W - PAD * 2;
-    blocks.push({ h: topH, draw: function(g, y){ g.drawImage(one, 0, 0, W, topH, 0, y, W, topH); } });
     // v210 큰 제목(파트 구분): 왼쪽 색 막대 + 42px — 바로 다음 블록과 같은 쪽에 붙어 다님
     var secTitle = function(t, sub){
       blocks.push({ h: 104, t: true, draw: function(g, y){   // v212 56px로 더 크게
@@ -6126,6 +6125,15 @@
         if(sub){ var tw = g.measureText(t).width; g.fillStyle = "#5B6875"; g.font = "700 32px " + F; g.fillText(sub, PAD + 58 + tw, y + 78); }
       } });
     };
+    // v283 머리글 → 한눈에 보기(회차별 변화) → 정면·측면 보드 + 점수. 대시보드를 만들 수 없으면(1회차도 없음·모듈 없음) 머리글 바로 아래 보드
+    blocks.push({ h: HEAD, draw: function(g, y){ g.drawImage(one, 0, 0, W, HEAD, 0, y, W, HEAD); } });
+    var dtl = (typeof repDashImgTl === "function") ? repDashImgTl() : null;
+    if(dtl && dtl.rounds.length){
+      var R0 = dtl.rounds[0], RN = dtl.rounds[dtl.rounds.length - 1];
+      secTitle("한눈에 보기", dtl.rounds.length > 1 ? R0.n + "차 " + R0.day + " → " + RN.n + "차 " + RN.day : "첫 측정 " + R0.day);
+      blocks.push({ h: repDashH(dtl), draw: function(g, y){ drawRepDash(g, PAD, y, cw, dtl, F, M); } });
+    }
+    blocks.push({ h: topH - HEAD, draw: function(g, y){ g.drawImage(one, 0, HEAD, W, topH - HEAD, 0, y, W, topH - HEAD); } });
     // 1) ROM·척추 균형 표
     var RS = repRomSrc(), rn = (typeof romLRRows === "function" ? romLRRows(RS).length : 0), sn = (typeof scolRows === "function" ? scolRows(RS).length : 0);
     if(rn || sn){
@@ -8111,7 +8119,7 @@
   /* ===================== v283 리포트 '한눈에 보기' (회원용 요약) =====================
      회차 묶음 S 는 repRoundsRender 가 만든 것을 그대로 받는다(회차 번호 출처 하나).
      계산·좌표는 js/logic/report-timeline.js·report-charts.js — 여기서는 화면만 그린다. */
-  var repDashCache = null, repDashS = null, repDashAct = null, repDashDetail = false;   // cache = { mid, key, tl } (공유 이미지가 같은 시계열을 씀)
+  var repDashCache = null, repDashS = null, repDashSMid = null, repDashAct = null, repDashDetail = false;   // cache = { mid, key, tl } (공유 이미지가 같은 시계열을 씀)
   function rdJ(){ return { romJudge: romJudge, scolJudge: scolJudge, scoreBand: scoreBand }; }
   function rdDeltaHtml(k){
     if(k.delta == null) return '<span class="rd-delta flat"></span>';   // 첫 측정·비교 불가는 위 줄("첫 측정")이 이미 말함
@@ -8122,8 +8130,8 @@
   function renderRepDash(S, act){
     var el = $("repDash"); if(!el) return;
     var L = window.AYO_LOGIC;
-    if(!L || !L.buildTimeline || !L.sparkSvg || !S || !S.length || !state.member){ el.hidden = true; repDashCache = null; return; }
-    repDashS = S; repDashAct = act || null;
+    if(!L || !L.buildTimeline || !L.sparkSvg || !S || !S.length || !state.member){ el.hidden = true; repDashCache = null; repDashS = null; repDashSMid = null; return; }
+    repDashS = S; repDashSMid = state.member.id; repDashAct = act || null;
     el.hidden = false; $("rdLoad").hidden = false; $("rdErr").hidden = true; $("rdBody").hidden = true;
     try{
       var tl = L.buildTimeline(S, ROM_ALL, rdJ(), { uptoKey: act ? act.key : null }), N = tl.rounds.length;
@@ -8169,6 +8177,100 @@
     }
   }
   $("rdRetry").addEventListener("click", function(){ renderRepDash(repDashS, repDashAct); });
+  /* 공유·저장 이미지용 — 화면과 같은 회차 범위(1차~선택 회차)의 시계열. 없으면 null (이미지에 대시보드를 넣지 않음) */
+  function repDashImgTl(){
+    var L = window.AYO_LOGIC; if(!L || !L.buildTimeline || !repDashS || !state.member || repDashSMid !== state.member.id) return null;
+    var key = repSessCur ? repSessCur.key : null;
+    if(repDashCache && repDashCache.mid === state.member.id && repDashCache.key === key) return repDashCache.tl;
+    try{ return L.buildTimeline(repDashS, ROM_ALL, rdJ(), { uptoKey: key }); }catch(e){ console.warn("[rep dash img]", e); return null; }
+  }
+  var RD_IMG = { KPI: 300, ROW: 56, HDR: 110, LEG: 50, GAP: 36, TW: 1150 };   // HDR = 제목 줄 + 회차 머리 줄 (겹치지 않게 두 줄)   // 2000px 캔버스 기준 치수
+  function repDashImgRows(tl){ var L = window.AYO_LOGIC; return { st: L.statusRows(tl, { maxCols: 5, detail: false }), db: L.dumbbellRows(tl, { max: 14 }) }; }
+  function repDashH(tl){
+    var R = repDashImgRows(tl), n = Math.max(R.st.rows.length, R.db.length);
+    return RD_IMG.KPI + RD_IMG.GAP + RD_IMG.HDR + n * RD_IMG.ROW + RD_IMG.LEG;
+  }
+  function drawRepDash(g, x, y, w, tl, F, M){
+    var L = window.AYO_LOGIC, R = repDashImgRows(tl), K = L.kpiOf(tl, rdJ()), N = tl.rounds.length;
+    var GC = { good: gradeColor("g-good"), warn: gradeColor("g-warn"), crit: gradeColor("g-crit"), "": "#8C99AE" }, INK = "#17212B", SOFT = "#5B6875", LINE = "#DDE3E9";
+    var card = function(cx, cy, cw2, ch, r){ g.fillStyle = "#FFFFFF"; rr(g, cx, cy, cw2, ch, r); g.fill(); g.strokeStyle = LINE; g.lineWidth = 2.5; rr(g, cx, cy, cw2, ch, r); g.stroke(); };
+    var badge = function(txt, cls, bx, by, right){   // 판정 배지 (right=true 면 bx 가 오른쪽 끝)
+      g.font = "800 24px " + F; var bw = g.measureText(txt).width + 28, x0 = right ? bx - bw : bx;
+      g.save(); g.globalAlpha = .18; g.fillStyle = GC[cls] || GC[""]; rr(g, x0, by, bw, 40, 10); g.fill(); g.restore();
+      g.fillStyle = GC[cls] || GC[""]; g.textAlign = "center"; g.fillText(txt, x0 + bw / 2, by + 29); g.textAlign = "left"; return bw;
+    };
+    // 1) KPI 타일 4개
+    var gap = 24, tw = (w - gap * 3) / 4, th = RD_IMG.KPI;
+    K.forEach(function(k, i){
+      var tx = x + i * (tw + gap), ty = y;
+      card(tx, ty, tw, th, 24);
+      g.fillStyle = SOFT; g.font = "600 26px " + F; g.fillText(k.label, tx + 28, ty + 46);
+      if(k.sub){ g.font = "500 22px " + F; g.fillText(k.sub, tx + 28, ty + 78); }
+      badge(k.judge, k.cls || "", tx + tw - 24, ty + 24, true);
+      if(k.latest == null){ g.fillStyle = "#8C99AE"; g.font = "700 60px " + M; g.fillText("–", tx + 28, ty + 150); g.fillStyle = SOFT; g.font = "500 24px " + F; g.fillText("측정 없음", tx + 28, ty + 250); return; }
+      g.fillStyle = INK; g.font = "700 72px " + M; var vt = String(k.latest); g.fillText(vt, tx + 26, ty + 150);
+      var vw = g.measureText(vt).width; g.fillStyle = SOFT; g.font = "600 28px " + F; g.fillText(k.unit, tx + 30 + vw, ty + 150);
+      if(N > 1){   // 미니 추이 (좌표는 report-charts.js 와 같은 함수)
+        var sg = L.sparkGeom(k.series, { w: tw - 56, h: 80, pl: 10, pr: 16, pt: 10, pb: 10, ref: k.ref }), ox = tx + 28, oy = ty + 166;
+        if(sg.refY != null){ g.save(); g.strokeStyle = L.CHART_COLOR.ref; g.lineWidth = 2; g.setLineDash([6, 6]); g.beginPath(); g.moveTo(ox + 10, oy + sg.refY); g.lineTo(ox + sg.w - 16, oy + sg.refY); g.stroke(); g.restore(); }
+        g.strokeStyle = L.CHART_COLOR.C; g.lineWidth = 4; g.lineCap = "round"; g.lineJoin = "round";
+        sg.segs.forEach(function(seg){ if(seg.length < 2) return; g.beginPath(); seg.forEach(function(p, j){ if(j) g.lineTo(ox + p[0], oy + p[1]); else g.moveTo(ox + p[0], oy + p[1]); }); g.stroke(); });
+        sg.pts.forEach(function(p){ var last = sg.last && p.i === sg.last.i; g.beginPath(); g.arc(ox + p.x, oy + p.y, last ? 9 : 5, 0, Math.PI * 2); g.fillStyle = L.CHART_COLOR.C; g.fill(); g.strokeStyle = "#FFFFFF"; g.lineWidth = 3; g.stroke(); });
+        g.font = "700 26px " + F;
+        if(k.delta == null || k.delta === 0){ g.fillStyle = SOFT; g.fillText(k.delta === 0 ? "변화 없음 · " + k.baseN + "차 대비" : "", tx + 28, ty + 278); }
+        else { g.fillStyle = k.better ? GC.good : GC.crit; g.fillText((k.delta > 0 ? "▲ " : "▼ ") + Math.abs(k.delta) + k.unit + " · " + k.baseN + "차 대비", tx + 28, ty + 278); }
+      } else { g.fillStyle = SOFT; g.font = "500 24px " + F; g.fillText("첫 측정", tx + 28, ty + 250); }
+    });
+    // 2) 항목 × 회차 상태표 (왼쪽) + ROM 아령 (오른쪽) — 아령 행이 없으면 표가 전체 폭
+    var sy = y + th + RD_IMG.GAP, st = R.st, db = R.db, TW = db.length ? RD_IMG.TW : w, DX = x + TW + 40, DW = w - TW - 40;
+    var LABW = 300, ncol = st.cols.length, gapw = st.gap ? 40 : 0, cgap = 8, cellw = (TW - LABW - gapw - cgap * (ncol - 1)) / ncol;
+    var colX = function(i){ return x + LABW + i * (cellw + cgap) + (st.gap && i >= 1 ? gapw : 0); };
+    g.fillStyle = INK; g.font = "800 28px " + F; g.fillText("항목별 변화", x, sy + 34);
+    g.fillStyle = SOFT; g.font = "500 22px " + F; g.fillText("칸 색 = 그 회차의 판정", x + 170, sy + 33);
+    var hy = sy + RD_IMG.HDR - 8, actKey = repSessCur ? repSessCur.key : null;
+    g.textAlign = "center";
+    st.cols.forEach(function(ci, i){
+      var r = tl.rounds[ci], cx = colX(i) + cellw / 2, on = r.key === actKey;
+      g.fillStyle = on ? "#17304F" : SOFT; g.font = "800 24px " + F; g.fillText(r.n + "차", cx, hy - 26);
+      g.font = "500 20px " + F; g.fillText(r.day.slice(5), cx, hy - 2);
+      if(on){ g.fillStyle = "#17304F"; g.fillRect(colX(i), hy + 2, cellw, 4); }
+      if(st.gap && i === 1){ g.fillStyle = SOFT; g.font = "700 24px " + F; g.fillText("…", colX(i) - gapw / 2 - cgap / 2, hy - 12); }
+    });
+    g.textAlign = "left";
+    var ry = hy + 10;
+    st.rows.forEach(function(row, ri){
+      var yy = ry + ri * RD_IMG.ROW;
+      g.fillStyle = INK; g.font = "600 26px " + F; g.fillText(row.label, x, yy + 36);
+      st.cols.forEach(function(ci, i){
+        var c = row.cells[ci], cx = colX(i), col = c ? (GC[c.cls] || GC[""]) : "#8C99AE";
+        g.save(); g.globalAlpha = c ? .18 : 1; g.fillStyle = c ? col : "#EEF1F5"; rr(g, cx, yy + 4, cellw, RD_IMG.ROW - 10, 10); g.fill(); g.restore();
+        g.fillStyle = col; g.font = "700 26px " + F; g.textAlign = "center"; g.fillText(c ? c.txt : "–", cx + cellw / 2, yy + 36); g.textAlign = "left";
+      });
+    });
+    var ly = ry + st.rows.length * RD_IMG.ROW + 30, lx = x;   // 범례
+    [["good", "양호"], ["warn", "주의"], ["crit", "개선 필요"]].forEach(function(q){
+      g.fillStyle = GC[q[0]]; rr(g, lx, ly - 18, 20, 20, 5); g.fill(); g.fillStyle = SOFT; g.font = "500 22px " + F; g.fillText(q[1], lx + 30, ly); lx += 30 + g.measureText(q[1]).width + 36;
+    });
+    if(!db.length) return;
+    // 아령: 라벨 | 막대 | %
+    var hasA = db.some(function(r){ return r.a != null; }), LW2 = 250, PW = 90, bw = DW - LW2 - PW - 20, bx0 = DX + LW2;
+    g.fillStyle = INK; g.font = "800 28px " + F; g.fillText(hasA ? "ROM 변화" : "ROM 정상 대비", DX, sy + 34);
+    g.fillStyle = SOFT; g.font = "500 22px " + F; g.fillText(hasA ? "회색 점 = 처음 · 색 점 = 최근" : "최근 측정", DX + (hasA ? 150 : 230), sy + 33);
+    var g0 = L.dumbbellGeom(null, 100, { w: bw, min: 40, max: 100, pl: 12, pr: 12 });
+    g.textAlign = "center"; g.font = "500 20px " + F; g.fillStyle = SOFT;
+    [40, 70, 100].forEach(function(v, i){ g.fillText(v + "%", bx0 + g0.ticks[i], hy - 2); });
+    g.textAlign = "left";
+    db.forEach(function(r, ri){
+      var yy = ry + ri * RD_IMG.ROW, cy = yy + RD_IMG.ROW / 2 - 2, gm = L.dumbbellGeom(r.a, r.b, { w: bw, min: 40, max: 100, pl: 12, pr: 12 }), col = L.CHART_COLOR[r.side] || L.CHART_COLOR.C;
+      g.fillStyle = INK; g.font = "600 24px " + F; g.fillText(r.label, DX, yy + 30);
+      g.fillStyle = SOFT; g.font = "500 18px " + F; g.fillText(r.a != null ? r.aN + "차 " + r.aVal + "° → " + r.bVal + "°" : r.bVal + "° / 정상 " + r.normal + "°", DX, yy + 52);
+      g.strokeStyle = L.CHART_COLOR.grid; g.lineWidth = 2; gm.ticks.forEach(function(tx){ g.beginPath(); g.moveTo(bx0 + tx, yy + 8); g.lineTo(bx0 + tx, yy + RD_IMG.ROW - 12); g.stroke(); });
+      if(gm.xa != null){ g.strokeStyle = col; g.lineWidth = 4; g.lineCap = "round"; g.beginPath(); g.moveTo(bx0 + gm.xa, cy); g.lineTo(bx0 + gm.xb, cy); g.stroke();
+        g.beginPath(); g.arc(bx0 + gm.xa, cy, 8, 0, Math.PI * 2); g.fillStyle = L.CHART_COLOR.base; g.fill(); g.strokeStyle = "#FFFFFF"; g.lineWidth = 3; g.stroke(); }
+      g.beginPath(); g.arc(bx0 + gm.xb, cy, 11, 0, Math.PI * 2); g.fillStyle = col; g.fill(); g.strokeStyle = "#FFFFFF"; g.lineWidth = 3; g.stroke();
+      g.fillStyle = GC[r.cls] || GC[""]; g.font = "700 28px " + M; g.textAlign = "right"; g.fillText(r.b + "%", DX + DW, yy + 38); g.textAlign = "left";
+    });
+  }
   var rdResizeT = null;   // 화면 폭이 바뀌면(회전·창 크기) 아령 폭을 다시 맞춤
   window.addEventListener("resize", function(){ if($("repDash").hidden || !repDashS) return; clearTimeout(rdResizeT); rdResizeT = setTimeout(function(){ renderRepDash(repDashS, repDashAct); }, 200); });
   $("rdDetail").addEventListener("click", function(){ repDashDetail = !repDashDetail; renderRepDash(repDashS, repDashAct); });

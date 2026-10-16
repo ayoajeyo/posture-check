@@ -71,43 +71,71 @@ test("학습 보정은 어깨 관절을 실제로 옮긴다 (보정이 사라지
   assert.ok(Math.abs(ctx.romS.pts[0].x - x0 - (-1.4 / 100 * H)) < 0.01, "0번 점이 사진 높이의 -1.4% 만큼 움직여야 한다");
 });
 
-// v281 기준선 끝점을 사용자가 직접 옮겼으면 자동으로 되돌리지 않는다
-test("사용자가 기준선 끝점을 옮겼으면(refMoved) 다시 세우지 않는다", () => {
-  setup(-0.6);
-  ctx.romS.refMoved = true;
-  ctx.romS.pts[2] = { x: 900, y: 2400 };   // 사용자가 일부러 비스듬히 둠
-  vm.runInContext("romRefReset()", ctx);
-  assert.equal(ctx.romS.pts[2].x, 900);
-  assert.equal(ctx.romS.pts[2].y, 2400);
+// v281 기준선 끝점을 사용자가 직접 옮겼으면(refMoved)·각도를 돌렸으면(refCustom) 자동으로 안 건드린다
+const refAuto = () => vm.runInContext("romRefAuto()", ctx);
+const refShift = (dx, dy) => vm.runInContext("romRefShift", ctx)(dx, dy);
+
+test("사용자가 기준선을 손댔으면 따라 움직이지 않는다", () => {
+  for (const flag of ["refMoved", "refCustom"]) {
+    setup(-0.6);
+    ctx.romS[flag] = flag === "refMoved" ? true : { x: 0.3, y: 0.95 };
+    const before = { x: ctx.romS.pts[2].x, y: ctx.romS.pts[2].y };
+    refShift(-30, 0);
+    assert.equal(ctx.romS.pts[2].x, before.x, flag + " 인데 움직였다");
+    assert.equal(ctx.romS.pts[2].y, before.y);
+  }
 });
 
-test("기준선 각도를 직접 돌렸으면(refCustom) 다시 세우지 않는다", () => {
+test("기준점이 실제 관절이면 건드리지 않는다 (팔꿈치 신전처럼)", () => {
   setup(-0.6);
-  ctx.romS.refCustom = { x: 0.3, y: 0.95 };
-  ctx.romS.pts[2] = { x: 880, y: 2300 };
-  vm.runInContext("romRefReset()", ctx);
-  assert.equal(ctx.romS.pts[2].x, 880);
-});
-
-test("기준점이 실제 관절이면 건드리지 않는다 (무릎·팔꿈치처럼)", () => {
-  setup(-0.6);
-  const keep = { x: 400, y: 1200 };
-  ctx.romS.pts[2] = keep;
-  ctx.ROM_LM.shoulder = 11;                       // 기준점 이름이 랜드마크인 상황
-  ctx.romPts = () => ["shj", "armend", "shoulder"];
-  vm.runInContext("romRefReset()", ctx);
-  assert.equal(ctx.romS.pts[2].x, 400);
-  assert.equal(ctx.romS.pts[2].y, 1200);
+  ctx.ROM_LM.shoulder = 11;
+  ctx.romPts = () => ["olec", "wrist", "shoulder"];
+  assert.equal(refAuto(), false);
+  const before = { x: ctx.romS.pts[2].x, y: ctx.romS.pts[2].y };
+  refShift(-30, 0);
+  assert.equal(ctx.romS.pts[2].x, before.x);
   delete ctx.ROM_LM.shoulder;
+  ctx.romPts = () => ["shj", "armend", "vdown"];
+});
+
+test("점이 2개뿐인 동작(거북목)에서는 아무 일도 하지 않는다", () => {
+  setup(-0.6);
+  ctx.romS.pts = [{ x: 700, y: 760 }, { x: 250, y: 600 }];
+  ctx.romPts = () => ["ear", "shoulder"];
+  assert.equal(refAuto(), false);
+  refShift(-30, 0);
+  assert.equal(ctx.romS.pts.length, 2);
   ctx.romPts = () => ["shj", "armend", "vdown"];
 });
 
 test("각도축을 손으로 옮긴 뒤에도 ①선은 화면에서 수직이다", () => {
   for (const roll of [0, -0.6, 1.2]) {
     setup(roll);
-    ctx.romS.pts[0] = { x: 640, y: 820 };   // 어깨 관절을 사용자가 끌어 옮김
-    vm.runInContext("romRefReset()", ctx);
+    const d = { x: -60, y: 60 };
+    ctx.romS.pts[0] = { x: ctx.romS.pts[0].x + d.x, y: ctx.romS.pts[0].y + d.y };
+    refShift(d.x, d.y);
     const t = screenTilt(roll);
     assert.ok(t < 0.05, `roll=${roll} 에서 ${t.toFixed(2)}° 기울어짐`);
   }
+});
+
+// 리뷰 지적: 재합성(romSynthA) 방식이면 romS.L 유무로 가로 기준선 방향이 뒤집힐 수 있었다.
+// 평행 이동은 방향을 건드리지 않으므로 L 과 무관하다 — 그 성질을 못으로 박아 둔다.
+test("가로 기준선(hzside)도 방향이 그대로 유지된다 — 사진 정보(L) 유무와 무관", () => {
+  ctx.romJoint = () => ({ k: "hip", kind: "dir", pts: ["hip", "femend", "hzside"] });
+  ctx.romPts = () => ["hip", "femend", "hzside"];
+  const dirOf = () => {
+    const [V, , A] = ctx.romS.pts;
+    return Math.atan2(A.y - V.y, A.x - V.x);
+  };
+  for (const L of [null, [{ x: 10, y: 10, v: 1 }]]) {
+    setup(-0.6);
+    ctx.romS.L = L;
+    const d0 = dirOf();
+    ctx.romS.pts[0] = { x: ctx.romS.pts[0].x - 40, y: ctx.romS.pts[0].y + 15 };
+    refShift(-40, 15);
+    assert.ok(Math.abs(dirOf() - d0) < 1e-9, "L=" + (L ? "있음" : "없음") + " 에서 방향이 바뀜");
+  }
+  ctx.romJoint = () => ({ k: "shoulder", kind: "dir", pts: ["shj", "armend", "vdown"] });
+  ctx.romPts = () => ["shj", "armend", "vdown"];
 });

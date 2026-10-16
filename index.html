@@ -8410,14 +8410,13 @@
     try{
       var J = romJoint(), mv = romMove(); if(!J || !mv || !romS.pts) return;
       var A = LEARN_ROM[J.k + "|" + mv.k + "|" + romSd(J, mv)]; if(!A) return;
-      var H = romS.h, P = romS.pts, axis = false;
+      var H = romS.h, P = romS.pts, v0 = P[0] ? { x: P[0].x, y: P[0].y } : null;
       Object.keys(A).forEach(function(i){
         var p = P[+i]; if(!p || (only && only.indexOf(+i) < 0)) return;
         var dx = A[i][0] / 100 * H, dy = A[i][1] / 100 * H;
         p.x = Math.max(0, Math.min(romS.w, p.x + dx)); p.y = Math.max(0, Math.min(romS.h, p.y + dy));
-        if(+i === 0) axis = true;
       });
-      if(axis) romRefReset();   // v281 각도축이 움직였으면 기준선(세로·가로)을 다시 세운다
+      if(v0 && P[0]) romRefShift(P[0].x - v0.x, P[0].y - v0.y);   // v281 각도축이 움직인 만큼 기준선도 평행 이동
     }catch(e){ console.warn("[learn rom]", e); }
   }
   function romSd(J, mv){ J = J || romJoint(); if(!J.single) return rom.side; if(mv === undefined && typeof romS !== "undefined" && romS && romS.mv) mv = J.moves.find(function(m){ return m.k === romS.mv; }); return (mv && mv.lr) ? rom.side : "C"; }
@@ -8480,17 +8479,30 @@
     }
     return { x: Math.max(0, Math.min(W, V.x + dir.x * len)), y: Math.max(0, Math.min(H, V.y + dir.y * len)) };
   }
-  /* v281 각도축(0번 점)이 움직이면 자동으로 만든 기준선 끝점(2번 점)을 다시 세운다.
+  /* v281 각도축(0번 점)이 움직이면 자동으로 만든 기준선 끝점(2번 점)도 **같은 만큼 평행 이동**한다.
      전에는 "끝점이 각도축과 2px 이내"일 때만 따라가게 돼 있었는데(romLearnAdj),
      폰 기울기 보정이 들어가면 ①선이 살짝 기울어 끝점 x 가 각도축에서 10~45px 떨어진다
      → 조건이 빗나가 각도축만 옮겨지고 기준선은 제자리 → ①선이 약 1.2° 기울어졌다.
-     사용자가 기준선 끝점을 직접 옮겼으면(refMoved·refCustom) 손대지 않는다. */
-  function romRefReset(){
-    var P = romS && romS.pts; if(!P || P.length < 3 || !P[0] || !P[1] || !P[2]) return;
-    if(romS.refMoved || romS.refCustom) return;
+     평행 이동은 기울기를 그대로 보존하므로 세로·가로 기준선 모두에 안전하다.
+     (romSynthA 로 다시 만들면 romS.L 이 없는 기록 열기에서 가로 기준선 방향이 뒤집힐 수 있다)
+     CRITICAL: 이 세 함수는 romSynthA 와 `var rom = {` 사이에 둔다 — 테스트가 그 구간을 잘라 쓴다. */
+  function romRefAuto(){   // 2번 점이 '자동으로 만든 기준선 끝점' 인가 (판단은 여기 한 곳에서만)
+    var P = romS && romS.pts; if(!P || P.length < 3 || !P[0] || !P[1] || !P[2]) return false;
     var pn = typeof romPts === "function" ? romPts() : null;
-    if(!pn || pn.length < 3 || romIsLm(pn[2])) return;   // 실제 관절이 기준점이면 건드리지 않는다
-    P[2] = romSynthA(pn[2], P[0], P[1], romS.L, romS.w, romS.h, romS.roll);
+    return !!(pn && pn.length >= 3 && !romIsLm(pn[2]));
+  }
+  function romRefShift(dx, dy){   // 각도축이 움직인 만큼 (경계로 자르지 않는다 — 자르면 기울어진다)
+    if(!romRefAuto() || romS.refMoved || romS.refCustom) return;
+    romS.pts[2] = { x: romS.pts[2].x + dx, y: romS.pts[2].y + dy };
+  }
+  function romRefFollow(orig, i0){   // 끌기: 원래 위치 기준 절대 이동 (여러 번 불려도 누적되지 않음)
+    if(!romRefAuto() || romS.refMoved || romS.refCustom) return;
+    if(!orig || !orig[2] || !orig[i0]) return;
+    romS.pts[2] = { x: orig[2].x + (romS.pts[i0].x - orig[i0].x), y: orig[2].y + (romS.pts[i0].y - orig[i0].y) };
+  }
+  function romRefRebuild(){   // [기준선 되돌리기] 전용 — 중력 기준 수직·수평으로 다시 만든다
+    if(!romRefAuto()) return;
+    romS.pts[2] = romSynthA(romPts()[2], romS.pts[0], romS.pts[1], romS.L, romS.w, romS.h, romS.roll);
   }
   var rom = { joint: "neck", side: "R", latest: {}, session: {}, sessionAll: [], all: [] };
   function romJoint(){ return ROM_ALL.find(function(j){ return j.k === rom.joint; }) || ROM_JOINTS[0]; }
@@ -8755,8 +8767,8 @@
   $("btnRomClose").addEventListener("click", function(){ $("romSheet").classList.remove("direct-wait"); $("romSheet").hidden = true; if(typeof scolRestore === "function") scolRestore(); });
   $("btnRomShot").addEventListener("click", function(){ romCam.facing = "environment"; romCamStart(); });
   $("btnRomFile").addEventListener("click", function(){ $("romFileIn").value = ""; $("romFileIn").click(); });
-  $("romRefV").addEventListener("click", function(){ romS.refCustom = null; var mv = romMove(); romS.ref = mv.ref === "up" ? "up" : "down"; romSub(); romDraw(); });
-  $("romRefH").addEventListener("click", function(){ romS.refCustom = null; romS.ref = "horiz"; romS.hdir = romHdir(); romSub(); romDraw(); });
+  $("romRefV").addEventListener("click", function(){ romS.refCustom = null; romS.refMoved = false; var mv = romMove(); romS.ref = mv.ref === "up" ? "up" : "down"; romSub(); romDraw(); });
+  $("romRefH").addEventListener("click", function(){ romS.refCustom = null; romS.refMoved = false; romS.ref = "horiz"; romS.hdir = romHdir(); romSub(); romDraw(); });
   $("romRefFlip").addEventListener("click", function(){ romS.hdir = -romS.hdir; romDraw(); });
   ["romShotIn", "romFileIn"].forEach(function(id){ $(id).addEventListener("change", function(){
     var f = this.files && this.files[0]; if(!f) return;
@@ -9326,7 +9338,7 @@
     n.hidden = !romS.pts;
     $("romSelName").textContent = romSelName();
     n.querySelectorAll("button[data-nd]").forEach(function(b){ b.disabled = !romS.sel; });
-    $("btnRomRefReset").hidden = !romS.refCustom;
+    $("btnRomRefReset").hidden = !(romS.refCustom || romS.refMoved);   // v281 기준선을 손으로 옮겼을 때도 되돌릴 수 있게
   }
   var romPtrs = {}, romPan = null, romPinch = null;
   function romScr(e){ var r = romCv.getBoundingClientRect(), bs = romS.bs || 1; return { x: (e.clientX - r.left) / bs, y: (e.clientY - r.top) / bs }; }
@@ -9383,13 +9395,12 @@
     var RG = 0.5;   // v132 ROM 점·선 이동 속도 (손가락의 절반 · 2단계 느리게)
     if(ed.h.t === "pt"){
       romS.pts[ed.h.i] = cl({ x: ed.orig[ed.h.i].x + (p.x - ed.start.x) * RG, y: ed.orig[ed.h.i].y + (p.y - ed.start.y) * RG });
-      if(ed.h.i === 2) romS.refMoved = true;        // v281 기준선 끝점을 직접 옮김 → 그 뒤로는 자동으로 다시 세우지 않는다
-      else if(ed.h.i === 0) romRefReset();          // v281 각도축을 옮기면 기준선도 따라온다
+      if(ed.h.i === 2){ if(romRefAuto()) romS.refMoved = true; }   // v281 기준선 끝점만 옮김 = 기울기를 바꿈 → 그 뒤로는 자동으로 안 건드림
+      else if(ed.h.i === 0) romRefFollow(ed.orig, 0);              // v281 각도축을 옮기면 기준선도 따라온다
     } else if(ed.h.t === "seg"){
-      var mx = (p.x - ed.start.x) * RG, my = (p.y - ed.start.y) * RG;
-      [ed.h.a, ed.h.b].forEach(function(i){ romS.pts[i] = cl({ x: ed.orig[i].x + mx, y: ed.orig[i].y + my }); });
-      if([ed.h.a, ed.h.b].indexOf(2) >= 0) romS.refMoved = true;
-      else if([ed.h.a, ed.h.b].indexOf(0) >= 0) romRefReset();
+      var mx = (p.x - ed.start.x) * RG, my = (p.y - ed.start.y) * RG, ab = [ed.h.a, ed.h.b];
+      ab.forEach(function(i){ romS.pts[i] = cl({ x: ed.orig[i].x + mx, y: ed.orig[i].y + my }); });
+      if(ab.indexOf(2) < 0 && ab.indexOf(0) >= 0) romRefFollow(ed.orig, 0);   // ①선 전체(2+0)는 같이 움직여 기울기가 그대로 → 할 일 없음
     } else if(ed.h.t === "ref"){
       var V = romS.pts[0], vx = p.x - V.x, vy = p.y - V.y, L = Math.hypot(vx, vy);
       if(L > 4){ romS.refCustom = { x: vx / L, y: vy / L }; }
@@ -9410,10 +9421,11 @@
     var st = 1 / (romS.scale || 1), cl = function(q){ return { x: Math.max(0, Math.min(romS.w, q.x)), y: Math.max(0, Math.min(romS.h, q.y)) }; };
     if(sel.t === "pt"){
       romS.pts[sel.i] = cl({ x: romS.pts[sel.i].x + dx * st, y: romS.pts[sel.i].y + dy * st });
-      if(sel.i === 2) romS.refMoved = true; else if(sel.i === 0) romRefReset();   // v281
+      if(sel.i === 2){ if(romRefAuto()) romS.refMoved = true; } else if(sel.i === 0) romRefShift(dx * st, dy * st);   // v281
     } else if(sel.t === "seg"){
-      [sel.a, sel.b].forEach(function(i){ romS.pts[i] = cl({ x: romS.pts[i].x + dx * st, y: romS.pts[i].y + dy * st }); });
-      if([sel.a, sel.b].indexOf(2) >= 0) romS.refMoved = true; else if([sel.a, sel.b].indexOf(0) >= 0) romRefReset();
+      var ab2 = [sel.a, sel.b];
+      ab2.forEach(function(i){ romS.pts[i] = cl({ x: romS.pts[i].x + dx * st, y: romS.pts[i].y + dy * st }); });
+      if(ab2.indexOf(2) < 0 && ab2.indexOf(0) >= 0) romRefShift(dx * st, dy * st);
     }
     else if(sel.t === "ref"){
       var d = romRefDir(), a = Math.atan2(d.y, d.x) + (dx + dy) * 0.5 * Math.PI / 180;
@@ -9427,7 +9439,7 @@
     b.addEventListener("pointerdown", function(e){ e.preventDefault(); romNudge(v[0], v[1]); timer = setTimeout(function(){ rep = setInterval(function(){ romNudge(v[0], v[1]); }, 60); }, 350); });
     ["pointerup", "pointerleave", "pointercancel"].forEach(function(t){ b.addEventListener(t, stop); });
   });
-  $("btnRomRefReset").addEventListener("click", function(){ romS.refCustom = null; romS.refMoved = false; romRefReset(); if(romS.sel && romS.sel.t === "ref") romS.sel = null; romDraw(); romSyncNudge(); });
+  $("btnRomRefReset").addEventListener("click", function(){ romS.refCustom = null; romS.refMoved = false; romRefRebuild(); if(romS.sel && romS.sel.t === "ref") romS.sel = null; romDraw(); romSyncNudge(); });
 
 
   window.addEventListener("resize", function(){ if(!$("romSheet").hidden && romS.img) romDraw(); });
@@ -10081,6 +10093,7 @@
       romS.img = im; romS.w = im.naturalWidth; romS.h = im.naturalHeight;
       var k = rec.imgK || 1;
       romS.pts = (rec.pts && rec.pts.length) ? rec.pts.map(function(q){ return { x: q.x * k, y: q.y * k }; }) : null;   // v275 점이 비워진 기록은 null (빈 배열이면 각도 계산에서 터진다)
+      romS.refMoved = !!(rec.pts && rec.pts.length);   // v281 저장된 기준선은 사람이 승인한 선 — 각도축을 옮겨도 멋대로 되돌리지 않는다
       romS.roll = rec.roll == null ? null : rec.roll; romS.roll0 = romS.roll || 0; romS.vz = 1; romS.L = null; romS.cutDone = false; romS.footOff = rec.footOff == null ? null : rec.footOff;
       romS.ant = rec.ant || null; romS.touched = false;
       romS.editId = rec.id; romS.editAt = rec.at; romS.editMember = rec.memberId; romS.recImg = { url: rec.img, k: 1 };

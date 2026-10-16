@@ -12,6 +12,7 @@
 - [ ] 보조선 계산(`romAuxGeo`·`romFixVUp`)을 `js/logic/rom-aux.js` 로 분리 — 지금은 index.html 문자열을 잘라 테스트해서 서식만 바뀌어도 깨짐 (ADR-011)
 - [ ] 측정 비우기 판단 함수(`wipeRecLeft`·`wipeRomTodo`·`wipeLeftCount`·`wipeBodyRec`·`wipeRomRec`)를 `js/logic/wipe.js` 로 분리 — 위와 같은 이유 (ADR-011). `sw.js` SHELL_FILES 에 추가 필요
 - [ ] 측정 비우기 직후 백업 필요 표시(`bkTouch`)가 안 켜진다 — `rawPut` 경로라서. 비운 뒤 백업 알림이 뜨는 게 맞는지 결정 필요
+- [ ] 리포트·전체 비교는 아직 비운 회차를 제외한다(`romHist` 의 `value != null`) — 각도가 없어 집계할 수 없기 때문. 다시 측정하면 자동으로 돌아오지만, 리포트에 '측정 전 N건' 을 알려 주는 편이 친절하다
 - [ ] 되돌릴 수 없는 작업의 확인창을 `window.confirm` 대신 앱 팝업(`.confirm-overlay`)으로 — 측정 비우기·보관한 수정 기록 비우기 2곳 (UI_GUIDE 5번)
 - [ ] `docs/UI_GUIDE.md` 7번 표준 단어에 '비우기' 가 없다 — 비우기/삭제/지우기 단어 체계를 정리하고 화면 문구를 맞추기
 - [ ] 관리자 창 전역 본문이 12.5px (`.adm-xls p`) — UI_GUIDE 3번 13px 미만 금지. 측정 비우기 칸만 v278 에서 올렸고 나머지는 그대로

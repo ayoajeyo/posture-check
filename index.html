@@ -1248,6 +1248,9 @@
   .rom-card.rc{display:grid; grid-template-columns:52px 1fr auto; align-items:center; gap:10px; padding:10px 10px 10px 10px; border-radius:14px;}
   .rc-th{width:52px; height:52px; border-radius:10px; object-fit:cover; background:#0B1222;}
   .rc-th0{display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:var(--ink-soft); background:var(--surface-2);}
+  /* v280 측정을 비운 회차: 썸네일은 없지만 사진은 있다 → 눌러서 다시 잴 수 있게 */
+  button.rc-th0{border:1px dashed var(--line); font:inherit; font-size:11px; font-weight:700; line-height:1.3; cursor:pointer; padding:0; text-align:center;}
+  button.rc-th0:hover{border-color:var(--navy); color:var(--navy);}
   .rc-main{min-width:0; display:flex; flex-direction:column; gap:4px;}
   .rc-lr{display:flex; align-items:center; gap:4px; margin:5px 0 2px; flex-wrap:wrap;}
   .rc-lr button{font-family:inherit; font-size:11.5px; font-weight:700; border:1px solid var(--line); background:transparent; color:var(--ink-soft); border-radius:8px; padding:3px 10px; cursor:pointer;}
@@ -7163,7 +7166,7 @@
         if(th.length < 2) ss.roms.slice(-2 + th.length).forEach(function(x){ if(x.thumb) th.push(x.thumb); });
         return '<div class="rec" data-key="' + esc(ss.key) + '" data-round="' + (S.length - si) + '"><input type="checkbox" aria-label="비교 선택" data-id="' + esc(ss.key) + '">' +
           '<div class="th">' + th.slice(0, 2).map(function(t){ return '<img src="' + safeSrc(t) + '" alt="">'; }).join("") + '</div>' +
-          '<div class="info"><b><span class="rd">' + (S.length - si) + '차</span>' + (r ? fmtDate(r.at) : ss.day) + '</b><em>' + (views || "기록 없음") + (r && r.height ? " · 키 " + r.height + "cm" : "") + (r && r.editedAt ? " · 수정됨" : "") + '</em></div>' +
+          '<div class="info"><b><span class="rd">' + (S.length - si) + '차</span>' + (r ? fmtDate(r.at) : ss.day) + '</b><em>' + (views || "기록 없음") + (r && r.height ? " · 키 " + r.height + "cm" : "") + (r && r.editedAt ? " · 수정됨" : "") + (r && r.score == null && r.blob ? " · 사진 있음 · 측정 전" : "") + '</em></div>' +
           '<div class="score">' + (r && r.score != null ? r.score : "–") + '</div><button type="button" class="ed" title="모든 항목 수정"><span class="l">불러와 </span>수정</button><button type="button" class="x" title="회차 삭제" aria-label="회차 삭제">✕</button></div>';
       }).join("");
       box.querySelectorAll(".rec").forEach(function(row){
@@ -8630,9 +8633,11 @@
         if(r){ done++; if(mv.normal > 0){ sumPct += Math.min(100, jd.pct); cnt++; } }
         var dt = romDeltaHtml(J.k, mv).replace('class="rom-delta', 'class="rom-delta rc-delta');
         return '<div class="rom-card rc ' + jd.cls + '">' +
-          (r && r.thumb ? '<img class="rc-th rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">' : '<div class="rc-th rc-th0" aria-hidden="true">' + (val == null ? '–' : '✓') + '</div>') +
+          (r && r.thumb ? '<img class="rc-th rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">'
+            : r && (r.img || r.blob) ? '<button type="button" class="rc-th rc-th0 rc-open" data-rid="' + esc(r.id) + '" title="저장된 사진으로 다시 측정">사진<br>다시 측정</button>'   // v280 측정을 비운 회차
+            : '<div class="rc-th rc-th0" aria-hidden="true">' + (val == null ? '–' : '✓') + '</div>') +
           '<div class="rc-main"><div class="rc-h"><b>' + mv.n + (J.single && mv.lr ? ' <small class="rc-sd">' + (rom.side === "R" ? "우측" : "좌측") + '</small>' : '') + '</b><em>정상 ' + (mv.normal ? "0–" + mv.normal : "0") + '°</em></div>' + lrSel +
-          '<div class="rc-v">' + (val == null ? '<span class="none">미측정</span>' : '<strong>' + val + '°</strong>') + '<span class="judge">' + (val == null ? '' : jd.txt) + '</span></div>' +
+          '<div class="rc-v">' + (val == null ? '<span class="none">' + (r && (r.img || r.blob) ? "사진 있음 · 측정 전" : "미측정") + '</span>' : '<strong>' + val + '°</strong>') + '<span class="judge">' + (val == null ? '' : jd.txt) + '</span></div>' +
           '<div class="rom-bar"><i style="width:' + (val == null ? 0 : Math.min(100, jd.pct)) + '%"></i></div>' +
           (r ? '<div class="rc-meta">' + (r.memberId ? romRoundOf(r) + "차 · " : "") + fmtDate(r.at).slice(0, 10) + (r.memberId ? "" : " · 회원 미지정") + '</div>' : '') + (!r && pv ? '<div class="rc-prev">지난 회차(' + romRoundOf(pv) + '차) ' + pv.value + '°</div>' : '') + dt + '</div>' +
           '<div class="rc-acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-mv="' + mv.k + '">' + CAM_IC + '측정</button>' +
@@ -10267,13 +10272,14 @@
       romSyncRound();
       $("scolGrid").innerHTML = SCOL_JOINT.moves.map(function(mv){
         var H = rom.all.filter(function(r){ return r.joint === "scol" && r.move === mv.k; }), r = state.member ? romCurRec("scol", "C", mv.k) : H[H.length - 1], val = r ? r.value : null, jd = scolJudge(mv, val);
-        var hist = H.slice(-5).reverse().map(function(h){ var j2 = scolJudge(mv, h.value); return '<li class="rc-open" data-rid="' + h.id + '"><span>' + fmtDate(h.at).slice(0, 10) + '</span><b class="' + j2.cls + '">' + h.value + '°</b></li>'; }).join("");
+        var hist = H.slice(-5).reverse().map(function(h){ var j2 = scolJudge(mv, h.value); return '<li class="rc-open" data-rid="' + h.id + '"><span>' + fmtDate(h.at).slice(0, 10) + '</span><b class="' + j2.cls + '">' + (h.value == null ? "측정 전" : h.value + "°") + '</b></li>'; }).join("");
         var dl = H.length >= 2 ? H[H.length - 1].value - H[H.length - 2].value : null;
         return '<div class="rom-card scol-card ' + jd.cls + '"><div class="top"><b>' + mv.n + '</b><em>' + (mv.grade === "atr" ? "기준 5° · 7°" : "기준 55° · 50° · 45°") + '</em></div>' +
-          '<div class="val">' + (val == null ? '<span class="none">아직 측정하지 않았어요</span>' : '<strong>' + val + '°</strong>') + '</div>' +
+          '<div class="val">' + (val == null ? '<span class="none">' + (r && (r.img || r.blob) ? "사진 있음 · 측정 전" : "아직 측정하지 않았어요") + '</span>' : '<strong>' + val + '°</strong>') + '</div>' +
           '<div class="judge">' + jd.txt + '</div>' +
           (dl != null ? (isPro() ? (function(){ var tr = trendOf(mv, H[H.length - 2].value, H[H.length - 1].value); return '<div class="rom-delta ' + (tr.t > 0 ? "up" : tr.t < 0 ? "down" : "same") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl < 0 ? "▼ " : "▲ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "° (" + tr.lab + ")") + ' · 총 ' + H.length + '회</div>'; })() : '<div class="rom-delta lock">🔒 이전 회차와의 비교는 PRO에서 볼 수 있어요</div>') : '') +
-          (r && r.thumb ? '<img class="thumb rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">' : '') +
+          (r && r.thumb ? '<img class="thumb rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">'
+            : r && (r.img || r.blob) ? '<button type="button" class="rc-th rc-th0 rc-open" data-rid="' + esc(r.id) + '" title="저장된 사진으로 다시 측정">사진<br>다시 측정</button>' : '') +
           (hist && isPro() ? '<ul class="scol-hist">' + hist + '</ul>' : '') +
           '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-scol="' + mv.k + '">' + CAM_IC + '측정</button>' +
           (r ? '<button type="button" class="btn line sm" data-scolcmp="' + mv.k + '">' + (isPro() ? "📊 이전 회차 비교" : "🔒 이전 회차 비교") + ' <small>' + H.length + '회</small></button>' : '') + '</div></div>';
@@ -10295,7 +10301,7 @@
     body += '<div class="rcmp-chart">' + romChartSvg({ normal: 0 }, H) + '</div>';
     body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
       H.map(function(r, i){ var jd = scolJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
-        return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요. 개선·악화는 촬영 자세·각도에 따라 달라질 수 있는 참고값이에요.</p>';
+        return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + (r.value == null ? "–" : r.value + "°") + '</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요. 개선·악화는 촬영 자세·각도에 따라 달라질 수 있는 참고값이에요.</p>';
     if(prev && prev.thumb && last.thumb) body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(prev.id) + '"><img src="' + safeSrc(prev.thumb) + '" alt=""><figcaption>이전 ' + romRoundOf(prev) + '차 · ' + prev.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + safeSrc(last.thumb) + '" alt=""><figcaption>최근 ' + romRoundOf(last) + '차 · ' + last.value + '°</figcaption></figure></div>';
     $("romCmpTitle").textContent = "척추 균형 측정 · 이전 회차 비교";
     $("romCmpBody").innerHTML = body; $("romCmp").hidden = false;
@@ -10320,13 +10326,14 @@
       romSyncRound();
       $("fhpGrid").innerHTML = FHP_JOINT.moves.map(function(mv){
         var H = rom.all.filter(function(r){ return r.joint === "fhp" && r.move === mv.k; }), r = state.member ? romCurRec("fhp", "C", mv.k) : H[H.length - 1], val = r ? r.value : null, jd = scolJudge(mv, val);
-        var hist = H.slice(-5).reverse().map(function(h){ var j2 = scolJudge(mv, h.value); return '<li class="rc-open" data-rid="' + h.id + '"><span>' + fmtDate(h.at).slice(0, 10) + '</span><b class="' + j2.cls + '">' + h.value + '°</b></li>'; }).join("");
+        var hist = H.slice(-5).reverse().map(function(h){ var j2 = scolJudge(mv, h.value); return '<li class="rc-open" data-rid="' + h.id + '"><span>' + fmtDate(h.at).slice(0, 10) + '</span><b class="' + j2.cls + '">' + (h.value == null ? "측정 전" : h.value + "°") + '</b></li>'; }).join("");
         var dl = H.length >= 2 ? H[H.length - 1].value - H[H.length - 2].value : null;
         return '<div class="rom-card scol-card ' + jd.cls + '"><div class="top"><b>' + mv.n + '</b><em>기준 55° · 50° · 45°</em></div>' +
-          '<div class="val">' + (val == null ? '<span class="none">아직 측정하지 않았어요</span>' : '<strong>' + val + '°</strong>') + '</div>' +
+          '<div class="val">' + (val == null ? '<span class="none">' + (r && (r.img || r.blob) ? "사진 있음 · 측정 전" : "아직 측정하지 않았어요") + '</span>' : '<strong>' + val + '°</strong>') + '</div>' +
           '<div class="judge">' + jd.txt + '</div>' +
           (dl != null ? (isPro() ? (function(){ var tr = trendOf(mv, H[H.length - 2].value, H[H.length - 1].value); return '<div class="rom-delta ' + (tr.t > 0 ? "up" : tr.t < 0 ? "down" : "same") + '">' + (dl === 0 ? "지난 측정과 같음" : (dl > 0 ? "▲ " : "▼ ") + "지난 측정 대비 " + (dl > 0 ? "+" : "") + dl + "° (" + tr.lab + ")") + ' · 총 ' + H.length + '회</div>'; })() : '<div class="rom-delta same">🔒 회차별 변화는 PRO</div>') : '') +
-          (r && r.thumb ? '<img class="thumb rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">' : '') +
+          (r && r.thumb ? '<img class="thumb rc-open" data-rid="' + esc(r.id) + '" src="' + safeSrc(r.thumb) + '" alt="" title="이 회차 사진 보기·수정">'
+            : r && (r.img || r.blob) ? '<button type="button" class="rc-th rc-th0 rc-open" data-rid="' + esc(r.id) + '" title="저장된 사진으로 다시 측정">사진<br>다시 측정</button>' : '') +
           (hist && isPro() ? '<ul class="scol-hist">' + hist + '</ul>' : '') +
           '<div class="acts"><button type="button" class="btn ' + (r ? "line" : "primary") + ' sm" data-fhp="' + mv.k + '">' + CAM_IC + '측정</button>' +
           (r ? '<button type="button" class="btn line sm" data-fhpcmp="' + mv.k + '">' + (isPro() ? "📊 이전 회차 비교" : "🔒 이전 회차 비교") + ' <small>' + H.length + '회</small></button>' : '') + '</div></div>';
@@ -10348,7 +10355,7 @@
     body += '<div class="rcmp-chart">' + romChartSvg({ normal: 55 }, H) + '</div>';
     body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
       H.map(function(r, i){ var jd = scolJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
-        return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table>';
+        return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + (r.value == null ? "–" : r.value + "°") + '</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + sg(dd) + '</td></tr>'; }).reverse().join("") + '</tbody></table>';
     if(prev && prev.thumb && last.thumb) body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(prev.id) + '"><img src="' + safeSrc(prev.thumb) + '" alt=""><figcaption>이전 ' + (H.length - 1) + '차 · ' + prev.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + safeSrc(last.thumb) + '" alt=""><figcaption>최근 ' + H.length + '차 · ' + last.value + '°</figcaption></figure></div>';
     $("romCmpTitle").textContent = "거북목(CVA) · 이전 회차 비교";
     $("romCmpBody").innerHTML = body; $("romCmp").hidden = false;
@@ -10789,7 +10796,7 @@
       body += '<div class="rcmp-chart">' + romChartSvg(mv, H) + '</div>';
       body += '<table class="rcmp-tbl"><thead><tr><th>회차</th><th>날짜</th><th>각도</th><th>판정</th><th>변화</th></tr></thead><tbody>' +
         H.map(function(r, i){ var jd = romJudge(mv, r.value), dd = i ? r.value - H[i - 1].value : null;
-          return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + r.value + '°</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + (dd == null ? "–" : (dd > 0 ? "+" : "") + dd + "°") + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요. 개선·악화는 촬영 자세·각도에 따라 달라질 수 있는 참고값이에요.</p>';
+          return '<tr class="rc-open" data-rid="' + r.id + '"><td>' + romRoundOf(r) + '차 ›</td><td>' + fmtDate(r.at).slice(0, 10) + '</td><td class="num">' + (r.value == null ? "–" : r.value + "°") + '</td><td class="j ' + jd.cls + '">' + jd.txt + '</td><td class="num">' + (dd == null ? "–" : (dd > 0 ? "+" : "") + dd + "°") + '</td></tr>'; }).reverse().join("") + '</tbody></table><p class="rcmp-note">회차를 누르면 그때 사진을 보고 측정점을 수정할 수 있어요. 개선·악화는 촬영 자세·각도에 따라 달라질 수 있는 참고값이에요.</p>';
       if(first.thumb && last.thumb && first !== last){
         body += '<div class="rcmp-photos"><figure class="rc-open" data-rid="' + esc(first.id) + '"><img src="' + safeSrc(first.thumb) + '" alt=""><figcaption>' + romRoundOf(first) + '차 · ' + first.value + '°</figcaption></figure><figure class="rc-open" data-rid="' + esc(last.id) + '"><img src="' + safeSrc(last.thumb) + '" alt=""><figcaption>' + romRoundOf(last) + '차 · ' + last.value + '°</figcaption></figure></div>';
       }

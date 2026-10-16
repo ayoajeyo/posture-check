@@ -75,7 +75,7 @@
       });
       if(s.rec){
         ["f", "sd"].forEach(function(m){
-          (s.rec[m] || []).forEach(function(it){
+          (Array.isArray(s.rec[m]) ? s.rec[m] : []).forEach(function(it){   // 옛 기록은 f·sd 가 배열이 아닐 수 있어 건너뜀
             if(!it || !it.key) return;
             var bk = m + ":" + it.key;
             if(!body[bk]) body[bk] = { key: bk, label: it.title || it.name || it.key, vals: blank(), cls: blank() };

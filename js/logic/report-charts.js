@@ -60,7 +60,7 @@
   function dumbbellRowSvg(row, o){
     o = o || {};
     var h = o.h || 24, g = dumbbellGeom(row.a, row.b, o), col = COLOR[row.side] || COLOR.C, cy = h / 2, ns = 'xmlns="http://www.w3.org/2000/svg"';
-    var s = '<svg class="rd-db" viewBox="0 0 ' + g.w + ' ' + h + '" ' + ns + ' preserveAspectRatio="none" aria-hidden="true" focusable="false">';
+    var s = '<svg class="rd-db" viewBox="0 0 ' + g.w + ' ' + h + '" ' + ns + ' aria-hidden="true" focusable="false">';
     g.ticks.forEach(function(tx){ s += '<line x1="' + tx + '" x2="' + tx + '" y1="2" y2="' + (h - 2) + '" stroke="' + COLOR.grid + '" stroke-width="1"/>'; });
     if(g.xa != null){
       s += '<line x1="' + g.xa + '" x2="' + g.xb + '" y1="' + cy + '" y2="' + cy + '" stroke="' + col + '" stroke-width="2" stroke-linecap="round"/>';

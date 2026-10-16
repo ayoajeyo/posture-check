@@ -225,6 +225,57 @@
   .rep-rounds-list button b{font-size:15px; font-weight:800;}
   .rep-rounds-list button em{font-style:normal; font-size:11.5px; color:var(--ink-soft); white-space:nowrap;}
   .rep-rounds-list button small{font-size:11px; color:var(--ink-soft); white-space:nowrap;}
+  /* v283 리포트 '한눈에 보기' — 회원용 요약 카드. 상태색은 판정에만, 차트 계열색은 report-charts.js 와 같은 값 */
+  .rep-dash{margin:10px 0 4px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 12px 12px;}
+  .rep-dash[hidden]{display:none!important;}
+  .rd-h{display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; margin-bottom:10px;}
+  .rd-h h3{margin:0; font-size:16px; font-weight:800;}
+  .rd-h span{font-size:13px; color:var(--ink-soft);}
+  .rd-state{margin:0; font-size:13px; color:var(--ink-soft); padding:8px 0;}
+  .rd-err{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px;} .rd-err p{margin:0;}
+  .rd-kpis{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px;}
+  @media (min-width:760px){ .rd-kpis{grid-template-columns:repeat(4, minmax(0,1fr));} }
+  .rd-kpi{min-width:0; border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; background:var(--surface);}
+  .rd-kpi small{font-size:13px; color:var(--ink-soft); line-height:1.3;} .rd-kpi small span{display:block;}
+  .rd-top{display:flex; align-items:flex-start; justify-content:space-between; gap:6px;}
+  .rd-kpi strong{font-size:28px; line-height:1.1; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.01em;}
+  .rd-kpi strong em{font-style:normal; font-size:14px; font-weight:500; color:var(--ink-soft); margin-left:1px;}
+  .rd-kpi strong.none{font-size:22px; color:var(--ink-soft);}
+  .rd-sp{height:44px; margin-top:2px;} .rd-sp svg{display:block; width:100%; height:44px;}
+  .rd-first{height:44px; display:flex; align-items:center; font-size:13px; color:var(--ink-soft);}
+  .rd-btm{display:flex; align-items:center; min-height:20px;}
+  .rd-delta{font-size:13px; font-weight:600; white-space:nowrap;} .rd-delta.up{color:var(--good);} .rd-delta.down{color:var(--crit);} .rd-delta.flat{color:var(--ink-soft); font-weight:500;}
+  .rd-st{display:inline-flex; align-items:center; gap:4px; font-size:13px; font-weight:600; padding:2px 7px; border-radius:6px; white-space:nowrap; margin-top:4px;}
+  .rd-st.good{color:var(--good); background:var(--good-soft);} .rd-st.warn{color:var(--warn); background:var(--warn-soft);} .rd-st.crit{color:var(--crit); background:var(--crit-soft);} .rd-st.none{color:var(--ink-soft); background:var(--surface-2);}
+  .rd-sec{margin-top:16px;}
+  .rd-sh{display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; margin-bottom:8px;} .rd-sh b{font-size:14px; font-weight:700;} .rd-sh span{font-size:13px; color:var(--ink-soft);}
+  .rd-heatwrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  .rd-heat{border-collapse:separate; border-spacing:3px 3px; width:100%; font-size:13px; font-variant-numeric:tabular-nums;}
+  .rd-heat th{font-weight:600; color:var(--ink-soft); text-align:center; padding:0 0 2px; white-space:nowrap; line-height:1.2; border-top:3px solid transparent;}
+  .rd-heat th small{display:block; font-size:11px; font-weight:500;} .rd-heat th.on{border-top-color:var(--navy); color:var(--navy);}
+  .rd-heat th:first-child,.rd-heat td:first-child{text-align:left; width:88px; max-width:88px;}
+  .rd-heat td{padding:0;} .rd-heat td.n{font-weight:600; font-size:13px; line-height:1.25; padding-right:4px; word-break:keep-all;}
+  .rd-heat td.gap,.rd-heat th.gap{width:14px; color:var(--ink-soft); text-align:center;}
+  .rd-cell{display:flex; align-items:center; justify-content:center; min-height:44px; min-width:44px; border-radius:6px; font-weight:600; font-size:13px; background:var(--surface-2); color:var(--ink-soft);}
+  .rd-cell.good{background:var(--good-soft); color:var(--good);} .rd-cell.warn{background:var(--warn-soft); color:var(--warn);} .rd-cell.crit{background:var(--crit-soft); color:var(--crit);}
+  .rd-legend{display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; font-size:13px; color:var(--ink-soft); margin-top:6px;}
+  .rd-legend span{display:inline-flex; align-items:center; gap:5px;} .rd-legend i{width:10px; height:10px; border-radius:3px; display:inline-block;}
+  .rd-legend i.good{background:var(--good);} .rd-legend i.warn{background:var(--warn);} .rd-legend i.crit{background:var(--crit);}
+  .rd-tg{margin-left:auto; font-family:inherit; font-size:13px; font-weight:600; min-height:44px; padding:0 12px; border-radius:10px; border:1px solid var(--line); background:var(--surface); color:var(--navy); cursor:pointer;}
+  .rd-tg[aria-pressed="true"]{background:var(--accent-soft); border-color:var(--navy);}
+  .rd-rows{display:grid; gap:6px;}
+  .rd-row{display:grid; grid-template-columns:110px minmax(0,1fr) 44px; align-items:center; gap:8px; min-height:28px;}
+  .rd-row .rd-lab{font-size:13px; font-weight:600; line-height:1.25; word-break:keep-all;} .rd-row .rd-lab small{display:block; font-weight:400; font-size:11px; color:var(--ink-soft);}
+  .rd-row .rd-db{min-width:0;} .rd-row .rd-db svg{display:block; width:100%; height:24px;}   /* viewBox 폭 = 실제 칸 폭(렌더 시 측정) → 점이 찌그러지지 않음 */
+  .rd-row .rd-pct{font-size:14px; font-weight:700; text-align:right; font-variant-numeric:tabular-nums;}
+  .rd-row .rd-pct.good{color:var(--good);} .rd-row .rd-pct.warn{color:var(--warn);} .rd-row .rd-pct.crit{color:var(--crit);}
+  .rd-axis{display:grid; grid-template-columns:110px minmax(0,1fr) 44px; gap:8px; font-size:11px; color:var(--ink-soft); margin-bottom:2px;}
+  .rd-axis span{display:flex; justify-content:space-between;}
+  #rdNum{margin:10px 0 0 auto; display:block;}
+  .rd-tblwrap{overflow-x:auto; margin-top:8px;}
+  .rd-tbl{width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums;}
+  .rd-tbl th,.rd-tbl td{padding:7px 6px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap;}
+  .rd-tbl th{color:var(--ink-soft); font-weight:600;} .rd-tbl th:first-child,.rd-tbl td:first-child{text-align:left;}
   .rep-rounds-list button[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#fff;}
   .rep-rounds-list button[aria-pressed="true"] em, .rep-rounds-list button[aria-pressed="true"] small{color:rgba(255,255,255,.85);}
   /* v135 결과 사진 보기: 원본 / 측정 / 격자 */
@@ -2035,6 +2086,25 @@
     <div class="rep-head" id="repHead" hidden>
       <span class="rep-meta" id="repMeta"></span>
     </div>
+    <!-- v283 한눈에 보기: 회차별 변화 요약 (계산은 js/logic/report-timeline.js · 차트는 report-charts.js) -->
+    <section class="rep-dash" id="repDash" hidden aria-label="한눈에 보기">
+      <div class="rd-h"><h3>한눈에 보기</h3><span id="rdSub"></span></div>
+      <p class="rd-state" id="rdLoad">불러오는 중…</p>
+      <div class="rd-state rd-err" id="rdErr" hidden><p>요약을 만들지 못했습니다.</p><button type="button" class="btn line sm" id="rdRetry">다시 시도</button></div>
+      <div id="rdBody" hidden>
+        <div class="rd-kpis" id="rdKpis"></div>
+        <div class="rd-sec"><div class="rd-sh"><b>항목별 변화</b><span>칸 색 = 그 회차의 판정</span></div>
+          <div class="rd-heatwrap" id="rdHeat"></div>
+          <div class="rd-legend"><span><i class="good"></i>양호</span><span><i class="warn"></i>주의</span><span><i class="crit"></i>개선 필요</span>
+            <button type="button" class="rd-tg" id="rdDetail" aria-pressed="false" hidden>체형 세부</button></div>
+        </div>
+        <div class="rd-sec" id="rdRomSec" hidden><div class="rd-sh"><b id="rdRomT">ROM 정상 대비</b><span id="rdRomS"></span></div>
+          <div class="rd-rows" id="rdRom"></div>
+          <button type="button" class="rd-tg" id="rdNum" aria-pressed="false">숫자로 보기</button>
+          <div class="rd-tblwrap" id="rdTbl" hidden></div>
+        </div>
+      </div>
+    </section>
     <label class="rep-gridsw" for="repGridOn"><input type="checkbox" id="repGridOn"><span class="sw" aria-hidden="true"></span><span class="tx"><b>격자 배경</b></span></label>
 
     <div class="rep-board">
@@ -8004,7 +8074,7 @@
   var repForeignAsk = null;
   function repRoundsRender(){
     var wrap = $("repRoundWrap"), box = $("repRounds"), seq = ++repRoundSeq;
-    if(!state.member){ wrap.hidden = true; repSessCur = null; return; }
+    if(!state.member){ wrap.hidden = true; repSessCur = null; renderRepDash(null, null); return; }
     var mid = state.member.id;
     Promise.all([dbAll("records"), dbAll("roms")]).then(function(res){
       if(seq !== repRoundSeq || !state.member || state.member.id !== mid) return;
@@ -8012,7 +8082,7 @@
       var S = mbBuildSessions(rs, res[1].filter(function(x){ return x.memberId === mid; }));
       S.forEach(function(ss, si){ ss.round = S.length - si; });
       wrap.hidden = !S.length;
-      if(!S.length){ repSessCur = null; return; }
+      if(!S.length){ repSessCur = null; renderRepDash(null, null); return; }
       var act = repSel && repSel.mid === mid ? S.find(function(x){ return x.key === repSel.key; }) : null;
       if(act && act.rec && state.sessionId && act.rec.id !== state.sessionId) act = null;   // 다른 화면에서 다른 기록을 열었으면 그쪽 기준
       if(!act && state.sessionId) act = S.find(function(x){ return x.rec && x.rec.id === state.sessionId; }) || null;
@@ -8021,6 +8091,7 @@
       if(!act && repForeign() && repForeignAsk !== mid){ repForeignAsk = mid; pickLater = S[0]; }
       var prev = repSessCur;
       repSessCur = act ? { mid: mid, key: act.key, roms: act.roms } : null;
+      renderRepDash(S, act);   // v283 한눈에 보기 — 회차 묶음을 그대로 넘긴다
       $("repRoundSub").textContent = act ? act.round + "차 측정 (" + act.day + ") 결과를 보고 있어요 · 다른 회차를 누르면 바뀌어요" : "지금 측정 중인 결과를 보고 있어요 · 회차를 누르면 저장된 기록으로 바뀌어요";
       box.innerHTML = S.slice().reverse().map(function(ss){
         var r = ss.rec, nS = ss.roms.filter(function(x){ return x.joint === "scol"; }).length, nF = ss.roms.filter(function(x){ return x.joint === "fhp"; }).length, nR = ss.roms.length - nS - nF;
@@ -8037,6 +8108,71 @@
       if(pickLater) setTimeout(function(){ if(state.member && state.member.id === mid) repPickRound(pickLater, !isDirty()); }, 0);
     });
   }
+  /* ===================== v283 리포트 '한눈에 보기' (회원용 요약) =====================
+     회차 묶음 S 는 repRoundsRender 가 만든 것을 그대로 받는다(회차 번호 출처 하나).
+     계산·좌표는 js/logic/report-timeline.js·report-charts.js — 여기서는 화면만 그린다. */
+  var repDashCache = null, repDashS = null, repDashAct = null, repDashDetail = false;   // cache = { mid, key, tl } (공유 이미지가 같은 시계열을 씀)
+  function rdJ(){ return { romJudge: romJudge, scolJudge: scolJudge, scoreBand: scoreBand }; }
+  function rdDeltaHtml(k){
+    if(k.delta == null) return '<span class="rd-delta flat"></span>';   // 첫 측정·비교 불가는 위 줄("첫 측정")이 이미 말함
+    if(k.delta === 0) return '<span class="rd-delta flat">변화 없음 · ' + k.baseN + '차 대비</span>';
+    var up = k.delta > 0, v = Math.abs(k.delta) + k.unit;
+    return '<span class="rd-delta ' + (k.better ? "up" : "down") + '">' + (up ? "▲ " : "▼ ") + v + ' · ' + k.baseN + '차 대비</span>';
+  }
+  function renderRepDash(S, act){
+    var el = $("repDash"); if(!el) return;
+    var L = window.AYO_LOGIC;
+    if(!L || !L.buildTimeline || !L.sparkSvg || !S || !S.length || !state.member){ el.hidden = true; repDashCache = null; return; }
+    repDashS = S; repDashAct = act || null;
+    el.hidden = false; $("rdLoad").hidden = false; $("rdErr").hidden = true; $("rdBody").hidden = true;
+    try{
+      var tl = L.buildTimeline(S, ROM_ALL, rdJ(), { uptoKey: act ? act.key : null }), N = tl.rounds.length;
+      repDashCache = { mid: state.member.id, key: act ? act.key : null, tl: tl };
+      var R0 = tl.rounds[0], RN = tl.rounds[N - 1];
+      $("rdSub").textContent = N > 1 ? R0.n + "차 " + R0.day + " → " + RN.n + "차 " + RN.day : "첫 측정 " + R0.day + " · 다음 측정부터 변화가 함께 보여요";
+      // KPI 타일
+      var labs = tl.rounds.map(function(r){ return r.n + "차 " + r.day; });
+      $("rdKpis").innerHTML = L.kpiOf(tl, rdJ()).map(function(k){
+        var val = k.latest == null ? '<strong class="none">–</strong>' : '<strong>' + k.latest + '<em>' + k.unit + '</em></strong>';
+        var mid = (N > 1 && k.latest != null) ? '<div class="rd-sp">' + L.sparkSvg(k.series, { ref: k.ref, color: L.CHART_COLOR.C, labels: labs.map(function(t, i){ return k.series[i] == null ? "" : t + " · " + k.series[i] + k.unit; }) }) + '</div>' : '<div class="rd-first">' + (k.latest == null ? "측정 없음" : "첫 측정") + '</div>';
+        return '<div class="rd-kpi"><small>' + k.label + (k.sub ? '<span>' + k.sub + '</span>' : '') + '</small><div class="rd-top">' + val + '<span class="rd-st ' + (k.cls || "none") + '">' + k.judge + '</span></div>' + mid +
+          '<div class="rd-btm">' + (k.latest == null ? '<span class="rd-delta flat"></span>' : rdDeltaHtml(k)) + '</div></div>';
+      }).join("");
+      // 상태표
+      var bodyN = Object.keys(tl.body).length; $("rdDetail").hidden = !bodyN; if(!bodyN) repDashDetail = false;
+      $("rdDetail").setAttribute("aria-pressed", String(repDashDetail));
+      var st = L.statusRows(tl, { maxCols: 5, detail: repDashDetail }), actKey = act ? act.key : null;
+      var th = '<th></th>' + st.cols.map(function(ci, i){ var r = tl.rounds[ci]; return (st.gap && i === 1 ? '<th class="gap">…</th>' : '') + '<th' + (r.key === actKey ? ' class="on"' : '') + '>' + r.n + '차<small>' + r.day.slice(5) + '</small></th>'; }).join("");
+      var tb = st.rows.map(function(row){
+        return '<tr><td class="n">' + esc(row.label) + '</td>' + st.cols.map(function(ci, i){ var c = row.cells[ci]; return (st.gap && i === 1 ? '<td class="gap"></td>' : '') + '<td>' + (c ? '<span class="rd-cell ' + c.cls + '" title="' + (L.CLS_TXT[c.cls] || "") + '">' + esc(c.txt) + '</span>' : '<span class="rd-cell">–</span>') + '</td>'; }).join("") + '</tr>';
+      }).join("");
+      $("rdHeat").innerHTML = st.rows.length ? '<table class="rd-heat"><thead><tr>' + th + '</tr></thead><tbody>' + tb + '</tbody></table>' : '<p class="rd-state">아직 판정할 항목이 없어요.</p>';
+      // ROM 아령 행 — SVG 폭을 실제 칸 폭에 맞춰 점이 찌그러지지 않게 (몸체를 먼저 보이게 해야 폭이 잡힘)
+      var rows = L.dumbbellRows(tl, { max: 14 }), hasA = rows.some(function(r){ return r.a != null; });
+      $("rdRomSec").hidden = !rows.length; $("rdLoad").hidden = true; $("rdBody").hidden = false;
+      if(rows.length){
+        var bw = Math.max(120, Math.round(($("rdRom").clientWidth || 300) - 110 - 44 - 16));
+        $("rdRomT").textContent = hasA ? "ROM 변화" : "ROM 정상 대비";
+        $("rdRomS").textContent = hasA ? "회색 점 = 처음 · 색 점 = 최근 · 오른쪽 끝 = 정상 100%" : "최근 측정 · 오른쪽 끝 = 정상 100%";
+        $("rdRom").innerHTML = '<div class="rd-axis"><span></span><span><i>40%</i><i>70%</i><i>100%</i></span><span></span></div>' + rows.map(function(r){
+          return '<div class="rd-row"><span class="rd-lab">' + esc(r.label) + (r.a != null ? '<small>' + r.aN + '차 ' + r.aVal + '° → ' + r.bVal + '°</small>' : '<small>' + r.bVal + '° / 정상 ' + r.normal + '°</small>') + '</span>' +
+            '<span class="rd-db">' + L.dumbbellRowSvg(r, { w: bw, h: 24, min: 40, max: 100 }) + '</span><b class="rd-pct ' + r.cls + '">' + r.b + '%</b></div>';
+        }).join("");
+        $("rdTbl").innerHTML = '<table class="rd-tbl"><thead><tr><th>항목</th><th>' + (hasA ? "처음" : "") + '</th><th>최근</th><th>변화</th><th>정상</th></tr></thead><tbody>' + rows.map(function(r){
+          var d = r.a != null ? r.bVal - r.aVal : null;
+          return '<tr><td>' + esc(r.label) + '</td><td>' + (r.a != null ? r.aVal + '°' : '–') + '</td><td><b>' + r.bVal + '°</b></td><td class="rd-delta ' + (d == null ? "flat" : d > 0 ? "up" : d < 0 ? "down" : "flat") + '">' + (d == null ? '–' : (d > 0 ? '▲ ' : d < 0 ? '▼ ' : '') + Math.abs(d) + '°') + '</td><td>' + (r.normal === 0 ? '0°' : r.normal + '°') + '</td></tr>';
+        }).join("") + '</tbody></table>';
+      }
+    }catch(e){
+      console.warn("[rep dash]", e); repDashCache = null;
+      $("rdLoad").hidden = true; $("rdBody").hidden = true; $("rdErr").hidden = false;
+    }
+  }
+  $("rdRetry").addEventListener("click", function(){ renderRepDash(repDashS, repDashAct); });
+  var rdResizeT = null;   // 화면 폭이 바뀌면(회전·창 크기) 아령 폭을 다시 맞춤
+  window.addEventListener("resize", function(){ if($("repDash").hidden || !repDashS) return; clearTimeout(rdResizeT); rdResizeT = setTimeout(function(){ renderRepDash(repDashS, repDashAct); }, 200); });
+  $("rdDetail").addEventListener("click", function(){ repDashDetail = !repDashDetail; renderRepDash(repDashS, repDashAct); });
+  $("rdNum").addEventListener("click", function(){ var on = $("rdNum").getAttribute("aria-pressed") === "true"; $("rdNum").setAttribute("aria-pressed", String(!on)); $("rdTbl").hidden = on; $("rdNum").textContent = on ? "숫자로 보기" : "숫자 접기"; });
   // v202 열린 체형 사진이 지금 선택한 회원 것이 아님 (다른 회원 측정 중에 리포트에서 회원을 바꾼 경우)
   function repForeign(){ return !!(state.member && hasPhotos() && state.photoMid && state.photoMid !== state.member.id); }
   function repPickRound(ss, auto){

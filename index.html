@@ -1521,6 +1521,12 @@
   .admx-pick label .sel{flex:1;}
   .adm-xls p{margin:0 0 10px; font-size:12.5px; line-height:1.55; color:var(--ink-soft);}
   /* v121 정확도 채점 */
+  /* v274 측정 비우기 — 되돌릴 수 없는 작업이라 눈에 띄게 분리 */
+  .adm-wipe{border:1px solid var(--crit); background:rgba(214,69,69,.06);}
+  .adm-wipe b{color:var(--crit);}
+  .adm-wipe-warn{margin:6px 0 10px; font-size:12.5px; line-height:1.6; color:var(--crit);}
+  .adm-wipe-st{margin:8px 0 6px; font-size:12.5px; line-height:1.6; color:var(--ink-soft);}
+  .adm-wipe-out{margin:10px 0 0; padding:10px 12px; border-radius:10px; background:var(--surface-2); font-size:13px; line-height:1.7; white-space:pre-line;}
   .bench-tabs{display:flex; gap:6px; margin-bottom:8px;}
   .bench-tab{flex:1; padding:7px 0; border:1px solid var(--line); border-radius:9px; background:var(--surface); color:var(--ink-soft); font:inherit; font-size:12.5px; font-weight:700; cursor:pointer;}
   .bench-tab[aria-pressed="true"]{background:var(--ink); color:var(--surface); border-color:var(--ink);}
@@ -2781,6 +2787,16 @@
       </div>
       <div class="bench-out" id="benchOut"></div>
       <button type="button" class="btn primary" id="btnBenchRun" style="width:100%;margin-top:8px">현재 버전으로 다시 채점</button>
+    </div>
+    <div class="adm-xls adm-wipe" id="admWipe" hidden>
+      <b>🧹 측정 비우기 (사진은 그대로)</b>
+      <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한, 한 번만 쓰는 기능이에요. 사진이 없는 예전 기록은 건너뜁니다.</p>
+      <p class="adm-wipe-warn"><b>되돌릴 수 없어요.</b> 30분 안에 받은 백업 파일이 있어야 실행할 수 있어요. 다른 기기(집 PC)가 있으면 먼저 그 기기에서도 앱을 열어 최신으로 맞춰 주세요.</p>
+      <button type="button" class="btn line sm" id="btnWipeBk" style="width:100%">① 지금 백업 파일 저장</button>
+      <p class="adm-wipe-st" id="admWipeSt"></p>
+      <input type="text" class="adm-in" id="admWipeWord" autocomplete="off" placeholder="② 비우기 라고 입력">
+      <button type="button" class="btn primary" id="btnWipeGo" style="width:100%;margin-top:6px" disabled>③ 측정 비우기 실행</button>
+      <p class="adm-wipe-out" id="admWipeOut" hidden></p>
     </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnAdmClose">닫기</button><button type="button" class="yes ok" id="btnAdmGo">확인</button></div>
   </div>
@@ -12237,7 +12253,7 @@
     $("admCode").hidden = ADM.on;
     $("admDesc").textContent = ADM.on ? "관리자 모드를 사용 중이에요. 측정을 저장하면 점의 위치 숫자(좌표)가 아래 '측정 수정 기록'에 자동으로 남아요." : "관리자 코드를 입력하면 측정을 저장할 때 점의 위치 숫자(좌표)가 '측정 수정 기록'에 자동으로 남아요.";
     $("btnAdmGo").textContent = ADM.on ? "관리자 모드 끄기" : "확인";
-    $("admXls").hidden = !ADM.on; $("admBench").hidden = !ADM.on; if(ADM.on) admxInfo();
+    $("admXls").hidden = !ADM.on; $("admBench").hidden = !ADM.on; $("admWipe").hidden = !ADM.on; if(ADM.on){ admxInfo(); wipeSync(); }
     $("admSheet").hidden = false;
     if(!ADM.on) setTimeout(function(){ try{ $("admCode").focus(); }catch(e){} }, 50);
   }
@@ -12755,6 +12771,88 @@
     idbKeys("blobs").then(function(keys){ return Promise.all(keys.filter(function(k){ return String(k).indexOf(ADMX) === 0; }).map(function(k){ return rawDel0("blobs", k); })); })
       .then(function(){ toast("보관한 수정 기록을 비웠어요."); admxInfo(); });
   });
+  /* ===================== v274 관리자: 측정 비우기 (사진은 그대로) =====================
+     모든 사진을 최신 측정법으로 다시 재기 위한 한 번만 쓰는 정리.
+     · 비움: 체형분석 점수·판정·측정점 · ROM/거북목/척추 균형의 점·각도
+     · 남김: 사진(원본), 회원·회차·날짜 — 사진이 없는 기록은 건너뜀
+     · 되돌릴 수 없으므로 30분 안에 받은 백업이 있어야 실행된다 (계획서 2026-10-16) */
+  var WIPE_LS = "ayo_wipe_done";
+  function wipeBodyPhotos(ph){   // 사진은 남기고 측정점만 비운 사진 묶음
+    if(!ph || typeof ph !== "object") return null;
+    var out = {}, n = 0;
+    Object.keys(ph).forEach(function(m){
+      var q = ph[m];
+      if(q && q.points && Object.keys(q.points).length){ out[m] = Object.assign({}, q, { points: {} }); n++; }
+      else out[m] = q;
+    });
+    return { v: out, n: n };
+  }
+  function wipeBodyRec(r){   // 체형분석 기록: 측정 결과만 비움 (사진 칸은 건드리지 않음)
+    var c = Object.assign({}, r);
+    c.score = null; c.f = null; c.sd = null; c.groups = []; c.thumbs = null; c.wipedAt = Date.now();
+    return c;
+  }
+  function wipeRomRec(r){    // ROM·거북목·척추 균형: 점과 각도만 비움
+    var c = Object.assign({}, r);
+    c.pts = null; c.value = null; c.pct = null; c.refCustom = null; c.footOff = null; c.ant = null; c.wipedAt = Date.now();
+    return c;
+  }
+  function wipeFresh(){ var t = +(lsGet("ayo_last_backup") || 0); return !!t && (Date.now() - t) < 30 * 60 * 1000; }
+  function wipeSync(){
+    var done = lsGet(WIPE_LS), fresh = wipeFresh(), word = ($("admWipeWord").value || "").trim() === "비우기";
+    $("btnWipeGo").disabled = !!done || !fresh || !word;
+    $("admWipeWord").disabled = !!done;
+    $("admWipeSt").textContent = done ? "이미 실행했어요 (" + done + ") · 한 번만 쓰는 기능이에요."
+      : !fresh ? "먼저 ① 백업 파일을 저장하세요 (30분 안에 받은 백업만 인정해요)."
+      : word ? "✓ 준비됐어요. ③을 누르면 바로 실행돼요." : "✓ 백업 확인됨 — ②에 비우기 라고 입력하세요.";
+  }
+  function wipeRun(){
+    var n = { rec: 0, rom: 0, admx: 0, skip: 0 }, out = $("admWipeOut");
+    var say = function(t){ out.hidden = false; out.textContent = t; };
+    say("비우는 중… 창을 닫지 마세요.");
+    var seq = function(L, job){ return L.reduce(function(p, x){ return p.then(function(){ return job(x); }); }, Promise.resolve()); };
+    return dbAll("records").then(function(R){
+      return seq(R, function(r){
+        return rawGet("blobs", "records:" + r.id).then(function(b){
+          var w = b && wipeBodyPhotos(b.v);
+          if(!w || !w.n) return;
+          var at = Date.now();
+          return rawPut("blobs", { id: b.id, v: w.v, at: at }).then(function(){ r = Object.assign({}, r, { blobAt: at }); });
+        }).then(function(){
+          if(r.score == null && !r.f && !r.sd){ n.skip++; return; }
+          n.rec++; return rawPut("records", wipeBodyRec(r));
+        }).catch(function(e){ console.warn("[wipe rec]", e); n.skip++; });
+      });
+    }).then(function(){
+      return dbAll("roms").then(function(L){
+        return seq(L, function(r){
+          if(!r.img && !r.blob){ n.skip++; return; }            // 사진이 없는 예전 기록은 그대로 둔다
+          if(r.pts == null && r.value == null){ n.skip++; return; }
+          n.rom++; return rawPut("roms", wipeRomRec(r)).catch(function(e){ console.warn("[wipe rom]", e); n.skip++; });
+        });
+      });
+    }).then(function(){
+      return idbKeys("blobs").then(function(keys){
+        var K = (keys || []).filter(function(k){ return String(k).indexOf(ADMX) === 0; });
+        n.admx = K.length;
+        return seq(K, function(k){ return rawDel0("blobs", k); });
+      });
+    }).then(function(){
+      lsSet(WIPE_LS, new Date().toLocaleDateString("ko-KR"));
+      romCache.all = null; laCache = null;
+      say("끝났어요.\n· 체형분석 " + n.rec + "건 · ROM·거북목·척추 균형 " + n.rom + "건의 측정을 비웠어요.\n· 관리자 수정 기록 " + n.admx + "건도 함께 비웠어요.\n· 사진이 없거나 이미 비어 있어 건너뛴 기록 " + n.skip + "건.\n· 사진은 그대로예요. 기록을 열면 최신 측정법으로 자동 인식이 돌아가요.");
+      wipeSync(); admxInfo();
+      toast("측정을 비웠어요. 사진은 그대로예요.");
+    }).catch(function(e){ console.warn("[wipe]", e); say("비우는 중 문제가 생겼어요. 다시 실행하면 남은 기록부터 이어서 비웁니다."); });
+  }
+  $("btnWipeBk").addEventListener("click", function(){ bkExportNow().then(wipeSync).catch(function(){ toast("백업을 만들지 못했어요."); }); });
+  $("admWipeWord").addEventListener("input", wipeSync);
+  $("btnWipeGo").addEventListener("click", function(){
+    if($("btnWipeGo").disabled) return;
+    if(!window.confirm("정말 비울까요?\n\n· 모든 회원의 측정점·각도·점수가 사라집니다\n· 사진은 그대로 남습니다\n· 되돌리려면 방금 받은 백업 파일이 필요합니다")) return;
+    $("btnWipeGo").disabled = true; wipeRun();
+  });
+
   /* ===================== v121 관리자: 정확도 채점 =====================
      보관한 측정 수정 기록의 최종 점(원장님이 고친 점)을 정답으로 보고 자동 인식을 채점.
      · 저장 당시: 그때의 자동 인식 점(수정 전) ↔ 최종 점

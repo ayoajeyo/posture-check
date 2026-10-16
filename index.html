@@ -2796,7 +2796,7 @@
     </div>
     <div class="adm-xls adm-wipe" id="admWipe" hidden>
       <b>측정 비우기 (사진은 그대로)</b>
-      <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한 정리예요.</p>
+      <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한 정리예요. 이 기기에 없는 사진은 서버에서 받아서 지우니 <b>와이파이</b>에서 해 주세요.</p>
       <p class="adm-wipe-warn"><b>되돌릴 수 없어요.</b> 지난 회차의 각도·점수는 다시 볼 수 없게 됩니다. 관리자 수정 기록은 백업 파일에도 없어 완전히 사라집니다. 다른 기기(집 PC)가 있으면 먼저 그 기기에서 앱을 한 번 열어 최신으로 맞춰 주세요. 원하시면 아래에서 파일로 먼저 내보낼 수 있어요.</p>
       <button type="button" class="btn line sm" id="btnWipeBk" style="width:100%">파일로 내보내기</button>
       <p class="adm-wipe-st" id="admWipeSt" aria-live="polite"></p>
@@ -11537,7 +11537,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v278";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v279";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -12865,7 +12865,7 @@
   }
   function wipeSync(){ return wipeCount(); }
   function wipeRun(){
-    var n = { rec: 0, rom: 0, admx: 0, skip: 0, fail: 0 }, out = $("admWipeOut");
+    var n = { rec: 0, rom: 0, admx: 0, skip: 0, fail: 0, noDl: 0 }, out = $("admWipeOut");
     var say = function(t){ out.textContent = t; };
     wipeBusy = true; $("admWipeWord").disabled = true; $("btnWipeGo").disabled = true;   // v277 실행 중 재진입 금지
     $("admWipeSt").textContent = "비우는 중…";   // v278 '준비됐어요' 가 '비우는 중' 과 같이 보이던 것
@@ -12875,14 +12875,23 @@
       var iR = 0;
       return seq(R, function(r){
         say("체형분석 " + (++iR) + "/" + R.length + " 비우는 중… 창을 닫지 마세요.");
-        var must = wipeRecLeft(r);   // v277 남은 건수를 세는 기준과 같은 함수 · 사진 묶음을 고쳤으면 기록도 반드시 같이 써야 blobAt 이 맞는다
-        return rawGet("blobs", "records:" + r.id).then(function(b){
+        var must = wipeRecLeft(r), bk = "records:" + r.id, hold = false;
+        /* v279 체형분석의 측정점은 **사진 묶음 안**에 있다(`photos.front.points`).
+           그래서 이 기기에 사진이 안 내려와 있으면 점을 지울 수 없고, 서버 사진에 옛 점이
+           그대로 남아 나중에 그 사진을 받을 때 옛 점이 되살아난다.
+           → 없으면 서버에서 먼저 받아서 지운다. 못 받으면 기록도 건드리지 않고 남겨 둔다
+             (그래야 남은 건수에 잡혀 다시 눌러 이어서 끝낼 수 있다). */
+        return rawGet("blobs", bk).then(function(b){
+          if(b || !r.blob) return b;
+          return (typeof blobFetch === "function" ? blobFetch(bk) : Promise.resolve(null));
+        }).then(function(b){
+          if(!b && r.blob){ hold = true; n.noDl++; return; }   // 사진을 못 받음 — 다음에 이어서
           var w = b && wipeBodyPhotos(b.v);
           if(!w || !w.n) return;
           var at = Date.now();
           return rawPut("blobs", { id: b.id, v: w.v, at: at }).then(function(){ r = Object.assign({}, r, { blobAt: at }); must = true; });
         }).then(function(){
-          if(!must){ n.skip++; return; }
+          if(hold || !must){ if(!hold) n.skip++; return; }
           return rawPut("records", wipeBodyRec(r)).then(function(){ n.rec++; });   // v277 저장이 끝난 뒤에 센다
         }).catch(function(e){ console.warn("[wipe rec]", e); n.fail++; });
       });
@@ -12918,6 +12927,7 @@
           + "\n· 관리자 수정 기록 " + n.admx + "건도 함께 비웠어요."
           + "\n· 사진이 없거나 이미 비어 있어 건너뛴 기록 " + n.skip + "건."
           + (n.fail ? "\n· 저장에 실패해 그대로 남은 기록 " + n.fail + "건 — 측정 비우기를 다시 누르면 이어서 비웁니다." : "")
+          + (n.noDl ? "\n· 이 기기에 사진이 아직 없어 못 비운 기록 " + n.noDl + "건 — 인터넷(와이파이)에 연결한 뒤 다시 누르면 사진을 받아서 비웁니다." : "")
           + (left === 0 ? "\n· 남은 측정 기록 0건 — 모두 비워졌어요."
              : left > 0 ? "\n· 아직 남은 측정 기록 " + left + "건 — 측정 비우기를 다시 누르면 이어서 비웁니다."
              : "\n· 남은 건수를 확인하지 못했어요 — 관리자 창을 닫고 다시 열어 확인해 주세요.")

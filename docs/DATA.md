@@ -78,6 +78,8 @@ sessionStorage: `ayo_view`(화면 상태), `4pm_ext_tried`.
 | 저장소 | 비우는 칸 | 남기는 칸 |
 |---|---|---|
 | `records` (체형분석) | `score` · `f` · `sd` · `groups` · `thumbs` → null/빈 배열 | `id` · `memberId` · `at` · `height` · `blob`/`blobAt` |
+
+> **체형분석 측정점의 위치 (v279)**: `points` 는 기록이 아니라 **`blobs` 의 사진 묶음 안**(`photos.front.points`)에 있다. 그래서 비우기를 실행하는 기기에 사진이 내려와 있어야 점을 지울 수 있다. 없으면 `blobFetch` 로 서버에서 받아서 지우고, 못 받으면 그 기록은 손대지 않고 남겨 둔다(기록만 비우면 서버 사진의 옛 점이 되살아난다). ROM 은 `pts` 가 기록 자체에 있어 해당 없음.
 | `blobs: records:<id>` | 각 사진의 `points` 만 빈 값으로 | `img` · `w` · `h` 등 **사진 자체** |
 | `roms` (ROM·거북목·척추 균형) | `pts` · `value` · `pct` · `refCustom` · `footOff` · `ant` · `thumb`(각도·선이 그려진 결과 그림) → null | `img`(원본 사진) · `imgK` · `roll` · 관절·동작·좌우·날짜 |
 | `blobs: admx:*` (관리자 수정 기록) | 전체 삭제 | — (사진은 측정 기록 쪽에 그대로 있음) |

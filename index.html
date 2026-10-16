@@ -868,7 +868,7 @@
   .sl-amt{margin-left:auto; font-family:var(--font-num); font-size:17px; font-weight:700;}
   .mini-list .cs-item, .mini-list .sl-item{background:transparent; border:none; border-top:1px solid var(--line); border-radius:0; padding:10px 0;}
   .mini-list > :first-child{border-top:none!important;}
-  .more-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px;}
+  .more-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px;}   /* v285 종합 리포트 칸을 빼고 3칸 한 줄 (리포트는 아래 탭에 있음) */
   .more-grid button{display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer;}
   .more-list{margin-bottom:12px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); overflow:hidden;}
   .more-list button{display:flex; align-items:center; gap:12px; width:100%; padding:13px 14px; border:none; border-top:1px solid var(--line); background:transparent; color:var(--ink); font-family:inherit; font-size:14px; font-weight:700; text-align:left; cursor:pointer;}
@@ -2303,7 +2303,7 @@
         </div>
       </div>
       <label>센터명<input id="stName" type="text" maxlength="24" placeholder="예: 남다예 필라테스"></label>
-      <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 070-0000-0000 · center@example.com"></label>
+      <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 070-5220-0919 · aesonge26@gmail.com"></label>   <!-- v248 원장님 요청: 센터 실제 연락처를 예시로 (회원 정보 아님 — 가짜로 바꾸지 말 것, v285) -->
       <!-- v185 리포트 공유 링크를 받은 회원 화면에 [전화하기] [예약하기] 버튼으로 표시 -->
       <label>전화번호 (선택) · 공유 링크의 [전화하기]<input id="stPhone" type="tel" inputmode="tel" maxlength="20" placeholder="예: 010-0000-0000"></label>
       <label>예약 링크 (선택) · 공유 링크의 [예약하기]<input id="stBook" type="url" inputmode="url" maxlength="300" placeholder="예: 네이버 예약·카카오톡 채널 주소"></label>
@@ -2317,7 +2317,7 @@
       <label>업종<select id="cpKind"><option value="">선택 안 함</option><option>필라테스</option><option>피트니스 · PT</option><option>재활 · 교정 운동센터</option><option>요가</option><option>물리치료실 (의료기관)</option><option>기타</option></select></label>
       <p class="cp-law" id="cpLaw" hidden>의료기관은 의료법의 의료광고 규정이 적용돼요. ‘치료 효과 보장’, ‘완치’, 치료 경험담·전후 사진 같은 표현은 넣지 마세요.</p>
       <label>한 줄 소개<textarea id="cpIntro" maxlength="300" rows="3" placeholder="예: 측정으로 시작해 변화로 확인하는 1:1 자세 관리 스튜디오"></textarea></label>
-      <label>주소<input id="cpAddr" type="text" maxlength="80" placeholder="예: ○○시 ○○구 ○○대로 00"></label>
+      <label>주소<input id="cpAddr" type="text" maxlength="80" placeholder="예: 부산 부산진구 중앙대로 708"></label>   <!-- v253 원장님 요청: 센터 실제 주소를 예시로 (회원 정보 아님 — 가짜로 바꾸지 말 것, v285) -->
       <label>운영 시간<input id="cpHours" type="text" maxlength="80" placeholder="예: 평일 10–21시 · 토 10–14시"></label>
       <div class="cp-tags-h">함께 관리하는 고민 <small>(최대 5개)</small></div>
       <div class="cp-tags" id="cpTags"></div>
@@ -2827,7 +2827,6 @@
       <button type="button" data-go="exercise"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/></svg><span>운동관리</span></button>
       <button type="button" data-go="consult"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10.5H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>상담일지</span></button>
       <button type="button" data-go="sales"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg><span>매출관리</span></button>
-      <button type="button" data-go="report"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 15.5l2.2-2.6 2 1.6 2.8-3.6"/></svg><span>종합 리포트</span></button>
     </div>
     <div class="more-list">
       <button type="button" data-go="settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span class="ml-t">설정 <small style="color:#7FA2FF;font-weight:800">PRO</small></span><span class="ml-c" aria-hidden="true">›</span></button>

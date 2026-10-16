@@ -1515,7 +1515,7 @@
   /* ===================== v115 ROM 몸 그림으로 부위 선택 ===================== */
   .rom-body{display:flex; align-items:stretch; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:14px 12px 10px 16px; box-shadow:var(--shadow);}
   .adm-xls{margin:4px 0 12px; padding:12px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2);}
-  .adm-xls b{display:block; font-size:14px; margin-bottom:4px;}
+  .adm-xls > b{display:block; font-size:14px; margin-bottom:4px;}   /* v278 직계만 제목 — 문장 안 <b> 가 블록이 되던 것 */
   .admx-pick{display:flex; flex-direction:column; gap:8px; margin:0 0 10px;}
   .admx-pick label{display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700; color:var(--ink-soft);}
   .admx-pick label .sel{flex:1;}
@@ -1523,13 +1523,16 @@
   /* v121 정확도 채점 */
   /* v274 측정 비우기 — 되돌릴 수 없는 작업이라 눈에 띄게 분리 */
   .adm-wipe{border:1px solid var(--crit); background:var(--crit-soft);}
-  .adm-wipe b{color:var(--crit);}
+  .adm-wipe > b{color:var(--crit);}   /* v278 제목만 — 문장 안 <b> 는 굵게만 */
   /* v278 .adm-xls p 보다 선택자 점수가 낮아 색·크기·여백이 전부 덮어써지고 있었다 (경고가 회색으로 보임) */
   .adm-wipe p.adm-wipe-warn{margin:6px 0 10px; font-size:13px; line-height:1.6; color:var(--crit);}
   .adm-wipe p.adm-wipe-st{margin:8px 0 6px; font-size:13px; line-height:1.6; color:var(--ink); white-space:pre-line;}
   .adm-wipe p.adm-wipe-out{margin:10px 0 0; padding:10px 0 0; border-top:1px solid var(--crit); font-size:13px; line-height:1.7; color:var(--ink); white-space:pre-line;}
+  .adm-wipe p.adm-wipe-out:empty{display:none;}   /* v278 hidden 대신 빈 값으로 숨겨 aria-live 첫 안내가 읽히게 */
   .adm-wipe p#admWipeInfo{font-size:13px; line-height:1.6;}
-  .adm-wipe button.btn, .adm-wipe .adm-in{min-height:44px;}   /* UI_GUIDE 10번 터치 영역 */
+  .adm-xls button.btn, .adm-xls .adm-in{min-height:44px;}   /* UI_GUIDE 10번 터치 영역 (관리자 패널 전체) */
+  /* v278 꺼진 상태의 빨강 글자가 분홍 배경에 섞여 1.9:1 밖에 안 됐다 */
+  .adm-xls button.btn.line:disabled{opacity:1; color:var(--ink-soft); border-color:var(--line);}
   .bench-tabs{display:flex; gap:6px; margin-bottom:8px;}
   .bench-tab{flex:1; padding:7px 0; border:1px solid var(--line); border-radius:9px; background:var(--surface); color:var(--ink-soft); font:inherit; font-size:12.5px; font-weight:700; cursor:pointer;}
   .bench-tab[aria-pressed="true"]{background:var(--ink); color:var(--surface); border-color:var(--ink);}
@@ -2360,7 +2363,7 @@
         <h2>내 데이터 내보내기</h2>
         <p class="sub" id="bkInfo">회원 정보와 측정 기록은 <b>계정 서버에 자동 저장</b>돼요. 센터에서 따로 보관하고 싶을 때만 파일로 내보내세요.</p>
         <div class="stage-controls" style="margin-top:0">
-          <button type="button" class="btn primary" id="btnBkExport">💾 파일로 내보내기</button>
+          <button type="button" class="btn primary" id="btnBkExport">파일로 내보내기</button>
           <button type="button" class="btn line" id="btnBkImport">파일 불러오기</button>
           <input type="file" id="bkFile" accept=".json,application/json">
         </div>
@@ -2718,7 +2721,7 @@
   <div class="confirm-box bk-sheet">
     <h3 id="bkSheetT">💾 내 데이터 내보내기</h3>
     <p class="sub" id="bkSheetInfo">회원 정보와 측정 기록(사진 포함)은 계정 서버에 자동 저장돼요.</p>
-    <div class="stage-controls"><button type="button" class="btn primary" id="btnBkS1">💾 파일로 내보내기</button><button type="button" class="btn line" id="btnBkS2">파일 불러오기</button></div>
+    <div class="stage-controls"><button type="button" class="btn primary" id="btnBkS1">파일로 내보내기</button><button type="button" class="btn line" id="btnBkS2">파일 불러오기</button></div>
     <p class="sub" style="margin-top:10px">휴대폰을 바꿔도 같은 계정으로 <b>로그인만 하면</b> 기록이 그대로 나와요. 내보낸 파일은 센터 보관용이에요.</p>
     <div class="bk-move" hidden>
       <b>📱 휴대폰을 바꾸거나 앱을 다시 설치할 때</b>
@@ -2779,7 +2782,7 @@
         <label>회차<select class="sel" id="admXlsRound"></select></label>
       </div>
       <button type="button" class="btn primary" id="btnAdmXls" style="width:100%">엑셀 파일로 저장</button>
-      <button type="button" class="btn line sm acc-danger" id="btnAdmXlsClr" style="width:100%;margin-top:6px">보관한 수정 기록 비우기</button>
+      <button type="button" class="btn line acc-danger" id="btnAdmXlsClr" style="width:100%;margin-top:8px">보관한 수정 기록 비우기</button>
     </div>
     <div class="adm-xls" id="admBench" hidden>
       <b>🎯 정확도 채점</b>
@@ -2793,13 +2796,13 @@
     </div>
     <div class="adm-xls adm-wipe" id="admWipe" hidden>
       <b>측정 비우기 (사진은 그대로)</b>
-      <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한 정리예요. 사진이 없어 다시 잴 수 없는 기록은 건너뜁니다.</p>
+      <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한 정리예요.</p>
       <p class="adm-wipe-warn"><b>되돌릴 수 없어요.</b> 지난 회차의 각도·점수는 다시 볼 수 없게 됩니다. 관리자 수정 기록은 백업 파일에도 없어 완전히 사라집니다. 다른 기기(집 PC)가 있으면 먼저 그 기기에서 앱을 한 번 열어 최신으로 맞춰 주세요. 원하시면 아래에서 파일로 먼저 내보낼 수 있어요.</p>
       <button type="button" class="btn line sm" id="btnWipeBk" style="width:100%">파일로 내보내기</button>
       <p class="adm-wipe-st" id="admWipeSt" aria-live="polite"></p>
       <input type="text" class="adm-in" id="admWipeWord" autocomplete="off" placeholder="비우기 라고 입력">
-      <button type="button" class="btn line acc-danger" id="btnWipeGo" style="width:100%;margin-top:6px" disabled>측정 비우기</button>
-      <p class="adm-wipe-out" id="admWipeOut" aria-live="polite" hidden></p>
+      <button type="button" class="btn line acc-danger" id="btnWipeGo" style="width:100%;margin-top:8px" disabled>측정 비우기</button>
+      <p class="adm-wipe-out" id="admWipeOut" aria-live="polite"></p>
     </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnAdmClose">닫기</button><button type="button" class="yes ok" id="btnAdmGo">확인</button></div>
   </div>
@@ -12833,7 +12836,7 @@
   var wipeN = null, wipeBusy = false;
   function wipeCount(){   // 기기 저장소를 실제로 다시 읽어 센다
     if(wipeBusy) return Promise.resolve();
-    $("admWipeOut").hidden = true; $("admWipeOut").textContent = "";   // v278 지난 실행 결과가 새 건수와 겹쳐 보이던 것
+    $("admWipeOut").textContent = "";   // v278 지난 실행 결과가 새 건수와 겹쳐 보이던 것
     $("admWipeSt").textContent = "남은 측정 기록을 확인하는 중…";
     $("btnWipeGo").disabled = true;
     return Promise.all([dbAll("records"), dbAll("roms"), idbKeys("blobs")]).then(function(a){
@@ -12863,7 +12866,7 @@
   function wipeSync(){ return wipeCount(); }
   function wipeRun(){
     var n = { rec: 0, rom: 0, admx: 0, skip: 0, fail: 0 }, out = $("admWipeOut");
-    var say = function(t){ out.hidden = false; out.textContent = t; };
+    var say = function(t){ out.textContent = t; };
     wipeBusy = true; $("admWipeWord").disabled = true; $("btnWipeGo").disabled = true;   // v277 실행 중 재진입 금지
     $("admWipeSt").textContent = "비우는 중…";   // v278 '준비됐어요' 가 '비우는 중' 과 같이 보이던 것
     say("비우는 중… 창을 닫지 마세요.");

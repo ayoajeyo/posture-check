@@ -4,7 +4,7 @@
 const VERSION = "pma-v231";   // v282 팔꿈치 촬영 실루엣: 손목이 화면 밖으로 나가던 문제
 const SHELL = "pma-shell-" + VERSION;
 const ASSETS = "pma-assets-v1";   // 모델 파일은 버전과 무관하게 유지(약 25MB 재다운로드 방지)
-const SHELL_FILES = ["./", "./index.html", "./manifest.webmanifest", "./js/logic/judge.js", "./js/logic/report-timeline.js",
+const SHELL_FILES = ["./", "./index.html", "./manifest.webmanifest", "./js/logic/judge.js", "./js/logic/report-timeline.js", "./js/logic/report-charts.js",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png",
   // v126 체형분석 측정가이드 사진(예전엔 index.html 안에 있었음 → 오프라인에서도 보이게 미리 저장)
   "./guide/body/front_1.jpg", "./guide/body/front_2.jpg", "./guide/body/front_3.jpg", "./guide/body/front_4.jpg",

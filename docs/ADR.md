@@ -162,3 +162,12 @@
 - v280: v279 가 **ADR 의 "세는 기준 = 비우는 기준" 규칙을 양방향으로 깼다**. ① 이미 한 번 비운 기록은 값이 null 이라 0건으로 세어져 단추가 잠기고, 정작 그 기록의 사진 점은 못 지운다 ② 영구히 못 받는 사진이 있으면 건수가 영원히 0 이 안 된다. → 점을 끝낸 기록에 `pxWiped` 를 남기고 `wipeRecLeft(r) = 값 || (blob && !pxWiped)` 로 두 기준을 다시 한 함수로 합쳤다. 서버에도 사진이 없으면 `pxGone` 으로 끝낸 것으로 보고 잠금 기준에서 뺀다(ROM 의 `noPic` 과 같은 취급). 덜 받아진 묶음(`blobHasRefs`)은 `syncPush` 가 업로드를 버리므로 반드시 다시 받아서 지운다.
 **교훈**: 이 기능은 "어디에 무엇이 저장돼 있는지" 를 틀리면 조용히 되살아난다. 저장 위치는 `docs/DATA.md` 2-5 에 적어 두고, 기준 함수는 **하나만** 둔다.
 **영향받는 파일**: index.html(관리자 화면·wipeBodyPhotos·wipeBodyRec·wipeRomRec·wipeRecVal·wipeRecLeft·wipeRomTodo·wipeLeftCount·wipeCount·wipePaint·wipeRun), tests/wipe.test.js, docs/DATA.md 2-5, docs/TESTING.md 23~36
+
+### ADR-015: 가입·비밀번호 메일을 Supabase 기본 발송기 대신 Gmail SMTP 로 보낸다
+**상태**: 채택 (2026-10-16 · 아요 결정) — Supabase 대시보드 설정은 아요가 직접 (`supabase/SETUP.md` 3번 4)
+**배경**: 회원가입 인증 메일이 오지 않아 여러 번 시도하자 '요청이 너무 잦아요' 로 한동안 가입이 막혔다. Supabase 기본 발송기는 시험용이라 프로젝트 팀원 주소에만 보내고, 프로젝트 전체에서 시간당 약 2통만 보낸다(같은 주소는 60초에 한 번). 한도는 모든 가입자가 함께 써서, 한 사람이 다 쓰면 다른 센터의 가입·비밀번호 찾기도 막힌다.
+**결정**: Supabase Auth 의 Custom SMTP 를 `smtp.gmail.com`(보내는 사람 `ayobodyyo@gmail.com`, Google 앱 비밀번호)으로 연결하고, 메일 발송 한도를 시간당 30통으로 둔다. 메일 내용은 한국어 템플릿으로 바꾼다.
+**이유**: 새 서비스 가입 없이 바로 쓸 수 있고, 보내는 주소가 실제 Gmail 이라 스팸 분류 위험이 낮다. 하루 약 500통으로 지금 규모에 충분하다.
+**대안**: ① Brevo 등 메일 발송 서비스 — 더 많이 보낼 수 있지만 가입·발신자 인증이 더 필요 ② 이메일 인증 끄기 — 가짜 주소 가입이 가능해지고 비밀번호 찾기 메일은 여전히 한도에 걸림 ③ 간편 로그인만 쓰기 — 이메일 가입자를 막게 됨.
+**트레이드오프**: 앱 비밀번호가 새면 그 Gmail 로 메일을 보낼 수 있다 → 저장소·문서·채팅에 쓰지 않고 Supabase 화면에만 입력, 의심되면 Google 계정에서 그 앱 비밀번호만 삭제. 가입이 하루 수백 건을 넘으면 Brevo 등으로 옮긴다. 앱 코드는 바뀌지 않는다.
+**영향받는 곳**: Supabase 대시보드(Authentication → Emails · Rate Limits), supabase/SETUP.md, docs/ARCHITECTURE.md 5번

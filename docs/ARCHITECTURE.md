@@ -75,6 +75,7 @@ syncPull: ayo_items 를 updated_at 기준으로 받아 IndexedDB 에 반영 (커
 | 구글·카카오 로그인 | OAuth | Supabase 대시보드 설정 | — |
 | jsDelivr / storage.googleapis | MediaPipe 라이브러리·모델 | 없음 | — |
 | Google Fonts | 글꼴 | 없음 | — |
+| Gmail SMTP (`smtp.gmail.com`) | Supabase Auth 가 가입 인증·비밀번호 재설정 메일을 `ayobodyyo@gmail.com` 으로 보냄 (ADR-015) | Google 앱 비밀번호 | Supabase 대시보드 SMTP 설정에만 — 코드·저장소엔 없음 |
 | FormSubmit (formsubmit.co) | 개선·추가 기능 요청을 운영자 메일(`FB_MAIL`)로 전달 — 새 주소는 첫 요청 때 확인 메일로 활성화 필요 | 없음 | — |
 
 ## 6. 오프라인과 동기화

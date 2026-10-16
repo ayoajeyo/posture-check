@@ -31,6 +31,40 @@
 3. **Authentication → URL Configuration**
    - Site URL: `https://ayoajeyo.github.io/posture-check/`
    - Redirect URLs에 추가: `https://ayoajeyo.github.io/posture-check/**`, `http://localhost:8765/**`
+4. **메일 발송 서비스 연결 (필수 · 2026-10-16 결정, ADR-015)** — Supabase 기본 발송기는 시험용이라 **프로젝트 팀원 주소에만** 메일을 보내고, 프로젝트 전체에서 **시간당 2통** 정도만 보낸다. 연결하지 않으면 다른 센터는 가입 인증·비밀번호 찾기 메일을 받지 못한다.
+   - ① Google 계정 `ayobodyyo@gmail.com` → 보안 → **2단계 인증** 켜기
+   - ② https://myaccount.google.com/apppasswords → 이름 `Supabase` → **앱 비밀번호 16자리** 만들기 (이 값은 Supabase 화면에만 입력 · 저장소·메모·채팅에 적지 않는다)
+   - ③ **Authentication → Emails → SMTP Settings → Enable custom SMTP** 켜기
+     | 칸 | 값 |
+     |---|---|
+     | Sender email | `ayobodyyo@gmail.com` |
+     | Sender name | `아요바디요` |
+     | Host | `smtp.gmail.com` |
+     | Port | `465` |
+     | Username | `ayobodyyo@gmail.com` |
+     | Password | ②의 앱 비밀번호 (띄어쓰기 없이) |
+     | Minimum interval | `60` 초 (기본값 그대로) |
+   - ④ **Authentication → Rate Limits → Rate limit for sending emails**: 시간당 `30` (연결 직후 기본값 · Gmail 하루 한도 약 500통 안쪽이면 더 올려도 됨)
+   - ⑤ **Authentication → Emails → Templates** 에서 아래 한국어 템플릿으로 바꾸기 (선택 · 권장)
+   - ⑥ 팀원이 아닌 새 주소로 가입해 인증 메일이 오는지 확인 (스팸함 포함)
+   - 메뉴 이름은 Supabase 화면 개편에 따라 조금 다를 수 있다
+
+   **가입 인증 (Confirm signup)** — 제목: `[아요바디요] 이메일 인증을 완료해 주세요`
+   ```html
+   <h2>아요바디요 가입을 환영합니다</h2>
+   <p>아래 단추를 누르면 이메일 인증이 끝나고 바로 로그인됩니다.</p>
+   <p><a href="{{ .ConfirmationURL }}">이메일 인증하기</a></p>
+   <p>본인이 가입하지 않았다면 이 메일을 무시해 주세요.</p>
+   <p style="color:#888;font-size:12px">made by AYOAJEYO · 문의 ayobodyyo@gmail.com</p>
+   ```
+   **비밀번호 재설정 (Reset password)** — 제목: `[아요바디요] 비밀번호 재설정 안내`
+   ```html
+   <h2>비밀번호를 다시 정해 주세요</h2>
+   <p>아래 단추를 눌러 새 비밀번호를 정하면 됩니다.</p>
+   <p><a href="{{ .ConfirmationURL }}">비밀번호 재설정하기</a></p>
+   <p>본인이 요청하지 않았다면 이 메일을 무시해 주세요. 비밀번호는 바뀌지 않습니다.</p>
+   <p style="color:#888;font-size:12px">made by AYOAJEYO · 문의 ayobodyyo@gmail.com</p>
+   ```
 
 ## 4. 구글 로그인
 

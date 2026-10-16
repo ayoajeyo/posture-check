@@ -8178,9 +8178,10 @@
        허리: 무릎 관절(A) – 고관절(V) – C7-T1(D)              → 넙다리 연장 ↔ 고관절–C7 (바르게 서면 0°)
        발목: 무릎 관절(A) – 거퇴관절(발목, V) – 제1 MTP(D)    → 정강이 ↔ 발목–엄지발가락 관절, 90° 기준 */
   ROM_JOINTS.unshift({ k:"neck", n:"목", single:true, kind:"dir", pts:["neckj","headtop","vup"], moves:[
-    { k:"flex", n:"굴곡", normal:90, guide:"<b>옆에서</b> 촬영 · 턱을 가슴 쪽으로 <b>최대한 숙인</b> 자세 · ①선: 목관절(목 가장 아래쪽의 정중앙) → 화면 위쪽 세로 기준선 · ②선: 목관절 → 정수리 중앙 · 축 = 목관절" },
-    { k:"ext", n:"신전", normal:90, guide:"<b>옆에서</b> 촬영 · 천장을 보듯 <b>최대한 젖힌</b> 자세 · ①선: 목관절(목과 몸통이 만나는 곳의 정중앙 = 목젖과 목뒤 주름의 중간) → 화면 위쪽 세로 기준선 · ②선: 목관절 → 정수리 중앙 · 축 = 목관절" },
-    { k:"lat", n:"측방굴곡", lr:true, normal:45, guide:"<b>정면에서</b> 촬영 · 어깨를 고정하고 귀를 어깨 쪽으로 <b>최대한 기울인</b> 자세 · ①선: 목관절(목의 정중앙, 목젖과 복장뼈자루 중간) → 화면 위쪽 세로 기준선 · ②선: 목관절 → 정수리 중앙 · 축 = 목관절" }
+    // v273 보조선 방식 (발목과 같은 구조) · ①선 = 목관절 → 화면 위쪽 세로 기준선(자동) · ②선 = 얼굴 선 · 각도 = ①선 ↔ ②선과 평행한 파란 보조선 · 바르게 선 자세가 0°
+    { k:"flex", n:"굴곡", normal:45, sgn:1, off:0, kind:"aux", vfix:true, pts:["neckj","vup","chinf","headf"], guide:"<b>옆에서</b> 촬영 · 턱을 가슴 쪽으로 <b>최대한 숙인</b> 자세 · ①선: 목관절(목 가장 아래쪽의 정중앙) → 화면 위쪽 세로 기준선(자동) · ②선: 턱 앞(턱의 전면) → 이마 앞(이마의 전면) · <b>파란 보조선</b> = ②선과 평행하게 목관절을 지나는 선(자동) · 각도 = ①선 ↔ 보조선" },
+    { k:"ext", n:"신전", normal:45, sgn:1, off:0, kind:"aux", vfix:true, pts:["neckj","vup","chinf","headf"], guide:"<b>옆에서</b> 촬영 · 천장을 보듯 <b>최대한 젖힌</b> 자세 · ①선: 목관절(목과 몸통이 만나는 곳의 정중앙) → 화면 위쪽 세로 기준선(자동) · ②선: 턱 앞(턱의 전면) → 이마 앞(이마의 전면) · <b>파란 보조선</b> = ②선과 평행하게 목관절을 지나는 선(자동) · 각도 = ①선 ↔ 보조선" },
+    { k:"lat", n:"측방굴곡", lr:true, normal:45, sgn:1, off:0, kind:"aux", vfix:true, pts:["neckj","vup","chintip","headtop"], guide:"<b>정면에서</b> 촬영 · 어깨를 고정하고 귀를 어깨 쪽으로 <b>최대한 기울인</b> 자세 · ①선: 목관절(목의 정중앙, 목젖과 복장뼈 자루의 중간) → 화면 위쪽 세로 기준선(자동) · ②선: 턱끝(입술 정중앙에서 수직 아래 끝의 턱 중앙) → 정수리 정중앙 · <b>파란 보조선</b> = ②선과 평행하게 목관절을 지나는 선(자동) · 각도 = ①선 ↔ 보조선" }
   ]});
   ROM_JOINTS.splice(3, 0, { k:"trunk", n:"허리", single:true, kind:"dir", pts:["crest","back","vup"], moves:[
     { k:"flex", n:"굴곡", normal:90, guide:"<b>옆에서</b> 촬영 · 상체를 <b>앞으로 최대한</b> 숙인 자세 · ①선: 골반 장골능(골반 후면 장골능 최상단, 옷을 입으면 바지선) → 화면 위쪽 세로 기준선 · ②선: 장골능 → 등 최고점(등의 곡선이 꺾이는 가장 높은 곳) · 축 = 골반 장골능" },
@@ -8202,7 +8203,7 @@
   ]};
   var ROM_ALL = ROM_JOINTS.concat([SCOL_JOINT, FHP_JOINT]);
   Object.assign(ROM_LM, { ear:[7,8], ear_o:[8,7], eye:[2,5], nose:[0,0], heel:[29,30], toe:[31,32], finger:[19,20] });
-  var ROM_DERIV = { crest:[11,12,23,24], back:[11,12,23,24], back2:[11,12,23,24], trunkend:[11,12,7,8], neckbase:[11,12,7,8], neckmid:[11,12,7,8], adam:[11,12,7,8], brow:[2,5,9,10], mtp2:[29,30,31,32], kneemid1:[25,26],
+  var ROM_DERIV = { chinf:[9,10,2,5,7,8], headf:[2,5,9,10,7,8], chintip:[9,10,7,8], crest:[11,12,23,24], back:[11,12,23,24], back2:[11,12,23,24], trunkend:[11,12,7,8], neckbase:[11,12,7,8], neckmid:[11,12,7,8], adam:[11,12,7,8], brow:[2,5,9,10], mtp2:[29,30,31,32], kneemid1:[25,26],
     // v103 측정 기준표 반영
     neckj:[11,12,7,8], pelvc:[11,12,23,24], t1:[11,12], shj:[11,12,13,14], armend:[11,12,13,14,15,16], olec:[11,12,13,14,15,16], femend:[23,24,25,26], sole:[25,26,27,28,29,30,31,32], toe5:[27,28,29,30,31,32], fibula:[25,26,27,28,29,30], malleolus:[27,28], fibhead:[25,26,27,28], heelsole:[27,28,29,30,31,32], mtp5:[27,28,29,30,31,32] };
   var ROM_MID = { shmid:[11,12], hipmid:[23,24], earmid:[7,8], kneemid:[25,26], tragus:[7,8] };
@@ -8270,7 +8271,7 @@
   }
 
   Object.assign(ROM_PTNAME, { tragus:"귀 이주(tragus)" });
-  Object.assign(ROM_PTNAME, { kneemid:"무릎 관절(양쪽 중앙)", c7:"C7(C7-T1)", headtop:"정수리", tcenter:"몸통 중심", mtp:"제1 MTP 관절", eye:"눈", foot:"발바닥 선(발끝 방향)", ear:"귀", ear_o:"반대쪽 귀", nose:"코끝", heel:"발뒤꿈치", toe:"발끝", shmid:"어깨 중앙", hipmid:"골반 중앙", earmid:"머리 중심",
+  Object.assign(ROM_PTNAME, { chinf:"턱 앞", headf:"이마 앞", chintip:"턱끝", kneemid:"무릎 관절(양쪽 중앙)", c7:"C7(C7-T1)", headtop:"정수리", tcenter:"몸통 중심", mtp:"제1 MTP 관절", eye:"눈", foot:"발바닥 선(발끝 방향)", ear:"귀", ear_o:"반대쪽 귀", nose:"코끝", heel:"발뒤꿈치", toe:"발끝", shmid:"어깨 중앙", hipmid:"골반 중앙", earmid:"머리 중심",
     hz:"수평 기준선", vdown:"세로 기준선(화면 아래)", hzfwd:"가로 기준선(몸 정면 방향)", hzfoot:"가로 기준선(발 쪽)", finger:"3번째 손가락 끝", crest:"골반 장골능", back:"등 최고점", back2:"등(굽기 직전)", trunkend:"몸통 끝(척추)", neckbase:"목 아래 중앙", neckmid:"목 정중앙(목젖–목뒤)", adam:"목젖", brow:"눈썹 사이", mtp2:"제2 MTP 관절", kneemid1:"무릎뼈 중앙",
     neckj:"목관절", pelvc:"골반 중앙", t1:"몸통 끝(흉추 1번)", shj:"어깨 관절", armend:"손목", olec:"팔꿈치 관절", femend:"무릎 관절(대퇴골 끝)", sole:"발바닥", toe5:"발끝(제5 MTP)", fibula:"비골", malleolus:"외측 복사뼈", fibhead:"비골두", heelsole:"발뒤꿈치(발바닥 면)", mtp5:"제5 MTP(발바닥 면)", hzside:"가로 기준선", shperp:"정면 기준선", pelvis:"골반선", scL:"좌측 높은 점", scR:"우측 높은 점", c1a:"상단 끝척추 ①", c1b:"상단 끝척추 ②", c2a:"하단 끝척추 ①", c2b:"하단 끝척추 ②" });
   // 발 고유 각도: 발목→제1 MTP 선이 발바닥 선(뒤꿈치→발끝)보다 아래로 기운 정도 (발 모양이라 움직여도 일정)
@@ -8329,6 +8330,21 @@
       if(n === "neckbase") return lerp(S0, E0, 0.12);              // 목 가장 아래 중앙
       if(n === "neckmid") return lerp(S0, E0, 0.42);               // 목젖–목뒤 주름 사이 정중앙
       if(n === "adam") return lerp(S0, E0, 0.40);                  // 목젖(정면)
+      // v273 목 보조선 방식: 턱 앞·이마 앞(옆모습) · 턱끝(정면) — 얼굴 윤곽 맞춤은 romRefine 에서
+      if(n === "chinf" || n === "headf" || n === "chintip"){
+        var ey3 = mid(2, 5), mo3 = mid(9, 10), em3 = mid(7, 8), no3 = L[0];
+        if(!ey3 || !mo3 || !em3) return null;
+        var hd3 = no3 ? (Math.hypot(no3.x - em3.x, no3.y - em3.y) || 0) : 0;
+        if(!hd3) hd3 = Math.hypot(mo3.x - ey3.x, mo3.y - ey3.y) * 2;
+        var dn3 = { x: mo3.x - ey3.x, y: mo3.y - ey3.y }, dl3 = Math.hypot(dn3.x, dn3.y) || 1;
+        dn3 = { x: dn3.x / dl3, y: dn3.y / dl3 };
+        var fw3 = no3 ? { x: no3.x - em3.x, y: no3.y - em3.y } : { x: 0, y: 0 }, fl3 = Math.hypot(fw3.x, fw3.y) || 1;
+        fw3 = { x: fw3.x / fl3, y: fw3.y / fl3 };
+        var vv3 = Math.min(ey3.v, mo3.v);
+        if(n === "chintip") return { x: mo3.x + dn3.x * hd3 * 0.55, y: mo3.y + dn3.y * hd3 * 0.55, v: vv3 };
+        if(n === "chinf") return { x: mo3.x + (dn3.x * 0.5 + fw3.x * 0.35) * hd3, y: mo3.y + (dn3.y * 0.5 + fw3.y * 0.35) * hd3, v: vv3 };
+        return { x: ey3.x + (-dn3.x * 0.45 + fw3.x * 0.45) * hd3, y: ey3.y + (-dn3.y * 0.45 + fw3.y * 0.45) * hd3, v: vv3 };   // headf (이마 앞)
+      }
       if(n === "brow"){ var ey = mid(2, 5), mo2 = mid(9, 10); return (ey && mo2) ? { x: ey.x + (ey.x - mo2.x) * 0.3, y: ey.y + (ey.y - mo2.y) * 0.3, v: Math.min(ey.v, mo2.v) } : ey; }
       if(n === "mtp2"){ var h2 = L[ROM_LM.heel[si]], t2 = L[ROM_LM.toe[si]]; return (h2 && t2) ? { x: h2.x + (t2.x - h2.x) * 0.75, y: h2.y + (t2.y - h2.y) * 0.75, v: Math.min(h2.v, t2.v) } : null; }
       if(n === "kneemid1") return L[ROM_LM.knee[si]] || null;
@@ -8349,7 +8365,8 @@
   function romPts(){ var mv = romMove && romS && romS.mv ? romMove() : null; if(romAuxLegacy(mv)) return romJoint().pts; return (mv && mv.pts) || romJoint().pts; }
   function romKind(){ var mv = romS && romS.mv ? romMove() : null; if(romAuxLegacy(mv)) return romJoint().kind || "d90"; return (mv && mv.kind) || romJoint().kind || "dir"; }
   function romIsLm(n){ return !!(ROM_LM[n] || ROM_DERIV[n] || ["foot", "mtp", "c7", "tcenter", "headtop"].indexOf(n) >= 0 || (typeof ROM_MID !== "undefined" && ROM_MID[n])); }
-  function romPtsLabel(pts){ if(pts.length === 2) return ROM_PTNAME[pts[0]] + " – " + ROM_PTNAME[pts[1]] + " + 바닥 수평선"; if(pts.length === 4 && pts[0] === "malleolus") return "①선 외측 복사뼈 – 비골두 · ②선 발뒤꿈치 – 제5 MTP (+ 파란 보조선)"; if(pts.length === 4) return "상단 끝척추 선 · 하단 끝척추 선 (4점)"; return ROM_PTNAME[pts[2]] + " – " + ROM_PTNAME[pts[0]] + " – " + ROM_PTNAME[pts[1]]; }
+  function romPtsLabel(pts){ if(pts.length === 2) return ROM_PTNAME[pts[0]] + " – " + ROM_PTNAME[pts[1]] + " + 바닥 수평선"; if(pts.length === 4 && pts[0] === "malleolus") return "①선 외측 복사뼈 – 비골두 · ②선 발뒤꿈치 – 제5 MTP (+ 파란 보조선)";
+    if(pts.length === 4 && pts[0] === "neckj") return "①선 목관절 – 세로 기준선(자동) · ②선 " + ROM_PTNAME[pts[2]] + " – " + ROM_PTNAME[pts[3]] + " (+ 파란 보조선)"; if(pts.length === 4) return "상단 끝척추 선 · 하단 끝척추 선 (4점)"; return ROM_PTNAME[pts[2]] + " – " + ROM_PTNAME[pts[0]] + " – " + ROM_PTNAME[pts[1]]; }
   // 목·허리 굴곡/신전은 좌우 구분 없음(C) · 측방굴곡/회전(lr)은 좌측/우측 따로
   // v203 관리자 수정 기록 학습 (점 번호 0 = 각도축, 1 = 2선 끝점, 2 = 1선 끝점 · 값 = 사진 높이 대비 % [가로, 세로])
   var LEARN_ROM = {"elbow|ext|L":{"0":[0,-1.4],"2":[-1.2,0]},"elbow|ext|R":{"0":[0,-2.5],"1":[-3.4,-2.1]},"elbow|flex|L":{"0":[0,-1.2]},"elbow|flex|R":{"0":[0,-1.5]},"hip|flex|L":{"0":[-0.8,0],"1":[-0.7,0]},"hip|flex|R":{"1":[0,-1.6]},"knee|ext|L":{"0":[-1.2,-0.8],"1":[-2.5,0]},"knee|flex|L":{"0":[-0.8,-1.4]},"knee|flex|R":{"0":[0,-1.1]},"neck|ext|C":{"0":[0,-9.4]},"neck|flex|C":{"1":[0,1.1]},"neck|lat|L":{"0":[-3.1,3.7]},"neck|lat|R":{"0":[2.4,3.8],"1":[-1.9,1.0]},"shoulder|abd|L":{"0":[-0.8,0],"1":[-0.8,0]},"shoulder|flex|L":{"0":[-1.4,0]},"shoulder|flex|R":{"1":[-1.1,0]},"trunk|ext|C":{"0":[0,-1.9]},"trunk|flex|C":{"0":[0,1.0]},"trunk|lat|L":{"0":[-1.3,-1.6],"1":[-2.7,-2.2]},"trunk|lat|R":{"0":[0,-1.2],"1":[0,-1.3]}};
@@ -8823,6 +8840,10 @@
   var ROM_TPL = {"neck|C|flex":[0.521,0.464,0.108,0.11],"neck|C|ext":[0.434,0.568,0.846,0.266],"neck|L|lat":[0.504,0.616,0.825,0.178],"neck|R|lat":[0.473,0.595,0.143,0.137],"trunk|C|flex":[0.788,0.248,0.509,0.151],"trunk|C|ext":[0.552,0.532,0.665,0.333],"trunk|L|lat":[0.534,0.511,0.337,0.251],"trunk|R|lat":[0.44,0.481,0.651,0.255],"shoulder|L|flex":[0.571,0.6,0.183,0.233],"shoulder|R|flex":[0.338,0.586,0.79,0.222],"shoulder|L|abd":[0.501,0.435,0.84,0.194],"shoulder|R|abd":[0.536,0.411,0.164,0.195],"shoulder|L|er":[0.6,0.648,0.281,0.233],"shoulder|R|er":[0.342,0.467,0.603,0.161],"shoulder|L|ir":[0.611,0.437,0.211,0.573],"shoulder|R|ir":[0.325,0.429,0.764,0.576],"knee|L|flex":[0.487,0.263,0.218,0.754,0.809,0.685],"knee|R|flex":[0.685,0.281,0.872,0.799,0.429,0.715],"knee|L|ext":[0.408,0.597,0.035,0.645,0.712,0.56],"knee|R|ext":[0.566,0.411,0.835,0.464,0.319,0.41],"hip|L|flex":[0.512,0.691,0.66,0.17],"hip|R|flex":[0.524,0.716,0.366,0.166],"hip|L|er":[0.236,0.585,0.604,0.177],"hip|R|er":[0.681,0.639,0.385,0.248],"hip|L|ir":[0.495,0.734,0.256,0.273],"hip|R|ir":[0.515,0.687,0.72,0.233],"ankle|L|dorsi":[0.202,0.65,0.169,0.322,0.98,0.425],"ankle|R|dorsi":[0.706,0.674,0.729,0.309,0.02,0.37],"ankle|L|plantar":[0.342,0.716,0.196,0.672,0.99,0.36],"ankle|R|plantar":[0.701,0.694,0.892,0.59,0.01,0.27],"ankle|L|inv":[0.505,0.647,0.333,0.795,0.505,0.02],"ankle|R|inv":[0.351,0.553,0.545,0.773,0.351,0.02],"ankle|L|ev":[0.437,0.632,0.571,0.809,0.437,0.02],"ankle|R|ev":[0.539,0.6,0.39,0.777,0.539,0.02],"elbow|L|flex":[0.349,0.815,0.355,0.363,0.685,0.482],"elbow|R|flex":[0.747,0.799,0.683,0.396,0.347,0.552],"elbow|L|ext":[0.493,0.599,0.174,0.626,0.799,0.55],"elbow|R|ext":[0.57,0.611,0.874,0.49,0.213,0.51]};
   function romDefaultPts(mv){
     var w = romS.w, h = romS.h, J = romJoint(), T = mv && ROM_TPL[J.k + "|" + romSd(J, mv) + "|" + mv.k];
+    if(mv && mv.kind === "aux" && mv.vfix){   // v273 목: 목관절 · 세로 기준선(자동) · ②선 두 점
+      var NV = { x: w * 0.5, y: h * 0.66 };
+      return [NV, { x: NV.x, y: 0 }, { x: w * 0.52, y: h * 0.42 }, { x: w * 0.52, y: h * 0.24 }];
+    }
     if(mv && mv.kind === "aux"){   // v243 배측굴곡: 예전 예시 점(발바닥·발끝·비골)에서 외측 복사뼈 · 비골두 · 발뒤꿈치 · 제5 MTP 위치를 만듦
       var T0 = T && T.length >= 6 ? T : (romSd(J, mv) === "R" ? [0.706,0.674,0.729,0.309,0.02,0.37] : [0.202,0.65,0.169,0.322,0.98,0.425]);
       var S0 = { x: T0[0] * w, y: T0[1] * h }, P5 = { x: T0[2] * w, y: T0[3] * h }, F0 = { x: T0[4] * w, y: T0[5] * h };
@@ -8888,12 +8909,15 @@
           else msg = "C7·귀 위치를 찾지 못했어요. 두 점을 직접 맞춰 주세요.";
           return { ok: ok, msg: msg };
         }
-        if(romKind() === "aux"){   // v243 배측굴곡: 점 4개 (외측 복사뼈 · 비골두 · 발뒤꿈치 · 제5 MTP)
+        if(romKind() === "aux"){   // v243 발목: 점 4개 · v273 목: ①선 끝점(세로 기준선)은 자동이라 3개만 찾는다
+          var vf = !!(romMove() && romMove().vfix);
           var g2a = romGet(pn[2], L, rom.side), g3a = romGet(pn[3], L, rom.side), Pa = romDefaultPts(romMove());
-          [g0, g1, g2a, g3a].forEach(function(g, i){ if(g && romIn(g)) Pa[i] = { x: g.x, y: g.y }; });
+          [g0, vf ? null : g1, g2a, g3a].forEach(function(g, i){ if(g && romIn(g)) Pa[i] = { x: g.x, y: g.y }; });
+          if(vf) Pa[1] = { x: Pa[0].x, y: 0 };   // ①선 = 목관절에서 화면 위쪽 세로선
           var mn = Math.max(romS.w, romS.h) * 0.02;
-          if(g0 && g1 && g2a && g3a && Pa.every(romIn) && Math.hypot(Pa[0].x - Pa[1].x, Pa[0].y - Pa[1].y) > mn && Math.hypot(Pa[2].x - Pa[3].x, Pa[2].y - Pa[3].y) > mn) ok = true;
-          else msg = "발목 측정점을 다 찾지 못했어요. 점 4개를 직접 맞춰 주세요.";
+          var got = vf ? (g0 && g2a && g3a) : (g0 && g1 && g2a && g3a);
+          if(got && Pa.every(romIn) && Math.hypot(Pa[0].x - Pa[1].x, Pa[0].y - Pa[1].y) > mn && Math.hypot(Pa[2].x - Pa[3].x, Pa[2].y - Pa[3].y) > mn) ok = true;
+          else msg = vf ? "목 측정점을 다 찾지 못했어요. 점 3개(목관절 · " + (ROM_PTNAME[pn[2]] || "") + " · " + (ROM_PTNAME[pn[3]] || "") + ")를 직접 맞춰 주세요." : "발목 측정점을 다 찾지 못했어요. 점 4개를 직접 맞춰 주세요.";
           romS.pts = Pa; romS.footOff = null; romS.ant = null;
           return { ok: ok, msg: msg };
         }
@@ -8975,6 +8999,7 @@
     return d > 0 ? { x: px, y: py } : { x: -px, y: -py };
   }
   function romAngle(){
+    romFixVUp();
     var P = romS.pts; if(!P) return null;
     if(romKind() === "tilt" || romKind() === "cva"){ if(P.length > 2) romS.pts = P = P.slice(0, 2); return scolTilt(P).deg; }
     P = P.map(function(q){ return q ? { x: Math.round(q.x), y: Math.round(q.y) } : q; });   // v256 저장 좌표(정수)와 같은 기준으로 계산 → 화면 값 = 저장 값
@@ -8996,8 +9021,8 @@
     if(fl < 1 || dl < 1) return null;
     var u1 = { x: fx / fl, y: fy / fl }, u2 = { x: dx / dl, y: dy / dl };
     var th = Math.acos(Math.max(-1, Math.min(1, u1.x * u2.x + u1.y * u2.y))) * 180 / Math.PI;
-    var mv = romMove(), sg = (mv && mv.sgn) || 1;
-    return { u1: u1, u2: u2, l1: fl, l2: dl, th: Math.round(th), val: Math.max(0, Math.round(sg * (th - 90))) };
+    var mv = romMove(), sg = (mv && mv.sgn) || 1, off = (mv && mv.off != null) ? mv.off : 90;   // v273 목은 기준 0°(바르게 서면 0°), 발목은 90°(직각이 0°)
+    return { u1: u1, u2: u2, l1: fl, l2: dl, th: Math.round(th), val: Math.max(0, Math.round(sg * (th - off))) };
   }
   function romAuxPaint(g, u){
     var P = romS.pts, M = P[0], ga = romAuxGeo(P), live = romS._live !== false;
@@ -9024,9 +9049,10 @@
       g.beginPath(); g.arc(M.x, M.y, R, a1, a1 + d, d < 0); g.stroke();
     }
     // 점 + 이름
-    var pn = romPts();
+    var pn = romPts(), vfx = !!(romMove() && romMove().vfix);
     P.forEach(function(p, i){
       if(!p) return;
+      if(vfx && i === 1) return;   // v273 ①선 끝점(세로 기준선)은 자동이라 점·이름표를 그리지 않는다
       if(romS.sel && romS.sel.t === "pt" && romS.sel.i === i){ g.save(); g.strokeStyle = "rgba(255,255,255,.9)"; g.lineWidth = 2 * u; g.setLineDash([4 * u, 4 * u]); g.beginPath(); g.arc(p.x, p.y, 13 * u, 0, Math.PI * 2); g.stroke(); g.restore(); }
       g.fillStyle = ROM_COL[i]; g.strokeStyle = "#fff"; g.lineWidth = 2 * u; g.beginPath(); g.arc(p.x, p.y, (i === 0 ? 6 : 5.5) * u, 0, Math.PI * 2); g.fill(); g.stroke();
       g.fillStyle = "#fff"; g.beginPath(); g.arc(p.x, p.y, 1.3 * u, 0, Math.PI * 2); g.fill();
@@ -9051,8 +9077,15 @@
     g.font = "700 " + (12 * u) + "px 'IBM Plex Sans KR', sans-serif"; g.fillStyle = "#8FB2FF"; g.fillText(sub, lx, ly + 16 * u);
     g.textAlign = "left"; g.textBaseline = "alphabetic";
   }
+  // v273 ①선 끝점(세로 기준선)은 사용자가 찍는 점이 아니라 목관절 바로 위(화면 꼭대기)에 자동으로 둔다
+  function romFixVUp(){
+    var mv = romS && romS.mv ? romMove() : null;
+    if(!mv || !mv.vfix || !romS.pts || !romS.pts[0]) return;
+    romS.pts[1] = { x: romS.pts[0].x, y: 0 };
+  }
   function romDraw(){
     if(!romS.img) return;
+    romFixVUp();
     romPtsCutMaybe();
     var stageW = $("romStage").clientWidth || 600, maxH = Math.max(260, window.innerHeight * 0.55);
     var sc = Math.min(stageW / romS.w, maxH / romS.h);
@@ -9640,6 +9673,29 @@
       var st = { x: E0.x + bkx * dne * 0.5, y: P[0].y };
       var ed = edge(st, { x: bkx, y: 0 }, dne * 3);
       if(ed) setPt(0, { x: ed.x - bkx * W * 0.001, y: ed.y });   // 목 뒤 윤곽 끝
+    }
+    // v273 목(보조선 방식): 턱 앞·이마 앞(옆모습) · 턱끝·정수리(정면) 를 얼굴 윤곽에 맞춤
+    if(pn[2] === "chinf" || pn[2] === "chintip"){
+      var EYn = (L[2] && L[5]) ? { x: (L[2].x + L[5].x) / 2, y: (L[2].y + L[5].y) / 2 } : null;
+      var MOn = (L[9] && L[10]) ? { x: (L[9].x + L[10].x) / 2, y: (L[9].y + L[10].y) / 2 } : null;
+      var hdn = (E0 && NO) ? (Math.hypot(NO.x - E0.x, NO.y - E0.y) || 0) : 0;
+      if(EYn && MOn && !hdn) hdn = Math.hypot(MOn.x - EYn.x, MOn.y - EYn.y) * 2;
+      if(EYn && MOn && hdn > 1){
+        var dnN = nrm({ x: MOn.x - EYn.x, y: MOn.y - EYn.y });                       // 턱 쪽(아래)
+        var fwN = (E0 && NO) ? nrm({ x: NO.x - E0.x, y: NO.y - E0.y }) : { x: 0, y: 0 };   // 얼굴 앞쪽
+        if(pn[2] === "chintip"){
+          var qa = edge(MOn, dnN, hdn * 2.2); if(qa) setPt(2, qa);                   // 정면: 바로 아래 턱 윤곽
+        } else {
+          var qb = edge(MOn, nrm({ x: dnN.x * 0.6 + fwN.x, y: dnN.y * 0.6 + fwN.y }), hdn * 2.2);
+          if(qb) setPt(2, qb);                                                       // 옆: 턱 앞 윤곽
+        }
+        if(pn[3] === "headf"){
+          var upN = { x: -dnN.x, y: -dnN.y }, stN = { x: EYn.x + upN.x * hdn * 0.45, y: EYn.y + upN.y * hdn * 0.45 };
+          var qc = edge(stN, fwN, hdn * 2.2); if(qc) setPt(3, qc);                   // 이마 높이에서 앞 윤곽
+        } else if(pn[3] === "headtop"){
+          var qd = edge(EYn, { x: -dnN.x, y: -dnN.y }, hdn * 3); if(qd) setPt(3, qd); // 정수리 윤곽
+        }
+      }
     }
     // 허리 굴곡·신전: 등 윤곽
     if((pn[0] === "crest") && S0 && H0){
@@ -10721,7 +10777,7 @@
   var romCam = { stream:null, facing:"environment", on:false, raf:0, lm:null, lmP:null, buf:[], lastTs:0, roll:null, pitch:null, orient:false, cpu:false, seen:0 };
   var romVideo = $("romVideo"), romLiveCv = $("romLiveCv"), romLiveG = romLiveCv.getContext("2d");
   window.__romCam = romCam;
-  var ROM_PART = { tragus:"귀 이주", neckj:"목관절", pelvc:"골반 중앙", t1:"몸통 끝", shj:"어깨 관절", armend:"손목", olec:"팔꿈치 관절", femend:"무릎 관절", sole:"발바닥", toe5:"발끝", fibula:"비골", malleolus:"외측 복사뼈", fibhead:"비골두", heelsole:"발뒤꿈치", mtp5:"제5 MTP", hzside:"가로 기준선", finger:"3번째 손가락 끝", crest:"장골능", back:"등 최고점", back2:"등(굽기 직전)", trunkend:"몸통 끝", neckbase:"목 아래 중앙", neckmid:"목 정중앙", adam:"목젖", brow:"눈썹 사이", mtp2:"제2 MTP", kneemid1:"무릎뼈 중앙", vdown:"세로 기준선", hzfwd:"가로 기준선", hzfoot:"가로 기준선", kneemid:"무릎 중앙", c7:"C7", headtop:"정수리", tcenter:"몸통 중심", mtp:"제1 MTP", c1a:"상단 선 ①", c1b:"상단 선 ②", c2a:"하단 선 ①", c2b:"하단 선 ②", scL:"좌측 높은 점", scR:"우측 높은 점", hz:"수평선", ear:"귀", ear_o:"반대쪽 귀", nose:"코", heel:"뒤꿈치", toe:"발끝", shmid:"어깨 중앙", hipmid:"골반 중앙", earmid:"머리 중심", shperp:"정면선", pelvis:"골반선", eye:"눈", foot:"발바닥선", trunk:"몸통선", floor:"바닥선", vup:"세로 기준선", shoulder:"어깨 관절", elbow:"팔꿈치 관절", wrist:"손목", hip:"고관절", knee:"무릎 관절", ankle:"발목" };
+  var ROM_PART = { chinf:"턱 앞", headf:"이마 앞", chintip:"턱끝", tragus:"귀 이주", neckj:"목관절", pelvc:"골반 중앙", t1:"몸통 끝", shj:"어깨 관절", armend:"손목", olec:"팔꿈치 관절", femend:"무릎 관절", sole:"발바닥", toe5:"발끝", fibula:"비골", malleolus:"외측 복사뼈", fibhead:"비골두", heelsole:"발뒤꿈치", mtp5:"제5 MTP", hzside:"가로 기준선", finger:"3번째 손가락 끝", crest:"장골능", back:"등 최고점", back2:"등(굽기 직전)", trunkend:"몸통 끝", neckbase:"목 아래 중앙", neckmid:"목 정중앙", adam:"목젖", brow:"눈썹 사이", mtp2:"제2 MTP", kneemid1:"무릎뼈 중앙", vdown:"세로 기준선", hzfwd:"가로 기준선", hzfoot:"가로 기준선", kneemid:"무릎 중앙", c7:"C7", headtop:"정수리", tcenter:"몸통 중심", mtp:"제1 MTP", c1a:"상단 선 ①", c1b:"상단 선 ②", c2a:"하단 선 ①", c2b:"하단 선 ②", scL:"좌측 높은 점", scR:"우측 높은 점", hz:"수평선", ear:"귀", ear_o:"반대쪽 귀", nose:"코", heel:"뒤꿈치", toe:"발끝", shmid:"어깨 중앙", hipmid:"골반 중앙", earmid:"머리 중심", shperp:"정면선", pelvis:"골반선", eye:"눈", foot:"발바닥선", trunk:"몸통선", floor:"바닥선", vup:"세로 기준선", shoulder:"어깨 관절", elbow:"팔꿈치 관절", wrist:"손목", hip:"고관절", knee:"무릎 관절", ankle:"발목" };
   function romOrient(e){
     if(e.beta == null || e.gamma == null) return;
     var d2r = Math.PI / 180, b = e.beta * d2r, g = e.gamma * d2r;
@@ -13443,9 +13499,9 @@
   var ROM_GD = {
     "fhp|cva": { V:"C7 극돌기 · 목젖 아랫부분 높이에서 가로선을 그었을 때 목 뒤 윤곽과 만나는 끝 지점 (목 뒤 가장 튀어나온 뼈)", D:"귀 이주 · 귓구멍 앞 작은 돌기(이주) 중앙 (귀 표식보다 조금 아래)", A:"수평선 · C7에서 얼굴 쪽으로 그은 가로선 (자동)", tip:"C7을 목 앞쪽이나 어깨 위에 찍지 마세요. 귀 이주는 귓바퀴 가운데가 아니라 귓구멍 바로 앞 작은 돌기예요. 일부러 턱을 당기거나 고개를 들지 않은 편한 자세로 찍어요.", fhp: true },
     "scol|atr": { V:"좌측 높은 점 · 좌측 허리(등)의 가장 높은 곳", D:"우측 높은 점 · 우측 허리(등)의 가장 높은 곳", A:"바닥 수평선 · 좌측 높은 점을 지나는 가로선 (자동)", tip:"두 점은 척추(등 가운데 골)에서 양옆으로 같은 거리에 찍으세요. 옷·허리띠·바지선이 아니라 맨 등의 가장 높은 곳이에요. 좌·우는 등 뒤에서 본 기준이에요.", scol: true },
-    "neck|flex": { V:"목관절 · 목 가장 아래쪽의 정중앙", D:"정수리 · 머리 정수리 중앙", A:"세로 기준선 · 목관절에서 화면 가장 위쪽", tip:"축(목관절)이 목 앞쪽으로 치우치지 않게, 목의 중앙에 두세요." },
-    "neck|ext": { V:"목관절 · 목과 몸통이 만나는 곳의 정중앙 (목젖과 목뒤 주름의 중간)", D:"정수리 · 머리 정수리 중앙", A:"세로 기준선 · 목관절에서 화면 가장 위쪽", tip:"정수리는 머리 윤곽 끝보다 조금 아래, 정수리 중앙에 두세요." },
-    "neck|lat": { V:"목관절 · 목의 정중앙 (목젖과 복장뼈자루의 중간)", D:"정수리 · 머리 정수리 중앙 (눈·눈썹이 아님)", A:"세로 기준선 · 목관절에서 화면 가장 위쪽", tip:"목관절이 한쪽으로 치우치지 않게 목 정중앙에 두세요." },
+    "neck|flex": { V:"목관절 · 목 가장 아래쪽의 정중앙 (①선 시작점 · 파란 보조선이 지나는 점)", D:"세로 기준선 · 목관절에서 화면 위쪽으로 그은 세로선 (①선 끝점 · 자동)", A:"턱 앞 · 턱의 전면 (②선 시작점)", E:"이마 앞 · 이마의 전면 (②선 끝점)", tip:"턱 앞·이마 앞은 얼굴의 가장 앞 윤곽에 찍으세요. 머리카락이 아니라 이마 피부의 앞면이에요. 세로 기준선은 자동이라 옮길 필요가 없어요." },
+    "neck|ext": { V:"목관절 · 목과 몸통이 만나는 곳의 정중앙 (①선 시작점 · 파란 보조선이 지나는 점)", D:"세로 기준선 · 목관절에서 화면 위쪽으로 그은 세로선 (①선 끝점 · 자동)", A:"턱 앞 · 턱의 전면 (②선 시작점)", E:"이마 앞 · 이마의 전면 (②선 끝점)", tip:"천장을 보는 자세라 턱이 위로 들립니다. 그래도 두 점은 얼굴 앞 윤곽(턱 앞·이마 앞)에 그대로 찍으세요." },
+    "neck|lat": { V:"목관절 · 목의 정중앙 (목젖과 복장뼈 자루의 중간) (①선 시작점 · 파란 보조선이 지나는 점)", D:"세로 기준선 · 목관절에서 화면 위쪽으로 그은 세로선 (①선 끝점 · 자동)", A:"턱끝 · 입술 정중앙에서 수직 아래 끝에 있는 턱 중앙 (②선 시작점)", E:"정수리 · 정수리 정중앙 (②선 끝점)", tip:"정면에서 찍어요. 턱끝은 턱 옆선이 아니라 입술 바로 아래의 턱 중앙이에요. 어깨가 같이 기울지 않게 고정하세요." },
     "trunk|flex": { V:"골반 장골능 · 골반 후면 장골능 최상단 (옷을 입었으면 바지선)", D:"등 최고점 · 등의 가장 높은 곳, 등의 곡선이 꺾이는 지점", A:"세로 기준선 · 장골능에서 화면 가장 위쪽", tip:"장골능을 고관절(엉덩이 옆) 높이에 찍지 마세요. 등 최고점은 몸통 중간이 아니라 가장 높은 곳이에요." },
     "trunk|ext": { V:"골반 장골능 · 골반 후면 최상단 (옷을 입었으면 바지선)", D:"등 최고점 · 등의 가장 높은 곳", A:"세로 기준선 · 장골능에서 화면 가장 위쪽", tip:"장골능을 엉덩이에 찍지 마세요. 등 최고점은 더 낮은 곳이 아니라 가장 높은 곳이에요." },
     "trunk|lat": { V:"골반 중앙 · 장골능 최상단의 중앙 (천추 1번, 정중앙)", D:"몸통 끝 · 흉추 1번 = 양쪽 어깨끝을 이은 선의 중간", A:"세로 기준선 · 골반 중앙에서 화면 가장 위쪽", tip:"골반 중앙은 장골능 최상단 높이까지 올리고, 몸통 끝은 어깨선 중간까지 올려 주세요." },
@@ -13521,24 +13577,26 @@
     var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=" + (ROM_GD_V[J.k] || "220");
     $("ptGuideTitle").textContent = "측정가이드 · " + J.n + " " + mv.n;
     var aux = mv.kind === "aux";
-    $("ptGuideSub").textContent = (lr ? (romGdSide === "R" ? "우측" : "좌측") + " 예시 · " : "") + (aux ? "측정점 4개 · 측정선 2개 + 파란 보조선" : "측정점 3개 · 측정선 2개");
+    $("ptGuideSub").textContent = (lr ? (romGdSide === "R" ? "우측" : "좌측") + " 예시 · " : "") + (aux ? "측정점 " + hand + "개" + (hand < 4 ? "(+ 자동 " + (4 - hand) + "개)" : "") + " · 측정선 2개 + 파란 보조선" : "측정점 3개 · 측정선 2개");
     var pts = aux ? mv.pts : romPts(), nm = function(i){ return ROM_PART[pts[i]] || ROM_PTNAME[pts[i]] || ""; };
+    var off0 = aux ? ((mv.off != null) ? mv.off : 90) : 0;   // v273 발목은 직각(90°)이 0°, 목은 바로 선 자세가 0°
+    var hand = aux ? mv.pts.filter(function(k){ return k !== "vup"; }).length : 0;   // 손으로 찍는 점 수
     if(aux){
       $("ptGuideBody").innerHTML =
         '<div class="pg-pose"><b>측정 자세</b> · ' + mv.guide + '</div>' +
         (lr ? '<div class="pg-side"><button type="button" data-gs="L" aria-pressed="' + (romGdSide === "L") + '">좌측</button><button type="button" data-gs="R" aria-pressed="' + (romGdSide === "R") + '">우측</button></div>' : '') +
-        '<div class="pg-pics one"><figure><img src="' + src + '" alt="' + esc(J.n + " " + mv.n) + ' 측정점 예시" loading="lazy"></figure></div>' +   // v270 4점 기준으로 다시 찍은 예시 사진
+        (ROM_GD_V[J.k] ? '<div class="pg-pics one"><figure><img src="' + src + '" alt="' + esc(J.n + " " + mv.n) + ' 측정점 예시" loading="lazy"></figure></div>' : '') +   // v273 새 기준 사진이 있는 부위만 (없으면 옛 사진 대신 글 설명)
         '<ul class="pg-list">' +
           '<li><i style="background:' + ROM_COL[0] + '"></i><b>①선 시작</b><span>' + esc(G.V) + '</span></li>' +
           '<li><i style="background:' + ROM_COL[1] + '"></i><b>①선 끝</b><span>' + esc(G.D) + '</span></li>' +
           '<li><i style="background:' + ROM_COL[2] + '"></i><b>②선 시작</b><span>' + esc(G.A) + '</span></li>' +
           '<li><i style="background:' + ROM_COL[3] + '"></i><b>②선 끝</b><span>' + esc(G.E) + '</span></li>' +
-          '<li><i style="background:#2F6BFF"></i><b>보조선</b><span>자동 · ②선과 같은 방향으로 외측 복사뼈를 지나는 파란 점선</span></li>' +
+          '<li><i style="background:#2F6BFF"></i><b>보조선</b><span>자동 · ②선과 같은 방향으로 ' + esc(nm(0)) + '을(를) 지나는 파란 점선</span></li>' +
         '</ul>' +
         '<p class="pg-warn"><b>자주 틀리는 곳</b> · ' + esc(G.tip) + '</p>' +
-        '<p class="pg-tip">각도 = ①선(외측 복사뼈 → 비골두) ↔ 파란 보조선 사이각 · 측정값 = ' + ((mv.sgn || 1) < 0 ? '90° − 사이각' : '사이각 − 90°') + ' (정강이와 발바닥이 직각이면 0°).</p>';
+        '<p class="pg-tip">각도 = ①선(' + esc(nm(0)) + ' → ' + esc(nm(1)) + ') ↔ 파란 보조선 사이각' + (off0 ? ' · 측정값 = ' + ((mv.sgn || 1) < 0 ? '90° − 사이각' : '사이각 − 90°') + ' (정강이와 발바닥이 직각이면 0°)' : ' · 바르게 선 자세가 0°') + '.</p>';
       $("ptGuideBody").querySelectorAll("[data-gs]").forEach(function(b){ b.addEventListener("click", function(){ romGdSide = b.getAttribute("data-gs"); openRomGuide(); }); });
-      pgPicFail($("ptGuideBody").querySelector("img"));
+      if(ROM_GD_V[J.k]) pgPicFail($("ptGuideBody").querySelector("img"));
       $("ptGuide").hidden = false; return;
     }
     $("ptGuideBody").innerHTML =

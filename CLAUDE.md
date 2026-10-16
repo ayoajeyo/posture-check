@@ -41,6 +41,8 @@
 - 결제: Google Play 월 구독 `ayo_pro_monthly` (Digital Goods API) + 오프라인 이용 코드(ECDSA, `license-pub.json`)
 
 ## 이 프로젝트만의 규칙
+- 사용자 호칭은 **"아요"** 다. "원장님" 이라고 부르지 않는다 (2026-10-16 요청).
+- 입력칸 예시(placeholder)의 센터명 '남다예 필라테스'·연락처 '070-5220-0919 · aesonge26@gmail.com'·주소 '부산 부산진구 중앙대로 708'·담당자 '남선생님' 은 **아요가 일부러 넣은 아요 본인 정보**다. 회원·환자 정보가 아니므로 개인정보 점검에서 가짜 값으로 바꾸지 않는다.
 - CRITICAL: 안드로이드 패키지 이름 `com.physiomaster.posture` 는 **절대 바꾸지 않는다** (바꾸면 Play 스토어에서 다른 앱이 되고 구독이 끊긴다). 쓰이는 곳: `index.html`(PLAY_PKG·Play 링크), `supabase/functions/play-verify/index.ts`.
 - CRITICAL: 기기 저장소 이름 `ayo-posture`(IndexedDB) 와 store 이름(members·records·roms…), Supabase `ayo_items.store` 값은 바꾸지 않는다 — 바꾸면 기존 회원 데이터가 안 보인다.
 - 앱 버전은 `index.html` 의 `APP_VER = "v262"` 형식(정수 증가). 서비스워커 `sw.js` 의 `VERSION = "pma-v211"` 은 별도 카운터로 배포마다 +1 한다.

@@ -1,10 +1,10 @@
 /* 리포트 "한눈에 보기" 차트 — 좌표 계산 + SVG 문자열 (화면을 모르는 순수 함수)
    화면(SVG)과 공유 이미지(캔버스)가 같은 좌표 함수를 쓰므로 수식이 한 곳에만 있다.
    브라우저: index.html 이 먼저 불러와 window.AYO_LOGIC 으로 씀 · Node: require (테스트: tests/report-charts.test.js)
-   계열색: 좌측 #2B4FBF · 우측 #0E8F84 · 첫 측정 점 #9AA3B2 (색각 이상 검증 통과) */
+   계열색: 좌측 #2B4FBF · 우측 #0E8F84 · 첫 측정 점 #9AA3B2 (색각 이상 검증 통과) · 단일 계열은 네이비 #1E2A4A (UI_GUIDE 포인트 색) */
 (function(root){
   "use strict";
-  var COLOR = { L: "#2B4FBF", R: "#0E8F84", C: "#2B4FBF", base: "#9AA3B2", ref: "#6B7280", grid: "#E5E7EB" };
+  var COLOR = { L: "#2B4FBF", R: "#0E8F84", C: "#1E2A4A", base: "#9AA3B2", ref: "#6B7280", grid: "#E5E7EB" };   // C = 단일 계열(KPI 추이) → 앱 포인트 색 네이비
   var STATUS = { good: "#15803D", warn: "#B45309", crit: "#B91C1C", "": "#6B7280" };
   var STATUS_BG = { good: "#ECFDF3", warn: "#FFF7E6", crit: "#FEF2F2", "": "#F3F4F6" };
 

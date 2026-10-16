@@ -226,16 +226,16 @@
   .rep-rounds-list button em{font-style:normal; font-size:11.5px; color:var(--ink-soft); white-space:nowrap;}
   .rep-rounds-list button small{font-size:11px; color:var(--ink-soft); white-space:nowrap;}
   /* v283 리포트 '한눈에 보기' — 회원용 요약 카드. 상태색은 판정에만, 차트 계열색은 report-charts.js 와 같은 값 */
-  .rep-dash{margin:10px 0 4px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 12px 12px;}
+  .rep-dash{margin:8px 0; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:16px 12px;}   /* 이웃 .card 와 같은 모서리 */
   .rep-dash[hidden]{display:none!important;}
-  .rd-h{display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; margin-bottom:10px;}
+  .rd-h{display:flex; flex-wrap:wrap; align-items:baseline; gap:0 8px; margin-bottom:8px;}
   .rd-h h3{margin:0; font-size:16px; font-weight:800;}
   .rd-h span{font-size:13px; color:var(--ink-soft);}
   .rd-state{margin:0; font-size:13px; color:var(--ink-soft); padding:8px 0;}
   .rd-err{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px;} .rd-err p{margin:0;}
   .rd-kpis{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px;}
   @media (min-width:760px){ .rd-kpis{grid-template-columns:repeat(4, minmax(0,1fr));} }
-  .rd-kpi{min-width:0; border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; background:var(--surface);}
+  .rd-kpi{min-width:0; border-radius:8px; padding:8px 12px 12px; display:flex; flex-direction:column; gap:4px; background:var(--surface-2);}   /* 카드 안에 테두리 카드를 겹치지 않음 */
   .rd-kpi small{font-size:13px; color:var(--ink-soft); line-height:1.3;} .rd-kpi small span{display:block;}
   .rd-top{display:flex; align-items:flex-start; justify-content:space-between; gap:6px;}
   .rd-kpi strong{font-size:28px; line-height:1.1; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.01em;}
@@ -248,30 +248,30 @@
   .rd-st{display:inline-flex; align-items:center; gap:4px; font-size:13px; font-weight:600; padding:2px 7px; border-radius:6px; white-space:nowrap; margin-top:4px;}
   .rd-st.good{color:var(--good); background:var(--good-soft);} .rd-st.warn{color:var(--warn); background:var(--warn-soft);} .rd-st.crit{color:var(--crit); background:var(--crit-soft);} .rd-st.none{color:var(--ink-soft); background:var(--surface-2);}
   .rd-sec{margin-top:16px;}
-  .rd-sh{display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; margin-bottom:8px;} .rd-sh b{font-size:14px; font-weight:700;} .rd-sh span{font-size:13px; color:var(--ink-soft);}
+  .rd-sh{display:flex; flex-wrap:wrap; align-items:baseline; gap:0 8px; margin-bottom:8px;} .rd-sh b{font-size:15px; font-weight:700;} .rd-sh span{font-size:13px; color:var(--ink-soft);}
   .rd-heatwrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
   .rd-heat{border-collapse:separate; border-spacing:3px 3px; width:100%; font-size:13px; font-variant-numeric:tabular-nums;}
   .rd-heat th{font-weight:600; color:var(--ink-soft); text-align:center; padding:0 0 2px; white-space:nowrap; line-height:1.2; border-top:3px solid transparent;}
-  .rd-heat th small{display:block; font-size:11px; font-weight:500;} .rd-heat th.on{border-top-color:var(--navy); color:var(--navy);}
+  .rd-heat th small{display:block; font-size:13px; font-weight:500;} .rd-heat th.on{border-top-color:var(--navy); color:var(--navy);}
   .rd-heat th:first-child,.rd-heat td:first-child{text-align:left; width:88px; max-width:88px;}
   .rd-heat td{padding:0;} .rd-heat td.n{font-weight:600; font-size:13px; line-height:1.25; padding-right:4px; word-break:keep-all;}
   .rd-heat td.gap,.rd-heat th.gap{width:14px; color:var(--ink-soft); text-align:center;}
   .rd-cell{display:flex; align-items:center; justify-content:center; min-height:44px; min-width:44px; border-radius:6px; font-weight:600; font-size:13px; background:var(--surface-2); color:var(--ink-soft);}
   .rd-cell.good{background:var(--good-soft); color:var(--good);} .rd-cell.warn{background:var(--warn-soft); color:var(--warn);} .rd-cell.crit{background:var(--crit-soft); color:var(--crit);}
-  .rd-legend{display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; font-size:13px; color:var(--ink-soft); margin-top:6px;}
+  .rd-legend{display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; font-size:13px; color:var(--ink-soft); margin-top:8px;}
   .rd-legend span{display:inline-flex; align-items:center; gap:5px;} .rd-legend i{width:10px; height:10px; border-radius:3px; display:inline-block;}
   .rd-legend i.good{background:var(--good);} .rd-legend i.warn{background:var(--warn);} .rd-legend i.crit{background:var(--crit);}
   .rd-tg{margin-left:auto; font-family:inherit; font-size:13px; font-weight:600; min-height:44px; padding:0 12px; border-radius:10px; border:1px solid var(--line); background:var(--surface); color:var(--navy); cursor:pointer;}
-  .rd-tg[aria-pressed="true"]{background:var(--accent-soft); border-color:var(--navy);}
-  .rd-rows{display:grid; gap:6px;}
+  .rd-tg[aria-expanded="true"]{background:var(--accent-soft); border-color:var(--navy);}
+  .rd-rows{display:grid; gap:8px;}
   .rd-row{display:grid; grid-template-columns:110px minmax(0,1fr) 44px; align-items:center; gap:8px; min-height:28px;}
-  .rd-row .rd-lab{font-size:13px; font-weight:600; line-height:1.25; word-break:keep-all;} .rd-row .rd-lab small{display:block; font-weight:400; font-size:11px; color:var(--ink-soft);}
+  .rd-row .rd-lab{font-size:13px; font-weight:600; line-height:1.25; word-break:keep-all;} .rd-row .rd-lab small{display:block; font-weight:400; font-size:13px; color:var(--ink-soft);}
   .rd-row .rd-db{min-width:0;} .rd-row .rd-db svg{display:block; width:100%; height:24px;}   /* viewBox 폭 = 실제 칸 폭(렌더 시 측정) → 점이 찌그러지지 않음 */
   .rd-row .rd-pct{font-size:14px; font-weight:700; text-align:right; font-variant-numeric:tabular-nums;}
   .rd-row .rd-pct.good{color:var(--good);} .rd-row .rd-pct.warn{color:var(--warn);} .rd-row .rd-pct.crit{color:var(--crit);}
-  .rd-axis{display:grid; grid-template-columns:110px minmax(0,1fr) 44px; gap:8px; font-size:11px; color:var(--ink-soft); margin-bottom:2px;}
+  .rd-axis{display:grid; grid-template-columns:110px minmax(0,1fr) 44px; gap:8px; font-size:13px; color:var(--ink-soft); margin-bottom:0;}
   .rd-axis span{display:flex; justify-content:space-between;}
-  #rdNum{margin:10px 0 0 auto; display:block;}
+  #rdNum{margin:8px 0 0 auto; display:block;}
   .rd-tblwrap{overflow-x:auto; margin-top:8px;}
   .rd-tbl{width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums;}
   .rd-tbl th,.rd-tbl td{padding:7px 6px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap;}
@@ -2090,17 +2090,17 @@
     <section class="rep-dash" id="repDash" hidden aria-label="한눈에 보기">
       <div class="rd-h"><h3>한눈에 보기</h3><span id="rdSub"></span></div>
       <p class="rd-state" id="rdLoad">불러오는 중…</p>
-      <div class="rd-state rd-err" id="rdErr" hidden><p>요약을 만들지 못했습니다.</p><button type="button" class="btn line sm" id="rdRetry">다시 시도</button></div>
+      <div class="rd-state rd-err" id="rdErr" hidden><p id="rdErrMsg">요약을 만들지 못했습니다.</p><button type="button" class="rd-tg" id="rdRetry">다시 시도</button></div>
       <div id="rdBody" hidden>
         <div class="rd-kpis" id="rdKpis"></div>
-        <div class="rd-sec"><div class="rd-sh"><b>항목별 변화</b><span>칸 색 = 그 회차의 판정</span></div>
+        <div class="rd-sec"><div class="rd-sh"><b>항목별 변화</b></div>
           <div class="rd-heatwrap" id="rdHeat"></div>
           <div class="rd-legend"><span><i class="good"></i>양호</span><span><i class="warn"></i>주의</span><span><i class="crit"></i>개선 필요</span>
-            <button type="button" class="rd-tg" id="rdDetail" aria-pressed="false" hidden>체형 세부</button></div>
+            <button type="button" class="rd-tg" id="rdDetail" aria-expanded="false" hidden>체형 항목 보기</button></div>
         </div>
         <div class="rd-sec" id="rdRomSec" hidden><div class="rd-sh"><b id="rdRomT">ROM 정상 대비</b><span id="rdRomS"></span></div>
           <div class="rd-rows" id="rdRom"></div>
-          <button type="button" class="rd-tg" id="rdNum" aria-pressed="false">숫자로 보기</button>
+          <button type="button" class="rd-tg" id="rdNum" aria-expanded="false" aria-controls="rdTbl">숫자 보기</button>
           <div class="rd-tblwrap" id="rdTbl" hidden></div>
         </div>
       </div>
@@ -8130,9 +8130,13 @@
   function renderRepDash(S, act){
     var el = $("repDash"); if(!el) return;
     var L = window.AYO_LOGIC;
-    if(!L || !L.buildTimeline || !L.sparkSvg || !S || !S.length || !state.member){ el.hidden = true; repDashCache = null; repDashS = null; repDashSMid = null; return; }
+    if(!S || !S.length || !state.member){ el.hidden = true; repDashCache = null; repDashS = null; repDashSMid = null; return; }   // 측정 0건 → 카드 숨김 (리포트 자체의 빈 안내가 있음)
     repDashS = S; repDashSMid = state.member.id; repDashAct = act || null;
     el.hidden = false; $("rdLoad").hidden = false; $("rdErr").hidden = true; $("rdBody").hidden = true;
+    if(!L || !L.buildTimeline || !L.sparkSvg){   // 계산 파일을 못 받은 경우(새 버전 설치 중·오프라인) — 숨기지 않고 알림
+      repDashCache = null; $("rdLoad").hidden = true; $("rdErrMsg").textContent = "요약 계산 파일을 아직 받지 못했습니다. 인터넷이 연결되면 다시 시도해 주세요."; $("rdErr").hidden = false; return;
+    }
+    $("rdErrMsg").textContent = "요약을 만들지 못했습니다.";
     try{
       var tl = L.buildTimeline(S, ROM_ALL, rdJ(), { uptoKey: act ? act.key : null }), N = tl.rounds.length;
       repDashCache = { mid: state.member.id, key: act ? act.key : null, tl: tl };
@@ -8148,7 +8152,7 @@
       }).join("");
       // 상태표
       var bodyN = Object.keys(tl.body).length; $("rdDetail").hidden = !bodyN; if(!bodyN) repDashDetail = false;
-      $("rdDetail").setAttribute("aria-pressed", String(repDashDetail));
+      $("rdDetail").setAttribute("aria-expanded", String(repDashDetail)); $("rdDetail").textContent = repDashDetail ? "체형 항목 접기" : "체형 항목 보기";
       var st = L.statusRows(tl, { maxCols: 5, detail: repDashDetail }), actKey = act ? act.key : null;
       var th = '<th></th>' + st.cols.map(function(ci, i){ var r = tl.rounds[ci]; return (st.gap && i === 1 ? '<th class="gap">…</th>' : '') + '<th' + (r.key === actKey ? ' class="on"' : '') + '>' + r.n + '차<small>' + r.day.slice(5) + '</small></th>'; }).join("");
       var tb = st.rows.map(function(row){
@@ -8161,7 +8165,7 @@
       if(rows.length){
         var bw = Math.max(120, Math.round(($("rdRom").clientWidth || 300) - 110 - 44 - 16));
         $("rdRomT").textContent = hasA ? "ROM 변화" : "ROM 정상 대비";
-        $("rdRomS").textContent = hasA ? "회색 점 = 처음 · 색 점 = 최근 · 오른쪽 끝 = 정상 100%" : "최근 측정 · 오른쪽 끝 = 정상 100%";
+        $("rdRomS").textContent = hasA ? "회색 점 = 처음 · 색 점 = 최근" : "최근 측정";
         $("rdRom").innerHTML = '<div class="rd-axis"><span></span><span><i>40%</i><i>70%</i><i>100%</i></span><span></span></div>' + rows.map(function(r){
           return '<div class="rd-row"><span class="rd-lab">' + esc(r.label) + (r.a != null ? '<small>' + r.aN + '차 ' + r.aVal + '° → ' + r.bVal + '°</small>' : '<small>' + r.bVal + '° / 정상 ' + r.normal + '°</small>') + '</span>' +
             '<span class="rd-db">' + L.dumbbellRowSvg(r, { w: bw, h: 24, min: 40, max: 100 }) + '</span><b class="rd-pct ' + r.cls + '">' + r.b + '%</b></div>';
@@ -8226,7 +8230,6 @@
     var LABW = 300, ncol = st.cols.length, gapw = st.gap ? 40 : 0, cgap = 8, cellw = (TW - LABW - gapw - cgap * (ncol - 1)) / ncol;
     var colX = function(i){ return x + LABW + i * (cellw + cgap) + (st.gap && i >= 1 ? gapw : 0); };
     g.fillStyle = INK; g.font = "800 28px " + F; g.fillText("항목별 변화", x, sy + 34);
-    g.fillStyle = SOFT; g.font = "500 22px " + F; g.fillText("칸 색 = 그 회차의 판정", x + 170, sy + 33);
     var hy = sy + RD_IMG.HDR - 8, actKey = repSessCur ? repSessCur.key : null;
     g.textAlign = "center";
     st.cols.forEach(function(ci, i){
@@ -8274,7 +8277,7 @@
   var rdResizeT = null;   // 화면 폭이 바뀌면(회전·창 크기) 아령 폭을 다시 맞춤
   window.addEventListener("resize", function(){ if($("repDash").hidden || !repDashS) return; clearTimeout(rdResizeT); rdResizeT = setTimeout(function(){ renderRepDash(repDashS, repDashAct); }, 200); });
   $("rdDetail").addEventListener("click", function(){ repDashDetail = !repDashDetail; renderRepDash(repDashS, repDashAct); });
-  $("rdNum").addEventListener("click", function(){ var on = $("rdNum").getAttribute("aria-pressed") === "true"; $("rdNum").setAttribute("aria-pressed", String(!on)); $("rdTbl").hidden = on; $("rdNum").textContent = on ? "숫자로 보기" : "숫자 접기"; });
+  $("rdNum").addEventListener("click", function(){ var on = $("rdNum").getAttribute("aria-expanded") === "true"; $("rdNum").setAttribute("aria-expanded", String(!on)); $("rdTbl").hidden = on; $("rdNum").textContent = on ? "숫자 보기" : "숫자 접기"; });
   // v202 열린 체형 사진이 지금 선택한 회원 것이 아님 (다른 회원 측정 중에 리포트에서 회원을 바꾼 경우)
   function repForeign(){ return !!(state.member && hasPhotos() && state.photoMid && state.photoMid !== state.member.id); }
   function repPickRound(ss, auto){

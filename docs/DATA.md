@@ -79,13 +79,16 @@ sessionStorage: `ayo_view`(화면 상태), `4pm_ext_tried`.
 |---|---|---|
 | `records` (체형분석) | `score` · `f` · `sd` · `groups` · `thumbs` → null/빈 배열 | `id` · `memberId` · `at` · `height` · `blob`/`blobAt` |
 | `blobs: records:<id>` | 각 사진의 `points` 만 빈 값으로 | `img` · `w` · `h` 등 **사진 자체** |
-| `roms` (ROM·거북목·척추 균형) | `pts` · `value` · `pct` · `refCustom` · `footOff` · `ant` → null | `img`(사진) · `imgK` · `roll` · 관절·동작·좌우·날짜 |
+| `roms` (ROM·거북목·척추 균형) | `pts` · `value` · `pct` · `refCustom` · `footOff` · `ant` · `thumb`(각도·선이 그려진 결과 그림) → null | `img`(원본 사진) · `imgK` · `roll` · 관절·동작·좌우·날짜 |
 | `blobs: admx:*` (관리자 수정 기록) | 전체 삭제 | — (사진은 측정 기록 쪽에 그대로 있음) |
 | 사진 버킷(서버 `photos`) | 손대지 않음 | 전부 |
 
 - 비운 기록에는 `wipedAt`(비운 시각)이 남는다.
 - 사진이 없는 예전 기록은 다시 잴 수 없으므로 건너뛴다.
 - 비운 기록은 동기화로 서버(`ayo_items`)에도 반영된다 — 다른 기기에서도 같은 상태가 된다.
+- 값이 비워진 기록은 '최근 측정'·히스토리·그래프·리포트 집계에서 **제외**된다 (회차 목록에는 남아 다시 측정할 수 있다).
+- 비운 기록을 열면 최신 측정법으로 **자동 인식이 한 번 돌아간다** (체형분석·ROM 모두).
+- 관리자 수정 기록(`admx:`)은 **백업 파일에 들어 있지 않아** 복구할 수 없다.
 
 ## 3. 관계
 ```

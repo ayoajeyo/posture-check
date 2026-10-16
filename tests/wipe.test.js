@@ -70,6 +70,12 @@ test("ROM 기록: 점·각도만 비우고 사진과 촬영 정보는 남는다"
   assert.equal(rec.value, 47, "원본 기록을 직접 바꾸지 않는다");
 });
 
+test("ROM 기록: 각도·선이 그려진 결과 그림(thumb)도 비운다 — 옛 측정 그림이 남으면 안 됨", () => {
+  const c = wipeRom({ id: "k2", img: "data:image/jpeg;base64,PHOTO", thumb: "data:image/jpeg;base64,OLDDRAWING", value: 51, pts: [{ x: 1, y: 2 }] });
+  assert.equal(c.thumb, null);
+  assert.equal(c.img.startsWith("data:image/jpeg"), true, "원본 사진은 남아야 한다");
+});
+
 test("사진 묶음이 없으면 null (사진 없는 예전 기록은 건너뛴다)", () => {
   assert.equal(wipePhotos(null), null);
   assert.equal(wipePhotos("문자열"), null);

@@ -154,3 +154,21 @@ test("환산 기록도 각도가 달라지면 수정 (좌표 차이와 무관)",
   assert.notEqual(x.noEdit, true);
   assert.equal(ctx.admxRow(x).k, "51° → 47°");
 });
+
+// v272 사진 없는 예전 회차를 각도 숫자만 고친 기록 — 점 좌표가 없어도 엑셀에 수정으로 남아야 한다
+test("각도 숫자만 고친 기록: 엑셀에 각도 변화와 '각도만 고침' 설명이 나옴", async () => {
+  const x = await prep(rom({ before: { val: 51 }, after: { val: 47, manual: true } }));
+  assert.notEqual(x.noEdit, true, "각도를 고쳤는데 '수정 없음'으로 처리됨");
+  const r = ctx.admxRow(x);
+  assert.equal(r.k, "51° → 47°");
+  assert.match(r.h, /각도 : 51° → 47°/);
+  assert.match(r.h, /각도 숫자만 고침/);
+  assert.equal(r.ia, "–");            // 점이 없으면 좌표 칸은 비우지 않고 –
+  assert.equal(r.ib, "–");
+});
+
+test("각도도 그대로면 '수정 없음' (각도만 수정 기록도 동일)", async () => {
+  const x = await prep(rom({ before: { val: 51 }, after: { val: 51, manual: true } }));
+  assert.equal(x.noEdit, true);
+  assert.equal(ctx.admxRow(x).k, "51° (수정 없음)");
+});

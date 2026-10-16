@@ -1080,10 +1080,11 @@
   .pg-pics figure{margin:0; border-radius:12px; overflow:hidden; background:#fff; cursor:zoom-in;}
   .pg-pics figure.big{grid-column:1 / -1; cursor:zoom-out;}
   .pg-pics img{display:block; width:100%; height:auto;}
-  .pg-list{margin:12px 0 2px; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px;}
-  .pg-list li{display:flex; gap:10px; align-items:baseline; background:var(--surface-2); border-radius:10px; padding:9px 12px; font-size:13.5px;}
-  .pg-list li b{flex:0 0 74px; font-size:14px;} .pg-list li i{width:10px; height:10px; border-radius:50%; flex:0 0 auto; align-self:center;}
-  .pg-tip{margin:10px 0 0; font-size:12px; color:var(--ink-soft);}
+  /* v272 '쪽 저장' 화면(417~423)에도 같은 이름이 있어 서로 덮어썼다 → 측정가이드 안으로 한정 */
+  #ptGuideBody .pg-list{margin:12px 0 2px; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px; align-items:stretch;}
+  #ptGuideBody .pg-list li{display:flex; gap:10px; align-items:baseline; background:var(--surface-2); border-radius:10px; padding:9px 12px; font-size:13.5px;}
+  #ptGuideBody .pg-list li b{flex:0 0 74px; font-size:14px;} #ptGuideBody .pg-list li i{width:10px; height:10px; border-radius:50%; flex:0 0 auto; align-self:center;}
+  #ptGuideBody .pg-tip{margin:10px 0 0; font-size:13px; color:var(--ink-soft); text-align:left;}
   .ss-box #mbSessSub{margin:3px 0 0; font-size:12.5px; color:var(--ink-soft);}
   .ss-sec{border-top:1px solid var(--line); padding:14px 0 6px; margin-top:10px;}
   .ss-h{display:flex; align-items:baseline; gap:8px; margin-bottom:10px;} .ss-h b{font-size:17px;} .ss-h span{font-size:12px; color:var(--ink-soft); font-weight:600;}
@@ -2217,7 +2218,7 @@
         </div>
       </div>
       <label>센터명<input id="stName" type="text" maxlength="24" placeholder="예: 남다예 필라테스"></label>
-      <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 070-5220-0919 · aesonge26@gmail.com"></label>
+      <label>연락처 · 안내 문구 (선택)<input id="stContact" type="text" maxlength="40" placeholder="예: 070-0000-0000 · center@example.com"></label>
       <!-- v185 리포트 공유 링크를 받은 회원 화면에 [전화하기] [예약하기] 버튼으로 표시 -->
       <label>전화번호 (선택) · 공유 링크의 [전화하기]<input id="stPhone" type="tel" inputmode="tel" maxlength="20" placeholder="예: 010-0000-0000"></label>
       <label>예약 링크 (선택) · 공유 링크의 [예약하기]<input id="stBook" type="url" inputmode="url" maxlength="300" placeholder="예: 네이버 예약·카카오톡 채널 주소"></label>
@@ -2231,7 +2232,7 @@
       <label>업종<select id="cpKind"><option value="">선택 안 함</option><option>필라테스</option><option>피트니스 · PT</option><option>재활 · 교정 운동센터</option><option>요가</option><option>물리치료실 (의료기관)</option><option>기타</option></select></label>
       <p class="cp-law" id="cpLaw" hidden>의료기관은 의료법의 의료광고 규정이 적용돼요. ‘치료 효과 보장’, ‘완치’, 치료 경험담·전후 사진 같은 표현은 넣지 마세요.</p>
       <label>한 줄 소개<textarea id="cpIntro" maxlength="300" rows="3" placeholder="예: 측정으로 시작해 변화로 확인하는 1:1 자세 관리 스튜디오"></textarea></label>
-      <label>주소<input id="cpAddr" type="text" maxlength="80" placeholder="예: 부산 부산진구 중앙대로 708"></label>
+      <label>주소<input id="cpAddr" type="text" maxlength="80" placeholder="예: ○○시 ○○구 ○○대로 00"></label>
       <label>운영 시간<input id="cpHours" type="text" maxlength="80" placeholder="예: 평일 10–21시 · 토 10–14시"></label>
       <div class="cp-tags-h">함께 관리하는 고민 <small>(최대 5개)</small></div>
       <div class="cp-tags" id="cpTags"></div>
@@ -2552,7 +2553,7 @@
     </div>
     <div class="mf-row">
       <label>출생연도<input id="mfBirth" type="number" inputmode="numeric" min="1920" max="2025" placeholder="예: 1988 (연령대 통계)"></label>
-      <label>담당자<input id="mfStaff" type="text" autocomplete="off" maxlength="30" placeholder="예: 남선생님"></label>   <!-- v238 담당자 -->
+      <label>담당자<input id="mfStaff" type="text" autocomplete="off" maxlength="30" placeholder="예: 홍길동 선생님"></label>   <!-- v238 담당자 -->
     </div>
     <!-- v176 촬영·보관 동의 기록: 체크한 날짜를 회원 정보에 보관 -->
     <label class="mf-consent"><input id="mfConsent" type="checkbox"><span id="mfConsentD">신체 사진 촬영·보관에 동의함 (체크한 날짜를 기록)</span></label>
@@ -9359,6 +9360,10 @@
       var mv0 = romMove(), v0 = Math.max(0, Math.round(+$("romManVal").value || 0)), old = romS.editRec;
       var upd = Object.assign({}, old, { value: v0, pct: mv0.normal ? Math.round(v0 / mv0.normal * 100) : null, editedAt: Date.now() });
       delete upd.img;
+      // v272 사진 없는 예전 회차를 각도 숫자만 고친 것도 관리자 '측정 수정 기록'에 남긴다 (점이 없으므로 각도만)
+      if(ADM.on) admxStore(ADMX + "roms:" + upd.id, { kind: "rom", joint: old.joint, side: old.side, move: old.move, at: old.at,
+        member: state.member ? state.member.name : "", w: Math.round(romS.w || 0), h: Math.round(romS.h || 0), names: [],
+        before: { val: old.value }, after: { val: v0, manual: true }, savedAt: Date.now() }, false, null);
       var fin = function(){ $("romSheet").hidden = true; if(state.view === "scol" || state.view === "fhp"){ scolRestore(); if(state.view === "fhp") renderFhp(); else renderScol(); } else renderRom(); toast("이전 회차 기록을 " + v0 + "°로 수정했어요."); };
       if(!upd.memberId){ rom.sessionAll = rom.sessionAll.map(function(r){ return r.id === upd.id ? upd : r; }); fin(); return; }
       rawPut("roms", upd).then(function(){ romCache.all = null; fin(); }).catch(function(){ toast("저장하지 못했어요."); });
@@ -12503,7 +12508,7 @@
         if(mv) lines.push("- " + a.label + " : " + mv);
       });
       return { a: "체형분석", b: x.mode === "front" ? "정면" : "측면", e: "X", f: "X", g: "X", h: x.legacy ? ADMX_LEG : x.noEdit ? "수정 없음" : B.fail ? "자동 인식 실패 — 점을 손으로 찍어 저장 (수정 전 사진 없음)" : (B.saved ? "수정 전 = 저장된 기록을 열었을 때의 점 (처음 측정 때 보관 자료가 없어 자동 인식 결과 대신 사용)\n" : "") + (lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)"),
-        ib: B.fail ? "–" : cb.join("\n"), ia: x.legacy ? "–" : x.noEdit ? "– (수정 없음)" : ca.join("\n"), k: "–" };
+        ib: B.fail ? "–" : (cb.join("\n") || "–"), ia: x.legacy ? "–" : x.noEdit ? "– (수정 없음)" : (ca.join("\n") || "–"), k: "–" };
     }
     var J = ROM_ALL.find(function(j){ return j.k === x.joint; }), mv = J ? J.moves.find(function(m){ return m.k === x.move; }) : null;
     var GD = ROM_GD[x.joint + "|" + x.move], sp = function(t){ var i = (t || "").indexOf(" · "); return i < 0 ? [t || "", ""] : [t.slice(0, i), t.slice(i + 3)]; };
@@ -12519,6 +12524,7 @@
     });
     var vb = B.val, va = A.val;
     if(vb != null && va != null && vb !== va) lines.push("- 각도 : " + vb + "° → " + va + "° (" + (va > vb ? "+" : "") + (va - vb) + "°)");
+    if(A.manual) lines.push("- 사진 없는 예전 회차 : 각도 숫자만 고침 (점 좌표 없음)");   // v272
     var V = sp(GD && GD.V), D = sp(GD && GD.D), Ar = sp(GD && GD.A);
     if(AUX && GD){   // 앱 안내용 "(①선 시작점 …)" 괄호는 빼고 점 이름·설명만
       var cut = function(t){ var q = sp(t); return [q[0], q[1].replace(/\s*\([①②][^)]*\)\s*$/, "")]; };
@@ -12528,7 +12534,7 @@
         f: "- 시작점(" + Ar[0] + ") : " + Ar[1] + "\n\n- 끝점(" + Ee[0] + ") : " + Ee[1],
         g: "1선과 생성된 보조선 (보조선은 2선과 평행하게 1선 시작점을 지남)",
         h: x.legacy ? ADMX_LEG : x.noEdit ? "수정 없음" : B.fail ? "자동 인식 실패 — 점을 손으로 찍어 저장 (수정 전 사진 없음)" : (B.saved ? "수정 전 = 저장된 기록을 열었을 때의 점 (처음 측정 때 보관 자료가 없어 자동 인식 결과 대신 사용)\n" : "") + (lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)"),
-        ib: B.fail ? "–" : cb.join("\n"), ia: x.legacy ? "–" : x.noEdit ? "– (수정 없음)" : ca.join("\n"),
+        ib: B.fail ? "–" : (cb.join("\n") || "–"), ia: x.legacy ? "–" : x.noEdit ? "– (수정 없음)" : (ca.join("\n") || "–"),
         k: x.legacy ? (vb == null ? "–" : vb + "°") : x.noEdit ? (vb == null ? "–" : vb + "° (수정 없음)") : (vb == null ? "–" : vb + "°") + " → " + (va == null ? "–" : va + "°") };
     }
     return { a: J ? J.n : x.joint, b: (mv ? mv.n : x.move) + (x.side === "L" ? "(좌측)" : x.side === "R" ? "(우측)" : ""),
@@ -12538,7 +12544,7 @@
         : FC ? "- 시작점(C7 극돌기) : 1선 시작점\n\n- 끝점(귀 이주) : 귓구멍 앞 작은 돌기(이주) 중앙" : GD ? "- 시작점(" + V[0] + ") : 1선 시작점\n\n- 끝점(" + D[0] + ") : " + D[1] : "",
       g: SC ? "좌측 높은 점 (두 점을 이은 선과 바닥 수평선이 만나는 지점)" : FC ? "C7 극돌기 (1선 수평선과 2선이 만나는 지점)" : GD ? V[0] + "(1선과 2선이 만나는 지점)" : "",
       h: x.legacy ? ADMX_LEG : x.noEdit ? "수정 없음" : B.fail ? "자동 인식 실패 — 점을 손으로 찍어 저장 (수정 전 사진 없음)" : (B.saved ? "수정 전 = 저장된 기록을 열었을 때의 점 (처음 측정 때 보관 자료가 없어 자동 인식 결과 대신 사용)\n" : "") + (lines.length ? lines.join("\n") : "수정 없음 (자동 인식 그대로 저장)"),
-      ib: B.fail ? "–" : cb.join("\n"), ia: x.legacy ? "–" : x.noEdit ? "– (수정 없음)" : ca.join("\n"),
+      ib: B.fail ? "–" : (cb.join("\n") || "–"), ia: x.legacy ? "–" : x.noEdit ? "– (수정 없음)" : (ca.join("\n") || "–"),
       k: x.legacy ? (vb == null ? "–" : vb + "°") : x.noEdit ? (vb == null ? "–" : vb + "° (수정 없음)") : (vb == null ? "–" : vb + "°") + " → " + (va == null ? "–" : va + "°") };
   }
   /* v202 엑셀 사진 보완 (엑셀을 만들 때 한 건씩 차례로)
@@ -13457,7 +13463,15 @@
     "elbow|flex": { V:"팔꿈치 관절 · 팔꿈치 관절 (주두 쪽으로 조금 뒤)", D:"손목 · 손목 앞·뒤 사이 중앙", A:"어깨 관절 · 상완골 근위부", tip:"팔꿈치 관절을 앞쪽에 찍지 말고 주두 쪽으로 조금 뒤에 두세요." },
     "elbow|ext": { V:"팔꿈치 관절 · 팔꿈치 관절 (주두 쪽으로 조금 뒤)", D:"손목 · 손목 앞·뒤 사이 중앙", A:"어깨 관절 · 상완골 근위부", tip:"손목은 손등·손바닥 쪽으로 치우치지 않게 중앙에 두세요." }
   };
+  var ROM_GD_V = { ankle: "270" };   // v270 발목만 4점 기준 사진으로 교체됨
   var romGdSide = null;
+  // v272 가이드 사진을 못 불러왔을 때 안내 (네 곳에 같은 코드가 복사돼 있던 것을 하나로)
+  function pgPicFail(img){
+    if(!img) return;
+    img.onerror = function(){
+      var f = img.closest("figure"); if(f) f.outerHTML = '<p class="pg-warn"><b>예시 사진을 불러오지 못했습니다.</b> 측정가이드를 닫았다가 다시 열어 주세요.</p>';
+    };
+  }
   // v219 거북목(CVA) 측정가이드 (점 2개 · C7 수평선)
   function openFhpGuide(){
     var G = ROM_GD["fhp|cva"];
@@ -13473,8 +13487,7 @@
       '</ul>' +
       '<p class="pg-warn"><b>자주 틀리는 곳</b> · ' + esc(G.tip) + '</p>' +
       '<p class="pg-tip">각도 = C7 수평선 ↔ C7–귀 이주 선 · 55° 이상 정상 · 50–55° 경계 · 45–50° 목이 앞으로 많이 나옴 · 45° 미만 전문가 상담 권장. 사진 속 얼굴은 흐리게 처리했어요.</p>';
-    var im = $("ptGuideBody").querySelector("img");
-    im.onerror = function(){ im.closest("figure").outerHTML = '<p class="pg-tip">예시 사진을 불러오지 못했어요. 인터넷 연결 후 다시 열어 주세요.</p>'; };
+    pgPicFail($("ptGuideBody").querySelector("img"));
     $("ptGuide").hidden = false;
   }
   $("btnFhpGuide").addEventListener("click", openFhpGuide);
@@ -13493,8 +13506,7 @@
       '</ul>' +
       '<p class="pg-warn"><b>자주 틀리는 곳</b> · ' + esc(G.tip) + '</p>' +
       '<p class="pg-tip">각도 = 두 점을 이은 선 ↔ 바닥 수평선 · 5° 미만 정상 · 5–7° 관찰 · 7° 이상 전문가와 상담 권장</p>';
-    var im = $("ptGuideBody").querySelector("img");
-    im.onerror = function(){ im.closest("figure").outerHTML = '<p class="pg-tip">예시 사진을 불러오지 못했어요. 인터넷 연결 후 다시 열어 주세요.</p>'; };
+    pgPicFail($("ptGuideBody").querySelector("img"));
     $("ptGuide").hidden = false;
   }
   $("btnScolGuide").addEventListener("click", openScolGuide);
@@ -13505,7 +13517,8 @@
     var G = ROM_GD[J.k + "|" + mv.k]; if(!G) return;
     var sd = romSd(J, mv), lr = sd !== "C";
     if(romGdSide == null || !lr) romGdSide = lr ? sd : "C";
-    var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=270";   // v270 발목은 4점 기준 사진으로 교체 (v202 새 기준 실루엣 사진)
+    // v272 사진이 바뀐 부위만 번호를 올린다 (주소를 전부 올리면 쓰지도 않는 가이드 사진 32장을 다시 받음)
+    var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=" + (ROM_GD_V[J.k] || "220");
     $("ptGuideTitle").textContent = "측정가이드 · " + J.n + " " + mv.n;
     var aux = mv.kind === "aux";
     $("ptGuideSub").textContent = (lr ? (romGdSide === "R" ? "우측" : "좌측") + " 예시 · " : "") + (aux ? "측정점 4개 · 측정선 2개 + 파란 보조선" : "측정점 3개 · 측정선 2개");
@@ -13525,8 +13538,7 @@
         '<p class="pg-warn"><b>자주 틀리는 곳</b> · ' + esc(G.tip) + '</p>' +
         '<p class="pg-tip">각도 = ①선(외측 복사뼈 → 비골두) ↔ 파란 보조선 사이각 · 측정값 = ' + ((mv.sgn || 1) < 0 ? '90° − 사이각' : '사이각 − 90°') + ' (정강이와 발바닥이 직각이면 0°).</p>';
       $("ptGuideBody").querySelectorAll("[data-gs]").forEach(function(b){ b.addEventListener("click", function(){ romGdSide = b.getAttribute("data-gs"); openRomGuide(); }); });
-      var imA = $("ptGuideBody").querySelector("img");
-      imA.onerror = function(){ imA.closest("figure").outerHTML = '<p class="pg-tip">예시 사진을 불러오지 못했어요. 인터넷 연결 후 다시 열어 주세요.</p>'; };
+      pgPicFail($("ptGuideBody").querySelector("img"));
       $("ptGuide").hidden = false; return;
     }
     $("ptGuideBody").innerHTML =
@@ -13534,15 +13546,14 @@
       (lr ? '<div class="pg-side"><button type="button" data-gs="L" aria-pressed="' + (romGdSide === "L") + '">좌측</button><button type="button" data-gs="R" aria-pressed="' + (romGdSide === "R") + '">우측</button></div>' : '') +
       '<div class="pg-pics one"><figure><img src="' + src + '" alt="' + esc(J.n + " " + mv.n) + ' 측정점 예시" loading="lazy"></figure></div>' +
       '<ul class="pg-list">' +
-        '<li><i style="background:' + ROM_COL[0] + '"></i><b>축</b><span>' + esc(G.V) + '</span></li>' +
-        '<li><i style="background:' + ROM_COL[1] + '"></i><b>②선 끝</b><span>' + esc(G.D) + '</span></li>' +
+        '<li><i style="background:' + ROM_COL[0] + '"></i><b>①②선 시작</b><span>' + esc(G.V) + '</span></li>' +
         '<li><i style="background:' + ROM_COL[2] + '"></i><b>①선 끝</b><span>' + esc(G.A) + '</span></li>' +
+        '<li><i style="background:' + ROM_COL[1] + '"></i><b>②선 끝</b><span>' + esc(G.D) + '</span></li>' +
       '</ul>' +
       '<p class="pg-warn"><b>자주 틀리는 곳</b> · ' + esc(G.tip) + '</p>' +
       '<p class="pg-tip">①선: 축 → ' + esc(nm(2)) + ' · ②선: 축 → ' + esc(nm(1)) + ' · 각도 = 두 선 사이. 사진 속 얼굴은 흐리게 처리했어요.</p>';
     $("ptGuideBody").querySelectorAll("[data-gs]").forEach(function(b){ b.addEventListener("click", function(){ romGdSide = b.getAttribute("data-gs"); openRomGuide(); }); });
-    var im = $("ptGuideBody").querySelector("img");
-    im.onerror = function(){ im.closest("figure").outerHTML = '<p class="pg-tip">예시 사진을 불러오지 못했어요. 인터넷 연결 후 다시 열어 주세요.</p>'; };
+    pgPicFail($("ptGuideBody").querySelector("img"));
     $("ptGuide").hidden = false;
   }
   $("btnRomGuide").addEventListener("click", function(){ romGdSide = null; openRomGuide(); });

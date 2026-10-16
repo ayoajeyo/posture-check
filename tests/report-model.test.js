@@ -84,6 +84,21 @@ test("03 체형 정렬: 값·방향·판정 — 정면은 좌↑/우↑, 측면�
   assert.equal(b.front.rows[1].valTxt, "1.8° 좌↑"); assert.equal(b.side.rows[1].valTxt, "0.6cm 뒤"); assert.equal(b.front.rows[2].valTxt, "0°");
 });
 
+test("03 체형 정렬: 저장 기록 모양(slim · grade 없이 cls 만)도 그린다", () => {
+  const slim = { score: 61,
+    f: [{ key: "earlobe", name: "귓볼", title: "귓볼 기울기", value: "0.8°", num: 0.8, foot: "우 ↑", cls: "g-good" }, { key: "pelvis", name: "골반", title: "골반 기울기", value: "3.4°", num: 3.4, foot: "좌 ↑", cls: "g-crit" }],
+    sd: [{ key: "ear", name: "귀", title: "귀 편위", value: "2.4cm", num: 2.4, foot: "전방 이동", cls: "g-warn" }] };
+  const b = RM.buildReportDoc({ tl: TL.buildTimeline([S3[0]], CATALOG, J), body: slim, J }).body;
+  assert.deepEqual(b.front.rows.map((r) => [r.n, r.v, r.dir, r.cls]), [["귓볼", 0.8, 1, "good"], ["골반", 3.4, -1, "crit"]]);
+  assert.equal(b.front.cls, "crit"); assert.equal(b.front.label, "비대칭 큼");
+  assert.equal(b.side.cls, "warn"); assert.equal(b.side.label, "약간 벗어남");
+  assert.deepEqual([b.side.t1, b.side.t2], [3, 6], "pct 가 없으면 150cm 기준 환산");
+});
+
+test("08 판정 기준 문장은 모듈 상수에서 (화면·이미지 공통)", () => {
+  assert.equal(RM.CRITERIA.length, 6); assert.equal(RM.CRITERIA[3][0], "거북목 CVA"); assert.match(RM.DISCLAIMER, /진단을 대신하지 않습니다/);
+});
+
 test("04 ROM: 동작별 좌/우 막대 — 선택 회차 값·%·1차 값·판정·좌우 차이", () => {
   const rows = doc3().rom.rows;
   assert.deepEqual(rows.map((r) => r.label), ["어깨 굴곡", "어깨 외전", "무릎 굴곡"]);

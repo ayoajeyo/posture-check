@@ -118,6 +118,7 @@
 **트레이드오프**: 파일이 하나 늘어 네트워크 요청 1회 추가. 새 index.html 만 받고 judge.js 를 못 받은 순간(새 서비스워커 설치 전 불안정한 연결)에는 판정 화면에서 오류가 날 수 있다.
 **영향받는 파일**: js/logic/judge.js, tests/judge.test.js, package.json, index.html, sw.js
 **진행 기록**: 2026-10-16 v283 — `romJudge`·`scoreBand` 도 `judge.js` 로 이동(그대로 복사, 동작 변화 없음). 리포트 '한눈에 보기' 를 위해 `report-timeline.js`(회차 시계열·KPI·상태표·아령 행)·`report-charts.js`(차트 좌표·SVG) 추가. 테스트 108개.
+**진행 기록**: 2026-10-16 v292 — 문서형 리포트를 위해 `report-model.js`(요약표·소견 문장·추이·체형 막대·ROM 막대·구간 띠·사진 순서·기록표·판정 기준 문장) 추가, `report-charts.js` 에 좌표 함수 4개(`trendGeom`·`divergingGeom`·`romBarGeom`·`zoneGeom`) 추가. 화면 HTML/SVG 와 이미지 캔버스가 같은 `buildReportDoc` 결과를 그린다. 테스트 135개.
 
 ### ADR-012: 버전은 두 곳 + CHANGELOG — 앱 번호와 서비스워커 번호를 따로 센다
 **상태**: 채택 (2026-10-15) — 공통 ADR-000-6 의 "네 곳" 을 이 프로젝트에서 대체

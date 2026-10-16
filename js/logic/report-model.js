@@ -83,7 +83,7 @@
     else if(cmp.length) first = "1차보다 좋아진 항목은 " + joinKo(up.map(function(s){ return NOTE_NAME[s.k]; })) + ", 나빠진 항목은 " + joinKo(dn.map(function(s){ return NOTE_NAME[s.k]; })) + "입니다.";
     else first = "1차와 비교할 수 있는 항목이 없습니다.";
     var second = [goodTxt ? goodTxt + (notTxt ? "이고" : "입니다") : "", notTxt].filter(Boolean).join(", ");
-    return (first + " " + (second ? second.replace(/ 번의/, " 번의") + "." : "")).replace(/\s+$/, "").replace(/ 번의/, " 번의");
+    return (first + " " + (second ? second + "." : "")).replace(/\s+$/, "");
   }
 
   /* 02 변화 그래프 4개 (값이 있는 것만). 축 범위는 값과 정상 띠를 모두 담는다 */
@@ -101,7 +101,9 @@
     return out;
   }
 
-  /* 03 체형 정렬 — computeReport() 의 f(정면 기울기 °)·sd(측면 편위 cm) → 0 기준 양방향 막대 */
+  /* 03 체형 정렬 — computeReport() 의 f(정면 기울기 °)·sd(측면 편위 cm) → 0 기준 양방향 막대
+     항목 모양은 두 가지: computeReport 결과 { grade:{cls,label}, pct } · 저장 기록(slim) { cls } — 둘 다 받는다 */
+  function clsOf(x){ return normCls(x && x.grade ? x.grade.cls : x && x.cls); }
   function bodyRows(body){
     if(!body || (!body.f && !body.sd)) return null;
     var mk = function(list, o){
@@ -111,10 +113,10 @@
         if(o.axis === "h"){ if(/좌/.test(foot)) dir = -1; else if(/우/.test(foot)) dir = 1; }
         else { if(/전방|앞/.test(foot)) dir = 1; else if(/후방|뒤/.test(foot)) dir = -1; }
         v = v == null ? 0 : Math.abs(v); if(v === 0) dir = 0;
-        var cls = normCls(x.grade && x.grade.cls);
+        var cls = clsOf(x);   // computeReport 모양(grade.cls) 과 저장 기록 slim 모양(cls) 둘 다
         return { n: x.name || x.title, v: v, dir: dir, cls: cls, pct: x.pct != null ? x.pct : null, valTxt: fmtNum(v) + o.u + (dir ? " " + (dir < 0 ? o.left : o.right) : "") };
       });
-      var w = null; list.forEach(function(x){ var c = normCls(x.grade && x.grade.cls); if(!w || CLS_RANK[c] < CLS_RANK[normCls(w.grade.cls)]) w = x; });
+      var w = null, wc = ""; list.forEach(function(x){ var c = clsOf(x); if(!w || CLS_RANK[c] < CLS_RANK[wc]){ w = x; wc = c; } });
       var t1 = o.t1, t2 = o.t2;
       if(o.axis === "v"){   // 측면 경계는 몸 높이 대비 %(2·4) — 이 회원의 cm 로 환산 (cm/% 비율은 어느 항목이나 같다)
         var ratio = null; rows.forEach(function(r){ if(ratio == null && r.pct > 0 && r.v > 0) ratio = r.v / r.pct; });
@@ -122,10 +124,10 @@
         t1 = Math.round(o.t1 * ratio * 10) / 10; t2 = Math.round(o.t2 * ratio * 10) / 10;
       }
       var maxV = Math.max(t2 * 1.5, Math.max.apply(null, rows.map(function(r){ return r.v; })) * 1.15);
-      return { rows: rows, cls: w ? normCls(w.grade.cls) : "", label: w && w.grade ? w.grade.label || CLS_TXT[normCls(w.grade.cls)] : "", t1: t1, t2: t2, max: Math.round(maxV * 10) / 10, u: o.u, left: o.left, right: o.right };
+      return { rows: rows, cls: wc, label: w && w.grade && w.grade.label ? w.grade.label : (o.labels[wc] || CLS_TXT[wc]), t1: t1, t2: t2, max: Math.round(maxV * 10) / 10, u: o.u, left: o.left, right: o.right };
     };
-    var front = mk(body.f, { axis: "h", t1: 1.5, t2: 3, u: "°", left: "좌↑", right: "우↑" });
-    var side = mk(body.sd, { axis: "v", t1: 2, t2: 4, u: "cm", left: "뒤", right: "앞" });
+    var front = mk(body.f, { axis: "h", t1: 1.5, t2: 3, u: "°", left: "좌↑", right: "우↑", labels: { good: "정상 범위", warn: "약간 비대칭", crit: "비대칭 큼" } });   // 라벨은 index.html THRESH 와 같은 말
+    var side = mk(body.sd, { axis: "v", t1: 2, t2: 4, u: "cm", left: "뒤", right: "앞", labels: { good: "정상 정렬", warn: "약간 벗어남", crit: "많이 벗어남" } });
     return (front || side) ? { front: front, side: side } : null;
   }
 
@@ -220,6 +222,17 @@
     return { cols: tl.rounds, rows: rows };
   }
 
+  /* 08 판정 기준 — 화면(#rsCrit)과 이미지가 같은 문장을 쓴다 */
+  var CRITERIA = [
+    ["체형 정렬 점수", "100점에서 기울기·편위만큼 감점. 정면 5쌍은 1°당 2.5점(쌍당 최대 10점), 측면 4점은 몸 높이 대비 1%당 2.5점. 90 이상 매우 좋음 · 75 이상 양호 · 60 이상 주의 · 60 미만 개선 필요."],
+    ["정면 기울기", "1.5° 미만 정상 · 3.0° 미만 약간 비대칭 · 그 이상 비대칭 큼."],
+    ["측면 편위", "플럼라인(복사뼈 기준 수직선)에서 귀~복사뼈 높이의 2% 미만 정상 · 4% 미만 약간 벗어남 · 그 이상 많이 벗어남. 그래프의 cm 경계는 이 회원의 키로 환산한 값."],
+    ["거북목 CVA", "55° 이상 정상 · 50–55° 경계 · 45–50° 목이 많이 나옴 · 45° 미만 매우 많이 나옴."],
+    ["척추 균형 ATR", "5° 미만 정상 · 5–7° 관찰 필요 · 7° 이상 전문가 상담 권장."],
+    ["관절 가동범위", "정상 각도 대비 90% 이상 정상 · 70% 이상 주의 · 70% 미만 개선 필요. 좌우 차이 10° 이상은 따로 표시."]
+  ];
+  var DISCLAIMER = "이 리포트는 촬영 거리·각도·자세에 따라 달라질 수 있는 스크리닝 참고 자료이며, 의학적 진단을 대신하지 않습니다. 통증이나 뚜렷한 변형이 있으면 전문가와 상담하세요.";
+
   function buildReportDoc(o){
     var tl = o.tl, J = o.J, N = tl.rounds.length, multi = N >= 2;
     var cur = N ? tl.rounds[N - 1] : null, base = multi ? tl.rounds[0] : null;
@@ -230,7 +243,7 @@
              photos: photoItems(tl, multi), history: historyRows(tl) };
   }
 
-  var api = { buildReportDoc: buildReportDoc, fmtNum: fmtNum, deltaOf: deltaOf, cvaLabel: cvaLabel, atrLabel: atrLabel, ZONE: ZONE };
+  var api = { buildReportDoc: buildReportDoc, fmtNum: fmtNum, deltaOf: deltaOf, cvaLabel: cvaLabel, atrLabel: atrLabel, ZONE: ZONE, CRITERIA: CRITERIA, DISCLAIMER: DISCLAIMER };
   if(typeof module !== "undefined" && module.exports) module.exports = api;
   else root.AYO_LOGIC = Object.assign(root.AYO_LOGIC || {}, api);
 })(this);

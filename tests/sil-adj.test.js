@@ -91,3 +91,12 @@ test("팔꿈치: 같은 쪽의 굴곡·신전이 비슷한 사람 크기 (설 �
 test("팔꿈치: 크기(s)는 건드리지 않는다 — 그림 테두리로 잰 잘못된 기준으로 맞추지 않게", () => {
   for (const k of Object.keys(HEAD)) assert.equal(adj(k).s, 1, k + " 에 s 가 들어갔다 (머리 폭 기준으로 다시 계산할 것)");
 });
+
+test("척추 균형 실루엣(v284): 조정값을 적용하면 옛 실루엣과 같은 등 폭·위치가 된다", () => {
+  const A = adj("scol_C_atr"); assert.ok(A.s > 1, "scol_C_atr 조정값(s)이 있어야 한다");
+  const OLD = { x0: 0.035, x1: 0.939, y0: 0.433 }, NEW = { x0: 0.219, x1: 0.803, y0: 0.444 };   // v3·v4 webp 의 사람 영역(알파>127) 범위, PIL 측정
+  const f = (p, s, d) => 0.5 - s / 2 + (d || 0) * s + p * s, s = A.s || 1;
+  near(f(NEW.x1, s, A.dx) - f(NEW.x0, s, A.dx), OLD.x1 - OLD.x0, 0.02, "등 폭이 옛것과 같다");
+  near((f(NEW.x0, s, A.dx) + f(NEW.x1, s, A.dx)) / 2, (OLD.x0 + OLD.x1) / 2, 0.02, "가로 중심이 옛것과 같다");
+  near(f(NEW.y0, s, A.dy), OLD.y0, 0.02, "등 윗선 높이가 옛것과 같다");
+});

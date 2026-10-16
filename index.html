@@ -229,7 +229,7 @@
   .rep-dash{margin:8px 0; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:16px 12px;}   /* 이웃 .card 와 같은 모서리 */
   .rep-dash[hidden]{display:none!important;}
   .rd-h{display:flex; flex-wrap:wrap; align-items:baseline; gap:0 8px; margin-bottom:8px;}
-  .rd-h h3{margin:0; font-size:16px; font-weight:800;}
+  .rd-h h3{margin:0; font-size:16px; font-weight:600;}
   .rd-h span{font-size:13px; color:var(--ink-soft);}
   .rd-state{margin:0; font-size:13px; color:var(--ink-soft); padding:8px 0;}
   .rd-err{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px;} .rd-err p{margin:0;}
@@ -248,7 +248,7 @@
   .rd-st{display:inline-flex; align-items:center; gap:4px; font-size:13px; font-weight:600; padding:2px 7px; border-radius:6px; white-space:nowrap; margin-top:4px;}
   .rd-st.good{color:var(--good); background:var(--good-soft);} .rd-st.warn{color:var(--warn); background:var(--warn-soft);} .rd-st.crit{color:var(--crit); background:var(--crit-soft);} .rd-st.none{color:var(--ink-soft); background:var(--surface-2);}
   .rd-sec{margin-top:16px;}
-  .rd-sh{display:flex; flex-wrap:wrap; align-items:baseline; gap:0 8px; margin-bottom:8px;} .rd-sh b{font-size:15px; font-weight:700;} .rd-sh span{font-size:13px; color:var(--ink-soft);}
+  .rd-sh{display:flex; flex-wrap:wrap; align-items:baseline; gap:0 8px; margin-bottom:8px;} .rd-sh b{font-size:16px; font-weight:600;} .rd-sh span{font-size:13px; color:var(--ink-soft);}
   .rd-heatwrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
   .rd-heat{border-collapse:separate; border-spacing:3px 3px; width:100%; font-size:13px; font-variant-numeric:tabular-nums;}
   .rd-heat th{font-weight:600; color:var(--ink-soft); text-align:center; padding:0 0 2px; white-space:nowrap; line-height:1.2; border-top:3px solid transparent;}
@@ -8142,7 +8142,7 @@
       var tl = L.buildTimeline(S, ROM_ALL, rdJ(), { uptoKey: act ? act.key : null }), N = tl.rounds.length;
       repDashCache = { mid: state.member.id, key: act ? act.key : null, tl: tl };
       var R0 = tl.rounds[0], RN = tl.rounds[N - 1];
-      $("rdSub").textContent = (N > 1 ? R0.n + "차 " + R0.day + " → " + RN.n + "차 " + RN.day : "첫 측정 " + R0.day + " · 다음 측정부터 변화가 함께 보여요") + (act ? "" : " · 저장된 회차 기준 (지금 측정 중인 결과는 아래)");
+      $("rdSub").textContent = (N > 1 ? R0.n + "차 " + R0.day + " → " + RN.n + "차 " + RN.day : "첫 측정 " + R0.day + " · 다음 측정부터 변화가 함께 보여요") + (act ? "" : " · 저장된 회차 기준");
       // KPI 타일
       var labs = tl.rounds.map(function(r){ return r.n + "차 " + r.day; });
       $("rdKpis").innerHTML = L.kpiOf(tl, rdJ()).map(function(k){
@@ -8171,9 +8171,9 @@
           return '<div class="rd-row"><span class="rd-lab">' + esc(r.label) + (r.a != null ? '<small>' + r.aN + '차 ' + r.aVal + '° → ' + r.bVal + '°</small>' : '<small>' + r.bVal + '° / 정상 ' + r.normal + '°</small>') + '</span>' +
             '<span class="rd-db">' + L.dumbbellRowSvg(r, { w: bw, h: 24, min: 40, max: 100 }) + '</span><b class="rd-pct ' + r.cls + '">' + r.b + '%</b></div>';
         }).join("");
-        $("rdTbl").innerHTML = '<table class="rd-tbl"><thead><tr><th>항목</th><th>' + (hasA ? "처음" : "") + '</th><th>최근</th><th>변화</th><th>정상</th></tr></thead><tbody>' + rows.map(function(r){
+        $("rdTbl").innerHTML = '<table class="rd-tbl"><thead><tr><th>항목</th>' + (hasA ? '<th>처음</th>' : '') + '<th>최근</th>' + (hasA ? '<th>변화</th>' : '') + '<th>정상</th></tr></thead><tbody>' + rows.map(function(r){
           var d = r.a != null ? r.bVal - r.aVal : null;   // 색은 정상 대비 % 가 올랐는지(r.better)로 — 신전은 각도가 줄어도 개선
-          return '<tr><td>' + esc(r.label) + '</td><td>' + (r.a != null ? r.aVal + '°' : '–') + '</td><td><b>' + r.bVal + '°</b></td><td class="rd-delta ' + (r.better === true ? "up" : r.better === false ? "down" : "flat") + '">' + (d == null ? '–' : (d > 0 ? '▲ ' : d < 0 ? '▼ ' : '') + Math.abs(d) + '°') + '</td><td>' + (r.normal === 0 ? '0°' : r.normal + '°') + '</td></tr>';
+          return '<tr><td>' + esc(r.label) + '</td>' + (hasA ? '<td>' + (r.a != null ? r.aVal + '°' : '–') + '</td>' : '') + '<td><b>' + r.bVal + '°</b></td>' + (hasA ? '<td class="rd-delta ' + (r.better === true ? "up" : r.better === false ? "down" : "flat") + '">' + (d == null ? '–' : (d > 0 ? '▲ ' : d < 0 ? '▼ ' : '') + Math.abs(d) + '°') + '</td>' : '') + '<td>' + (r.normal === 0 ? '0°' : r.normal + '°') + '</td></tr>';
         }).join("") + '</tbody></table>';
       }
     }catch(e){

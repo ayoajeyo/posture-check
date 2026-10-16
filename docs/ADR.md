@@ -155,4 +155,5 @@
 - ① **화면이 안 다시 그려짐** — `rawPut` 은 `dbPut` 과 달리 캐시를 비우지 않아 목록·리포트가 옛 숫자를 그대로 보여줄 수 있다 → 실행 끝에 `romCache`·`romRenderCache`·`laCache` 를 비우고 `syncRefresh(true)` 로 다시 그린다.
 - ② **일부만 비워졌는데 단추가 잠김** — 저장이 실패한 기록이 있어도 `ayo_wipe_done` 이 걸려 다시 실행할 수 없었다 → 남은 건수로 잠금을 판단하고, 결과 안내에 실패 건수를 따로 적는다.
 - ③ **비울 것이 애초에 없었는지 알 수 없음** — 이 기기에 기록이 안 받아져 있으면 '0건 비움' 이 정상처럼 보인다 → 칸을 열 때 `wipeLeftCount` 로 **남은 건수 + 전체 건수**를 항상 표시한다.
+**규칙(v277 리뷰에서 확인)**: 남은 건수를 세는 함수(`wipeRecLeft`·`wipeRomTodo`)는 `wipeRun` 이 '비울지 말지' 를 정하는 **바로 그 기준**이어야 한다. 두 기준이 갈리면 남은 건수가 영원히 0 이 되지 않아 잠금이 안 걸리고, 고치려던 "비웠는데 그대로" 가 다시 생긴다. 특히 **사진이 없는 ROM 기록**(`delete upd.img` 로 각도만 고친 예전 회차)은 다시 잴 수 없어 비우지 않으므로, 잠금 기준에서 빼고 `noPic` 으로 건수만 알린다. 실행 중에는 `wipeBusy` 로 재진입을 막는다.
 **영향받는 파일**: index.html(관리자 화면·wipeBodyPhotos·wipeBodyRec·wipeRomRec·wipeRecLeft·wipeRomLeft·wipeLeftCount·wipeCount·wipePaint·wipeRun), tests/wipe.test.js, docs/DATA.md 2-5, docs/TESTING.md 23~32

@@ -2790,7 +2790,7 @@
     </div>
     <div class="adm-xls adm-wipe" id="admWipe" hidden>
       <b>측정 비우기 (사진은 그대로)</b>
-      <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한, 한 번만 쓰는 기능이에요. 사진이 없는 예전 기록은 건너뜁니다.</p>
+      <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한 정리 기능이에요. 사진이 없어 다시 잴 수 없는 기록은 건너뜁니다.</p>
       <p class="adm-wipe-warn"><b>되돌릴 수 없어요.</b> 지난 회차의 각도·점수는 다시 볼 수 없게 됩니다(사진은 남아요). 관리자 수정 기록은 백업 파일에도 들어 있지 않아 완전히 사라집니다. 다른 기기(집 PC)가 있으면 먼저 그 기기에서도 앱을 열어 최신으로 맞춰 주세요.</p>
       <button type="button" class="btn line sm" id="btnWipeBk" style="width:100%">백업 파일 저장 (선택)</button>
       <p class="adm-wipe-st" id="admWipeSt"></p>
@@ -12787,7 +12787,7 @@
      모든 사진을 최신 측정법으로 다시 재기 위한 한 번만 쓰는 정리.
      · 비움: 체형분석 점수·판정·측정점 · ROM/거북목/척추 균형의 점·각도
      · 남김: 사진(원본), 회원·회차·날짜 — 사진이 없는 기록은 건너뜀
-     · 되돌릴 수 없으므로 30분 안에 받은 백업이 있어야 실행된다 (계획서 2026-10-16) */
+     · 백업은 실행 조건이 아니다 (2026-10-16 사용자 결정 · ADR-014) */
   var WIPE_LS = "ayo_wipe_done";
   function wipeBodyPhotos(ph){   // 사진은 남기고 측정점만 비운 사진 묶음
     if(!ph || typeof ph !== "object") return null;
@@ -12814,14 +12814,22 @@
   // v274 백업은 이 작업의 조건이 아니다(사용자 결정) — 앱의 백업·내보내기·서버 저장 기능은 그대로 쓴다
   /* v277 "비웠는데 그대로" 를 눈으로 확인할 수 있게: 남은 측정 기록 수를 세어 보여주고,
      남은 것이 있으면 단추를 다시 쓸 수 있게 한다 (한 번에 다 못 비워도 이어서 끝낼 수 있다) */
+  /* CRITICAL: 아래 판단 함수는 wipeRun 이 '비울지 말지' 를 정하는 바로 그 기준이다.
+     세는 기준과 비우는 기준이 갈리면 남은 건수가 영원히 0 이 되지 않아
+     "비웠는데 그대로" 가 다시 생긴다 (v277 리뷰 지적). 한쪽만 고치지 말 것. */
   function wipeRecLeft(r){ return !!(r && (r.score != null || r.f || r.sd || (r.groups && r.groups.length) || r.thumbs)); }
-  function wipeRomLeft(r){ return !!(r && (r.pts != null || r.value != null)); }
+  function wipeRomHasPic(r){ return !!(r && (r.img || r.blob)); }
+  function wipeRomVal(r){ return !!(r && (r.pts != null || r.value != null)); }
+  function wipeRomTodo(r){ return wipeRomHasPic(r) && wipeRomVal(r); }   // 사진이 없으면 다시 잴 수 없어 그대로 둔다
+  function wipeRomNoPic(r){ return !wipeRomHasPic(r) && wipeRomVal(r); }
   function wipeLeftCount(R, L, aK){
-    return { rec: (R || []).filter(wipeRecLeft).length, rom: (L || []).filter(wipeRomLeft).length,
+    return { rec: (R || []).filter(wipeRecLeft).length, rom: (L || []).filter(wipeRomTodo).length,
+             noPic: (L || []).filter(wipeRomNoPic).length,
              admx: (aK || []).length, recAll: (R || []).length, romAll: (L || []).length };
   }
-  var wipeN = null;
+  var wipeN = null, wipeBusy = false;
   function wipeCount(){   // 기기 저장소를 실제로 다시 읽어 센다
+    if(wipeBusy) return Promise.resolve();
     $("admWipeSt").textContent = "남은 측정 기록을 확인하는 중…";
     $("btnWipeGo").disabled = true;
     return Promise.all([dbAll("records"), dbAll("roms"), idbKeys("blobs")]).then(function(a){
@@ -12834,31 +12842,32 @@
   }
   function wipePaint(){   // 글자만 다시 그림 (입력할 때마다 저장소를 다시 읽지 않게)
     var done = lsGet(WIPE_LS), word = ($("admWipeWord").value || "").trim() === "비우기", n = wipeN;
-    if(!n){ $("btnWipeGo").disabled = true; return; }
+    if(wipeBusy || !n){ $("btnWipeGo").disabled = true; return; }
     var left = n.rec + n.rom + n.admx;
+    var all = "이 기기에 있는 전체 기록: 체형분석 " + n.recAll + "건 · ROM·거북목·척추 균형 " + n.romAll + "건."
+      + (n.recAll + n.romAll ? "" : " 기록이 하나도 없어요 — 로그인해 서버에서 받은 뒤 다시 확인해 주세요.");
+    var noPic = n.noPic ? "\n사진이 없어 다시 잴 수 없는 ROM 기록 " + n.noPic + "건은 그대로 둡니다." : "";
     $("admWipeWord").disabled = !left;
     $("btnWipeGo").disabled = !left || !word;
-    if(!left){
-      $("admWipeSt").textContent = "비울 측정 기록이 없어요" + (done ? " (" + done + " 실행 완료)" : "")
-        + "\n이 기기에 있는 전체 기록: 체형분석 " + n.recAll + "건 · ROM·거북목·척추 균형 " + n.romAll + "건."
-        + (n.recAll + n.romAll ? "" : "\n이 기기에 기록이 하나도 없어요 — 로그인해 서버에서 받은 뒤 다시 확인해 주세요.");
-      return;
-    }
-    $("admWipeSt").textContent = "아직 남은 측정 기록: 체형분석 " + n.rec + "건 · ROM·거북목·척추 균형 " + n.rom + "건 · 관리자 수정 기록 " + n.admx + "건"
-      + (done ? "\n" + done + " 에 한 번 실행했어요 — 다시 누르면 남은 것부터 이어서 비웁니다." : "")
-      + (word ? "\n✓ 준비됐어요. ②를 누르면 바로 실행돼요." : "\n①에 비우기 라고 입력하면 실행 단추가 켜져요.");
+    $("admWipeSt").textContent = !left
+      ? "비울 측정 기록이 없어요" + (done ? " (" + done + " 실행 완료)" : "") + "\n" + all + noPic
+      : "아직 남은 측정 기록: 체형분석 " + n.rec + "건 · ROM·거북목·척추 균형 " + n.rom + "건 · 관리자 수정 기록 " + n.admx + "건"
+        + "\n" + all + noPic
+        + (done ? "\n" + done + " 에 한 번 실행했어요 — 다시 누르면 남은 것부터 이어서 비웁니다." : "")
+        + (word ? "\n✓ 준비됐어요. ②를 누르면 바로 실행돼요." : "\n①에 비우기 라고 입력하면 실행 단추가 켜져요.");
   }
   function wipeSync(){ return wipeCount(); }
   function wipeRun(){
     var n = { rec: 0, rom: 0, admx: 0, skip: 0, fail: 0 }, out = $("admWipeOut");
     var say = function(t){ out.hidden = false; out.textContent = t; };
+    wipeBusy = true; $("admWipeWord").disabled = true; $("btnWipeGo").disabled = true;   // v277 실행 중 재진입 금지
     say("비우는 중… 창을 닫지 마세요.");
     var seq = function(L, job){ return L.reduce(function(p, x){ return p.then(function(){ return job(x); }); }, Promise.resolve()); };
     return dbAll("records").then(function(R){
       var iR = 0;
       return seq(R, function(r){
         say("체형분석 " + (++iR) + "/" + R.length + " 비우는 중… 창을 닫지 마세요.");
-        var must = !(r.score == null && !r.f && !r.sd);   // v275 사진 묶음을 고쳤으면 기록도 반드시 같이 써야 blobAt 이 맞는다
+        var must = wipeRecLeft(r);   // v277 남은 건수를 세는 기준과 같은 함수 · 사진 묶음을 고쳤으면 기록도 반드시 같이 써야 blobAt 이 맞는다
         return rawGet("blobs", "records:" + r.id).then(function(b){
           var w = b && wipeBodyPhotos(b.v);
           if(!w || !w.n) return;
@@ -12866,7 +12875,7 @@
           return rawPut("blobs", { id: b.id, v: w.v, at: at }).then(function(){ r = Object.assign({}, r, { blobAt: at }); must = true; });
         }).then(function(){
           if(!must){ n.skip++; return; }
-          n.rec++; return rawPut("records", wipeBodyRec(r));
+          return rawPut("records", wipeBodyRec(r)).then(function(){ n.rec++; });   // v277 저장이 끝난 뒤에 센다
         }).catch(function(e){ console.warn("[wipe rec]", e); n.fail++; });
       });
     }).then(function(){
@@ -12874,9 +12883,8 @@
         var iL = 0;
         return seq(L, function(r){
           say("ROM·거북목·척추 균형 " + (++iL) + "/" + L.length + " 비우는 중… 창을 닫지 마세요.");
-          if(!r.img && !r.blob){ n.skip++; return; }            // 사진이 없는 예전 기록은 그대로 둔다
-          if(r.pts == null && r.value == null){ n.skip++; return; }
-          n.rom++; return rawPut("roms", wipeRomRec(r)).catch(function(e){ console.warn("[wipe rom]", e); n.rom--; n.fail++; });
+          if(!wipeRomTodo(r)){ n.skip++; return; }   // v277 사진이 없거나 이미 비어 있음 — 세는 기준과 같은 함수
+          return rawPut("roms", wipeRomRec(r)).then(function(){ n.rom++; }).catch(function(e){ console.warn("[wipe rom]", e); n.fail++; });
         });
       });
     }).then(function(){
@@ -12888,8 +12896,14 @@
     }).then(function(){
       lsSet(WIPE_LS, new Date().toLocaleDateString("ko-KR"));
       romCache.all = null; romRenderCache = {}; laCache = null;
-      // v277 비운 결과가 목록·리포트 화면에 바로 보이도록 다시 그린다 (옛 숫자가 남아 보이던 원인)
-      try{ syncRefresh(true); }catch(e){ console.warn("[wipe refresh]", e); }
+      // v277 비운 결과가 지금 보던 화면에 바로 보이도록 다시 그린다 (옛 숫자가 남아 보이던 원인)
+      //      회원 상세·리포트를 보던 중이면 그 화면만 — syncRefresh(true) 는 목록으로 튕긴다
+      try{
+        if(state.view === "members" && mbCurrent) mbOpenDetail(mbCurrent.id);
+        else if(state.view === "report") renderReport();
+        else syncRefresh(true);
+      }catch(e){ console.warn("[wipe refresh]", e); }
+      wipeBusy = false;
       return wipeCount().then(function(){
         var left = wipeN ? wipeN.rec + wipeN.rom + wipeN.admx : -1;
         say("끝났어요.\n· 체형분석 " + n.rec + "건 · ROM·거북목·척추 균형 " + n.rom + "건의 측정을 비웠어요."
@@ -12897,21 +12911,23 @@
           + "\n· 사진이 없거나 이미 비어 있어 건너뛴 기록 " + n.skip + "건."
           + (n.fail ? "\n· 저장에 실패해 그대로 남은 기록 " + n.fail + "건 — ②를 다시 누르면 이어서 비웁니다." : "")
           + (left === 0 ? "\n· 남은 측정 기록 0건 — 모두 비워졌어요."
-             : left > 0 ? "\n· 아직 남은 측정 기록 " + left + "건 — ②를 다시 누르면 이어서 비웁니다." : "")
+             : left > 0 ? "\n· 아직 남은 측정 기록 " + left + "건 — ②를 다시 누르면 이어서 비웁니다."
+             : "\n· 남은 건수를 확인하지 못했어요 — 관리자 창을 닫고 다시 열어 확인해 주세요.")
           + "\n· 사진은 그대로예요. 기록을 열면 최신 측정법으로 자동 인식이 돌아가요.");
         admxInfo();
-        toast(left === 0 ? "측정을 비웠어요. 사진은 그대로예요." : "일부가 남았어요. ②를 다시 눌러 주세요.");
+        toast(left === 0 ? "측정을 비웠어요. 사진은 그대로예요."
+          : left > 0 ? "일부가 남았어요. ②를 다시 눌러 주세요." : "비우기는 끝났어요. 창을 다시 열어 남은 건수를 확인해 주세요.");
       });
-    }).catch(function(e){ console.warn("[wipe]", e); say("비우는 중 문제가 생겼어요. 다시 실행하면 남은 기록부터 이어서 비웁니다."); wipeCount(); });
+    }).catch(function(e){ wipeBusy = false; console.warn("[wipe]", e); say("비우는 중 문제가 생겼어요. 다시 실행하면 남은 기록부터 이어서 비웁니다."); wipeCount(); });
   }
   $("btnWipeBk").addEventListener("click", function(){ bkExportNow().then(wipeCount).catch(function(){ toast("백업을 만들지 못했어요."); }); });
   $("admWipeWord").addEventListener("input", wipePaint);
   $("btnWipeGo").addEventListener("click", function(){
-    if($("btnWipeGo").disabled) return;
+    if(wipeBusy || $("btnWipeGo").disabled) return;
     if(($("admWipeWord").value || "").trim() !== "비우기"){ wipePaint(); return; }   // v275 누르는 순간 다시 확인
     if(!wipeN || (wipeN.rec + wipeN.rom + wipeN.admx) === 0){ wipeCount(); return; }   // v277 남은 것이 없으면 실행하지 않음
     if(!window.confirm("정말 비울까요?\n\n· 모든 회원의 측정점·각도·점수가 사라집니다\n· 사진은 그대로 남습니다\n· 되돌릴 수 없습니다")) return;
-    $("btnWipeGo").disabled = true; wipeRun();
+    wipeRun();
   });
 
   /* ===================== v121 관리자: 정확도 채점 =====================

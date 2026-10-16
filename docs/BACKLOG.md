@@ -5,6 +5,9 @@
 
 ## 지금 (이번 버전)
 - [ ] **Play Console · 데이터 보안(Data safety) 고치기** — v287~v289 에서 '개선·추가 기능 요청' 이 방침에 들어감. 수집 항목에 추가 필요(선택 수집): 개인 정보 > 이름·이메일 주소·전화번호, 메시지 > 기타 메시지(요청 내용), 앱 정보 및 성능 > 기타(앱 버전·기기 정보). 목적: 개발자 커뮤니케이션. 전송 중 암호화: 예. FormSubmit 은 운영자 대신 처리하는 서비스라 '공유' 아닌 '수집' 으로 보는 것이 Google 기준(확인 필요). 이 앱 화면 코드 변경은 없음
+- [ ] 개인정보처리방침에 **Google Play 구독 결제**가 없다 — 구독 확인 때 구매 토큰·구독 상태가 Google LLC(미국, androidpublisher API)로 간다(`supabase/functions/play-verify`). 2번(구독 정보)·6번(Google Play 결제·확인)에 넣고, 7번 국외 이전에 넣어야 하는지는 전문가 확인 (v289 privacy-guard)
+- [ ] 기능 요청 화면에 '보내면 FormSubmit·Gmail(국외)을 거쳐 전달돼요 · 개인정보처리방침 7번' 안내나 동의 체크칸을 둘지 — 선택 기능이라 방침 공개만으로 충분한지 전문가 확인 (v289 privacy-guard)
+- [ ] 방침 7번 받는 곳 연락처가 사이트 주소·정책 페이지뿐이다 — 바로 연락할 수 있는 메일·문의 양식 주소로 바꾸기, FormSubmit 보유 기간 원문 확인 (v289 privacy-guard)
 - [ ] **Play Console · 스토어 등록정보 연락처 이메일** — 앱·방침 문의 메일을 ayobodyyo@gmail.com 으로 바꿈(v287). 스토어에 보이는 개발자 이메일이 예전 주소면 같이 바꾸기
 - [ ] **Play Console · 개인정보처리방침 URL 확인** — https://ayoajeyo.github.io/posture-check/privacy.html 그대로인지(바꿀 필요 없음, 확인만)
 

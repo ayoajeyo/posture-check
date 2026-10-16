@@ -341,7 +341,7 @@
   .rhist td.num{font-family:var(--font-num);} .rhist td .none{color:var(--ink-soft);} .rhist tr:last-child td{border-bottom:0;}
   /* 08 판정 기준 · 바닥글 */
   .rcrit{display:grid; gap:10px; font-size:13px;} .rcrit div{display:flex; gap:10px; align-items:baseline; min-width:0;} .rcrit b{flex:none; width:96px; font-weight:600;} .rcrit span{color:var(--ink-soft); line-height:1.5;}
-  .rsign{display:grid; grid-template-columns:1fr 1fr; gap:16px;} .rsign div{border-top:1px solid var(--line); padding-top:8px; font-size:13px; color:var(--ink-soft); display:flex; justify-content:space-between; align-items:baseline; min-height:28px;} .rsign div b{color:var(--ink); font-weight:600;}
+  .rsign{display:grid; grid-template-columns:1fr 1fr; gap:16px;} .rsign div{border-top:1px solid var(--line); padding-top:8px; font-size:13px; color:var(--ink-soft); display:flex; justify-content:space-between; align-items:baseline; min-height:28px;} .rsign div b{color:var(--ink); font-weight:600;} .rsign-img{height:28px; width:auto; max-width:120px; display:block;}
   .rdoc-ft{padding-top:12px; border-top:1px solid var(--line); display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px; font-size:13px; color:var(--ink-soft);}
   .rdoc-ft .c{min-width:0; flex-basis:100%;} .rdoc-ft .mb{white-space:nowrap; margin-left:auto;}
   .rdoc .rp-x{font-size:13px; min-width:32px; min-height:32px; margin:-8px 0 -8px 2px;}
@@ -6178,9 +6178,12 @@
         yy += crH[i / 2] + 12;
       }
       yy += 8; rRect(g, x0, yy, RCW, warnH, RC.s2); rRect(g, x0, yy, 3, warnH, RC.line); rPara(g, WARN, x0 + 16, yy + 20, RCW - 32, { s: 13.5, lh: 21 });
-      yy += warnH + 16; var m = state.member, sw = (RCW - 16) / 2;
+      yy += warnH + 16; var m = state.member, sw = (RCW - 16) / 2;   // 서명 높이만큼 아래 여백은 h8 의 40 에 포함
       rLine(g, x0, yy, x0 + sw, yy, "#D5D9E0"); rLine(g, x0 + sw + 16, yy, RLW - RPAD, yy, "#D5D9E0");
-      rT(g, "담당", x0, yy + 20, { s: 12.5, c: RC.muted }); rT(g, m && m.staff ? m.staff : "", x0 + sw, yy + 20, { s: 12.5, w: 600, a: "right" }); rT(g, "회원 확인", x0 + sw + 16, yy + 20, { s: 12.5, c: RC.muted });
+      rT(g, "담당", x0, yy + 20, { s: 12.5, c: RC.muted }); rT(g, m && m.staff ? m.staff : "", x0 + sw, yy + 20, { s: 12.5, w: 600, a: "right" });
+      var sImg = m ? signImgOf(m) : null;   // v252 촬영·보관 동의 서명 → '회원 확인' 칸
+      rT(g, "회원 확인" + (sImg ? " · 동의 서명" : ""), x0 + sw + 16, yy + 20, { s: 12.5, c: RC.muted });
+      if(sImg){ var sh = 28, sw2 = Math.min(120, sh * sImg.naturalWidth / sImg.naturalHeight); g.drawImage(sImg, RLW - RPAD - sw2, yy + 4, sw2, sw2 * sImg.naturalHeight / sImg.naturalWidth); }
     } });
     return B;
   }
@@ -8149,7 +8152,8 @@
     var cells = [["측정 회차", cur ? cur.n + "차 · " + cur.day : "–"], ["비교 기준", doc.base ? doc.base.n + "차 · " + doc.base.day : "첫 측정"]];
     if(c.name) cells.push(["측정 센터", c.name]); if(m && m.staff) cells.push(["담당", m.staff]);
     $("rdMeta").innerHTML = cells.map(function(q){ return '<div><small>' + q[0] + '</small><b>' + esc(q[1]) + '</b></div>'; }).join("");
-    $("rdSign").innerHTML = '<div><span>담당</span><b>' + (m && m.staff ? esc(m.staff) : '') + '</b></div><div><span>회원 확인</span><b></b></div>';
+    var sg = m && m.consentSign ? safeSrc(m.consentSign) : "";   // v252 촬영·보관 동의 서명 → '회원 확인' 칸
+    $("rdSign").innerHTML = '<div><span>담당</span><b>' + (m && m.staff ? esc(m.staff) : '') + '</b></div><div><span>회원 확인' + (sg ? ' · 동의 서명' : '') + '</span><b>' + (sg ? '<img class="rsign-img" src="' + sg + '" alt="회원 동의 서명">' : '') + '</b></div>';
   }
   function rdFoot(){ var c = rdCenter(); $("rdFoot").innerHTML = '<span class="c">' + esc([c.name, c.contact].filter(Boolean).join(" · ")) + '</span><span class="mb">made by AYOAJEYO</span>'; }
   function rdNumber(){ var n = 0; [].forEach.call($("rdBody").querySelectorAll(".rsec"), function(s){ if(s.hidden) return; n++; var e = s.querySelector("h2 .no"); if(e) e.textContent = (n < 10 ? "0" : "") + n; }); }

@@ -63,3 +63,15 @@ test("정면만 찍은 기록은 측면 회차가 없다 (비운 뒤에도)", ()
   assert.equal(PR.a.f, 1);
   assert.equal(PR.a.s, null);
 });
+
+test("이전 기록에 측면만 나중에 추가해 정면·측면 번호가 엇갈려도 저장된 번호를 바꾸지 않는다 (v126)", () => {
+  const PR = poseRounds([body("a", D(9), { rf: 1, rs: 2 }), body("b", D(11), { rf: 2, rs: 1 })]);
+  assert.deepEqual([PR.a.f, PR.a.s, PR.b.f, PR.b.s], [1, 2, 2, 1]);
+});
+
+test("겹친 번호 뒤에 저장된 기록도 시간 순서대로 이어 센다 (예전 앱이 만든 번호)", () => {
+  // 1차 비움(rf1) → 2차를 다시 재며 rf1 로 덮어씀 → 그 뒤 새 3차는 _next=2 를 받음
+  const PR = poseRounds([wiped("b1", D(9), { rf: 1, rs: 1 }), body("b2", D(11), { rf: 1, rs: 1 }), body("b3", D(13), { rf: 2, rs: 2 })]);
+  assert.deepEqual([PR.b1.f, PR.b2.f, PR.b3.f], [1, 2, 3]);
+  assert.deepEqual([PR.b1.s, PR.b2.s, PR.b3.s], [1, 2, 3]);
+});

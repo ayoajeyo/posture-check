@@ -7814,7 +7814,7 @@
     if(!state.member){ bar.hidden = true; box.hidden = true; return; }
     var side = state.mode === "side", k = side ? "s" : "f", fk = side ? "sd" : "f", nm = side ? "측면" : "정면";
     var RR = state.rnd || { f: 1, s: 1 }, n = RR[k] || 1, rs = (state.bodyRecs || []).filter(function(r){ return r.memberId === state.member.id; }), PR = state.bodyPR || {};
-    var mine = rs.filter(function(r){ return r[fk] && PR[r.id] && PR[r.id][k]; }), mx = mine.reduce(function(a, r){ return Math.max(a, PR[r.id][k]); }, 0);
+    var mine = rs.filter(function(r){ return (r[fk] || r.wipedAt) && PR[r.id] && PR[r.id][k]; }), mx = mine.reduce(function(a, r){ return Math.max(a, PR[r.id][k]); }, 0);   // v291 비운 기록도 회차 버튼으로 열 수 있게
     var curRec = state.sessionId ? rs.find(function(r){ return r.id === state.sessionId; }) : null, has = !!(curRec && curRec[fk]);
     bar.hidden = false;
     $("bodyRoundNo").textContent = n + "차";
@@ -7829,7 +7829,7 @@
     var html = "";
     for(var q = 1; q <= top; q++){
       var R = mine.filter(function(r){ return PR[r.id][k] === q; }), rec = R[R.length - 1];
-      var sub = rec ? fmtDate(rec.at).slice(5, 10).replace("-", ".") + (rec.score != null ? " · " + rec.score + "점" : "") : "새 회차";
+      var sub = rec ? fmtDate(rec.at).slice(5, 10).replace("-", ".") + (rec.score != null ? " · " + rec.score + "점" : rec[fk] ? "" : " · 측정 전") : "새 회차";
       html += '<button type="button" data-rn="' + q + '"' + (rec ? ' data-rid="' + rec.id + '"' : "") + ' aria-pressed="' + (q === n) + '"' + (rec ? "" : ' class="new"') + '><b>' + q + '차</b><em>' + sub + '</em></button>';
     }
     box.innerHTML = html;
@@ -7876,6 +7876,10 @@
     dbAll("records").then(function(all){
       var old = all.find(function(x){ return x.id === rec.id; });
       if(old){ rec.at = old.at; rec.editedAt = Date.now(); }
+      if(old && old.wipedAt){   // v291 비운 기록을 한쪽만 다시 재도, 저장하지 않은 쪽의 회차 번호는 남김 (겹친 번호를 바로잡은 값)
+        var P0 = (state.bodyPR || {})[rec.id] || {};
+        if(!rec.rf && P0.f) rec.rf = P0.f; if(!rec.rs && P0.s) rec.rs = P0.s;
+      }
       return dbPut("records", rec);
     }).then(function(){
       state.savedSig = sig;

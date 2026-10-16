@@ -12,7 +12,10 @@
       "Bash(npm run lint:*)",
       "Bash(npm run build:*)",
       "Bash(python -m pytest:*)",
-      "Bash(python scripts/execute.py:*)"
+      "Bash(python scripts/execute.py:*)",
+      "Bash(python scripts/screenshot.py:*)",
+      "Bash(python scripts/app_capture.py shot:*)",
+      "Bash(python scripts/app_capture.py status:*)"
     ],
     "deny": [
       "Bash(rm -rf:*)",

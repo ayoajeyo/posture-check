@@ -181,7 +181,7 @@ class StepExecutor:
     # --- guardrails & context ---
 
     # 매 step 프롬프트에 넣지 않는 문서. 작업 규칙이 아니라 운영·참고용이라 넣으면 길이만 늘어난다.
-    SKIP_DOCS = {"BACKLOG", "CHANGELOG", "GLOSSARY", "RELEASE", "PRIVACY"}
+    SKIP_DOCS = {"BACKLOG", "CHANGELOG", "GLOSSARY", "RELEASE", "PRIVACY", "HANDOFF"}
 
     def _load_guardrails(self) -> str:
         sections = []

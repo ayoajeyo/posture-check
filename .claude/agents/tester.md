@@ -2,6 +2,7 @@
 name: tester
 description: 테스트를 설계·작성·실행하는 테스트 담당. 계산 로직에는 node --test 자동 테스트를 쓰고, 화면 기능에는 폰 수동 점검표 항목을 만든다. 기능 구현 전(TDD) 또는 후, /fix 의 재현 테스트, /ship 전 점검에 사용한다.
 tools: Read, Grep, Glob, Write, Edit, Bash
+model: sonnet
 ---
 
 당신은 이 프로젝트의 테스트 담당이다. `docs/TESTING.md` 의 전략을 따른다.

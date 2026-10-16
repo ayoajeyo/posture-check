@@ -8693,7 +8693,12 @@
     $("romMan").hidden = J.k === "scol" || J.k === "fhp";   // v164 거북목·척추 균형은 탭 화면에 촬영 매뉴얼이 있으므로 측정 화면에선 없앰 (ROM만 유지)
     $("btnRomGuide").hidden = !ROM_GD[J.k + "|" + mv.k];
     if(!$("romTip").dataset.def) $("romTip").dataset.def = $("romTip").innerHTML;   // v244 배측굴곡(점 4개) 안내
-    $("romTip").innerHTML = mv.kind === "aux" ? "✋ <b>점</b>을 끌면 위치 수정(확대경 표시) · <b>선</b>을 끌면 선 전체 이동 · 점을 누른 뒤 ◀▲▼▶로 미세조정. 측정점 4개: 주황 = 외측 복사뼈, 분홍 = 비골두(①선), 하늘색 = 발뒤꿈치, 초록 = 제5 MTP(②선) · <b>파란 점선</b> = 자동 보조선." : $("romTip").dataset.def;
+    if(mv.kind === "aux"){   // v273 동작에 맞는 점 이름으로 (발목 전용 문구였음)
+      var tp = mv.pts || [], tn = function(i){ return ROM_PART[tp[i]] || ROM_PTNAME[tp[i]] || ""; }, tvf = !!mv.vfix;
+      $("romTip").innerHTML = "✋ <b>점</b>을 끌면 위치 수정(확대경 표시) · <b>선</b>을 끌면 선 전체 이동 · 점을 누른 뒤 ◀▲▼▶로 미세조정. 측정점 " + (tvf ? "3개" : "4개") +
+        ": 주황 = " + tn(0) + (tvf ? "(①선 시작 · 보조선이 지나는 점)" : "") + (tvf ? "" : ", 분홍 = " + tn(1) + "(①선)") + ", 하늘색 = " + tn(2) + ", 초록 = " + tn(3) + "(②선)" +
+        (tvf ? " · <b>①선</b>은 " + tn(0) + "에서 화면 위로 자동" : "") + " · <b>파란 점선</b> = 자동 보조선.";
+    } else $("romTip").innerHTML = $("romTip").dataset.def;
     $("romEmptyTip").textContent = "[측정]을 누르면 후면 카메라가 켜져요. 수평계를 초록으로 맞추고, 측정할 쪽 팔·다리가 카메라를 향하게 해서 관절 점이 초록일 때 촬영하세요.";
     romCv.hidden = true; $("romEmpty").hidden = false; $("romLive").hidden = true; $("romTip").hidden = true; $("romQ").hidden = true;
     ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = true; });
@@ -8763,10 +8768,11 @@
   // 필요한 두 점의 신뢰도 (가려진 점은 visibility가 낮게 나옴)
   function romQual(L, side){
     if(!L) return 0;
-    var pn = romPts(), a = romGet(pn[0], L, side), b = romGet(pn[1], L, side);
+    var pn = romPts(), vfq = !!(romS && romS.mv && romMove() && romMove().vfix);   // v273 목: pn[1]="vup"(자동)이라 점수를 매길 수 없음
+    var a = romGet(pn[0], L, side), b = romGet(vfq ? pn[2] : pn[1], L, side);
     if(!romIn(a) || !romIn(b)) return 0;
-    var q = (a.v + b.v) / 2;
-    if(romIsLm(pn[2])){ var c = romGet(pn[2], L, side); q = romIn(c) ? (a.v + b.v + c.v) / 3 : q * 0.8; }
+    var q = (a.v + b.v) / 2, c3 = vfq ? pn[3] : pn[2];
+    if(romIsLm(c3)){ var c = romGet(c3, L, side); q = romIn(c) ? (a.v + b.v + c.v) / 3 : q * 0.8; }
     if(Math.hypot(a.x - b.x, a.y - b.y) < Math.max(romS.w, romS.h) * (romJoint().k === "neck" ? 0.01 : 0.04)) q *= 0.3;   // 목(귀–눈)은 원래 짧음
     return q;
   }
@@ -9081,6 +9087,7 @@
   function romFixVUp(){
     var mv = romS && romS.mv ? romMove() : null;
     if(!mv || !mv.vfix || !romS.pts || !romS.pts[0]) return;
+    if(romAuxLegacy(mv) || romS.pts.length < 4) return;   // v273 옛 기록(점 3개)은 그대로 — pts[1]이 정수리라 덮어쓰면 각도가 0°가 된다
     romS.pts[1] = { x: romS.pts[0].x, y: 0 };
   }
   function romDraw(){
@@ -9261,7 +9268,8 @@
     if(sel.t === "ref") return "기준선";
     if(sel.t === "seg" && romKind() === "tilt") return "두 점 연결선";
     if(sel.t === "seg" && romKind() === "cva") return "C7 – 귀 이주 선";
-    if(sel.t === "seg" && romKind() === "aux") return sel.a === 2 ? "②선 (발뒤꿈치 – 제5 MTP)" : "①선 (외측 복사뼈 – 비골두)";
+    if(sel.t === "seg" && romKind() === "aux"){ var sp = romPts(), sn = function(i){ return ROM_PART[sp[i]] || ROM_PTNAME[sp[i]] || ""; };
+      return sel.a === 2 ? "②선 (" + sn(2) + " – " + sn(3) + ")" : "①선 (" + sn(0) + " – " + sn(1) + ")"; }
     if(sel.t === "seg") return sel.a === 2 || sel.b === 2 ? "측정선 1 (기준)" : "측정선 2";
     return ROM_PART[romPts()[sel.i]] || "점";
   }
@@ -9517,7 +9525,10 @@
       var c = document.createElement("canvas"); c.width = w; c.height = h; var g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(img, 0, 0, w, h);
       var px = g.getImageData(0, 0, w, h).data, n = w * h, i, x, y;
       var q = P.map(function(p){ return { x: p.x * k, y: p.y * k }; });
-      var segs = [[q[0], q[1]]]; if(q.length > 2 && (kind === "ext" || kind === "d90")) segs.push([q[0], q[2]]); if(kind === "aux" && q[3]) segs.push([q[2], q[3]], [q[0], q[2]]);
+      // v273 목: ①선은 목관절에서 화면 위로 가는 자동 세로선이라 대부분 배경(벽) → 사람 색을 고르는 표본에서 뺀다
+      var vfs = !!(q[0] && q[1] && Math.abs(q[1].x - q[0].x) < 1 && q[1].y <= 1);
+      var segs = vfs ? [] : [[q[0], q[1]]]; if(q.length > 2 && (kind === "ext" || kind === "d90")) segs.push([q[0], q[2]]); if(kind === "aux" && q[3]) segs.push([q[2], q[3]], [q[0], q[2]]);
+      if(!segs.length) segs = [[q[0], q[1]]];
       var Lm = 0; segs.forEach(function(s){ Lm = Math.max(Lm, Math.hypot(s[1].x - s[0].x, s[1].y - s[0].y)); }); if(Lm < 6) return null;
       // 끝을 조금 늘림 (발끝·무릎 위 등)
       var segs0 = segs;   // v134 원래 선분(심지) · 바깥 끝은 길이의 35%까지 늘려 발·발가락처럼 점 너머 부위도 색으로 찾음
@@ -9571,7 +9582,9 @@
     var c = document.createElement("canvas"); c.width = w; c.height = h; var g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(img, 0, 0, w, h);
     var px = g.getImageData(0, 0, w, h).data;
     var q = P.map(function(p){ return p ? { x: p.x * k, y: p.y * k } : null; });
-    var segs = [[q[0], q[1]]]; if(q[2] && (kind === "ext" || kind === "d90")) segs.push([q[0], q[2]]); if(kind === "aux" && q[2] && q[3]) segs.push([q[2], q[3]], [q[0], q[2]]);
+    var vfs2 = !!(q[0] && q[1] && Math.abs(q[1].x - q[0].x) < 1 && q[1].y <= 1);   // v273 목의 자동 세로선은 배경이라 제외
+    var segs = vfs2 ? [] : [[q[0], q[1]]]; if(q[2] && (kind === "ext" || kind === "d90")) segs.push([q[0], q[2]]); if(kind === "aux" && q[2] && q[3]) segs.push([q[2], q[3]], [q[0], q[2]]);
+    if(!segs.length) segs = [[q[0], q[1]]];
     var Lm = 0; segs.forEach(function(s2){ Lm = Math.max(Lm, Math.hypot(s2[1].x - s2[0].x, s2[1].y - s2[0].y)); });
     var near = Math.max(3, Lm * 0.16), core = Math.max(2, Lm * 0.05);
     var dseg = function(X, Y){ var best = 1e9; segs.forEach(function(s2){ var ax = s2[0].x, ay = s2[0].y, bx = s2[1].x - ax, by = s2[1].y - ay, l2 = bx * bx + by * by || 1, t = Math.max(0, Math.min(1, ((X - ax) * bx + (Y - ay) * by) / l2)), dx = X - ax - t * bx, dy = Y - ay - t * by, d = Math.sqrt(dx * dx + dy * dy); if(d < best) best = d; }); return best; };
@@ -11042,17 +11055,20 @@
       return;
     }
     if(romKind() === "aux"){   // v243 배측굴곡: ①선 · ②선 · 파란 보조선 미리보기
-      var ap = romPts(), Q = ap.map(P), okQ = Q.map(function(p){ return p.in && p.v >= 0.4; });
+      var ap = romPts(), vfq = !!(romMove() && romMove().vfix), Q = ap.map(P), okQ = Q.map(function(p){ return p.in && p.v >= 0.4; });
+      if(vfq && okQ[0]){ Q[1] = { x: Q[0].x, y: 0, in: true, v: Q[0].v }; okQ[1] = true; }   // v273 목: ①선 끝점은 화면 위쪽 자동
       var gq = (okQ[0] && okQ[1] && okQ[2] && okQ[3]) ? romAuxGeo(Q) : null;
       if(gq){ g.save(); g.setLineDash([12, 8]); g.strokeStyle = "#2F6BFF"; g.lineWidth = 4; var LLq = Math.hypot(vw, vh); g.beginPath(); g.moveTo(Q[0].x - gq.u2.x * LLq, Q[0].y - gq.u2.y * LLq); g.lineTo(Q[0].x + gq.u2.x * LLq, Q[0].y + gq.u2.y * LLq); g.stroke(); g.restore(); }
       if(okQ[0] && okQ[1]){ g.strokeStyle = ROM_COL[1]; g.lineWidth = 5; g.beginPath(); g.moveTo(Q[0].x, Q[0].y); g.lineTo(Q[1].x, Q[1].y); g.stroke(); }
       if(okQ[2] && okQ[3]){ g.strokeStyle = ROM_COL[3]; g.lineWidth = 5; g.beginPath(); g.moveTo(Q[2].x, Q[2].y); g.lineTo(Q[3].x, Q[3].y); g.stroke(); }
       g.font = "700 12px 'IBM Plex Sans KR', sans-serif"; g.textBaseline = "middle";
-      Q.forEach(function(p, i){ if(!p.in || p.v < 0.12) return; g.fillStyle = ROM_COL[i]; g.strokeStyle = vc(p.v); g.lineWidth = 3.5; g.beginPath(); g.arc(p.x, p.y, 9, 0, Math.PI * 2); g.fill(); g.stroke();
+      Q.forEach(function(p, i){ if(vfq && i === 1) return; if(!p.in || p.v < 0.12) return; g.fillStyle = ROM_COL[i]; g.strokeStyle = vc(p.v); g.lineWidth = 3.5; g.beginPath(); g.arc(p.x, p.y, 9, 0, Math.PI * 2); g.fill(); g.stroke();
         var t = ROM_PART[ap[i]], tw = g.measureText(t).width + 10, tx = p.x - 14 - tw; if(tx < 0) tx = p.x + 14; g.fillStyle = "rgba(13,21,40,.72)"; rr(g, tx, p.y - 10, tw, 20, 6); g.fill(); g.fillStyle = ROM_COL[i]; g.fillText(t, tx + 5, p.y + 0.5); });
       g.textBaseline = "alphabetic";
-      if(gq){ romCam.seen++; chip.className = "rom-pts good"; chip.textContent = "✓ 외측 복사뼈 · 비골두 · 발뒤꿈치 · 제5 MTP 인식됨 · 현재 약 " + gq.val + "° · 촬영하세요"; }
-      else { romCam.seen = 0; var missQ = ap.filter(function(n, i){ return !okQ[i]; }).map(function(n){ return ROM_PART[n]; }).join("·"); chip.className = "rom-pts warn"; chip.textContent = missQ + "이(가) 잘 안 보여요 · " + (rom.side === "R" ? "우측" : "좌측") + " 발목 바깥쪽이 카메라를 향하게, 무릎부터 발끝까지 들어오게"; }
+      if(gq){ romCam.seen++; chip.className = "rom-pts good";
+        chip.textContent = "✓ " + ap.filter(function(n, i){ return !(vfq && i === 1); }).map(function(n){ return ROM_PART[n] || n; }).join(" · ") + " 인식됨 · 현재 약 " + gq.val + "° · 촬영하세요"; }
+      else { romCam.seen = 0; var missQ = ap.filter(function(n, i){ return !okQ[i] && !(vfq && i === 1); }).map(function(n){ return ROM_PART[n]; }).join("·"); chip.className = "rom-pts warn";
+        chip.textContent = missQ + "이(가) 잘 안 보여요 · " + (vfq ? (romMove().k === "lat" ? "정면에서 얼굴과 목이" : "옆모습으로 얼굴과 목이") + " 화면에 들어오게" : (rom.side === "R" ? "우측" : "좌측") + " 발목 바깥쪽이 카메라를 향하게, 무릎부터 발끝까지 들어오게"); }
       return;
     }
     // v69: 측정하는 3점·2선만 표시
@@ -13577,10 +13593,10 @@
     var src = "guide/rom/" + J.k + "_" + romGdSide + "_" + mv.k + ".jpg?v=" + (ROM_GD_V[J.k] || "220");
     $("ptGuideTitle").textContent = "측정가이드 · " + J.n + " " + mv.n;
     var aux = mv.kind === "aux";
-    $("ptGuideSub").textContent = (lr ? (romGdSide === "R" ? "우측" : "좌측") + " 예시 · " : "") + (aux ? "측정점 " + hand + "개" + (hand < 4 ? "(+ 자동 " + (4 - hand) + "개)" : "") + " · 측정선 2개 + 파란 보조선" : "측정점 3개 · 측정선 2개");
     var pts = aux ? mv.pts : romPts(), nm = function(i){ return ROM_PART[pts[i]] || ROM_PTNAME[pts[i]] || ""; };
     var off0 = aux ? ((mv.off != null) ? mv.off : 90) : 0;   // v273 발목은 직각(90°)이 0°, 목은 바로 선 자세가 0°
-    var hand = aux ? mv.pts.filter(function(k){ return k !== "vup"; }).length : 0;   // 손으로 찍는 점 수
+    var hand = aux ? mv.pts.filter(function(k){ return k !== "vup"; }).length : 0;   // 손으로 찍는 점 수 (자동 점 제외)
+    $("ptGuideSub").textContent = (lr ? (romGdSide === "R" ? "우측" : "좌측") + " 예시 · " : "") + (aux ? "측정점 " + hand + "개" + (hand < 4 ? "(+ 자동 " + (4 - hand) + "개)" : "") + " · 측정선 2개 + 파란 보조선" : "측정점 3개 · 측정선 2개");
     if(aux){
       $("ptGuideBody").innerHTML =
         '<div class="pg-pose"><b>측정 자세</b> · ' + mv.guide + '</div>' +

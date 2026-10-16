@@ -113,3 +113,26 @@ test("목 세 동작이 모두 보조선 방식 · 정상값 45°", () => {
     assert.match(line, new RegExp(`pts:\\["neckj","vup","${p2}","${p3}"\\]`), move + ": 측정점");
   }
 });
+
+// v273 회귀: 옛 기록(점 3개)에 romFixVUp 이 손대면 정수리 점이 세로선으로 덮여 각도가 0° 가 된다
+const ctx3 = Object.assign({}, ctx2);
+ctx3.romS = { mv: "flex", pts: null };
+ctx3.romJoint = () => ctx2.NECK_JOINT;
+ctx3.romMove = () => ctx2.NECK_FLEX;
+vm.createContext(ctx3);
+vm.runInContext(grab("  function romAuxLegacy(mv){", "  function romIsLm(n){"), ctx3);
+vm.runInContext(grab("  function romFixVUp(){", "  function romDraw(){"), ctx3);
+
+test("옛 기록(점 3개): 자동 세로선 고정이 정수리 점을 건드리지 않는다", () => {
+  ctx3.romS.pts = [{ x: 100, y: 400 }, { x: 150, y: 120 }, { x: 100, y: 50 }];   // [1] = 정수리
+  vm.runInContext("romFixVUp()", ctx3);
+  assert.deepEqual(ctx3.romS.pts[1], { x: 150, y: 120 }, "정수리 점이 덮어써짐");
+});
+
+test("새 기록(점 4개): ①선 끝점이 목관절 바로 위로 고정된다", () => {
+  ctx3.romS.pts = [{ x: 100, y: 400 }, { x: 999, y: 999 }, { x: 120, y: 300 }, { x: 120, y: 200 }];
+  vm.runInContext("romFixVUp()", ctx3);
+  // vm 안에서 만든 객체라 deepEqual 은 프로토타입까지 보므로 값으로 비교
+  assert.equal(ctx3.romS.pts[1].x, 100, "①선 끝점 x = 목관절 x");
+  assert.equal(ctx3.romS.pts[1].y, 0, "①선 끝점 y = 화면 맨 위");
+});

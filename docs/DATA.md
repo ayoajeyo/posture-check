@@ -39,6 +39,8 @@
 | 프로그램 | `programs.{name, desc, exIds}` | | S1 | ayo_items | 직접 삭제 |
 | 프로그램 배정 | `assigns.{memberId, programId, name, exIds, active}` | | S1 | ayo_items | 회원 삭제 |
 
+> v283 리포트 "한눈에 보기"(회차별 변화 대시보드)는 **저장하지 않는다.** 열 때마다 `records.score/f/sd` 와 `roms.value` 에서 계산한다(`js/logic/report-timeline.js`). 새 필드·표·localStorage 키 없음. 공유 이미지(`shares` 버킷)에 판정·각도가 **그림으로** 더 들어가는 것은 기존 경로와 같다.
+
 ### 2-2. localStorage
 | 키 | 내용 | 등급 |
 |---|---|---|

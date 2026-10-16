@@ -20,7 +20,9 @@
 ## 2. 디렉토리 구조
 ```
 index.html            # 앱 전체 (약 14,400줄). 화면 = <section class="view" id="view-*">
-js/logic/judge.js     # 판정 기준 순수 함수(ADR-011) — 브라우저 window.AYO_LOGIC / Node require
+js/logic/judge.js     # 판정 기준 순수 함수(ADR-011) — 브라우저 window.AYO_LOGIC / Node require (scolJudge·romJudge·scoreBand)
+js/logic/report-timeline.js  # 리포트 '한눈에 보기': 회차 시계열·KPI·상태표·아령 행 (계산만, v283)
+js/logic/report-charts.js    # 리포트 '한눈에 보기': 스파크라인·아령 좌표 + SVG 문자열 (화면 SVG 와 이미지 캔버스가 같은 좌표를 씀, v283)
 tests/*.test.js       # node --test (npm test)
 package.json          # 테스트 명령만 (앱 실행·배포엔 불필요)
 r.html                # 회원용 공유 리포트 (?k=키) — share-view 함수 호출
@@ -49,6 +51,7 @@ syncPush (로그인 시): 사진 → Storage photos/{uid}/blobs/... (WebP 0.85)
                     기록 → ayo_items upsert (store,id,data JSON, deleted)
 syncPull: ayo_items 를 updated_at 기준으로 받아 IndexedDB 에 반영 (커서 `ayo_pull`)
 리포트 → 캔버스로 A4 쪽 그림 → pagesToPdf() 로 PDF 직접 생성 / 이미지 저장 / navigator.share
+       1쪽 = 머리글 → '한눈에 보기'(drawRepDash, 회차 묶음은 mbBuildSessions 하나에서) → 정면·측면 보드 + 점수 (v283)
 공유 링크 → 리포트 JPEG 를 shares/{uid}/{키}.jpg + ayo_shares 행 → r.html 이 share-view 로 10분짜리 서명 주소 받아 표시
 ```
 
@@ -94,4 +97,5 @@ syncPull: ayo_items 를 updated_at 기준으로 받아 IndexedDB 에 반영 (커
 ## 9. 설계 패턴 (현재 코드)
 - 화면 전환: `showView(v)` 가 `hidden` 속성 토글. 뒤로가기는 `history.pushState` 가드 + `popstate`.
 - 저장: `dbPut/dbGet/dbDel` 헬퍼, localStorage 는 `lsGet/lsSet`.
-- 계산 로직은 대부분 아직 index.html 안에 섞여 있다. `js/logic/` 로 하나씩 옮기며 테스트를 붙인다(ADR-011, 현재 `scolJudge` 1개).
+- 계산 로직은 대부분 아직 index.html 안에 섞여 있다. `js/logic/` 로 하나씩 옮기며 테스트를 붙인다(ADR-011, 현재 `judge.js`·`report-timeline.js`·`report-charts.js` 3개).
+- 리포트 '한눈에 보기'(v283): `repRoundsRender()` 가 만든 회차 묶음 S 를 `renderRepDash(S, act)` 가 그대로 받는다(회차 번호 출처 하나). 화면은 SVG, 공유 이미지는 `drawRepDash` 가 캔버스로 직접 그리며 좌표는 같은 함수(`sparkGeom`·`dumbbellGeom`). 모듈을 못 받으면 카드만 숨기고 나머지 리포트는 정상.

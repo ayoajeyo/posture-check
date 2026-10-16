@@ -24,6 +24,8 @@
 - 메뉴·버튼 아래 중복 설명 문구는 넣지 않는다.
 - 인쇄·공유용 리포트는 A4 여러 장으로 나뉘게 만든다.
 - 앱 하단이나 리포트 끝에 제작자 표기 `made by AYOAJEYO`를 작게 넣는다.
+- 화면을 만들기 전에 `docs/TASTE.md`(사용자 디자인 취향)를 읽는다. 이 앱은 자기 CSS 가 있으므로 `design-system/tokens.css` 를 통째로 걸지 않고 앱의 기존 모양을 따른다(견본은 참고, `clean-ui` "기존 앱").
+- 사용자가 디자인에 대해 "좋다·싫다·이렇게" 라고 말하면 그 자리에서 `docs/TASTE.md` 에 기록한다.
 
 ### 작업 방식
 - 일상 작업은 명령어로: 기능 `/feature`, 버그 `/fix`, 배포 `/ship`, 다른 PC 와 맞추기 `/sync`, 현황 `/status`. 새 앱 전체는 `/start` → `/harness`.
@@ -50,7 +52,7 @@
 
 ## 개발 프로세스
 - 계산·변환처럼 결과가 정해진 로직은 `js/logic/` 에 두고 테스트를 먼저 작성한다 (TDD, `docs/TESTING.md`).
-- 설계는 `architect`, 테스트는 `tester`, 원인 분석은 `debugger`, 검토는 `reviewer`, 개인정보는 `privacy-guard`, 화면은 `ui-checker`, 문서 동기화는 `docs-keeper` 에이전트.
+- 설계는 `architect`, 테스트는 `tester`, 원인 분석은 `debugger`, 검토는 `reviewer`, 개인정보는 `privacy-guard`, 화면 규칙 점검은 `ui-checker`, 화면 개선안은 `ui-designer`, 문서 동기화는 `docs-keeper` 에이전트. 화면 시안이 여러 가지로 가능하면 `/design`.
 - 버전은 정수 `vNNN`. `/ship` 이 `index.html` `APP_VER` 와 `CHANGELOG.md` 맨 위 번호를 같이 올리고, `sw.js` `VERSION` 은 `pma-v` 뒤 숫자만 +1 한다. manifest 는 version 칸이 없어 건드리지 않는다 (`docs/RELEASE.md` 1번).
 
 ## 명령어

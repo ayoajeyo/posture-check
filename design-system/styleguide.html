@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AYOAJEYO 컴포넌트 견본</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  /* 견본 페이지 전용 (앱에는 복사하지 않음) */
+  .sg-top { padding: var(--s4) 0 var(--s3); }
+  .sg-sec { margin-top: var(--s4); }
+  .sg-sec > h2 { font-size: var(--fs-cap); font-weight: 700; color: var(--muted); letter-spacing: .04em; margin: 0 0 12px; }
+  .sg-note { font-size: var(--fs-cap); color: var(--muted); margin: 8px 0 0; }
+  .sg-swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s1); }
+  .sg-sw { border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; background: var(--bg); }
+  .sg-sw i { display: block; height: 40px; }
+  .sg-sw span { display: block; padding: 6px; font-size: 11px; line-height: 1.3; color: var(--muted); }
+  .sg-sw b { display: block; color: var(--text); font-weight: 600; }
+  .sg-frame { position: relative; border: 1px dashed var(--line-strong); border-radius: var(--radius); overflow: hidden; background: var(--page); }
+  .sg-frame .scrim, .sg-frame .toast { position: absolute; }
+  .sg-frame .bottom-bar { position: static; }
+  .sg-chart text { font: 500 11px var(--font); fill: var(--muted); }
+</style>
+</head>
+<body>
+<main class="app">
+
+  <header class="sg-top">
+    <p class="t-cap" style="margin:0 0 4px">AYOAJEYO 디자인 시스템</p>
+    <h1 class="t-title">컴포넌트 견본</h1>
+    <p class="sg-note">새 화면은 여기 있는 모양을 그대로 복사해서 만든다. 여기에 없는 모양이 필요하면 먼저 이 견본에 추가한다. 기준 문서: <code>docs/UI_GUIDE.md</code></p>
+  </header>
+
+  <!-- 1. 색 -->
+  <section class="sg-sec" id="color">
+    <h2>1. 색 — 포인트는 네이비 하나</h2>
+    <div class="sg-swatches">
+      <div class="sg-sw"><i style="background:var(--ink)"></i><span><b>포인트</b>#1E2A4A</span></div>
+      <div class="sg-sw"><i style="background:var(--ink-soft)"></i><span><b>선택 배경</b>#EEF1F7</span></div>
+      <div class="sg-sw"><i style="background:var(--text)"></i><span><b>본문</b>#1F2328</span></div>
+      <div class="sg-sw"><i style="background:var(--muted)"></i><span><b>보조</b>#6B7280</span></div>
+      <div class="sg-sw"><i style="background:var(--line)"></i><span><b>선</b>#E5E7EB</span></div>
+      <div class="sg-sw"><i style="background:var(--page)"></i><span><b>배경</b>#F7F7F5</span></div>
+      <div class="sg-sw"><i style="background:var(--ok)"></i><span><b>정상</b>상태 전용</span></div>
+      <div class="sg-sw"><i style="background:var(--warn)"></i><span><b>주의</b>상태 전용</span></div>
+      <div class="sg-sw"><i style="background:var(--bad)"></i><span><b>개선 필요·오류</b>상태 전용</span></div>
+    </div>
+  </section>
+
+  <!-- 2. 글자 -->
+  <section class="sg-sec" id="type">
+    <h2>2. 글자 — 크기 단계 5개만</h2>
+    <div class="card stack">
+      <p class="t-title">화면 제목 20 · 700</p>
+      <p class="t-sub">소제목·카드 제목 16 · 600</p>
+      <p class="t-body" style="margin:0">본문 15 · 400. 한글은 단어 단위로 줄이 바뀌어 읽기 편합니다.</p>
+      <p class="t-cap" style="margin:0">보조·캡션 13 · 날짜, 단위, 설명</p>
+      <p class="num" style="margin:0">63<span class="unit">점</span></p>
+    </div>
+    <p class="sg-note">글꼴: Pretendard (없으면 Noto Sans KR → 시스템 기본)</p>
+  </section>
+
+  <!-- 3. 버튼 -->
+  <section class="sg-sec" id="button">
+    <h2>3. 버튼 — 주 버튼은 화면당 1개</h2>
+    <div class="card stack">
+      <button class="btn btn-primary btn-block">저장</button>
+      <div class="btn-row">
+        <button class="btn">취소</button>
+        <button class="btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/></svg>
+          공유
+        </button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-danger">삭제</button>
+        <button class="btn" disabled>PDF 저장</button>
+      </div>
+      <button class="btn btn-text">건너뛰기</button>
+    </div>
+    <p class="sg-note">주 버튼 48px · 나머지 44px · 위험 버튼은 채우지 않고 테두리만 · 비활성은 흐리게</p>
+  </section>
+
+  <!-- 4. 입력 -->
+  <section class="sg-sec" id="input">
+    <h2>4. 입력 — 라벨은 위, 예시는 칸 안</h2>
+    <div class="card stack">
+      <div class="field">
+        <label for="f-name">이름</label>
+        <input id="f-name" class="input" placeholder="홍길동">
+      </div>
+      <div class="field">
+        <label for="f-phone">연락처</label>
+        <input id="f-phone" class="input" inputmode="tel" value="010-0000" aria-invalid="true">
+        <p class="error">연락처를 끝까지 입력해 주세요</p>
+      </div>
+      <div class="field">
+        <label for="f-sex">성별</label>
+        <select id="f-sex" class="select"><option>선택</option><option>여</option><option>남</option></select>
+      </div>
+      <label class="check"><input type="checkbox" checked> 신체 사진 촬영·보관에 동의합니다</label>
+    </div>
+  </section>
+
+  <!-- 5. 카드·목록 -->
+  <section class="sg-sec" id="list">
+    <h2>5. 카드·목록 — 카드 안에 카드 넣지 않기</h2>
+    <div class="list">
+      <a class="list-item is-link" href="#list">
+        <span class="avatar">홍</span>
+        <span class="grow"><span class="title">홍길동</span><span class="meta">최근 측정 2026.10.14</span></span>
+        <span class="badge badge-warn">주의</span>
+      </a>
+      <a class="list-item is-link" href="#list">
+        <span class="avatar">김</span>
+        <span class="grow"><span class="title">김예시</span><span class="meta">최근 측정 2026.10.02</span></span>
+        <span class="badge badge-ok">정상</span>
+      </a>
+      <a class="list-item is-link" href="#list">
+        <span class="avatar">이</span>
+        <span class="grow"><span class="title">이테스트</span><span class="meta">측정 기록 없음</span></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 6. 배지·탭 -->
+  <section class="sg-sec" id="badge">
+    <h2>6. 배지·탭</h2>
+    <div class="card stack">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="badge badge-ok">정상</span>
+        <span class="badge badge-warn">주의</span>
+        <span class="badge badge-bad">개선 필요</span>
+        <span class="badge">PRO</span>
+      </div>
+      <div class="seg" role="tablist">
+        <button role="tab" aria-selected="true">정면</button>
+        <button role="tab" aria-selected="false">측면</button>
+        <button role="tab" aria-selected="false">후면</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 화면 상태 4가지 -->
+  <section class="sg-sec" id="state">
+    <h2>7. 화면 상태 4가지 — 모든 목록·데이터 화면에</h2>
+    <div class="stack">
+      <div class="card" aria-busy="true">
+        <p class="t-cap" style="margin:0 0 12px">불러오는 중</p>
+        <div class="skeleton" style="width:60%"></div>
+        <div class="skeleton" style="width:90%"></div>
+        <div class="skeleton" style="width:40%"></div>
+      </div>
+      <div class="card state">
+        <p class="t-sub">아직 회원이 없습니다</p>
+        <button class="btn btn-primary">회원 등록</button>
+      </div>
+      <div class="state state-error" role="alert">
+        <p class="t-sub">저장하지 못했습니다</p>
+        <p class="t-cap" style="margin:0">인터넷 연결을 확인한 뒤 다시 시도해 주세요</p>
+        <button class="btn">다시 시도</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. 측정 데이터 -->
+  <section class="sg-sec" id="measure">
+    <h2>8. 측정 데이터 — measure-viz 스킬</h2>
+    <div class="stack">
+
+      <div class="card">
+        <div class="metric">
+          <span class="label">머리 앞쪽 기울기 (측면)</span>
+          <span class="num">18.4°</span>
+          <span class="badge badge-warn">주의</span>
+        </div>
+        <div class="range" style="--lo:0; --hi:40; --val:61" role="img" aria-label="정상 범위 0~12°, 측정값 18.4°">
+          <span class="range-mark"></span>
+        </div>
+        <div class="range-scale"><span>0°</span><span class="ok" style="--at:20">정상 0–12°</span><span>30°</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><p class="t-sub">어깨 높이 좌우 차이</p><span class="badge badge-ok">정상</span></div>
+        <div class="pair" role="img" aria-label="왼쪽 어깨 0.4cm, 오른쪽 어깨 1.1cm 높음">
+          <div class="pair-row is-low"><b>왼쪽</b><div class="pair-bar"><i style="--v:27"></i></div><span>0.4cm</span></div>
+          <div class="pair-row"><b>오른쪽</b><div class="pair-bar"><i style="--v:73"></i></div><span>1.1cm</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><p class="t-sub">종합 점수 추이</p><span class="t-cap">최근 5회</span></div>
+        <svg class="sg-chart" viewBox="0 0 320 140" role="img" aria-label="종합 점수 52, 55, 58, 61, 63점">
+          <rect x="24" y="20" width="288" height="36" fill="#ECFDF3"/>
+          <line x1="24" y1="110" x2="312" y2="110" stroke="#E5E7EB"/>
+          <line x1="24" y1="65" x2="312" y2="65" stroke="#E5E7EB" stroke-dasharray="3 4"/>
+          <text x="0" y="24">80</text><text x="0" y="69">60</text><text x="0" y="114">40</text>
+          <polyline fill="none" stroke="#1E2A4A" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"
+                    points="34,83 103,76 172,70 241,63 302,58"/>
+          <g fill="#FFFFFF" stroke="#1E2A4A" stroke-width="2">
+            <circle cx="34" cy="83" r="3.5"/><circle cx="103" cy="76" r="3.5"/><circle cx="172" cy="70" r="3.5"/><circle cx="241" cy="63" r="3.5"/>
+          </g>
+          <circle cx="302" cy="58" r="5" fill="#1E2A4A"/>
+          <text x="292" y="48" text-anchor="end" style="fill:#1E2A4A;font-weight:700;font-size:13px">63점</text>
+          <text x="34" y="132" text-anchor="middle">06.10</text><text x="172" y="132" text-anchor="middle">08.12</text><text x="302" y="132" text-anchor="end">10.14</text>
+        </svg>
+        <p class="sg-note">연한 초록 띠 = 목표 범위(64~80점) · 마지막 값만 글자로 · 축과 선은 최소로</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 9. 팝업·알림 -->
+  <section class="sg-sec" id="modal">
+    <h2>9. 팝업·알림</h2>
+    <div class="sg-frame" style="height:300px">
+      <div class="scrim">
+        <div class="modal" role="dialog" aria-labelledby="m-t">
+          <p class="t-sub" id="m-t">정말 삭제할까요?</p>
+          <p class="t-cap" style="margin:0">홍길동 님의 측정 기록과 사진이 모두 삭제됩니다. 되돌릴 수 없습니다.</p>
+          <div class="btn-row"><button class="btn">취소</button><button class="btn btn-danger">삭제</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="sg-frame" style="height:96px;margin-top:12px">
+      <div class="toast" style="bottom:28px">저장했습니다</div>
+    </div>
+  </section>
+
+  <!-- 10. 하단 고정 버튼 -->
+  <section class="sg-sec" id="bottom">
+    <h2>10. 하단 고정 주 버튼 — 엄지가 닿는 곳</h2>
+    <div class="sg-frame">
+      <div style="padding:16px"><p class="t-cap" style="margin:0">… 화면 내용 …</p></div>
+      <div class="bottom-bar"><button class="btn btn-primary btn-block">다음</button></div>
+    </div>
+  </section>
+
+  <!-- 11. 리포트 머리글 -->
+  <section class="sg-sec" id="report">
+    <h2>11. 리포트 머리글 — report-print 스킬</h2>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:12px">
+        <div><p class="t-sub" style="color:var(--ink)">체형 측정 리포트</p><p class="t-cap" style="margin:2px 0 0">2026.10.14 · No. 0012</p></div>
+        <div style="text-align:right"><p style="margin:0;font-weight:600">홍길동</p><p class="t-cap" style="margin:0">여 · 30대</p></div>
+      </div>
+      <p class="t-cap" style="margin:12px 0 0">A4 세로 · 여백 14mm · 페이지마다 머리글과 바닥글</p>
+    </div>
+  </section>
+
+  <p class="maker">made by AYOAJEYO</p>
+</main>
+</body>
+</html>

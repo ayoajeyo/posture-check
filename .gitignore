@@ -17,3 +17,6 @@ __pycache__/
 # 이 PC 전용 (개인정보·도구 임시 파일)
 .claude/pii-names.local.txt
 supabase/.temp/
+
+# 화면 캡처 (scripts/screenshot.py)
+.shots/

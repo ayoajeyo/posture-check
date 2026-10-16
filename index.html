@@ -8410,16 +8410,14 @@
     try{
       var J = romJoint(), mv = romMove(); if(!J || !mv || !romS.pts) return;
       var A = LEARN_ROM[J.k + "|" + mv.k + "|" + romSd(J, mv)]; if(!A) return;
-      var H = romS.h, P = romS.pts, v0 = P[0] ? { x: P[0].x, y: P[0].y } : null;
+      var H = romS.h, P = romS.pts, axis = false;
       Object.keys(A).forEach(function(i){
         var p = P[+i]; if(!p || (only && only.indexOf(+i) < 0)) return;
         var dx = A[i][0] / 100 * H, dy = A[i][1] / 100 * H;
         p.x = Math.max(0, Math.min(romS.w, p.x + dx)); p.y = Math.max(0, Math.min(romS.h, p.y + dy));
-        if(+i === 0 && v0 && P[2]){   // 기준선(세로·가로) 끝점은 각도축을 따라 함께 이동
-          if(Math.abs(P[2].x - v0.x) < 2) P[2].x = p.x;
-          if(Math.abs(P[2].y - v0.y) < 2) P[2].y = p.y;
-        }
+        if(+i === 0) axis = true;
       });
+      if(axis) romRefReset();   // v281 각도축이 움직였으면 기준선(세로·가로)을 다시 세운다
     }catch(e){ console.warn("[learn rom]", e); }
   }
   function romSd(J, mv){ J = J || romJoint(); if(!J.single) return rom.side; if(mv === undefined && typeof romS !== "undefined" && romS && romS.mv) mv = J.moves.find(function(m){ return m.k === romS.mv; }); return (mv && mv.lr) ? rom.side : "C"; }
@@ -8481,6 +8479,18 @@
       len *= 0.8;
     }
     return { x: Math.max(0, Math.min(W, V.x + dir.x * len)), y: Math.max(0, Math.min(H, V.y + dir.y * len)) };
+  }
+  /* v281 각도축(0번 점)이 움직이면 자동으로 만든 기준선 끝점(2번 점)을 다시 세운다.
+     전에는 "끝점이 각도축과 2px 이내"일 때만 따라가게 돼 있었는데(romLearnAdj),
+     폰 기울기 보정이 들어가면 ①선이 살짝 기울어 끝점 x 가 각도축에서 10~45px 떨어진다
+     → 조건이 빗나가 각도축만 옮겨지고 기준선은 제자리 → ①선이 약 1.2° 기울어졌다.
+     사용자가 기준선 끝점을 직접 옮겼으면(refMoved·refCustom) 손대지 않는다. */
+  function romRefReset(){
+    var P = romS && romS.pts; if(!P || P.length < 3 || !P[0] || !P[1] || !P[2]) return;
+    if(romS.refMoved || romS.refCustom) return;
+    var pn = typeof romPts === "function" ? romPts() : null;
+    if(!pn || pn.length < 3 || romIsLm(pn[2])) return;   // 실제 관절이 기준점이면 건드리지 않는다
+    P[2] = romSynthA(pn[2], P[0], P[1], romS.L, romS.w, romS.h, romS.roll);
   }
   var rom = { joint: "neck", side: "R", latest: {}, session: {}, sessionAll: [], all: [] };
   function romJoint(){ return ROM_ALL.find(function(j){ return j.k === rom.joint; }) || ROM_JOINTS[0]; }
@@ -8721,7 +8731,7 @@
     if(romCam.on) romCamStop();
     $("btnRomSwap").hidden = true; romS.editId = null; romS.editRec = null; romS.manualEdit = false; $("romManual").hidden = true; romS.recImg = null; romS.cut = null; romS.mask = null; romS.maskP = null; $("btnRomApply").textContent = "결과 저장"; $("btnRomGrid").hidden = true; pvBarSync();
     romS.ant = null; romS.touched = false; romS.confirmRaw = false;
-    romS.footOff = null; romS.autoSnap = null; romS.mv = mk; romS.img = null; romS.pts = null; romS.trunk = null; romS.q = 0; romS.roll = null; romS.liveL = null; romS.refCustom = null; romS.sel = null; romS.edit = null;
+    romS.footOff = null; romS.autoSnap = null; romS.mv = mk; romS.img = null; romS.pts = null; romS.trunk = null; romS.q = 0; romS.roll = null; romS.liveL = null; romS.refCustom = null; romS.refMoved = false; romS.sel = null; romS.edit = null;
     var J = romJoint(), mv = romMove();
     romS.ref = "pt3"; romS.hdir = 1;
     $("romSheetTitle").textContent = (J.k === "scol" ? mv.n : J.n + " " + mv.n) + (romSideTxt(mv) ? " · " + romSideTxt(mv) : "");
@@ -8914,7 +8924,7 @@
       romS.sel = null; romS.trunk = null;
       $("romBusy").hidden = true; scolAuto(); return;
     }
-    romS.pts = romDefaultPts(mv); romS.trunk = null; romS.refCustom = null; romS.sel = null; romDraw();
+    romS.pts = romDefaultPts(mv); romS.trunk = null; romS.refCustom = null; romS.refMoved = false; romS.sel = null; romDraw();
     $("romBusy").textContent = window.__romModelReady ? "관절 위치 정밀 인식 중…" : "정밀 인식 준비 중… (처음 한 번 약 30MB)";
     $("romBusy").hidden = false; $("romQ").hidden = true;
     ["btnRomAuto", "btnRomImg", "btnRomApply"].forEach(function(id){ $(id).disabled = true; });
@@ -9002,7 +9012,7 @@
   // v107 인식이 반대쪽 팔·다리를 잡았을 때: 좌·우를 바꿔 측정점 다시 배치
   $("btnRomSwap").addEventListener("click", function(){
     if(!romS.L) return;
-    romS.L = romSwapLR(romS.L); romS.refCustom = null; romS.sel = null;
+    romS.L = romSwapLR(romS.L); romS.refCustom = null; romS.refMoved = false; romS.sel = null;
     var pl = romPlace(romS.L);
     if(pl.ok) romLearnAdj();   // v203
     if(pl.ok && romS.mask){ try{ romRefine(romS.mask); }catch(e){} }
@@ -9371,10 +9381,15 @@
     var ed = romS.edit; if(!ed) return;
     var p = romEvtPt(e), cl = function(q){ return { x: Math.max(0, Math.min(romS.w, q.x)), y: Math.max(0, Math.min(romS.h, q.y)) }; };
     var RG = 0.5;   // v132 ROM 점·선 이동 속도 (손가락의 절반 · 2단계 느리게)
-    if(ed.h.t === "pt") romS.pts[ed.h.i] = cl({ x: ed.orig[ed.h.i].x + (p.x - ed.start.x) * RG, y: ed.orig[ed.h.i].y + (p.y - ed.start.y) * RG });
-    else if(ed.h.t === "seg"){
+    if(ed.h.t === "pt"){
+      romS.pts[ed.h.i] = cl({ x: ed.orig[ed.h.i].x + (p.x - ed.start.x) * RG, y: ed.orig[ed.h.i].y + (p.y - ed.start.y) * RG });
+      if(ed.h.i === 2) romS.refMoved = true;        // v281 기준선 끝점을 직접 옮김 → 그 뒤로는 자동으로 다시 세우지 않는다
+      else if(ed.h.i === 0) romRefReset();          // v281 각도축을 옮기면 기준선도 따라온다
+    } else if(ed.h.t === "seg"){
       var mx = (p.x - ed.start.x) * RG, my = (p.y - ed.start.y) * RG;
       [ed.h.a, ed.h.b].forEach(function(i){ romS.pts[i] = cl({ x: ed.orig[i].x + mx, y: ed.orig[i].y + my }); });
+      if([ed.h.a, ed.h.b].indexOf(2) >= 0) romS.refMoved = true;
+      else if([ed.h.a, ed.h.b].indexOf(0) >= 0) romRefReset();
     } else if(ed.h.t === "ref"){
       var V = romS.pts[0], vx = p.x - V.x, vy = p.y - V.y, L = Math.hypot(vx, vy);
       if(L > 4){ romS.refCustom = { x: vx / L, y: vy / L }; }
@@ -9393,8 +9408,13 @@
     admxSnap(); romS.autoPts = false; romS.touched = true;
     var sel = romS.sel; if(!sel || !romS.pts) return;
     var st = 1 / (romS.scale || 1), cl = function(q){ return { x: Math.max(0, Math.min(romS.w, q.x)), y: Math.max(0, Math.min(romS.h, q.y)) }; };
-    if(sel.t === "pt") romS.pts[sel.i] = cl({ x: romS.pts[sel.i].x + dx * st, y: romS.pts[sel.i].y + dy * st });
-    else if(sel.t === "seg") [sel.a, sel.b].forEach(function(i){ romS.pts[i] = cl({ x: romS.pts[i].x + dx * st, y: romS.pts[i].y + dy * st }); });
+    if(sel.t === "pt"){
+      romS.pts[sel.i] = cl({ x: romS.pts[sel.i].x + dx * st, y: romS.pts[sel.i].y + dy * st });
+      if(sel.i === 2) romS.refMoved = true; else if(sel.i === 0) romRefReset();   // v281
+    } else if(sel.t === "seg"){
+      [sel.a, sel.b].forEach(function(i){ romS.pts[i] = cl({ x: romS.pts[i].x + dx * st, y: romS.pts[i].y + dy * st }); });
+      if([sel.a, sel.b].indexOf(2) >= 0) romS.refMoved = true; else if([sel.a, sel.b].indexOf(0) >= 0) romRefReset();
+    }
     else if(sel.t === "ref"){
       var d = romRefDir(), a = Math.atan2(d.y, d.x) + (dx + dy) * 0.5 * Math.PI / 180;
       romS.refCustom = { x: Math.cos(a), y: Math.sin(a) };
@@ -9407,7 +9427,7 @@
     b.addEventListener("pointerdown", function(e){ e.preventDefault(); romNudge(v[0], v[1]); timer = setTimeout(function(){ rep = setInterval(function(){ romNudge(v[0], v[1]); }, 60); }, 350); });
     ["pointerup", "pointerleave", "pointercancel"].forEach(function(t){ b.addEventListener(t, stop); });
   });
-  $("btnRomRefReset").addEventListener("click", function(){ romS.refCustom = null; if(romS.sel && romS.sel.t === "ref") romS.sel = null; romDraw(); romSyncNudge(); });
+  $("btnRomRefReset").addEventListener("click", function(){ romS.refCustom = null; romS.refMoved = false; romRefReset(); if(romS.sel && romS.sel.t === "ref") romS.sel = null; romDraw(); romSyncNudge(); });
 
 
   window.addEventListener("resize", function(){ if(!$("romSheet").hidden && romS.img) romDraw(); });
@@ -11544,7 +11564,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v280";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v281";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -13108,7 +13128,7 @@
         var save = { S: Object.assign({}, romS), joint: rom.joint, side: rom.side };
         rom.joint = x.joint; if(x.side === "L" || x.side === "R") rom.side = x.side;
         Object.assign(romS, { mv: x.move, img: im, w: im.naturalWidth, h: im.naturalHeight, pts: null, trunk: null, q: 0, L: null, roll: r.roll == null ? null : r.roll, footOff: null,
-          liveL: I && I.liveL ? I.liveL.map(function(p){ return { x: p.x * lk, y: p.y * lk, v: p.v }; }) : null, refCustom: null, sel: null, edit: null, drag: -1, editId: null, editRec: null, manualEdit: false, recImg: null, cut: null, mask: null, maskP: null, autoSnap: null,
+          liveL: I && I.liveL ? I.liveL.map(function(p){ return { x: p.x * lk, y: p.y * lk, v: p.v }; }) : null, refCustom: null, refMoved: false, sel: null, edit: null, drag: -1, editId: null, editRec: null, manualEdit: false, recImg: null, cut: null, mask: null, maskP: null, autoSnap: null,
           sideSwap: false, ref: "pt3", hdir: 1 });
         return Promise.resolve(romAuto()).then(function(){ return benchWait(romS.maskP, 20000); }).then(function(){
           var k = (x.w || romS.w) / romS.w;

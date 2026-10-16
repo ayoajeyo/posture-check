@@ -869,7 +869,7 @@
   .mini-list .cs-item, .mini-list .sl-item{background:transparent; border:none; border-top:1px solid var(--line); border-radius:0; padding:10px 0;}
   .mini-list > :first-child{border-top:none!important;}
   .more-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px;}   /* v285 종합 리포트 칸을 빼고 3칸 한 줄 (리포트는 아래 탭에 있음) */
-  .more-grid button{display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer;}
+  .more-grid button{display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; word-break:keep-all;}
   .more-list{margin-bottom:12px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); overflow:hidden;}
   .more-list button{display:flex; align-items:center; gap:12px; width:100%; padding:13px 14px; border:none; border-top:1px solid var(--line); background:transparent; color:var(--ink); font-family:inherit; font-size:14px; font-weight:700; text-align:left; cursor:pointer;}
   .more-list button:first-child{border-top:none;}
@@ -1778,7 +1778,6 @@
   html[data-skin="vivid"] .more-grid button:nth-child(1){background:var(--p-mint); color:var(--p-mint-i);}
   html[data-skin="vivid"] .more-grid button:nth-child(2){background:var(--p-peach); color:var(--p-peach-i);}
   html[data-skin="vivid"] .more-grid button:nth-child(3){background:var(--p-lav); color:var(--p-lav-i);}
-  html[data-skin="vivid"] .more-grid button:nth-child(4){background:var(--p-aqua); color:var(--p-aqua-i);}
   html[data-skin="vivid"] .more-list{background:#fff;}
   html[data-skin="vivid"] .more-list button > svg:first-child{width:18px; height:18px; padding:6px; border-radius:9px; box-sizing:content-box;}
   html[data-skin="vivid"] .more-list button:nth-child(5n+1) > svg:first-child{background:var(--p-sky); color:var(--p-sky-i);}

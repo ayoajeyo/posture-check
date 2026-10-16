@@ -13,7 +13,7 @@ const grab = (start, end) => {
 };
 const ctx = {};
 vm.createContext(ctx);
-vm.runInContext(grab("  function wipeBodyPhotos(ph){", "  var wipeN = null, wipeBusy = false;"), ctx);
+vm.runInContext(grab("  function wipeBodyPhotos(ph){", "  var wipeN = null,"), ctx);
 const wipePhotos = vm.runInContext("wipeBodyPhotos", ctx);
 const wipeBody = vm.runInContext("wipeBodyRec", ctx);
 const wipeRom = vm.runInContext("wipeRomRec", ctx);
@@ -83,6 +83,7 @@ test("사진 묶음이 없으면 null (사진 없는 예전 기록은 건너뛴�
 
 // v277 "비웠는데 그대로" 를 눈으로 확인하는 남은 기록 세기
 const leftRec = vm.runInContext("wipeRecLeft", ctx);
+const valRec = vm.runInContext("wipeRecVal", ctx);
 const leftRom = vm.runInContext("wipeRomTodo", ctx);
 const noPicRom = vm.runInContext("wipeRomNoPic", ctx);
 const leftCnt = vm.runInContext("wipeLeftCount", ctx);
@@ -98,7 +99,7 @@ test("남은 기록 세기: 비우기 전 기록은 '남았다'고 센다", () =
 });
 
 test("남은 기록 세기: 비운 기록은 '남지 않았다'고 센다", () => {
-  assert.equal(leftRec(wipeBody({ id: "r1", score: 82, f: { a: 1 }, sd: { b: 2 }, groups: [{}], thumbs: { front: "T" } })), false);
+  assert.equal(leftRec(wipeBody({ id: "r1", score: 82, f: { a: 1 }, sd: { b: 2 }, groups: [{}], thumbs: { front: "T" } })), false, "사진이 없는 기록은 값만 비우면 끝");
   assert.equal(leftRom(wipeRom({ id: "k1", blob: true, value: 47, pts: [{ x: 1, y: 2 }], pct: 94, thumb: "T" })), false);
   assert.equal(leftRec(null), false);
   assert.equal(leftRom(undefined), false);
@@ -141,4 +142,31 @@ test("사진 없는 ROM 기록만 남으면 남은 건수 0 → 단추가 잠긴
 test("사진은 있고 값이 비어 있으면 양쪽 모두 0 (이미 비운 기록)", () => {
   const n = leftCnt([], [{ blob: true, value: null, pts: null }], []);
   assert.equal(n.rom, 0); assert.equal(n.noPic, 0);
+});
+
+// v280 🔴 회귀: 체형분석의 측정점은 사진 묶음 안에 있다.
+// '값이 남았나' 만 세면 이미 한 번 비운 기록(값 null · 사진 속 점 그대로)이 0건으로 세어져
+// 단추가 잠기고 그 기록만 영원히 못 고친다 — 사용자가 겪은 "비웠는데 그대로" 가 그대로 재현된다.
+test("한 번 비웠지만 사진 속 점을 못 지운 기록은 '남은 것' 으로 센다", () => {
+  const once = { id: "r9", blob: true, blobAt: 1, score: null, f: null, sd: null, groups: [], thumbs: null, wipedAt: 1 };
+  assert.equal(valRec(once), false, "값은 이미 비어 있다");
+  assert.equal(leftRec(once), true, "그래도 사진 속 점이 남아 있어 아직 할 일이 있다");
+  const n = leftCnt([once], [], []);
+  assert.equal(n.rec, 1, "남은 건수에 잡혀야 단추가 잠기지 않는다");
+});
+
+test("사진 속 점까지 끝낸 기록(pxWiped)은 더 세지 않는다 — 단추가 잠긴다", () => {
+  const done = { id: "r9", blob: true, blobAt: 1, score: null, f: null, sd: null, groups: [], thumbs: null, pxWiped: 1 };
+  assert.equal(leftRec(done), false);
+  assert.equal(leftCnt([done], [], []).rec, 0);
+});
+
+test("사진이 아예 없는 기록은 값만 비우면 끝 (pxWiped 가 없어도 세지 않는다)", () => {
+  const noPhoto = { id: "r8", score: null, f: null, sd: null, groups: [], thumbs: null, wipedAt: 1 };
+  assert.equal(leftRec(noPhoto), false);
+});
+
+test("값도 남고 사진 점도 남은 기록은 당연히 센다", () => {
+  assert.equal(leftRec({ id: "r7", blob: true, score: 82 }), true);
+  assert.equal(leftRec({ id: "r7", blob: true, score: 82, pxWiped: 1 }), true, "점은 끝났어도 값이 남으면 남은 것");
 });

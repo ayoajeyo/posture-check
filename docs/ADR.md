@@ -156,4 +156,8 @@
 - ② **일부만 비워졌는데 단추가 잠김** — 저장이 실패한 기록이 있어도 `ayo_wipe_done` 이 걸려 다시 실행할 수 없었다 → 남은 건수로 잠금을 판단하고, 결과 안내에 실패 건수를 따로 적는다.
 - ③ **비울 것이 애초에 없었는지 알 수 없음** — 이 기기에 기록이 안 받아져 있으면 '0건 비움' 이 정상처럼 보인다 → 칸을 열 때 `wipeLeftCount` 로 **남은 건수 + 전체 건수**를 항상 표시한다.
 **규칙(v277 리뷰에서 확인)**: 남은 건수를 세는 함수(`wipeRecLeft`·`wipeRomTodo`)는 `wipeRun` 이 '비울지 말지' 를 정하는 **바로 그 기준**이어야 한다. 두 기준이 갈리면 남은 건수가 영원히 0 이 되지 않아 잠금이 안 걸리고, 고치려던 "비웠는데 그대로" 가 다시 생긴다. 특히 **사진이 없는 ROM 기록**(`delete upd.img` 로 각도만 고친 예전 회차)은 다시 잴 수 없어 비우지 않으므로, 잠금 기준에서 빼고 `noPic` 으로 건수만 알린다. 실행 중에는 `wipeBusy` 로 재진입을 막는다.
-**영향받는 파일**: index.html(관리자 화면·wipeBodyPhotos·wipeBodyRec·wipeRomRec·wipeRecLeft·wipeRomLeft·wipeLeftCount·wipeCount·wipePaint·wipeRun), tests/wipe.test.js, docs/DATA.md 2-5, docs/TESTING.md 23~32
+**v279·v280 보완 (2026-10-16)**: 체형분석의 측정점이 기록이 아니라 **사진 묶음 안**(`blobs` 의 `photos.front.points`)에 있다는 사실이 늦게 드러났다. 사진은 필요할 때 서버에서 받아오므로(`blobFetch`), 사진이 안 내려온 기기에서 비우면 기록만 비워지고 서버 사진에 옛 점이 남아 **나중에 그 사진을 받을 때 옛 점이 되살아난다**.
+- v279: 기기에 없는 사진을 `blobFetch` 로 받아서 지운다. 못 받으면 그 기록을 손대지 않는다. → **로그인·온라인이 필요하고 통신량이 크다**(사진을 받고, 점을 지운 사진을 다시 올린다). 안내에 '와이파이에서' 를 넣었다.
+- v280: v279 가 **ADR 의 "세는 기준 = 비우는 기준" 규칙을 양방향으로 깼다**. ① 이미 한 번 비운 기록은 값이 null 이라 0건으로 세어져 단추가 잠기고, 정작 그 기록의 사진 점은 못 지운다 ② 영구히 못 받는 사진이 있으면 건수가 영원히 0 이 안 된다. → 점을 끝낸 기록에 `pxWiped` 를 남기고 `wipeRecLeft(r) = 값 || (blob && !pxWiped)` 로 두 기준을 다시 한 함수로 합쳤다. 서버에도 사진이 없으면 `pxGone` 으로 끝낸 것으로 보고 잠금 기준에서 뺀다(ROM 의 `noPic` 과 같은 취급). 덜 받아진 묶음(`blobHasRefs`)은 `syncPush` 가 업로드를 버리므로 반드시 다시 받아서 지운다.
+**교훈**: 이 기능은 "어디에 무엇이 저장돼 있는지" 를 틀리면 조용히 되살아난다. 저장 위치는 `docs/DATA.md` 2-5 에 적어 두고, 기준 함수는 **하나만** 둔다.
+**영향받는 파일**: index.html(관리자 화면·wipeBodyPhotos·wipeBodyRec·wipeRomRec·wipeRecVal·wipeRecLeft·wipeRomTodo·wipeLeftCount·wipeCount·wipePaint·wipeRun), tests/wipe.test.js, docs/DATA.md 2-5, docs/TESTING.md 23~36

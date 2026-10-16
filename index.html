@@ -11537,7 +11537,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v279";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v280";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -12823,7 +12823,11 @@
   /* CRITICAL: 아래 판단 함수는 wipeRun 이 '비울지 말지' 를 정하는 바로 그 기준이다.
      세는 기준과 비우는 기준이 갈리면 남은 건수가 영원히 0 이 되지 않아
      "비웠는데 그대로" 가 다시 생긴다 (v277 리뷰 지적). 한쪽만 고치지 말 것. */
-  function wipeRecLeft(r){ return !!(r && (r.score != null || r.f || r.sd || (r.groups && r.groups.length) || r.thumbs)); }
+  function wipeRecVal(r){ return !!(r && (r.score != null || r.f || r.sd || (r.groups && r.groups.length) || r.thumbs)); }
+  /* v280 체형분석의 측정점은 사진 묶음 안에 있다 → '값이 남았나' 만 보면
+     이미 한 번 비운 기록(값은 null, 사진 속 점은 그대로)이 0건으로 세어져
+     단추가 잠기고 그 기록만 영원히 못 고친다. 점을 끝낸 기록에 pxWiped 를 남겨 함께 센다. */
+  function wipeRecLeft(r){ return !!(r && (wipeRecVal(r) || (r.blob && !r.pxWiped))); }
   function wipeRomHasPic(r){ return !!(r && (r.img || r.blob)); }
   function wipeRomVal(r){ return !!(r && (r.pts != null || r.value != null)); }
   function wipeRomTodo(r){ return wipeRomHasPic(r) && wipeRomVal(r); }   // 사진이 없으면 다시 잴 수 없어 그대로 둔다
@@ -12833,7 +12837,7 @@
              noPic: (L || []).filter(wipeRomNoPic).length,
              admx: (aK || []).length, recAll: (R || []).length, romAll: (L || []).length };
   }
-  var wipeN = null, wipeBusy = false;
+  var wipeN = null, wipeBusy = false, wipeLast = "";   // v280 wipeLast: 지난 실행에서 사진을 못 받은 건수 안내
   function wipeCount(){   // 기기 저장소를 실제로 다시 읽어 센다
     if(wipeBusy) return Promise.resolve();
     $("admWipeOut").textContent = "";   // v278 지난 실행 결과가 새 건수와 겹쳐 보이던 것
@@ -12853,7 +12857,7 @@
     var left = n.rec + n.rom + n.admx;
     var all = "이 기기에 있는 전체 기록: 체형분석 " + n.recAll + "건 · ROM·거북목·척추 균형 " + n.romAll + "건."
       + (n.recAll + n.romAll ? "" : " 기록이 하나도 없어요 — 로그인해 서버에서 받은 뒤 다시 확인해 주세요.");
-    var noPic = n.noPic ? "\n사진이 없어 다시 잴 수 없는 ROM 기록 " + n.noPic + "건은 그대로 둡니다." : "";
+    var noPic = (n.noPic ? "\n사진이 없어 다시 잴 수 없는 ROM 기록 " + n.noPic + "건은 그대로 둡니다." : "") + (wipeLast ? "\n" + wipeLast : "");
     $("admWipeWord").disabled = !left;
     $("btnWipeGo").disabled = !left || !word;
     $("admWipeSt").textContent = !left
@@ -12865,7 +12869,7 @@
   }
   function wipeSync(){ return wipeCount(); }
   function wipeRun(){
-    var n = { rec: 0, rom: 0, admx: 0, skip: 0, fail: 0, noDl: 0 }, out = $("admWipeOut");
+    var n = { rec: 0, rom: 0, admx: 0, skip: 0, fail: 0, noDl: 0, gone: 0, dl: 0 }, out = $("admWipeOut");
     var say = function(t){ out.textContent = t; };
     wipeBusy = true; $("admWipeWord").disabled = true; $("btnWipeGo").disabled = true;   // v277 실행 중 재진입 금지
     $("admWipeSt").textContent = "비우는 중…";   // v278 '준비됐어요' 가 '비우는 중' 과 같이 보이던 것
@@ -12874,25 +12878,38 @@
     return dbAll("records").then(function(R){
       var iR = 0;
       return seq(R, function(r){
-        say("체형분석 " + (++iR) + "/" + R.length + " 비우는 중… 창을 닫지 마세요.");
-        var must = wipeRecLeft(r), bk = "records:" + r.id, hold = false;
-        /* v279 체형분석의 측정점은 **사진 묶음 안**에 있다(`photos.front.points`).
-           그래서 이 기기에 사진이 안 내려와 있으면 점을 지울 수 없고, 서버 사진에 옛 점이
-           그대로 남아 나중에 그 사진을 받을 때 옛 점이 되살아난다.
-           → 없으면 서버에서 먼저 받아서 지운다. 못 받으면 기록도 건드리지 않고 남겨 둔다
-             (그래야 남은 건수에 잡혀 다시 눌러 이어서 끝낼 수 있다). */
+        var tag = "체형분석 " + (++iR) + "/" + R.length;
+        say(tag + " 비우는 중… 창을 닫지 마세요.");
+        /* v279~v280 체형분석의 측정점은 **사진 묶음 안**(`photos.front.points`)에 있다.
+           기기에 사진이 없거나 덜 받아진 묶음(refs)이면 점을 지울 수 없고, 서버 사진에 옛 점이
+           남아 나중에 그 사진을 받을 때 되살아난다. → 서버에서 받아서 지우고, 끝낸 기록에
+           pxWiped 를 남긴다(세는 기준과 같은 함수를 쓰므로 빠짐없이 끝까지 간다). */
+        if(!wipeRecLeft(r)){ n.skip++; return; }
+        var bk = "records:" + r.id, hold = false, px = false, gone = false;
         return rawGet("blobs", bk).then(function(b){
-          if(b || !r.blob) return b;
-          return (typeof blobFetch === "function" ? blobFetch(bk) : Promise.resolve(null));
+          if(!r.blob) return null;                       // 사진 없는 기록 — 값만 비운다
+          var pend = typeof SQ === "object" && SQ && SQ["blobs|" + bk];
+          var refs = b && blobHasRefs(b.v);              // v280 🔴 덜 받아진 묶음은 올려도 syncPush 가 버린다
+          var stale = b && r.blobAt && b.at !== r.blobAt && !pend;   // 다른 기기에서 바뀐 사진
+          if(b && !refs && !stale) return b;
+          say(tag + " 사진 받는 중… 창을 닫지 마세요.");
+          n.dl++;
+          return blobFetch(bk).then(function(nb){ return nb || (refs ? null : b); });   // 받지 못하면 쓸 수 있는 로컬본만 유지
         }).then(function(b){
-          if(!b && r.blob){ hold = true; n.noDl++; return; }   // 사진을 못 받음 — 다음에 이어서
+          if(r.blob && !b){
+            if(!navigator.onLine){ hold = true; n.noDl++; return; }   // 일시 실패 — 다음에 이어서
+            gone = px = true; n.gone++; return;                      // 서버에도 없음 — 지울 점이 없다
+          }
           var w = b && wipeBodyPhotos(b.v);
-          if(!w || !w.n) return;
+          if(!w || !w.n){ if(r.blob) px = true; return; }             // 점이 이미 없음
           var at = Date.now();
-          return rawPut("blobs", { id: b.id, v: w.v, at: at }).then(function(){ r = Object.assign({}, r, { blobAt: at }); must = true; });
+          return rawPut("blobs", { id: bk, v: w.v, at: at }).then(function(){ r = Object.assign({}, r, { blobAt: at }); px = true; });
         }).then(function(){
-          if(hold || !must){ if(!hold) n.skip++; return; }
-          return rawPut("records", wipeBodyRec(r)).then(function(){ n.rec++; });   // v277 저장이 끝난 뒤에 센다
+          if(hold) return;
+          var c = wipeBodyRec(r);
+          if(px) c.pxWiped = 1;        // 사진 속 점까지 끝냈다는 영구 표시
+          if(gone) c.pxGone = 1;       // 사진을 서버에서도 찾지 못함
+          return rawPut("records", c).then(function(){ n.rec++; });   // v277 저장이 끝난 뒤에 센다
         }).catch(function(e){ console.warn("[wipe rec]", e); n.fail++; });
       });
     }).then(function(){
@@ -12921,19 +12938,22 @@
         else syncRefresh(true);
       }catch(e){ console.warn("[wipe refresh]", e); }
       wipeBusy = false;
+      wipeLast = n.noDl ? "지난 실행에서 인터넷이 끊겨 사진을 못 받은 기록 " + n.noDl + "건이 있어요 — 와이파이에서 다시 눌러 주세요." : "";
       return wipeCount().then(function(){
         var left = wipeN ? wipeN.rec + wipeN.rom + wipeN.admx : -1;
         say("끝났어요.\n· 체형분석 " + n.rec + "건 · ROM·거북목·척추 균형 " + n.rom + "건의 측정을 비웠어요."
           + "\n· 관리자 수정 기록 " + n.admx + "건도 함께 비웠어요."
           + "\n· 사진이 없거나 이미 비어 있어 건너뛴 기록 " + n.skip + "건."
           + (n.fail ? "\n· 저장에 실패해 그대로 남은 기록 " + n.fail + "건 — 측정 비우기를 다시 누르면 이어서 비웁니다." : "")
-          + (n.noDl ? "\n· 이 기기에 사진이 아직 없어 못 비운 기록 " + n.noDl + "건 — 인터넷(와이파이)에 연결한 뒤 다시 누르면 사진을 받아서 비웁니다." : "")
-          + (left === 0 ? "\n· 남은 측정 기록 0건 — 모두 비워졌어요."
+          + (n.dl ? "\n· 서버에서 받아서 지운 사진 " + n.dl + "건." : "")
+          + (n.gone ? "\n· 사진을 서버에서도 찾지 못해 점을 못 지운 기록 " + n.gone + "건 (다시 잴 수 없는 기록이라 끝낸 것으로 둡니다)." : "")
+          + (n.noDl ? "\n· 인터넷이 끊겨 사진을 못 받은 기록 " + n.noDl + "건 — 와이파이에 연결한 뒤 다시 누르면 사진을 받아서 비웁니다." : "")
+          + (left === 0 && !n.noDl ? "\n· 남은 측정 기록 0건 — 모두 비워졌어요."
              : left > 0 ? "\n· 아직 남은 측정 기록 " + left + "건 — 측정 비우기를 다시 누르면 이어서 비웁니다."
              : "\n· 남은 건수를 확인하지 못했어요 — 관리자 창을 닫고 다시 열어 확인해 주세요.")
           + "\n· 사진은 그대로예요. 기록을 열면 최신 측정법으로 자동 인식이 돌아가요.");
         admxInfo();
-        toast(left === 0 ? "측정을 비웠어요. 사진은 그대로예요."
+        toast(left === 0 && !n.noDl ? "측정을 비웠어요. 사진은 그대로예요."
           : left > 0 ? "일부가 남았어요. 다시 눌러 주세요." : "비우기는 끝났어요. 창을 다시 열어 남은 건수를 확인해 주세요.");
       });
     }).catch(function(e){ wipeBusy = false; console.warn("[wipe]", e); say("비우는 중 문제가 생겼어요. 다시 실행하면 남은 기록부터 이어서 비웁니다."); wipeCount(); });

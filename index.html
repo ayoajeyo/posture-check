@@ -275,7 +275,7 @@
   .rd-tblwrap{overflow-x:auto; margin-top:8px;}
   .rd-tbl{width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums;}
   .rd-tbl th,.rd-tbl td{padding:7px 6px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap;}
-  .rd-tbl th{color:var(--ink-soft); font-weight:600;} .rd-tbl th:first-child,.rd-tbl td:first-child{text-align:left;}
+  .rd-tbl th{color:var(--ink-soft); font-weight:600;} .rd-tbl th:first-child,.rd-tbl td:first-child{text-align:left; white-space:normal; word-break:keep-all;}
   .rep-rounds-list button[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#fff;}
   .rep-rounds-list button[aria-pressed="true"] em, .rep-rounds-list button[aria-pressed="true"] small{color:rgba(255,255,255,.85);}
   /* v135 결과 사진 보기: 원본 / 측정 / 격자 */
@@ -6127,11 +6127,12 @@
     };
     // v283 머리글 → 한눈에 보기(회차별 변화) → 정면·측면 보드 + 점수. 대시보드를 만들 수 없으면(1회차도 없음·모듈 없음) 머리글 바로 아래 보드
     blocks.push({ h: HEAD, draw: function(g, y){ g.drawImage(one, 0, 0, W, HEAD, 0, y, W, HEAD); } });
-    var dtl = (typeof repDashImgTl === "function") ? repDashImgTl() : null;
-    if(dtl && dtl.rounds.length){
+    var dtl = null, dh = 0;
+    try{ dtl = (typeof repDashImgTl === "function") ? repDashImgTl() : null; if(dtl && dtl.rounds.length) dh = repDashH(dtl); }catch(e){ console.warn("[rep dash img]", e); dtl = null; }
+    if(dtl && dh){
       var R0 = dtl.rounds[0], RN = dtl.rounds[dtl.rounds.length - 1];
       secTitle("한눈에 보기", dtl.rounds.length > 1 ? R0.n + "차 " + R0.day + " → " + RN.n + "차 " + RN.day : "첫 측정 " + R0.day);
-      blocks.push({ h: repDashH(dtl), draw: function(g, y){ drawRepDash(g, PAD, y, cw, dtl, F, M); } });
+      blocks.push({ h: dh, draw: function(g, y){ try{ drawRepDash(g, PAD, y, cw, dtl, F, M); }catch(e){ console.warn("[rep dash img]", e); } } });   // 그리다 실패해도 나머지 쪽은 그대로
     }
     blocks.push({ h: topH - HEAD, draw: function(g, y){ g.drawImage(one, 0, HEAD, W, topH - HEAD, 0, y, W, topH - HEAD); } });
     // 1) ROM·척추 균형 표
@@ -8094,7 +8095,7 @@
       var act = repSel && repSel.mid === mid ? S.find(function(x){ return x.key === repSel.key; }) : null;
       if(act && act.rec && state.sessionId && act.rec.id !== state.sessionId) act = null;   // 다른 화면에서 다른 기록을 열었으면 그쪽 기준
       if(!act && state.sessionId) act = S.find(function(x){ return x.rec && x.rec.id === state.sessionId; }) || null;
-      if(!act && !hasPhotos()){ repPickRound(S[0], true); return; }   // 열린 측정이 없으면 가장 최근 회차
+      if(!act && !hasPhotos()){ if(repDashSMid !== mid) renderRepDash(null, null); repPickRound(S[0], true); return; }   // 열린 측정이 없으면 가장 최근 회차 (다른 회원 카드는 먼저 숨김)
       var pickLater = null;   // v202 다른 회원의 사진이 열려 있으면 이 회원의 회차 목록을 먼저 그리고 가장 최근 회차로 (저장 안 한 측정이면 확인 후)
       if(!act && repForeign() && repForeignAsk !== mid){ repForeignAsk = mid; pickLater = S[0]; }
       var prev = repSessCur;
@@ -8141,7 +8142,7 @@
       var tl = L.buildTimeline(S, ROM_ALL, rdJ(), { uptoKey: act ? act.key : null }), N = tl.rounds.length;
       repDashCache = { mid: state.member.id, key: act ? act.key : null, tl: tl };
       var R0 = tl.rounds[0], RN = tl.rounds[N - 1];
-      $("rdSub").textContent = N > 1 ? R0.n + "차 " + R0.day + " → " + RN.n + "차 " + RN.day : "첫 측정 " + R0.day + " · 다음 측정부터 변화가 함께 보여요";
+      $("rdSub").textContent = (N > 1 ? R0.n + "차 " + R0.day + " → " + RN.n + "차 " + RN.day : "첫 측정 " + R0.day + " · 다음 측정부터 변화가 함께 보여요") + (act ? "" : " · 저장된 회차 기준 (지금 측정 중인 결과는 아래)");
       // KPI 타일
       var labs = tl.rounds.map(function(r){ return r.n + "차 " + r.day; });
       $("rdKpis").innerHTML = L.kpiOf(tl, rdJ()).map(function(k){
@@ -8153,7 +8154,7 @@
       // 상태표
       var bodyN = Object.keys(tl.body).length; $("rdDetail").hidden = !bodyN; if(!bodyN) repDashDetail = false;
       $("rdDetail").setAttribute("aria-expanded", String(repDashDetail)); $("rdDetail").textContent = repDashDetail ? "체형 항목 접기" : "체형 항목 보기";
-      var st = L.statusRows(tl, { maxCols: 5, detail: repDashDetail }), actKey = act ? act.key : null;
+      var st = L.statusRows(tl, { maxCols: 5, maxRows: 14, detail: repDashDetail }), actKey = act ? act.key : null;
       var th = '<th></th>' + st.cols.map(function(ci, i){ var r = tl.rounds[ci]; return (st.gap && i === 1 ? '<th class="gap">…</th>' : '') + '<th' + (r.key === actKey ? ' class="on"' : '') + '>' + r.n + '차<small>' + r.day.slice(5) + '</small></th>'; }).join("");
       var tb = st.rows.map(function(row){
         return '<tr><td class="n">' + esc(row.label) + '</td>' + st.cols.map(function(ci, i){ var c = row.cells[ci]; return (st.gap && i === 1 ? '<td class="gap"></td>' : '') + '<td>' + (c ? '<span class="rd-cell ' + c.cls + '" title="' + (L.CLS_TXT[c.cls] || "") + '">' + esc(c.txt) + '</span>' : '<span class="rd-cell">–</span>') + '</td>'; }).join("") + '</tr>';
@@ -8171,8 +8172,8 @@
             '<span class="rd-db">' + L.dumbbellRowSvg(r, { w: bw, h: 24, min: 40, max: 100 }) + '</span><b class="rd-pct ' + r.cls + '">' + r.b + '%</b></div>';
         }).join("");
         $("rdTbl").innerHTML = '<table class="rd-tbl"><thead><tr><th>항목</th><th>' + (hasA ? "처음" : "") + '</th><th>최근</th><th>변화</th><th>정상</th></tr></thead><tbody>' + rows.map(function(r){
-          var d = r.a != null ? r.bVal - r.aVal : null;
-          return '<tr><td>' + esc(r.label) + '</td><td>' + (r.a != null ? r.aVal + '°' : '–') + '</td><td><b>' + r.bVal + '°</b></td><td class="rd-delta ' + (d == null ? "flat" : d > 0 ? "up" : d < 0 ? "down" : "flat") + '">' + (d == null ? '–' : (d > 0 ? '▲ ' : d < 0 ? '▼ ' : '') + Math.abs(d) + '°') + '</td><td>' + (r.normal === 0 ? '0°' : r.normal + '°') + '</td></tr>';
+          var d = r.a != null ? r.bVal - r.aVal : null;   // 색은 정상 대비 % 가 올랐는지(r.better)로 — 신전은 각도가 줄어도 개선
+          return '<tr><td>' + esc(r.label) + '</td><td>' + (r.a != null ? r.aVal + '°' : '–') + '</td><td><b>' + r.bVal + '°</b></td><td class="rd-delta ' + (r.better === true ? "up" : r.better === false ? "down" : "flat") + '">' + (d == null ? '–' : (d > 0 ? '▲ ' : d < 0 ? '▼ ' : '') + Math.abs(d) + '°') + '</td><td>' + (r.normal === 0 ? '0°' : r.normal + '°') + '</td></tr>';
         }).join("") + '</tbody></table>';
       }
     }catch(e){
@@ -8183,13 +8184,15 @@
   $("rdRetry").addEventListener("click", function(){ renderRepDash(repDashS, repDashAct); });
   /* 공유·저장 이미지용 — 화면과 같은 회차 범위(1차~선택 회차)의 시계열. 없으면 null (이미지에 대시보드를 넣지 않음) */
   function repDashImgTl(){
-    var L = window.AYO_LOGIC; if(!L || !L.buildTimeline || !repDashS || !state.member || repDashSMid !== state.member.id) return null;
-    var key = repSessCur ? repSessCur.key : null;
+    var L = window.AYO_LOGIC;
+    if(!L || !L.buildTimeline || !L.kpiOf || !L.statusRows || !L.dumbbellRows || !L.sparkGeom || !L.dumbbellGeom || !L.CHART_COLOR) return null;   // 계산·차트 파일 중 하나라도 없으면 대시보드만 뺀다
+    if(!repDashS || !state.member || repDashSMid !== state.member.id || !repSessCur) return null;   // 저장 안 한 '지금 측정 중' 결과(repSessCur 없음)에는 저장값 대시보드를 섞지 않는다
+    var key = repSessCur.key;
     if(repDashCache && repDashCache.mid === state.member.id && repDashCache.key === key) return repDashCache.tl;
     try{ return L.buildTimeline(repDashS, ROM_ALL, rdJ(), { uptoKey: key }); }catch(e){ console.warn("[rep dash img]", e); return null; }
   }
   var RD_IMG = { KPI: 300, ROW: 56, HDR: 110, LEG: 50, GAP: 36, TW: 1150 };   // HDR = 제목 줄 + 회차 머리 줄 (겹치지 않게 두 줄)   // 2000px 캔버스 기준 치수
-  function repDashImgRows(tl){ var L = window.AYO_LOGIC; return { st: L.statusRows(tl, { maxCols: 5, detail: false }), db: L.dumbbellRows(tl, { max: 14 }) }; }
+  function repDashImgRows(tl){ var L = window.AYO_LOGIC; return { st: L.statusRows(tl, { maxCols: 5, maxRows: 14, detail: false }), db: L.dumbbellRows(tl, { max: 14 }) }; }   // 14행이면 1쪽(머리글→대시보드→보드)에 들어간다
   function repDashH(tl){
     var R = repDashImgRows(tl), n = Math.max(R.st.rows.length, R.db.length);
     return RD_IMG.KPI + RD_IMG.GAP + RD_IMG.HDR + n * RD_IMG.ROW + RD_IMG.LEG;

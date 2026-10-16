@@ -176,3 +176,34 @@ test("normCls: st-good · g-good · good 모두 good", () => {
   for (const c of ["st-good", "g-good", "good"]) assert.equal(TL.normCls(c), "good");
   assert.equal(TL.normCls("st-crit"), "crit"); assert.equal(TL.normCls(""), ""); assert.equal(TL.normCls(undefined), "");
 });
+
+test("아령 행 better: 신전(정상 0°)은 각도가 줄어도 정상 대비 % 가 오르면 개선", () => {
+  const S = [
+    sess("a", 0, null, [rom("elbow", "R", "ext", 15, T0)]),
+    sess("b", 1, null, [rom("elbow", "R", "ext", 5, T0 + 86400000)]),
+  ];
+  const rows = TL.dumbbellRows(TL.buildTimeline(S, CATALOG, J));
+  const r = rows.find((x) => x.key === "elbow|R|ext");
+  assert.ok(r, "신전 행이 있다");
+  assert.equal(r.better, true, "15° → 5° 는 개선");
+  const S2 = [
+    sess("a", 0, null, [rom("shoulder", "L", "flex", 150, T0)]),
+    sess("b", 1, null, [rom("shoulder", "L", "flex", 130, T0 + 86400000)]),
+  ];
+  assert.equal(TL.dumbbellRows(TL.buildTimeline(S2, CATALOG, J))[0].better, false, "굴곡 150° → 130° 는 악화");
+  const S3 = [sess("a", 0, null, [rom("shoulder", "L", "flex", 150, T0)])];
+  assert.equal(TL.dumbbellRows(TL.buildTimeline(S3, CATALOG, J))[0].better, null, "처음 값이 없으면 null");
+});
+
+test("상태표 행 제한: maxRows 를 넘으면 최근 회차에 있는 항목을 먼저 남긴다 (기본 14행)", () => {
+  const old = [], recent = [];
+  CATALOG.filter((Jt) => !Jt.single).forEach((Jt) => Jt.moves.forEach((m) => { old.push(rom(Jt.k, "L", m.k, 30, T0)); old.push(rom(Jt.k, "R", m.k, 30, T0)); }));   // 1차: 5동작 × 좌우 = 10항목
+  recent.push(rom("ankle", "L", "dorsi", 15, T0 + 86400000), rom("ankle", "R", "dorsi", 15, T0 + 86400000));   // 2차: 발목 2항목만
+  const tl = TL.buildTimeline([sess("a", 0, { score: 60 }, old), sess("b", 1, { score: 70 }, recent)], CATALOG, J);
+  assert.equal(TL.statusRows(tl).rows.length, 11, "기본 14행 안이면 전부 (점수 1 + ROM 10 · 거북목·척추 행은 값이 없어 빠짐)");
+  const st = TL.statusRows(tl, { maxRows: 8 });
+  assert.equal(st.rows.length, 8, "빈 행을 뺀 뒤에 8행을 채운다");
+  assert.ok(st.rows.some((r) => r.key === "ankle|L|dorsi") && st.rows.some((r) => r.key === "ankle|R|dorsi"), "최근 회차 항목(발목, 카탈로그 맨 뒤)은 반드시 포함");
+  assert.deepEqual(st.rows.slice(1).map((r) => r.key), st.rows.slice(1).map((r) => r.key).slice().sort((a, b) => tl.rom[a].ord - tl.rom[b].ord), "남긴 행은 카탈로그 순서");
+  assert.equal(TL.statusRows(tl, { maxRows: 100 }).rows.length, 11, "제한이 크면 전부");
+});

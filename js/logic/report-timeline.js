@@ -127,14 +127,19 @@
     rows.push({ key: "score", label: "종합 점수", cells: tl.score.map(function(v, i){ return cell(v, tl.scoreCls[i], "점"); }) });
     rows.push({ key: "cva", label: "거북목 각도", cells: tl.cva.map(function(v, i){ return cell(v, tl.cvaCls[i], "°"); }) });
     rows.push({ key: "atr", label: "척추 균형", cells: tl.atr.map(function(v, i){ return cell(v, tl.atrCls[i], "°"); }) });
-    Object.keys(tl.rom).map(function(k){ return tl.rom[k]; }).sort(function(a, b){ return a.ord - b.ord; }).forEach(function(it){
+    rows = rows.filter(function(r){ return r.cells.some(function(c){ return c; }); });   // 값이 하나도 없는 행은 뺀다 (예: ROM 만 잰 회원의 종합 점수 행)
+    var maxRows = opts.maxRows || 14, roomRom = Math.max(0, maxRows - rows.length);   // 행 제한: 최근 회차에 있는 항목 우선, 나머지는 카탈로그 순
+    var romItems = Object.keys(tl.rom).map(function(k){ return tl.rom[k]; }).sort(function(a, b){ return a.ord - b.ord; });
+    if(romItems.length > roomRom){
+      var recent = function(it){ return it.vals[N - 1] != null ? 0 : 1; };
+      romItems = romItems.slice().sort(function(a, b){ return recent(a) - recent(b) || a.ord - b.ord; }).slice(0, roomRom).sort(function(a, b){ return a.ord - b.ord; });
+    }
+    romItems.forEach(function(it){
       rows.push({ key: it.key, label: it.label, cells: it.vals.map(function(v, i){ return cell(v, it.cls[i], "°"); }) });
     });
     if(opts.detail){
       Object.keys(tl.body).forEach(function(k){ var it = tl.body[k]; rows.push({ key: it.key, label: it.label, body: true, cells: it.vals.map(function(v, i){ return cell(v, it.cls[i], ""); }) }); });
     }
-    // 값이 하나도 없는 행은 뺀다 (예: ROM 만 잰 회원의 종합 점수 행)
-    rows = rows.filter(function(r){ return r.cells.some(function(c){ return c; }); });
     return { cols: cols, gap: gap, rows: rows };
   }
 
@@ -148,7 +153,8 @@
       var fi = firstIdx(it.vals), hasA = fi >= 0 && fi !== li;
       out.push({ key: it.key, label: it.label, side: it.side, normal: it.normal,
                  a: hasA ? it.pct[fi] : null, aVal: hasA ? it.vals[fi] : null, aN: hasA ? fi + 1 : null,
-                 b: it.pct[li], bVal: it.vals[li], bN: li + 1, cls: it.cls[li] });
+                 b: it.pct[li], bVal: it.vals[li], bN: li + 1, cls: it.cls[li],
+                 better: hasA ? (it.pct[li] > it.pct[fi] ? true : it.pct[li] < it.pct[fi] ? false : null) : null });   // 방향은 정상 대비 % 로 (신전·과신전은 각도가 줄어도 개선)
     });
     return out.slice(0, max);
   }

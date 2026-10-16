@@ -80,3 +80,41 @@ test("사진 묶음이 없으면 null (사진 없는 예전 기록은 건너뛴�
   assert.equal(wipePhotos(null), null);
   assert.equal(wipePhotos("문자열"), null);
 });
+
+// v277 "비웠는데 그대로" 를 눈으로 확인하는 남은 기록 세기
+const leftRec = vm.runInContext("wipeRecLeft", ctx);
+const leftRom = vm.runInContext("wipeRomLeft", ctx);
+const leftCnt = vm.runInContext("wipeLeftCount", ctx);
+
+test("남은 기록 세기: 비우기 전 기록은 '남았다'고 센다", () => {
+  assert.equal(leftRec({ score: 82 }), true);
+  assert.equal(leftRec({ score: null, f: { tilt: 3 } }), true, "점수만 지워도 판정값이 남으면 남은 것");
+  assert.equal(leftRec({ score: null, sd: { fhp: 51 } }), true);
+  assert.equal(leftRec({ score: null, groups: [{ name: "어깨" }] }), true);
+  assert.equal(leftRec({ score: null, thumbs: { front: "T" } }), true, "측정선 썸네일이 남으면 남은 것");
+  assert.equal(leftRom({ value: 47 }), true);
+  assert.equal(leftRom({ value: null, pts: [{ x: 1, y: 2 }] }), true);
+});
+
+test("남은 기록 세기: 비운 기록은 '남지 않았다'고 센다", () => {
+  assert.equal(leftRec(wipeBody({ id: "r1", score: 82, f: { a: 1 }, sd: { b: 2 }, groups: [{}], thumbs: { front: "T" } })), false);
+  assert.equal(leftRom(wipeRom({ id: "k1", value: 47, pts: [{ x: 1, y: 2 }], pct: 94, thumb: "T" })), false);
+  assert.equal(leftRec(null), false);
+  assert.equal(leftRom(undefined), false);
+});
+
+test("남은 기록 세기: 전체 건수도 같이 알려 준다 (기기에 기록이 없을 때 구분용)", () => {
+  const n = leftCnt(
+    [{ score: 82 }, { score: null, wipedAt: 1 }, { score: null, thumbs: { front: "T" } }],
+    [{ value: 47 }, { value: null, pts: null }],
+    ["admx:roms:a", "admx:records:b"]
+  );
+  assert.equal(n.rec, 2); assert.equal(n.rom, 1); assert.equal(n.admx, 2);
+  assert.equal(n.recAll, 3); assert.equal(n.romAll, 2);
+});
+
+test("남은 기록 세기: 기기에 기록이 하나도 없으면 전부 0 (동기화 전 상태를 구분할 수 있다)", () => {
+  const n = leftCnt([], [], []);
+  assert.equal(n.rec + n.rom + n.admx, 0);
+  assert.equal(n.recAll, 0); assert.equal(n.romAll, 0);
+});

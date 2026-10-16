@@ -3819,6 +3819,7 @@
     // v160 팔꿈치·무릎·고관절·발목 18개 항목 추가
     "elbow_L_flex", "elbow_R_flex", "elbow_L_ext", "elbow_R_ext", "knee_L_flex", "knee_R_flex", "knee_L_ext", "knee_R_ext", "hip_L_flex", "hip_R_flex", "hip_L_er", "hip_R_er", "hip_L_ir", "hip_R_ir", "ankle_L_dorsi", "ankle_R_dorsi", "ankle_L_plantar", "ankle_R_plantar",
     "fhp_C_cva", "scol_C_atr"];   // v211 척추 균형(앞으로 숙인 등) 기준 실루엣 · v174 거북목(CVA) 기준 실루엣 — 측면 상반신, C7 높이 촬영 가이드
+  var SIL_V = { scol_C_atr: "v4" };   // v284 사진을 바꾼 실루엣만 파일 번호를 올린다 (나머지는 v3) — 이름이 같으면 폰이 옛 그림을 계속 쓸 수 있어서
   /* v161 항목별 기준 실루엣 크기·위치 조정: s = 크기 배율, dx = 오른쪽 이동(그린 실루엣 폭 대비)
      v187 dy = 아래쪽 이동(음수면 위로). 체형(body_*)은 촬영 화면 높이 대비, ROM은 그린 실루엣 높이 대비 */
   var SIL_ADJ = {
@@ -11521,7 +11522,7 @@
         var fid = "fixed:" + sk, im0 = new Image(); romCam.ghostId = fid;
         im0.onload = function(){ if(romCam.ghostId !== fid) return; romCam.ghost = { w: im0.naturalWidth, h: im0.naturalHeight, rec: null, cv: silStylize(im0), mode: "sil", fixed: true, adj: SIL_ADJ[sk] || null }; romOutlineBtn(); };   // v191
         im0.onerror = function(){ if(romCam.ghostId === fid) romGhostPrepRec(); };
-        im0.src = "guide/sil/" + sk + "_v3.webp";   // v146 얼굴 흐림 + 몸매 보정본
+        im0.src = "guide/sil/" + sk + "_" + (SIL_V[sk] || "v3") + ".webp";   // v146 얼굴 흐림 + 몸매 보정본 · v284 척추 균형은 v4
         return;
       }
     }
@@ -14060,7 +14061,7 @@
     $("ptGuideSub").textContent = "측정점 2개 · 바닥 수평선";
     $("ptGuideBody").innerHTML =
       '<div class="pg-pose"><b>측정 자세</b> · ' + mv.guide + '</div>' +
-      '<div class="pg-pics one"><figure><img src="guide/rom/scol_C_atr.jpg?v=211" alt="척추 균형 측정점 예시" loading="lazy"></figure></div>' +
+      '<div class="pg-pics one"><figure><img src="guide/rom/scol_C_atr.jpg?v=284" alt="척추 균형 측정점 예시" loading="lazy"></figure></div>' +
       '<ul class="pg-list">' +
         '<li><i style="background:#F5A623"></i><b>시작점</b><span>' + esc(G.V) + '</span></li>' +
         '<li><i style="background:#E8508A"></i><b>끝점</b><span>' + esc(G.D) + '</span></li>' +

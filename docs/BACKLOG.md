@@ -12,6 +12,15 @@
 - [ ] 보조선 계산(`romAuxGeo`·`romFixVUp`)을 `js/logic/rom-aux.js` 로 분리 — 지금은 index.html 문자열을 잘라 테스트해서 서식만 바뀌어도 깨짐 (ADR-011)
 - [ ] 측정 비우기 판단 함수(`wipeRecLeft`·`wipeRomTodo`·`wipeLeftCount`·`wipeBodyRec`·`wipeRomRec`)를 `js/logic/wipe.js` 로 분리 — 위와 같은 이유 (ADR-011). `sw.js` SHELL_FILES 에 추가 필요
 - [ ] 측정 비우기 직후 백업 필요 표시(`bkTouch`)가 안 켜진다 — `rawPut` 경로라서. 비운 뒤 백업 알림이 뜨는 게 맞는지 결정 필요
+- [ ] 되돌릴 수 없는 작업의 확인창을 `window.confirm` 대신 앱 팝업(`.confirm-overlay`)으로 — 측정 비우기·보관한 수정 기록 비우기 2곳 (UI_GUIDE 5번)
+- [ ] `docs/UI_GUIDE.md` 7번 표준 단어에 '비우기' 가 없다 — 비우기/삭제/지우기 단어 체계를 정리하고 화면 문구를 맞추기
+- [ ] 관리자 창 전역 본문이 12.5px (`.adm-xls p`) — UI_GUIDE 3번 13px 미만 금지. 측정 비우기 칸만 v278 에서 올렸고 나머지는 그대로
+- [ ] 관리자 창에 주 단추(`btn primary`)가 3개 — UI_GUIDE 5번 '화면당 1개'
+- [ ] 측정 비우기의 '비어 있음'·'오류' 상태에 다음 행동 단추가 없다 — [다시 확인]/[로그인] 1개 추가 (UI_GUIDE 6번)
+- [ ] `#admWipeSt` 가 여러 줄로 커지며 단추가 아래로 밀린다 — `min-height` 로 레이아웃 고정
+- [ ] `button.btn.primary` 의 `box-shadow` — UI_GUIDE 4번 '그림자 없음' 과 어긋남 (전역, 영향 범위 큼)
+- [ ] `docs/PRIVACY.md` 에 관리자 엑셀(회원 이름 포함) 보관·공유 수칙 한 줄 추가
+- [ ] `CLAUDE.md` 의 'Supabase anon 키·URL 은 `js/config.js` 에 둔다' 문구를 실제 위치(`index.html`·`c.html`·`r.html`)로 수정 — `js/config.js` 는 없다
 - [ ] 목 굴곡·신전·측방굴곡 **측정가이드 예시 사진 3장**이 없음 — 새 방식(보조선)으로 찍어 `guide/rom/neck_C_flex.jpg`·`neck_C_ext.jpg`·`neck_L_lat.jpg`·`neck_R_lat.jpg` 교체 후 `ROM_GD_V.neck` 추가하면 가이드에 사진이 나옴 (v273)
 - [ ] 목 보조선 방식: ①선 끝점(세로 기준선)은 자동인데 손가락으로 집을 수는 있음(놓으면 제자리로) — 아예 집히지 않게 할지 (v273)
 - [ ] 측정가이드 사진이 뜰 때 아래 내용이 밀림 — **`aspect-ratio:4/3` 은 쓸 수 없음**(가이드 사진 비율이 제각각: 거북목·척추 640×639, 무릎 620×459, 목 620×899, 발목 620×465). 부위별 사진 크기를 코드에 들고 있다가 `width`/`height` 로 넣는 방식이 필요 (v272 확인)

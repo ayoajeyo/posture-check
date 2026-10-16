@@ -1522,11 +1522,14 @@
   .adm-xls p{margin:0 0 10px; font-size:12.5px; line-height:1.55; color:var(--ink-soft);}
   /* v121 정확도 채점 */
   /* v274 측정 비우기 — 되돌릴 수 없는 작업이라 눈에 띄게 분리 */
-  .adm-wipe{border:1px solid var(--crit); background:rgba(214,69,69,.06);}
+  .adm-wipe{border:1px solid var(--crit); background:var(--crit-soft);}
   .adm-wipe b{color:var(--crit);}
-  .adm-wipe-warn{margin:6px 0 10px; font-size:12.5px; line-height:1.6; color:var(--crit);}
-  .adm-wipe-st{margin:8px 0 6px; font-size:12.5px; line-height:1.6; color:var(--ink-soft); white-space:pre-line;}
-  .adm-wipe-out{margin:10px 0 0; padding:10px 12px; border-radius:10px; background:var(--surface-2); font-size:13px; line-height:1.7; white-space:pre-line;}
+  /* v278 .adm-xls p 보다 선택자 점수가 낮아 색·크기·여백이 전부 덮어써지고 있었다 (경고가 회색으로 보임) */
+  .adm-wipe p.adm-wipe-warn{margin:6px 0 10px; font-size:13px; line-height:1.6; color:var(--crit);}
+  .adm-wipe p.adm-wipe-st{margin:8px 0 6px; font-size:13px; line-height:1.6; color:var(--ink); white-space:pre-line;}
+  .adm-wipe p.adm-wipe-out{margin:10px 0 0; padding:10px 0 0; border-top:1px solid var(--crit); font-size:13px; line-height:1.7; color:var(--ink); white-space:pre-line;}
+  .adm-wipe p#admWipeInfo{font-size:13px; line-height:1.6;}
+  .adm-wipe button.btn, .adm-wipe .adm-in{min-height:44px;}   /* UI_GUIDE 10번 터치 영역 */
   .bench-tabs{display:flex; gap:6px; margin-bottom:8px;}
   .bench-tab{flex:1; padding:7px 0; border:1px solid var(--line); border-radius:9px; background:var(--surface); color:var(--ink-soft); font:inherit; font-size:12.5px; font-weight:700; cursor:pointer;}
   .bench-tab[aria-pressed="true"]{background:var(--ink); color:var(--surface); border-color:var(--ink);}
@@ -2776,7 +2779,7 @@
         <label>회차<select class="sel" id="admXlsRound"></select></label>
       </div>
       <button type="button" class="btn primary" id="btnAdmXls" style="width:100%">엑셀 파일로 저장</button>
-      <button type="button" class="btn line sm" id="btnAdmXlsClr" style="width:100%;margin-top:6px">보관한 수정 기록 비우기</button>
+      <button type="button" class="btn line sm acc-danger" id="btnAdmXlsClr" style="width:100%;margin-top:6px">보관한 수정 기록 비우기</button>
     </div>
     <div class="adm-xls" id="admBench" hidden>
       <b>🎯 정확도 채점</b>
@@ -2790,13 +2793,13 @@
     </div>
     <div class="adm-xls adm-wipe" id="admWipe" hidden>
       <b>측정 비우기 (사진은 그대로)</b>
-      <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한 정리 기능이에요. 사진이 없어 다시 잴 수 없는 기록은 건너뜁니다.</p>
-      <p class="adm-wipe-warn"><b>되돌릴 수 없어요.</b> 지난 회차의 각도·점수는 다시 볼 수 없게 됩니다(사진은 남아요). 관리자 수정 기록은 백업 파일에도 들어 있지 않아 완전히 사라집니다. 다른 기기(집 PC)가 있으면 먼저 그 기기에서도 앱을 열어 최신으로 맞춰 주세요.</p>
-      <button type="button" class="btn line sm" id="btnWipeBk" style="width:100%">백업 파일 저장 (선택)</button>
-      <p class="adm-wipe-st" id="admWipeSt"></p>
-      <input type="text" class="adm-in" id="admWipeWord" autocomplete="off" placeholder="① 비우기 라고 입력">
-      <button type="button" class="btn primary" id="btnWipeGo" style="width:100%;margin-top:6px" disabled>② 측정 비우기 실행</button>
-      <p class="adm-wipe-out" id="admWipeOut" hidden></p>
+      <p id="admWipeInfo">저장된 <b>측정점·각도·점수만</b> 비우고 <b>사진은 한 장도 지우지 않아요</b>. 모든 사진을 최신 측정법으로 다시 재기 위한 정리예요. 사진이 없어 다시 잴 수 없는 기록은 건너뜁니다.</p>
+      <p class="adm-wipe-warn"><b>되돌릴 수 없어요.</b> 지난 회차의 각도·점수는 다시 볼 수 없게 됩니다. 관리자 수정 기록은 백업 파일에도 없어 완전히 사라집니다. 다른 기기(집 PC)가 있으면 먼저 그 기기에서 앱을 한 번 열어 최신으로 맞춰 주세요. 원하시면 아래에서 파일로 먼저 내보낼 수 있어요.</p>
+      <button type="button" class="btn line sm" id="btnWipeBk" style="width:100%">파일로 내보내기</button>
+      <p class="adm-wipe-st" id="admWipeSt" aria-live="polite"></p>
+      <input type="text" class="adm-in" id="admWipeWord" autocomplete="off" placeholder="비우기 라고 입력">
+      <button type="button" class="btn line acc-danger" id="btnWipeGo" style="width:100%;margin-top:6px" disabled>측정 비우기</button>
+      <p class="adm-wipe-out" id="admWipeOut" aria-live="polite" hidden></p>
     </div>
     <div class="confirm-btns"><button type="button" class="no" id="btnAdmClose">닫기</button><button type="button" class="yes ok" id="btnAdmGo">확인</button></div>
   </div>
@@ -11531,7 +11534,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v277";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v278";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){
@@ -12830,6 +12833,7 @@
   var wipeN = null, wipeBusy = false;
   function wipeCount(){   // 기기 저장소를 실제로 다시 읽어 센다
     if(wipeBusy) return Promise.resolve();
+    $("admWipeOut").hidden = true; $("admWipeOut").textContent = "";   // v278 지난 실행 결과가 새 건수와 겹쳐 보이던 것
     $("admWipeSt").textContent = "남은 측정 기록을 확인하는 중…";
     $("btnWipeGo").disabled = true;
     return Promise.all([dbAll("records"), dbAll("roms"), idbKeys("blobs")]).then(function(a){
@@ -12854,13 +12858,14 @@
       : "아직 남은 측정 기록: 체형분석 " + n.rec + "건 · ROM·거북목·척추 균형 " + n.rom + "건 · 관리자 수정 기록 " + n.admx + "건"
         + "\n" + all + noPic
         + (done ? "\n" + done + " 에 한 번 실행했어요 — 다시 누르면 남은 것부터 이어서 비웁니다." : "")
-        + (word ? "\n✓ 준비됐어요. ②를 누르면 바로 실행돼요." : "\n①에 비우기 라고 입력하면 실행 단추가 켜져요.");
+        + (word ? "\n준비됐어요. 아래 단추를 누르면 바로 실행돼요." : "");
   }
   function wipeSync(){ return wipeCount(); }
   function wipeRun(){
     var n = { rec: 0, rom: 0, admx: 0, skip: 0, fail: 0 }, out = $("admWipeOut");
     var say = function(t){ out.hidden = false; out.textContent = t; };
     wipeBusy = true; $("admWipeWord").disabled = true; $("btnWipeGo").disabled = true;   // v277 실행 중 재진입 금지
+    $("admWipeSt").textContent = "비우는 중…";   // v278 '준비됐어요' 가 '비우는 중' 과 같이 보이던 것
     say("비우는 중… 창을 닫지 마세요.");
     var seq = function(L, job){ return L.reduce(function(p, x){ return p.then(function(){ return job(x); }); }, Promise.resolve()); };
     return dbAll("records").then(function(R){
@@ -12894,7 +12899,7 @@
         return seq(K, function(k){ return rawDel0("blobs", k); });
       });
     }).then(function(){
-      lsSet(WIPE_LS, new Date().toLocaleDateString("ko-KR"));
+      lsSet(WIPE_LS, toDateInput(Date.now()).replace(/-/g, "."));   // v278 UI_GUIDE 날짜 형식
       romCache.all = null; romRenderCache = {}; laCache = null;
       // v277 비운 결과가 지금 보던 화면에 바로 보이도록 다시 그린다 (옛 숫자가 남아 보이던 원인)
       //      회원 상세·리포트를 보던 중이면 그 화면만 — syncRefresh(true) 는 목록으로 튕긴다
@@ -12909,14 +12914,14 @@
         say("끝났어요.\n· 체형분석 " + n.rec + "건 · ROM·거북목·척추 균형 " + n.rom + "건의 측정을 비웠어요."
           + "\n· 관리자 수정 기록 " + n.admx + "건도 함께 비웠어요."
           + "\n· 사진이 없거나 이미 비어 있어 건너뛴 기록 " + n.skip + "건."
-          + (n.fail ? "\n· 저장에 실패해 그대로 남은 기록 " + n.fail + "건 — ②를 다시 누르면 이어서 비웁니다." : "")
+          + (n.fail ? "\n· 저장에 실패해 그대로 남은 기록 " + n.fail + "건 — 측정 비우기를 다시 누르면 이어서 비웁니다." : "")
           + (left === 0 ? "\n· 남은 측정 기록 0건 — 모두 비워졌어요."
-             : left > 0 ? "\n· 아직 남은 측정 기록 " + left + "건 — ②를 다시 누르면 이어서 비웁니다."
+             : left > 0 ? "\n· 아직 남은 측정 기록 " + left + "건 — 측정 비우기를 다시 누르면 이어서 비웁니다."
              : "\n· 남은 건수를 확인하지 못했어요 — 관리자 창을 닫고 다시 열어 확인해 주세요.")
           + "\n· 사진은 그대로예요. 기록을 열면 최신 측정법으로 자동 인식이 돌아가요.");
         admxInfo();
         toast(left === 0 ? "측정을 비웠어요. 사진은 그대로예요."
-          : left > 0 ? "일부가 남았어요. ②를 다시 눌러 주세요." : "비우기는 끝났어요. 창을 다시 열어 남은 건수를 확인해 주세요.");
+          : left > 0 ? "일부가 남았어요. 다시 눌러 주세요." : "비우기는 끝났어요. 창을 다시 열어 남은 건수를 확인해 주세요.");
       });
     }).catch(function(e){ wipeBusy = false; console.warn("[wipe]", e); say("비우는 중 문제가 생겼어요. 다시 실행하면 남은 기록부터 이어서 비웁니다."); wipeCount(); });
   }

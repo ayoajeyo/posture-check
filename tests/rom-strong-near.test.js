@@ -15,7 +15,7 @@ const grab = (start, end) => {
 };
 const ctx = {};
 vm.createContext(ctx);
-vm.runInContext(grab("  function romStrongNear(S, K, w, h, r){", "  function romMaskMerge("), ctx);
+vm.runInContext(grab("  function romDilate(M, w, h, r){", "  function romMaskMerge("), ctx);
 const near = vm.runInContext("romStrongNear", ctx);
 
 const W = 40, H = 20;

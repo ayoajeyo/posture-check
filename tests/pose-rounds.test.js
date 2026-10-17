@@ -75,3 +75,54 @@ test("겹친 번호 뒤에 저장된 기록도 시간 순서대로 이어 센다
   assert.deepEqual([PR.b1.f, PR.b2.f, PR.b3.f], [1, 2, 3]);
   assert.deepEqual([PR.b1.s, PR.b2.s, PR.b3.s], [1, 2, 3]);
 });
+
+// v296 1차에 잰 체형분석이 3차로 밀리던 문제
+//  다시 저장할 때 정면이 미완성이면 정면 회차 번호(rf)가 지워졌고(v291 보호는 비운 기록에만),
+//  나중에 정면을 다시 저장하자 '다음 회차' 번호(3)를 받아 1차가 비고 3차가 됐다
+test("1차 기록이 맨 뒤 번호(3)를 받아 1차가 비면, 그 사이 번호가 모두 나중 기록일 때 1차로 되돌려 센다", () => {
+  const rs = [body("b1", D(9), { rf: 3, rs: 1, score: 81 }), wiped("b2", D(15), { rf: 2, rs: 2 })];
+  const PR = poseRounds(rs);
+  assert.deepEqual([PR.b1.f, PR.b2.f, PR.b1.s, PR.b2.s], [1, 2, 1, 2]);
+  assert.deepEqual(plain(PR._next), { f: 3, s: 3 }, "다음 측정은 3차");
+  const S = byKey(build(rs, ROMS));
+  assert.deepEqual(S.b1, ["f1", "r1a", "s1"], "1차 ROM 은 1차 체형분석과 함께");
+});
+
+test("정면·측면 모두 3으로 밀린 기록도 1차로 되돌린다", () => {
+  const PR = poseRounds([body("b1", D(9), { rf: 3, rs: 3 }), wiped("b2", D(15), { rf: 2, rs: 2 })]);
+  assert.deepEqual([PR.b1.f, PR.b1.s, PR.b2.f, PR.b2.s], [1, 1, 2, 2]);
+});
+
+test("중간 회차를 지워 생긴 빈 번호는 그대로 둔다 (번호가 시간 순서대로면 당기지 않음)", () => {
+  const PR = poseRounds([body("a", D(9), { rf: 1, rs: 1 }), body("c", D(13), { rf: 3, rs: 3 })]);
+  assert.deepEqual([PR.a.f, PR.c.f, PR.a.s, PR.c.s], [1, 3, 1, 3]);
+  assert.deepEqual(plain(PR._next), { f: 4, s: 4 });
+});
+
+test("빈 번호 사이에 이 기록보다 먼저 잰 기록이 있으면 당기지 않는다", () => {
+  // 1차를 지운 회원: 2차(9시) · 3차(13시) 는 시간 순서가 맞으므로 그대로
+  const PR = poseRounds([body("b", D(9), { rf: 2 }), body("c", D(13), { rf: 3 })]);
+  assert.deepEqual([PR.b.f, PR.c.f], [2, 3]);
+});
+
+// keepRounds: saveMeasurement 가 기록을 새로 만들어 저장할 때 이번에 저장하지 않은 쪽의 회차 번호를 이어받음
+const keepRounds = vm.runInContext("keepRounds", ctx);
+test("다시 저장할 때 정면이 빠져도 정면 회차 번호(rf)는 남는다", () => {
+  const rec = keepRounds({ id: "b1", f: null, sd: [1], rs: 1 }, { id: "b1", rf: 1, rs: 1 }, { f: 1, s: 1 });
+  assert.equal(rec.rf, 1);
+  assert.equal(rec.rs, 1);
+});
+test("이번에 저장하는 쪽 번호는 덮어쓰지 않는다", () => {
+  const rec = keepRounds({ id: "b1", f: [1], rf: 2, sd: null }, { id: "b1", rf: 1, rs: 1 }, { f: 1, s: 1 });
+  assert.equal(rec.rf, 2);
+  assert.equal(rec.rs, 1);
+});
+test("계산된 번호(겹침을 바로잡은 값)를 저장된 번호보다 먼저 쓴다", () => {
+  const rec = keepRounds({ id: "b2", f: [1], rf: 2, sd: null }, { id: "b2", rf: 1, rs: 1 }, { f: 2, s: 2 });
+  assert.equal(rec.rs, 2);
+});
+test("새 기록(옛 기록 없음)은 그대로", () => {
+  const rec = keepRounds({ id: "n", f: [1], rf: 3, sd: null }, null, null);
+  assert.equal(rec.rf, 3);
+  assert.equal(rec.rs, undefined);
+});

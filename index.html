@@ -12988,7 +12988,7 @@
       }).then(function(sizes){
         L.forEach(function(x, i){
           var r = admxRow(x), rn = i + 2;
-          var row = ws.addRow([r.a, r.b, "", "", r.e, r.f, r.g, r.h, r.ib, r.ia, r.k, (x.member || "회원 미지정") + "\n" + fmtDate(x.at) + "\n" + x.w + "×" + x.h + "px", ""]);   // v120 마지막 열 = 직접 적는 빈칸
+          var row = ws.addRow([r.a, r.b, "", "", r.e, r.f, r.g, r.h, r.ib, r.ia, r.k, (x.member || "회원 미지정") + (x.round === "del" ? " · 삭제된 기록" : x.round ? " · " + x.round + "차" : "") + "\n" + fmtDate(x.at) + "\n" + x.w + "×" + x.h + "px", ""]);   // v120 마지막 열 = 직접 적는 빈칸
           row.height = 314.65;
           row.eachCell({ includeEmpty: true }, function(c){ c.font = font; c.alignment = al; });
           var og = sizes[i][2];   // v143 마지막 열: 같은 항목 1차 촬영 실루엣

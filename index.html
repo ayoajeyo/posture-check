@@ -7742,7 +7742,10 @@
     if(A && A.ht !== B.ht) out.push("키 " + (A.ht || "없음") + " → " + (B.ht || "없음") + (B.ht ? "cm" : ""));
     return out;
   }
-  function sigKeep(saved, before, after){ return saved != null && before != null && saved === before ? after : null; }   // v301 바꾸기 전에 저장된 그대로였으면 바꾼 뒤 지문으로, 아니면 '저장 안 됨'
+  function sigKeep(saved, before, after, same){   // v301 바꾸기 전에 저장된 그대로였으면 바꾼 뒤 지문으로, 아니면 '저장 안 됨'
+    if(saved == null || before == null || saved !== before || after == null) return null;
+    return same ? after.slice(0, after.lastIndexOf("|") + 1) + saved.slice(saved.lastIndexOf("|") + 1) : after;   // 같은 회원이면 키는 저장한 값 기준 (회원 키로 바뀌면 '키 a → b' 로 보이게)
+  }
   function hasPhotos(){ return !!(state.byMode.front.img || state.byMode.side.img); }
   function isDirty(){ return hasPhotos() && sessSig() !== state.savedSig; }
 
@@ -8009,7 +8012,7 @@
   function confirmDiscard(){
     if(!isDirty()) return true;
     var L = sessDiffList(state.savedSig, sessSig()), who = state.member ? state.member.name + " 회원 · " + sessRndTxt() : "회원 미지정";   // v301 무엇이 저장되지 않았는지 보여 줌
-    return window.confirm("저장하지 않은 측정이 있어요 (" + who + ")" + (L.length ? "\n· " + L.join("\n· ") : "") + "\n저장하지 않고 넘어갈까요? 저장하려면 [취소] 후 측정 화면에서 [측정 저장] 을 눌러 주세요.");
+    return window.confirm("저장하지 않은 측정이 있어요 (" + who + ")" + (L.length ? "\n· " + L.join("\n· ") : "") + "\n저장하지 않고 넘어갈까요? 저장하려면 [취소] 후 측정 화면의 저장 버튼을 눌러 주세요.");
   }
   function startFreshSession(){ clearAllModes(); state.sessionId = null; state.savedSig = null; state.editingOld = false; $("repSaved").hidden = true; }   // 사진·회차를 비우고 새 측정으로
   $("btnSessNext").addEventListener("click", function(){
@@ -8029,9 +8032,9 @@
   setMember = function(m){
     if(m && hasPhotos() && !state.photoMid) state.photoMid = m.id;   // v202 회원 없이 찍은 사진 → 처음 고른 회원 것으로
     if(typeof repForeignAsk !== "undefined") repForeignAsk = null;
-    var was = hasPhotos() ? sessSig() : null;
+    var was = hasPhotos() ? sessSig() : null, same = !!(m && state.member && state.member.id === m.id);
     _setMember(m); state.editingOld = false;
-    state.savedSig = sigKeep(state.savedSig, was, hasPhotos() ? sessSig() : null);   // v301 저장된 기록을 보던 중이면 회원을 바꿔도 '저장 안 됨' 이 아니다 (전에는 무조건 null → 거짓 확인창)
+    state.savedSig = sigKeep(state.savedSig, was, hasPhotos() ? sessSig() : null, same);   // v301 저장된 기록을 보던 중이면 회원을 바꿔도 '저장 안 됨' 이 아니다 (전에는 무조건 null → 거짓 확인창)
     refreshRound().then(function(){
       if(state.pendingSave && m){ state.pendingSave = false; saveMeasurement(); }
     });
@@ -8083,7 +8086,7 @@
     state.sessionId = rec.id; state.editingOld = true; state.sessRound = round;
     if(rec.height){ $("htField").value = rec.height; }
     Promise.all([restoreMode("front", rec.photos.front, tok), restoreMode("side", rec.photos.side, tok)]).then(function(){
-      if(tok !== state.openSeq){ state.savedSig = sessSig(); return; }   // v301 중간에 취소돼도 저장된 기록 사진이라 '저장 안 됨' 으로 남기지 않음
+      if(tok !== state.openSeq) return;
       ["front", "side"].forEach(function(m){ var x = state.byMode[m], o = null; if(x.img){ o = {}; Object.keys(x.points).forEach(function(k){ o[k] = { x: x.points[k].x, y: x.points[k].y }; }); } x.recPos = o; });   // v262 불러온 기록의 점 = 이번 수정의 '수정 전' (관리자 보관용)
       $("htField").dispatchEvent(new Event("input"));
       showView("analyze");
@@ -8403,7 +8406,7 @@
       if(tok !== state.openSeq) return;
       var P = rec && rec.photos;
       Promise.all([restoreMode("front", P && P.front, tok), restoreMode("side", P && P.side, tok)]).then(function(){
-        if(tok !== state.openSeq || !state.member || state.member.id !== mid){ state.savedSig = sessSig(); return; }   // v301 위와 같음
+        if(tok !== state.openSeq || !state.member || state.member.id !== mid) return;
         state.sessionId = rec ? rec.id : null; state.editingOld = !!rec; state.sessRound = ss.round;
         $("htField").value = rec && rec.height ? rec.height : (state.member && state.member.height ? state.member.height : "");
         $("htField").dispatchEvent(new Event("input"));

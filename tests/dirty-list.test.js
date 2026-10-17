@@ -15,7 +15,7 @@ const grab = (start, end) => {
 const ctx = {};
 vm.createContext(ctx);
 vm.runInContext(grab("  function sessDiffList(saved, now){", "\n  }\n") + "\n  }\n", ctx);
-vm.runInContext(grab("  function sigKeep(saved, before, after){", "\n") + "\n", ctx);
+vm.runInContext(grab("  function sigKeep(saved, before, after, same){", "\n  }\n") + "\n  }\n", ctx);
 const diff = (a, b) => JSON.parse(JSON.stringify(vm.runInContext("sessDiffList", ctx)(a, b)));
 
 // sessSig 와 같은 모양: JSON [정면, 측면] + "|" + 키 · 한 쪽 = [사진 길이, 가로, 세로, 측정점[[이름,x,y]…], 회전×10, 중심선]
@@ -49,4 +49,6 @@ test("회원을 바꿔도 저장된 그대로였으면 깨끗한 상태 유지",
   assert.equal(keep("S1", "S9", "S2"), null, "고친 게 있으면 그대로 '저장 안 됨'");
   assert.equal(keep(null, "S1", "S2"), null, "회원 없이 찍은 사진(한 번도 저장 안 함)은 '저장 안 됨'");
   assert.equal(keep("S1", null, null), null, "사진이 없으면 지문 없음");
+  assert.equal(keep("[1]|170", "[1]|170", "[1]|172", true), "[1]|170", "같은 회원이면 키는 저장한 값 기준 → 키가 바뀌면 '저장 안 됨' 으로 보인다");
+  assert.equal(keep("[1]|170", "[1]|170", "[1]|172", false), "[1]|172", "다른 회원으로 바꾸면 그 회원 키가 기준");
 });

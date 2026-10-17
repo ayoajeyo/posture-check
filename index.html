@@ -2601,7 +2601,7 @@
 <div class="confirm-overlay sign-overlay" id="signPad" hidden role="dialog" aria-modal="true" aria-labelledby="signTitle">
   <div class="confirm-box sign-box">
     <h3 id="signTitle">촬영·보관 동의 서명</h3>
-    <p class="sign-desc" id="signDesc">신체 사진 촬영·보관에 동의하시면 아래 칸에 회원님이 직접 서명해 주세요. 서명은 이 회원의 리포트 첫 장에 작게 표시돼요.</p>
+    <p class="sign-desc" id="signDesc">신체 사진 촬영·보관에 동의하시면 아래 칸에 회원님이 직접 서명해 주세요. 서명은 이 회원의 리포트 <b>마지막 장 '판정 기준'의 회원 확인 칸</b>에 작게 표시돼요. 리포트를 이미지나 공유 링크로 보내면 서명도 함께 들어갑니다.</p>
     <div class="sign-wrap"><canvas id="signCv" aria-label="서명 칸"></canvas><span class="sign-ph" id="signPh">여기에 서명</span><button type="button" class="sign-clear" id="btnSignClear">지우기</button></div>
     <div class="confirm-btns">
       <button type="button" class="no" id="btnSignCancel">취소</button>
@@ -6972,7 +6972,7 @@
   /* ---- 현재 측정 회원 ---- */
   state.member = null; state.sessionId = null;
   function setMember(m){
-    if(m) signImgOf(m);   // v252 리포트 1쪽 서명 미리 불러오기
+    if(m) signImgOf(m);   // v252 리포트 서명 미리 불러오기 (v292 부터 08 판정 기준의 '회원 확인' 칸)
     state.member = m || null; state.sessionId = null;
     var bar = $("memberBar");
     bar.classList.toggle("on", !!m);
@@ -7040,7 +7040,7 @@
 
   /* ---- 회원 등록·수정 폼 ---- */
   var formEditing = null, formAfter = null;
-  /* ===== v252 신체 사진 촬영·보관 동의 서명: 체크하면 서명 팝업 → 회원 정보에 서명 이미지 보관 → 리포트 1쪽 회원 이름 아래 ===== */
+  /* ===== v252 신체 사진 촬영·보관 동의 서명: 체크하면 서명 팝업 → 회원 정보에 서명 이미지 보관 → 리포트 08 판정 기준의 '회원 확인' 칸에 표시 (v292 전에는 1쪽 회원 이름 아래 ===== */
   var mfSign = null, signInk = false, signDone = null;
   function mfSignSync(){
     var on = !!(mfSign && $("mfConsent").checked);
@@ -11611,7 +11611,7 @@
   function daysLeft(k){ var a = new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)), t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((a - t) / 864e5); }
   function licValid(){ return !!(LIC && LIC.ok && LIC.dev === deviceId() && LIC.exp && todayKey() <= LIC.exp); }
   /* v94 Google Play(TWA)에서 실행됐는지 감지 → 앱 안 결제 안내 숨김 */
-  var APP_VER = "v293";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
+  var APP_VER = "v294";   // v194 앱 버전 (한 곳에서 관리 · 홈 맨 아래와 각 측정 화면 안내에 표시)
   var PLAY_PKG = "com.physiomaster.posture";
   (function(){ var e = $("appVer"); if(e) e.textContent = "아요바디요 " + APP_VER; document.querySelectorAll(".app-ver-note").forEach(function(x){ x.textContent = "앱 버전 " + APP_VER; }); })();
   function isPlayApp(){

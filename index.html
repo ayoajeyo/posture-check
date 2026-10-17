@@ -10686,19 +10686,41 @@
     return romRenderRecordRaw(rec, maxW, view).then(function(c){ if(c) romRcPut(ck, c); return c; });
   }
   /* v312 리포트 좌·우 짝 — 우측 그림은 그대로, 좌측만 우측 몸 크기에 맞춰 다시 그림 (원본 사진·측정점은 읽기만, 저장 안 함) */
+  /* v313 몸통 길이(어깨 가운데 → 골반 가운데)로 몸 크기 — 사진에서 자세 인식을 한 번 (기록마다 한 번만, 결과 숫자만 메모리에 기억)
+     움직이는 팔·다리 길이는 카메라 쪽으로 기울면 짧아 보여 기준으로 믿을 수 없었다 (v312 어깨 굴곡·외전) */
+  var romTorsoMemo = {};
+  function romPairTorso(rec){
+    var key = rec.id + "|" + (rec.img ? rec.img.length : 0);
+    if(key in romTorsoMemo) return Promise.resolve(romTorsoMemo[key]);
+    if(!rec.img || !window.__detectPose) return Promise.resolve(null);
+    return new Promise(function(res){ var im = new Image(); im.onload = function(){ res(im); }; im.onerror = function(){ res(null); }; im.src = rec.img; }).then(function(im){
+      if(!im) return null;
+      var w = im.naturalWidth, h = im.naturalHeight;
+      return window.__detectPose(im).then(function(lm){
+        if(!lm) return null;
+        return AYO_LOGIC.pairTorso(lm.map(function(p){ return { x: p.x * w, y: p.y * h, v: p.visibility === undefined ? 1 : p.visibility }; }), w, h);
+      });
+    }).catch(function(){ return null; }).then(function(t){ romTorsoMemo[key] = t; return t; });
+  }
   function romPairLeft(recL, recR, maxW){
-    var L = window.AYO_LOGIC, cR = null;
-    var meta = function(rec){   // 크기 재기용 — 사람 분리 없이 그려 원본 크기·측정점만 얻음 (캐시 안 함)
-      return (!rec.img && rec.blob ? dbFull("roms", rec).then(function(full){ return full && full.img ? full : rec; }) : Promise.resolve(rec)).then(function(r){ return r.img ? romRenderRecordRaw(r, maxW, null, true) : null; });
-    };
-    return romRenderRecord(recR, maxW).then(function(c){ cR = c; return meta(recL); }).then(function(cL){   // 한꺼번에 그리지 않고 우측 → 좌측 차례로 (폰이 멈추지 않게)
-      if(!cL || !cR || !cL._pair || !cR._pair || !L || !L.pairZoom) return romRenderRecord(recL, maxW);   // 원본 없이 미리보기만 있는 예전 기록은 그대로
-      if(cL._pair.names.join() !== cR._pair.names.join()) return romRenderRecord(recL, maxW);   // 좌·우 측정 방식이 다르면(예전 3점 ↔ 새 4점) 몸 길이를 비교할 수 없어 그대로
-      var m = function(c){ return { size: L.pairBodySize(c._pair.pts, c._pair.names), w: c._pair.w, cw: c.width, ch: c.height }; };
-      var z = L.pairZoom(m(cL), m(cR)); if(z === 1) return romRenderRecord(recL, maxW);
-      var a = L.pairAnchor(cL._pair.pts, cL._pair.names) || { x: cL._pair.w / 2, y: cL._pair.h / 2 };
-      return romRenderRecord(recL, maxW, { z: z, ax: a.x, ay: a.y });
-    }).catch(function(e){ console.warn("[pair]", e); return romRenderRecord(recL, maxW); });
+    var L = window.AYO_LOGIC, cR = null, cL = null, fL = null;
+    var full = function(rec){ return !rec.img && rec.blob ? dbFull("roms", rec).then(function(f){ return f && f.img ? f : rec; }) : Promise.resolve(rec); };
+    var plain = function(){ return romRenderRecord(recL, maxW); };
+    return romRenderRecord(recR, maxW).then(function(c){ cR = c; return full(recL); }).then(function(r){   // 한꺼번에 그리지 않고 우측 → 좌측 차례로 (폰이 멈추지 않게)
+      fL = r; return r.img ? romRenderRecordRaw(r, maxW, null, true) : null;   // 좌측 크기 재기용 — 사람 분리 없이 (캐시 안 함)
+    }).then(function(c){
+      cL = c;
+      if(!cL || !cR || !cL._pair || !cR._pair || !L || !L.pairZoom) return plain();   // 원본 없이 미리보기만 있는 예전 기록은 그대로
+      if(cL._pair.names.join() !== cR._pair.names.join()) return plain();   // 좌·우 측정 방식이 다르면(예전 3점 ↔ 새 4점) 비교할 수 없어 그대로
+      return full(recR).then(function(fR){ return romPairTorso(fR); }).then(function(tR){ return romPairTorso(fL).then(function(tL){
+        // 좌·우 모두 몸통이 보이면 몸통 길이, 아니면(발목 근접 사진 등) 둘 다 측정점 길이 — 항상 같은 방법끼리 비교
+        var both = tL && tR;
+        var m = function(c, t){ return { size: both ? t : L.pairBodySize(c._pair.pts, c._pair.names), w: c._pair.w, cw: c.width, ch: c.height }; };
+        var z = L.pairZoom(m(cL, tL), m(cR, tR)); if(z === 1) return plain();
+        var a = L.pairAnchor(cL._pair.pts, cL._pair.names) || { x: cL._pair.w / 2, y: cL._pair.h / 2 };
+        return romRenderRecord(recL, maxW, { z: z, ax: a.x, ay: a.y });
+      }); });
+    }).catch(function(e){ console.warn("[pair]", e); return plain(); });
   }
   function romRenderRecordRaw(rec, maxW, view, metaOnly){   // metaOnly: v312 크기 재기용 — 사람 분리 없이
     if(!rec.img){

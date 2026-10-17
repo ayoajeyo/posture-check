@@ -9410,12 +9410,19 @@
     g.font = "700 " + (12 * u) + "px 'IBM Plex Sans KR', sans-serif"; g.fillStyle = "#8FB2FF"; g.fillText(sub, lx, ly + 16 * u);
     g.textAlign = "left"; g.textBaseline = "alphabetic";
   }
-  // v273 ①선 끝점(세로 기준선)은 사용자가 찍는 점이 아니라 목관절 바로 위(화면 꼭대기)에 자동으로 둔다
+  /* v273 ①선 끝점(세로 기준선)은 사용자가 찍는 점이 아니라 목관절 바로 위(화면 꼭대기)에 자동으로 둔다
+     v293 화면은 사진을 폰 기울기(romRotA)만큼 돌려 그리므로, 사진 좌표에서 세로로 세우면 화면에서는 그만큼 비뚤어진다
+          → romSynthA 의 세로·가로 기준선과 똑같이 romRotRef 로 기울기를 미리 되돌려 **화면 기준** 수직으로 만든다 */
   function romFixVUp(){
     var mv = romS && romS.mv ? romMove() : null;
     if(!mv || !mv.vfix || !romS.pts || !romS.pts[0]) return;
     if(romAuxLegacy(mv) || romS.pts.length < 4) return;   // v273 옛 기록(점 3개)은 그대로 — pts[1]이 정수리라 덮어쓰면 각도가 0°가 된다
-    romS.pts[1] = { x: romS.pts[0].x, y: 0 };
+    var V = romS.pts[0], W = romS.w || 1e9, H = romS.h || 1e9;
+    var d = (typeof romRotRef === "function") ? romRotRef({ x: 0, y: -1 }, romS.roll) : { x: 0, y: -1 };
+    var tx = d.x > 1e-6 ? (W - V.x) / d.x : d.x < -1e-6 ? -V.x / d.x : 1e9;   // 사진 밖으로 나가지 않게 (방향은 그대로)
+    var ty = d.y < -1e-6 ? -V.y / d.y : 1e9, len = Math.min(tx, ty);
+    if(!isFinite(len) || len <= 0) len = Math.max(W, H) * 0.5;
+    romS.pts[1] = { x: V.x + d.x * len, y: V.y + d.y * len };
   }
   function romDraw(){
     if(!romS.img) return;

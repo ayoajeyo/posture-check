@@ -130,9 +130,36 @@ test("옛 기록(점 3개): 자동 세로선 고정이 정수리 점을 건드�
 });
 
 test("새 기록(점 4개): ①선 끝점이 목관절 바로 위로 고정된다", () => {
-  ctx3.romS.pts = [{ x: 100, y: 400 }, { x: 999, y: 999 }, { x: 120, y: 300 }, { x: 120, y: 200 }];
+  ctx3.romS = { mv: "flex", pts: [{ x: 100, y: 400 }, { x: 999, y: 999 }, { x: 120, y: 300 }, { x: 120, y: 200 }], roll: null, w: 800, h: 600 };
   vm.runInContext("romFixVUp()", ctx3);
   // vm 안에서 만든 객체라 deepEqual 은 프로토타입까지 보므로 값으로 비교
   assert.equal(ctx3.romS.pts[1].x, 100, "①선 끝점 x = 목관절 x");
   assert.equal(ctx3.romS.pts[1].y, 0, "①선 끝점 y = 화면 맨 위");
+});
+
+/* v293 폰 기울기 보정(romRotA)이 들어간 사진에서도 ①선은 **화면 기준** 수직이어야 한다.
+   화면 = 사진을 -roll 만큼 돌려 그린 것이므로, 사진 좌표에서는 보정각만큼 기울어 있어야 화면에서 수직이 된다. */
+vm.runInContext(grab("  function romRotRef(d, roll){", "  function romAngleOf("), ctx3);
+const screenVec = (V, E, roll) => {   // 사진 좌표 벡터를 화면 좌표로 (romPaint 의 romRotA 와 같은 회전)
+  const a = -(roll || 0) * Math.PI / 180, x = E.x - V.x, y = E.y - V.y;
+  return { x: x * Math.cos(a) - y * Math.sin(a), y: x * Math.sin(a) + y * Math.cos(a) };
+};
+
+for (const roll of [-1.3, 2.4]) {
+  test("폰 기울기 " + roll + "° 보정 사진: ①선이 화면 기준 정확히 수직", () => {
+    ctx3.romS = { mv: "flex", pts: [{ x: 300, y: 400 }, { x: 999, y: 999 }, { x: 320, y: 300 }, { x: 320, y: 200 }], roll: roll, w: 800, h: 600 };
+    vm.runInContext("romFixVUp()", ctx3);
+    const V = ctx3.romS.pts[0], E = ctx3.romS.pts[1], v = screenVec(V, E, roll);
+    assert.ok(Math.abs(v.x) < 0.01, "화면에서 좌우로 치우치면 안 됨 (x=" + v.x.toFixed(2) + ")");
+    assert.ok(v.y < -50, "화면 위쪽으로 그어져야 함");
+    assert.ok(E.x >= 0 && E.x <= 800 && E.y >= 0 && E.y <= 600, "끝점이 사진 밖으로 나가면 안 됨");
+    assert.ok(Math.abs(E.x - V.x) > 1, "사진 좌표에서는 보정각만큼 기울어 있어야 함");
+  });
+}
+
+test("기울기 정보가 없는 사진(갤러리)은 사진 기준 수직 그대로", () => {
+  ctx3.romS = { mv: "flex", pts: [{ x: 300, y: 400 }, { x: 999, y: 999 }, { x: 320, y: 300 }, { x: 320, y: 200 }], roll: null, w: 800, h: 600 };
+  vm.runInContext("romFixVUp()", ctx3);
+  assert.equal(ctx3.romS.pts[1].x, 300);
+  assert.equal(ctx3.romS.pts[1].y, 0);
 });

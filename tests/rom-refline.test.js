@@ -139,3 +139,17 @@ test("가로 기준선(hzside)도 방향이 그대로 유지된다 — 사진 �
   ctx.romJoint = () => ({ k: "shoulder", kind: "dir", pts: ["shj", "armend", "vdown"] });
   ctx.romPts = () => ["shj", "armend", "vdown"];
 });
+
+/* v293 아요 보고: "화면 기준 위아래로 세로선이 그어지는 모든 항목" 점검.
+   목(굴곡·신전·측방굴곡)은 romFixVUp 이 따로 그리고(tests/rom-aux.test.js),
+   허리 측방굴곡·허리 굴곡·신전·고관절 회전처럼 기준점이 "vup" 인 항목은 이 함수가 그린다. */
+test("vup(허리 측방굴곡 등) 기준선도 폰 기울기와 무관하게 화면에서 수직", () => {
+  const V = { x: 520, y: 900 }, D = { x: 430, y: 300 };
+  for (const roll of [0, -1.3, 2.4]) {
+    const A = vm.runInContext("romSynthA", ctx)("vup", V, D, null, W, H, roll);
+    const r = -roll * Math.PI / 180, dx = A.x - V.x, dy = A.y - V.y;
+    const rx = dx * Math.cos(r) - dy * Math.sin(r), ry = dx * Math.sin(r) + dy * Math.cos(r);
+    assert.ok(Math.abs(Math.atan2(rx, ry) * 180 / Math.PI) > 179.99, `roll=${roll}: 화면에서 수직이 아님`);
+    assert.ok(A.x >= 0 && A.x <= W && A.y >= 0 && A.y <= H, "끝점이 사진 밖");
+  }
+});

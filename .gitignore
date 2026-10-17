@@ -20,3 +20,4 @@ supabase/.temp/
 
 # 화면 캡처 (scripts/screenshot.py)
 .shots/
+.playwright-mcp/

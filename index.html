@@ -235,9 +235,9 @@
   .rdoc-hd .brand{display:flex; align-items:center; gap:10px; min-width:0;} .rdoc-hd .brand > div{min-width:0;}
   .rdoc-hd .mark{width:40px; height:40px; border:1.5px solid var(--navy); display:grid; place-items:center; color:var(--navy); font-weight:700; font-size:13px; letter-spacing:.08em; flex:none; overflow:hidden;}
   .rdoc-hd .mark img{width:100%; height:100%; object-fit:contain;}
-  .rdoc-hd .brand b{display:block; font-size:17px; font-weight:700; color:var(--navy); line-height:1.2; white-space:nowrap;}
+  .rdoc-hd .brand b{display:block; font-size:17px; font-weight:700; color:var(--navy); line-height:1.2; word-break:keep-all;}   /* v306 nowrap 이면 좁은 폰에서 오른쪽 회원 정보와 겹침 → 단어 단위로 줄바꿈 */
   .rdoc-hd .brand span{display:block; font-size:13px; color:var(--ink-soft); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .rdoc-hd .who{text-align:right; flex:none; min-width:0; max-width:60%;}
+  .rdoc-hd .who{text-align:right; flex:none; min-width:0; max-width:50%;}   /* v306 60% 면 390px 폭에서 왼쪽 제목이 세 줄로 쪼개짐 */
   .rdoc-hd .who b{font-size:17px; font-weight:700; display:block; line-height:1.2;}
   .rdoc-hd .who span{font-size:13px; color:var(--ink-soft); display:block; margin-top:2px; white-space:normal; word-break:keep-all;}
   .rdoc-meta{display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); margin-top:-12px;}

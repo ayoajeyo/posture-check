@@ -7815,7 +7815,7 @@
     box.querySelectorAll("button[data-rid]").forEach(function(btn){ btn.addEventListener("click", function(){
       var id = btn.getAttribute("data-rid"); if(id === state.sessionId) return;
       var all = state.bodyRecs || [], rec = all.find(function(r){ return r.id === id; }); if(!rec) return;
-      openRecordForEdit(state.member, rec, all.indexOf(rec) + 1);
+      openRecordForEdit(state.member, rec, all.indexOf(rec) + 1, true);
     }); });
     var on = box.querySelector('[aria-pressed="true"]'); if(on) box.scrollLeft = Math.max(0, on.offsetLeft - box.clientWidth / 2 + on.offsetWidth / 2);
   }
@@ -8020,9 +8020,9 @@
       img.src = p.img;
     });
   }
-  function openRecordForEdit(m, rec, round){
+  function openRecordForEdit(m, rec, round, keepMode){   // keepMode: v296 회차 버튼에서 열 때는 지금 보는 쪽(정면/측면) 그대로 — 그 쪽 사진이 없으면 촬영 화면
     if(!rec) return;
-    if(!rec.photos && rec.blob){ toast("사진 불러오는 중…"); dbFull("records", rec).then(function(full){ openRecordForEdit(m, full, round); }); return; }
+    if(!rec.photos && rec.blob){ toast("사진 불러오는 중…"); dbFull("records", rec).then(function(full){ openRecordForEdit(m, full, round, keepMode); }); return; }
     if(!rec.photos || (!rec.photos.front && !rec.photos.side)){
       toast("이 기록은 사진 원본 없이 저장된 예전 기록이라 불러올 수 없어요. 새로 저장한 기록부터 수정할 수 있어요.");
       return;
@@ -8037,7 +8037,7 @@
       ["front", "side"].forEach(function(m){ var x = state.byMode[m], o = null; if(x.img){ o = {}; Object.keys(x.points).forEach(function(k){ o[k] = { x: x.points[k].x, y: x.points[k].y }; }); } x.recPos = o; });   // v262 불러온 기록의 점 = 이번 수정의 '수정 전' (관리자 보관용)
       $("htField").dispatchEvent(new Event("input"));
       showView("analyze");
-      var want = rec.photos.front ? "front" : "side";
+      var want = keepMode ? state.mode : rec.photos.front ? "front" : "side";
       if(state.mode !== want) selectMode(want);
       else {
         var s = cur();

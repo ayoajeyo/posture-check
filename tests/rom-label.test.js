@@ -24,9 +24,10 @@ const covers = (r, p, pad) => p.x > r.x0 - pad && p.x < r.x1 + pad && p.y > r.y0
 // 아요가 보낸 목 측방굴곡 화면을 옮긴 배치: 목관절(아래) · 세로 기준선 끝(위, 자동) · 턱끝(표시칸 바로 아래) · 정수리(왼쪽 위)
 const NECK = [{ x: 251, y: 335 }, { x: 251, y: 0 }, { x: 214, y: 254 }, { x: 57, y: 59 }];
 const ANCHOR = { x: 211, y: 222 };   // 지금까지 표시칸이 놓이던 꼭짓점 옆 자리
+const NECK_SEGS = [[NECK[0], NECK[1]], [NECK[2], NECK[3]]];
 
 test("목 측방굴곡: 표시칸이 턱끝 점을 가리지 않는다", () => {
-  const b = pick({ W, H, bw, bh, k: 1, a: ANCHOR, pts: NECK, loupe: false });
+  const b = pick({ W, H, bw, bh, k: 1, a: ANCHOR, pts: NECK, segs: NECK_SEGS, loupe: false });
   const r = rectOf(b);
   NECK.forEach((p, i) => assert.ok(!covers(r, p, 12), "측정점 " + i + " 를 가림: " + JSON.stringify(b)));
   assert.ok(r.x0 >= 0 && r.x1 <= W && r.y0 >= 0 && r.y1 <= H, "화면 안에 있어야 한다");
@@ -50,4 +51,20 @@ test("화면이 2배 해상도(k=2)여도 모서리 여백·크기를 같은 비
   const b = pick({ W: W * 2, H: H * 2, bw: bw * 2, bh: bh * 2, k: 2, a: { x: ANCHOR.x * 2, y: ANCHOR.y * 2 }, pts: pts2, loupe: false });
   const r = { x0: b.x - bw, x1: b.x + bw, y0: b.y - bh, y1: b.y + bh };
   pts2.forEach((p, i) => assert.ok(!covers(r, p, 24), "측정점 " + i + " 를 가림"));
+});
+
+test("점을 끄는 동안 직전 자리가 크게 나쁘지 않으면 옮기지 않는다 (튀지 않게)", () => {
+  const pts = [{ x: 180, y: 200 }, { x: 180, y: 60 }];
+  const first = pick({ W, H, bw, bh, k: 1, a: { x: 180, y: 190 }, pts, loupe: false });
+  assert.equal(first.i, 1, "꼭짓점 옆은 점과 겹치므로 왼쪽 아래 모서리");
+  const again = pick({ W, H, bw, bh, k: 1, a: { x: 180, y: 190 }, pts, loupe: false, prev: 2 });
+  assert.equal(again.i, 2, "직전 자리(오른쪽 아래)가 비어 있으면 그대로");
+  const blocked = pick({ W, H, bw, bh, k: 1, a: { x: 180, y: 190 }, pts: pts.concat([{ x: 300, y: 330 }]), loupe: false, prev: 2 });
+  assert.notEqual(blocked.i, 2, "직전 자리에 점이 들어오면 옮긴다");
+});
+
+test("이름표가 점 왼쪽에 붙는 경우(화면 오른쪽 끝)도 피한다", () => {
+  const pts = [{ x: 180, y: 120 }, { x: 120, y: 330 }];   // 왼쪽 아래 모서리 바로 오른쪽 위에 점 → 이름표가 왼쪽으로 넘어갈 수 있음
+  const b = pick({ W, H, bw, bh, k: 1, a: { x: 180, y: 120 }, pts, loupe: false });
+  assert.notEqual(b.i, 1, "왼쪽 아래 모서리는 그 점의 이름표와 겹칠 수 있다");
 });

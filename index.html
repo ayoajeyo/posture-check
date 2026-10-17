@@ -9465,7 +9465,7 @@
     romS.bs = sc; romS.scale = sc * z;
     var g = romCtx; g.setTransform(dpr * sc, 0, 0, dpr * sc, 0, 0);
     romPaint(g, 1 / (sc * z));
-    if((romS.drag >= 0 && romS.dragAt) || (romS.edit && romS.edit.h && romS.edit.h.t === "ref")) romLoupe(g, 1 / sc, z);   // v131 확대한 상태에서도 돋보기 표시
+    if(romLoupeOn()) romLoupe(g, 1 / sc, z);   // v131 확대한 상태에서도 돋보기 표시
     romSyncView(); if(typeof romRotSync === "function") romRotSync();
     var mv = romMove(), val = romAngle(), jd = romJudge(mv, val);
     $("romVal").textContent = val == null ? "–" : val + "°";
@@ -9484,10 +9484,9 @@
     g.save();
     if(a){ g.translate(romS.w / 2, romS.h / 2); g.rotate(a); g.translate(-romS.w / 2, -romS.h / 2); }
     romS._live = !noView;   // v97 수평·수직 안내는 편집 화면에서만 (저장 이미지에는 안 넣음)
-    romS._lbl = null; var T = null;
+    romS._lbl = null; var T = g.getTransform();   // 사진 좌표 → 화면 픽셀 (확대·회전 포함)
     try{
       romPaint0(g, u);
-      T = g.getTransform();
       if(!noView && romS.edit && romS.edit.h && romS.edit.h.t === "pt" && romS.drag >= 0 && romS.pts && romS.pts[romS.drag]){   // v162 점을 누르거나 옮기는 동안 십자선
         var P = g.getTransform().transformPoint(new DOMPoint(romS.pts[romS.drag].x, romS.pts[romS.drag].y));
         crossDraw(g, P.x, P.y, g.canvas.width, g.canvas.height, Math.min(2, window.devicePixelRatio || 1));
@@ -9498,27 +9497,31 @@
   /* v297 편집 화면의 각도 표시칸: 꼭짓점 옆에 두면 턱끝 같은 측정점·이름표를 가려 점을 고칠 수 없었다
           → 측정점·이름표·선·돋보기를 피한 자리(꼭짓점 옆이 비면 그대로, 아니면 네 모서리 중 빈 곳)로 옮겨 화면 좌표로 그린다
           저장 이미지(리포트·공유 사진)는 지금처럼 꼭짓점 옆에 그대로 그린다 */
+  function romLoupeOn(){ return !!((romS.drag >= 0 && romS.dragAt) || (romS.edit && romS.edit.h && romS.edit.h.t === "ref")); }   // 돋보기가 뜨는 때 (점·기준선 끝을 끄는 중)
   function romLblDefer(x, y, txt, sub, size){
     if(romS._live === false) return false;
     romS._lbl = { x: x, y: y, txt: txt, sub: sub || "", size: size || 26 }; return true;
   }
-  /* 표시칸 자리 고르기 (화면 픽셀). o = { W, H, 표시칸 bw·bh, k(화면 배율), a: 꼭짓점 옆 자리, pts: 측정점(0번이 꼭짓점), loupe: 돋보기가 뜨는 중 }
-     피할 곳: 측정점과 그 오른쪽 위 이름표, 점 사이 선, 돋보기(위쪽 두 모서리). 같은 점수면 꼭짓점 옆 → 아래 모서리 → 위 모서리 */
+  /* 표시칸 자리 고르기 (화면 픽셀). o = { W, H, 표시칸 bw·bh, k(화면 배율), a: 꼭짓점 옆 자리, pts: 측정점, segs: [[점, 점]…] 그려진 선,
+                                         loupe: 돋보기가 뜨는 중, prev: 직전에 고른 자리 번호 }
+     피할 곳: 측정점과 그 양옆 이름표(이름표는 점 오른쪽 위, 화면 끝이면 왼쪽), 선, 돋보기(위쪽 두 모서리)
+     같은 점수면 꼭짓점 옆 → 아래 모서리 → 위 모서리. 직전 자리가 크게 나쁘지 않으면 그대로 둔다(점을 끄는 동안 이리저리 튀지 않게) */
   function romLblPick(o){
-    var k = o.k || 1, m = 8 * k, W = o.W, H = o.H, bw = o.bw, bh = o.bh, P = o.pts || [];
-    var boxes = P.map(function(p){ return { x0: p.x - 18 * k, x1: p.x + 100 * k, y0: p.y - 32 * k, y1: p.y + 18 * k }; });
+    var k = o.k || 1, m = 8 * k, W = o.W, H = o.H, bw = o.bw, bh = o.bh, P = o.pts || [], segs = o.segs || [];
+    var boxes = P.map(function(p){ return { x0: p.x - 100 * k, x1: p.x + 100 * k, y0: p.y - 32 * k, y1: p.y + 18 * k }; });
     if(o.loupe){ var lr = 106 * k; boxes.push({ x0: 0, x1: lr, y0: 0, y1: lr }, { x0: W - lr, x1: W, y0: 0, y1: lr }); }
-    var segs = []; for(var i = 1; i < P.length; i++) segs.push([P[0], P[i]]); if(P.length >= 4) segs.push([P[2], P[3]]);
-    var cand = [o.a, { x: 0, y: H }, { x: W, y: H }, { x: 0, y: 0 }, { x: W, y: 0 }], best = null;
+    var cand = [o.a, { x: 0, y: H }, { x: W, y: H }, { x: 0, y: 0 }, { x: W, y: 0 }], all = [], best = null;
     cand.forEach(function(c, ci){
       if(!c) return;
       var x = Math.max(m + bw / 2, Math.min(W - m - bw / 2, c.x)), y = Math.max(m + bh / 2, Math.min(H - m - bh / 2, c.y));
       var r = { x0: x - bw / 2, x1: x + bw / 2, y0: y - bh / 2, y1: y + bh / 2 }, pen = ci * 0.1;
       boxes.forEach(function(b){ if(b.x0 < r.x1 && b.x1 > r.x0 && b.y0 < r.y1 && b.y1 > r.y0) pen += 100; });
       segs.forEach(function(sg){ for(var j = 0; j <= 20; j++){ var px = sg[0].x + (sg[1].x - sg[0].x) * j / 20, py = sg[0].y + (sg[1].y - sg[0].y) * j / 20; if(px > r.x0 && px < r.x1 && py > r.y0 && py < r.y1) pen += 1; } });
-      if(!best || pen < best.pen) best = { x: x, y: y, pen: pen };
+      all[ci] = { x: x, y: y, pen: pen, i: ci };
+      if(!best || pen < best.pen) best = all[ci];
     });
-    return best;
+    var pv = o.prev != null ? all[o.prev] : null;
+    return pv && pv.pen < best.pen + 50 ? pv : best;
   }
   function romLblLive(g, T){
     var L = romS._lbl, dpr = Math.min(2, window.devicePixelRatio || 1), W = g.canvas.width, H = g.canvas.height;
@@ -9527,8 +9530,11 @@
     g.font = "700 " + (12 * dpr) + "px 'IBM Plex Sans KR', sans-serif"; var sw = L.sub ? g.measureText(L.sub).width : 0;
     g.font = "800 " + (L.size * dpr) + "px 'IBM Plex Sans KR', sans-serif";
     var bw = Math.max(g.measureText(L.txt).width, sw) + 20 * dpr, bh = (L.sub ? 54 : L.size + 12) * dpr;
-    var pts = (romS.pts || []).filter(Boolean).map(sp);
-    var best = romLblPick({ W: W, H: H, bw: bw, bh: bh, k: dpr, a: sp({ x: L.x, y: L.y }), pts: pts, loupe: romS.drag >= 0 || !!(romS.edit && romS.edit.h) });
+    var RP = romS.pts || [], mv = romMove(), vfx = !!(mv && mv.vfix);
+    var pts = RP.map(function(p, i){ return p && !(vfx && i === 1) ? sp(p) : null; }).filter(Boolean);   // 목 세로선 끝(자동)은 점·이름표가 없다
+    var segs = romSegs().filter(function(sg){ return RP[sg[0]] && RP[sg[1]]; }).map(function(sg){ return [sp(RP[sg[0]]), sp(RP[sg[1]])]; });
+    var best = romLblPick({ W: W, H: H, bw: bw, bh: bh, k: dpr, a: sp({ x: L.x, y: L.y }), pts: pts, segs: segs, loupe: romLoupeOn(), prev: romS._lblAt });
+    romS._lblAt = best.i;
     g.fillStyle = "rgba(13,21,40,.9)"; rr(g, best.x - bw / 2, best.y - bh / 2, bw, bh, 10 * dpr); g.fill();
     g.textAlign = "center"; g.textBaseline = "middle"; g.fillStyle = "#fff";
     if(L.sub){

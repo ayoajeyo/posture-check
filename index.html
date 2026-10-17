@@ -221,6 +221,7 @@
   .rep-rounds-h span{font-size:12px; color:var(--ink-soft); line-height:1.45;}
   .rep-rounds-list{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none;}
   .rep-rounds-list::-webkit-scrollbar{display:none;}
+  .rep-base{display:flex; align-items:center; gap:8px; margin-top:8px;} .rep-base > span{font-size:13px; font-weight:600; color:var(--ink-soft); white-space:nowrap;} .rep-base .sel{min-height:44px;}
   .rep-rounds-list button{flex:0 0 auto; min-width:84px; font-family:inherit; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 10px; border-radius:12px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); cursor:pointer;}
   .rep-rounds-list button b{font-size:15px; font-weight:800;}
   .rep-rounds-list button em{font-style:normal; font-size:11.5px; color:var(--ink-soft); white-space:nowrap;}
@@ -2084,6 +2085,8 @@
     <div class="rep-rounds" id="repRoundWrap" hidden>
       <p class="rep-rounds-h"><b>회차 선택</b><span id="repRoundSub">회차를 누르면 그 회차의 체형·ROM·척추 균형 결과로 리포트를 보여줘요</span></p>
       <div class="rep-rounds-list" id="repRounds"></div>
+      <!-- v307 비교할 두 회차: 뒤 회차 = 누른 회차, 앞 회차를 고른다. 짝이 하나뿐(누른 회차가 1·2차)이면 숨김 -->
+      <label class="rep-base" id="repBaseWrap" hidden><span>비교</span><select class="sel" id="repBase" aria-label="비교할 회차"></select></label>
     </div>
     <div class="rep-head" id="repHead" hidden>
       <span class="rep-meta" id="repMeta"></span>
@@ -8181,8 +8184,9 @@
   function renderRepDoc(S, act){
     var el = $("rdoc"); if(!el) return;
     var L = window.AYO_LOGIC;
-    S = S || []; repDoc.S = S; repDoc.act = act || null; repDoc.mid = state.member ? state.member.id : null;
-    var show = function(id){ ["rdLoad", "rdErr", "rdEmpty", "rdBody"].forEach(function(k){ $(k).hidden = k !== id; }); };
+    var mid = state.member ? state.member.id : null; if(repDoc.mid !== mid) repDoc.baseKey = null;   // v307 회원이 바뀌면 비교 기준은 1차로
+    S = S || []; repDoc.S = S; repDoc.act = act || null; repDoc.mid = mid;
+    var show = function(id){ ["rdLoad", "rdErr", "rdEmpty", "rdBody"].forEach(function(k){ $(k).hidden = k !== id; }); if(id !== "rdBody") $("repBaseWrap").hidden = true; };
     var liveRoms = state.member ? [] : (rom.sessionAll || []).filter(function(x){ return x.value != null; });   // 회원 없이 잰 ROM·척추 균형·거북목 (저장 전)
     var live = (hasPhotos() && !repForeign()) || !!liveRoms.length;
     if(!state.member && !live){ $("rdEmptyMsg").textContent = "회원을 선택하면 리포트가 만들어져요"; $("rdEmptyPick").hidden = false; $("rdEmptyGo").hidden = true; show("rdEmpty"); return; }
@@ -8200,9 +8204,9 @@
         else { liveKey = "__live"; SS.push({ key: liveKey, at: Date.now(), day: today, rec: liveRec, roms: liveRoms }); }
       }
       var tl = L.buildTimeline(SS, ROM_ALL, rdJ(), { uptoKey: act ? act.key : liveKey });
-      var doc = L.buildReportDoc({ tl: tl, body: body, J: rdJ() });
+      var doc = L.buildReportDoc({ tl: tl, body: body, J: rdJ(), baseKey: repDoc.baseKey });
       repDoc.SS = SS; repDoc.tl = tl; repDoc.doc = doc; repDoc.live = liveKey;
-      rdHead(doc, !!liveKey); rdSum(doc); rdTrend(doc); rdBodySec(doc, r); rdRom(doc); rdZone(doc); rdPhotos(doc); rdHist(doc); rdCrit(); rdFoot(); rdNumber();
+      rdBaseSel(doc); rdHead(doc, !!liveKey); rdSum(doc); rdTrend(doc); rdBodySec(doc, r); rdRom(doc); rdZone(doc); rdPhotos(doc); rdHist(doc); rdCrit(); rdFoot(); rdNumber();
       show("rdBody");
       requestAnimationFrame(rdFit);
     }catch(e){ console.warn("[rep doc]", e); repDoc.doc = null; show("rdErr"); }
@@ -8221,6 +8225,14 @@
   var rdResizeT = null;
   window.addEventListener("resize", function(){ if(state.view !== "report") return; clearTimeout(rdResizeT); rdResizeT = setTimeout(rdFit, 200); });
   $("rdRetry").addEventListener("click", function(){ renderRepDoc(repDoc.S, repDoc.act); });
+  // v307 비교 칸: "n차 → 선택 회차 비교" 목록 (앞 회차만 고른다). 회차가 1·2개면 숨김 — 비교 짝이 하나뿐이라 자동(1차 → 2차)
+  function rdBaseSel(doc){
+    var R = doc.rounds, cur = doc.cur, wrap = $("repBaseWrap"), sel = $("repBase");
+    wrap.hidden = R.length < 3; if(wrap.hidden) return;
+    sel.innerHTML = R.slice(0, -1).map(function(r){ return '<option value="' + esc(r.key) + '">' + r.n + '차 → ' + cur.n + '차 비교</option>'; }).join("");
+    sel.value = doc.base.key;
+  }
+  $("repBase").addEventListener("change", function(){ repDoc.baseKey = this.value || null; renderRepDoc(repDoc.S, repDoc.act); });
   $("rdEmptyPick").addEventListener("click", function(){ $("btnRepPick").click(); });
   function rdHead(doc, live){
     var m = state.member, c = rdCenter(), cur = doc.cur;

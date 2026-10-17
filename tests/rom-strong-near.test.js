@@ -37,3 +37,12 @@ test("측정 부위에 닿은 확신 큰 덩어리가 없으면 null (예전처�
   const K = grid((x, y) => x === 27 && y === 10);
   assert.equal(near(S, K, W, H, 2), null);
 });
+
+test("K 없이 부르면 확신 큰 덩어리 전부를 씨앗으로 (측정 부위에 안 닿은 다른 쪽 다리도 남는다)", () => {
+  const S = grid((x, y) => (x >= 25 && x <= 30) || (x >= 10 && x <= 13 && y <= 6));   // 측정하는 다리 · 떨어진 다른 다리
+  const N = near(S, null, W, H, 2);
+  assert.equal(at(N, 11, 3), 1, "다른 다리");
+  assert.equal(at(N, 11, 8), 1, "세로로도 2칸 넓힘");
+  assert.equal(at(N, 11, 9), 0);
+  assert.equal(at(N, 19, 10), 0, "둘 사이 배경");
+});

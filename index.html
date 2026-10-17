@@ -10062,16 +10062,17 @@
      - 남색·파란색(치료 침대)은 측정 부위 가까이가 아니면 지움 (검정·회색 옷, 피부는 그대로 · v300 사람 분리 모델이 '옷' 으로 본 곳도 그대로)
      - 측정 부위와 떨어진 작은 조각(침대 다리 등)은 지움 */
   /* v302 사람 분리 모델이 사람과 맞닿은 배경(커튼 등)을 '옷' 으로 볼 때가 있다(확신은 약함 ~0.7).
-          확신이 큰 곳(S) 중 측정 부위(K)에 닿은 덩어리를 씨앗으로 삼고, 그 둘레 r 칸 안만 사람으로 인정 → 씨앗이 없으면 null(예전대로) */
+          확신이 큰 곳(S)을 씨앗으로 삼고(K 를 주면 K 에 닿은 덩어리만), 그 둘레 r 칸 안만 사람으로 인정 → 씨앗이 없으면 null(예전대로)
+          측정 부위에 닿은 조각만 남기는 일은 romMaskMerge 의 연결 조각 필터가 한다 */
   function romStrongNear(S, K, w, h, r){
     var n = w * h, lab = new Uint8Array(n), keep = new Uint8Array(n), st = [], any = false, i;
     for(i = 0; i < n; i++){
       if(!S[i] || lab[i]) continue;
       var cmp = [], touch = false; lab[i] = 1; st.push(i);
-      while(st.length){ var j = st.pop(), jx = j % w; cmp.push(j); if(K[j]) touch = true;
+      while(st.length){ var j = st.pop(), jx = j % w; cmp.push(j); if(K && K[j]) touch = true;
         if(jx > 0 && S[j - 1] && !lab[j - 1]){ lab[j - 1] = 1; st.push(j - 1); } if(jx < w - 1 && S[j + 1] && !lab[j + 1]){ lab[j + 1] = 1; st.push(j + 1); }
         if(j >= w && S[j - w] && !lab[j - w]){ lab[j - w] = 1; st.push(j - w); } if(j + w < n && S[j + w] && !lab[j + w]){ lab[j + w] = 1; st.push(j + w); } }
-      if(touch){ any = true; cmp.forEach(function(q){ keep[q] = 1; }); }
+      if(touch || !K){ any = true; cmp.forEach(function(q){ keep[q] = 1; }); }   // K 가 없으면 확신 큰 덩어리 전부
     }
     if(!any) return null;
     var T = new Uint8Array(n), out = new Uint8Array(n), x, y;   // 가로 → 세로로 r 칸 넓히기
@@ -10102,15 +10103,16 @@
       blueCloth = romBlueCloth(nb, nt);
     }
     var Near = null;
-    if(seg){   // v302 커튼처럼 사람에 붙은 약한 '사람' 영역 걸러내기
-      var Sg = new Uint8Array(n), Kc = new Uint8Array(n);
-      for(y = 0; y < h; y++) for(x = 0; x < w; x++){ i = y * w + x; if(at(base, x, y) >= 0.85) Sg[i] = 1; if(dseg(x + 0.5, y + 0.5) <= core) Kc[i] = 1; }
-      Near = romStrongNear(Sg, Kc, w, h, Math.max(2, Math.round(Math.max(w, h) * 0.03)));
+    if(seg && base.cloth){   // v302 커튼처럼 사람에 붙은 약한 '사람' 영역 걸러내기 (문턱을 맞춘 사람 전용 6분류 모델일 때만)
+      var Sg = new Uint8Array(n), Kc = new Uint8Array(n), nS = 0, nB = 0;
+      for(y = 0; y < h; y++) for(x = 0; x < w; x++){ i = y * w + x; var bv = at(base, x, y); if(bv >= 0.85){ Sg[i] = 1; nS++; } if(bv >= 0.5) nB++; if(dseg(x + 0.5, y + 0.5) <= core) Kc[i] = 1; }
+      // 씨앗은 측정 부위에 닿은 덩어리만 — 커튼에도 확신 큰 얼룩이 섞여 있어 '확신 큰 곳 전부' 로 하면 커튼이 되살아난다(원본 사진으로 확인)
+      if(nS >= nB * 0.3) Near = romStrongNear(Sg, Kc, w, h, Math.max(2, Math.round(Math.max(w, h) * 0.03)));   // 확신 큰 곳이 너무 적으면(모델이 전체로 자신 없음) 거르지 않음
     }
     // v196 사람 분리가 됐으면, 측정점 색 영역(pm)은 사람 윤곽 바로 옆(사진 크기의 1.2%)까지만 보탬 — 측정점이 벽 쪽에 잘못 찍혀도 벽이 붙지 않게
     var Bn = null;
     if(pm){
-      var B0 = new Uint8Array(n); for(y = 0; y < h; y++) for(x = 0; x < w; x++) if(at(base, x, y) >= 0.3) B0[y * w + x] = 1;
+      var B0 = new Uint8Array(n); for(y = 0; y < h; y++) for(x = 0; x < w; x++) if(at(base, x, y) >= 0.3 && !(Near && !Near[y * w + x])) B0[y * w + x] = 1;   // v302 걸러낸 영역 기준
       var rd = Math.max(1, Math.round(Math.max(w, h) * 0.003)), T1 = new Uint8Array(n); Bn = new Uint8Array(n);   // v250 1.2% → 0.3% (사람 윤곽 밖 회색 띠 방지)
       for(y = 0; y < h; y++){ var run = -1e9; for(x = 0; x < w; x++){ if(B0[y * w + x]) run = x; if(x - run <= rd) T1[y * w + x] = 1; } run = 1e9; for(x = w - 1; x >= 0; x--){ if(B0[y * w + x]) run = x; if(run - x <= rd) T1[y * w + x] = 1; } }
       for(x = 0; x < w; x++){ var rn = -1e9; for(y = 0; y < h; y++){ if(T1[y * w + x]) rn = y; if(y - rn <= rd) Bn[y * w + x] = 1; } rn = 1e9; for(y = h - 1; y >= 0; y--){ if(T1[y * w + x]) rn = y; if(rn - y <= rd) Bn[y * w + x] = 1; } }

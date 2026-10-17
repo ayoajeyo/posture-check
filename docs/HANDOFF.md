@@ -11,8 +11,8 @@
 - 마지막 작업: v304 관리자 엑셀 — 지워진 기록의 보관 자료를 같은 이름 회원에 '삭제된 기록' 으로 합침(이름 중복 해결), 점 안 옮긴 항목은 수정후 칸에 '수정 없음'
 
 ## 다음 할 일 (순서대로, 바로 입력할 명령 포함)
-1. **집·병원 PC 를 새로 받기** (git 기록에서 회원 실명을 지우느라 기록 번호가 모두 바뀜). 예전 폴더에서 push 하면 실명이 되살아남
-   `Rename-Item posture-check posture-check-old` → `git clone https://github.com/ayoajeyo/posture-check` → 잘 열리면 예전 폴더 삭제
+1. **병원 PC 새로 받기** (집 PC 는 2026-10-17 완료 → 폴더 `C:\Users\USER\posture-check-new` 사용, 예전 `posture-check` 는 열지 않음·push 금지). 예전 폴더 이름 바꾸기는 다른 프로그램이 잡고 있어 실패했으므로 새 이름으로 받는다
+   `git clone https://github.com/ayoajeyo/posture-check posture-check-new` → 숨은 파일 2개 복사 `.claude\pii-names.local.txt`(실명 차단 목록, 필수)·`supabase\.temp`(Supabase 연결) → 예전 폴더는 며칠 뒤 삭제
 2. **GitHub 지원팀에 PR #1 캐시 삭제 요청** (아요가 직접, 브라우저) — https://support.github.com/contact → Remove sensitive data · 저장소 ayoajeyo/posture-check · PR #1 · 옛 커밋 03dfc18 28d94e3 a2d4c3a 3b2a3a3 52f0298 a8c14d4
 3. 아요 폰 확인 결과 받기 → 어색한 곳은 `/fix` (격자 잘림이 보이면 `romMaskMerge` 의 둘레 1%·확신 0.5 기준 조정)
 4. 다음 후보 `/fix` — 회원을 바꿔도 이전 회원 체형 사진이 남은 채 [측정 저장] 하면 다른 사람 사진이 새 회원 기록으로 저장될 수 있음 (privacy-guard 권장, BACKLOG '지금')

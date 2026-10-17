@@ -176,3 +176,10 @@ def test_mattpocock_ports_wired_and_credited():
     # 사용자 PC 의 grill-me·grilling(사용자 스킬)과 이름이 겹치지 않게
     assert not (CLAUDE / "skills" / "grilling").exists()
     assert not (CLAUDE / "commands" / "grill-me.md").exists()
+
+
+def test_archify_output_not_committed():
+    assert ".archify/" in (ROOT / ".gitignore").read_text(encoding="utf-8")
+    import json
+    env = json.loads((CLAUDE / "settings.json").read_text(encoding="utf-8")).get("env", {})
+    assert env.get("ARCHIFY_UPDATE_CHECK_DISABLED") == "1"

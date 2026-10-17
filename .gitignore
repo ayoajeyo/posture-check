@@ -21,3 +21,6 @@ supabase/.temp/
 # 화면 캡처 (scripts/screenshot.py)
 .shots/
 .playwright-mcp/
+
+# Archify 구조도 (공개 저장소에 올리지 않음)
+.archify/

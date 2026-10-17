@@ -1207,6 +1207,7 @@
   .ss-row{display:flex; align-items:center; gap:10px; background:var(--surface-2); border-radius:12px; padding:7px 9px;}
   .ss-th{width:44px; height:44px; border-radius:8px; object-fit:cover; background:#E6E9F0; flex:0 0 auto; cursor:pointer;}
   div.ss-th{background:var(--surface); cursor:default;}
+  div.ss-th[data-open]{display:flex; align-items:center; justify-content:center; background:#E6E9F0; cursor:pointer;} div.ss-th[data-open]::after{content:"측정"; font-size:13px; font-weight:700; color:var(--ink-soft);}   /* v298 비운 기록: 눌러서 사진 열고 다시 측정 */
   .ss-nm{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;}
   .ss-nm b{font-size:14px;} .ss-nm b small{font-size:11px; color:var(--blue); font-weight:800; margin-left:3px;}
   .ss-nm em{font-style:normal; font-size:11.5px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
@@ -7288,10 +7289,15 @@
         return '<tr><td>' + esc(nm) + '</td><td>' + (a ? esc(a.value) : "–") + '</td><td>' + (b ? esc(b.value) : "–") + '</td><td class="' + dl.cls + '">' + dl.txt + '</td></tr>';
       }).join("") + '</tbody></table>';
   }
-  // 회차의 ROM·척추 균형 기록 → 비교 행 (같은 항목은 가장 최근 값)
+  /* v298 '측정 비우기' 뒤 아직 다시 재지 않은 ROM 기록은 값이 없다(null) — 'null°' 로 찍지 않고 '측정 전',
+          회차 상세 수정 칸이 비어 있으면 0° 로 저장하지 않는다(전에는 빈칸 → 0° 로 저장됐다) */
+  function romValTxt(v){ return v == null ? "측정 전" : v + "°"; }
+  function ssParseVal(s){ s = String(s == null ? "" : s).trim(); if(!s) return null; var v = Math.round(+s); return isFinite(v) ? Math.max(0, v) : null; }
+  // 회차의 ROM·척추 균형 기록 → 비교 행 (같은 항목은 가장 최근 값 · 값이 없는 기록은 건너뜀)
   function cmpRomList(ss, want){   // want: "rom" · "scol" · "fhp"
     var map = {};
     (ss.roms || []).forEach(function(x){
+      if(x.value == null) return;
       var i = mbRomInfo(x); if(i.cat !== want) return;
       var k = x.joint + "|" + x.side + "|" + x.move;
       if(map[k] && map[k].at > x.at) return;
@@ -10547,7 +10553,7 @@
   }
   function openScolCompare(mk){
     if(!isPro()){ openProGate("scol"); return; }
-    var mv = SCOL_JOINT.moves.find(function(m){ return m.k === mk; }), H = rom.all.filter(function(r){ return r.joint === "scol" && r.move === mk; });
+    var mv = SCOL_JOINT.moves.find(function(m){ return m.k === mk; }), H = rom.all.filter(function(r){ return r.joint === "scol" && r.move === mk && r.value != null; });   // v298 비운 기록 제외
     if(!H.length) return;
     var first = H[0], last = H[H.length - 1], prev = H.length >= 2 ? H[H.length - 2] : null, d1 = last.value - first.value, dp = prev ? last.value - prev.value : null;
     var tcls = function(a, b){ if(a == null || b == null) return ""; var t = trendOf(mv, a, b).t; return t > 0 ? "up" : t < 0 ? "down" : ""; }, sg = function(d){ return d == null ? "–" : (d > 0 ? "+" : "") + d + "°"; };
@@ -10601,7 +10607,7 @@
   }
   function openFhpCompare(mk){
     if(!isPro()){ openProGate("scol"); return; }
-    var mv = FHP_JOINT.moves.find(function(m){ return m.k === mk; }), H = rom.all.filter(function(r){ return r.joint === "fhp" && r.move === mk; });
+    var mv = FHP_JOINT.moves.find(function(m){ return m.k === mk; }), H = rom.all.filter(function(r){ return r.joint === "fhp" && r.move === mk && r.value != null; });   // v298 비운 기록 제외
     if(!H.length) return;
     var first = H[0], last = H[H.length - 1], prev = H.length >= 2 ? H[H.length - 2] : null, d1 = last.value - first.value, dp = prev ? last.value - prev.value : null;
     var tcls = function(a, b){ if(a == null || b == null) return ""; var t = trendOf(mv, a, b).t; return t > 0 ? "up" : t < 0 ? "down" : ""; }, sg = function(d){ return d == null ? "–" : (d > 0 ? "+" : "") + d + "°"; };
@@ -10872,7 +10878,7 @@
   function repDelRom(id){
     var x = rom.all.find(function(r){ return r.id === id; }); if(!x) return;
     var i = mbRomInfo(x);
-    if(!window.confirm(i.name + (i.sd ? " (" + i.sd + ")" : "") + " " + x.value + "° 기록을 삭제할까요?" + (x.memberId ? " 회원 기록에서도 삭제돼요." : ""))) return;
+    if(!window.confirm(i.name + (i.sd ? " (" + i.sd + ")" : "") + " " + romValTxt(x.value) + " 기록을 삭제할까요?" + (x.memberId ? " 회원 기록에서도 삭제돼요." : ""))) return;
     var done = function(){ romRenderCache = {}; toast("삭제했어요."); renderReport(); };
     if(!x.memberId){ rom.sessionAll = rom.sessionAll.filter(function(r){ return r.id !== id; }); done(); return; }
     dbDel("roms", id).then(done);
@@ -13740,12 +13746,14 @@
       h += '<div class="ss-sec"><div class="ss-h"><b>' + sec[0] + '</b><span>' + sec[1] + '</span></div>';
       if(!sec[2].length){ h += '<p class="ss-empty">이 회차에는 ' + sec[0] + ' 기록이 없어요.</p></div>'; return; }
       h += '<div class="ss-list">' + sec[2].map(function(o){
-        var x = o.x, i = o.i;
-        return '<div class="ss-row" data-rid="' + esc(x.id) + '">' + (x.thumb ? '<img class="ss-th" src="' + safeSrc(x.thumb) + '" alt=""' + (i.mv ? ' data-open="' + esc(x.id) + '"' : '') + '>' : '<div class="ss-th"></div>') +
-          '<div class="ss-nm"><b>' + esc(i.name) + (i.sd ? ' <small>' + i.sd + '</small>' : '') + '</b><em class="' + i.jd.cls + '">' + esc(i.jd.txt) + (i.mv && !i.scol ? ' · 정상 0–' + i.mv.normal + '°' : '') + '</em></div>' +
-          (edit ? '<label class="ss-in"><input type="number" inputmode="numeric" min="0" max="200" value="' + x.value + '" data-val="' + esc(x.id) + '">°</label>' +
+        var x = o.x, i = o.i, nv = x.value == null, pic = !!(x.img || x.blob);
+        var dup = nv && sec[2].some(function(q){ return q.x !== x && q.x.value != null && q.x.joint === x.joint && q.x.side === x.side && q.x.move === x.move; });   // v298 같은 항목의 측정값이 따로 있는 비운 기록
+        var sub = nv ? (pic ? "사진 있음 · 측정 전" : "미측정") + (dup ? " · 같은 항목 기록이 따로 있어요" : "") : i.jd.txt + (i.mv && !i.scol ? ' · 정상 0–' + i.mv.normal + '°' : '');
+        return '<div class="ss-row" data-rid="' + esc(x.id) + '">' + (x.thumb ? '<img class="ss-th" src="' + safeSrc(x.thumb) + '" alt=""' + (i.mv ? ' data-open="' + esc(x.id) + '"' : '') + '>' : '<div class="ss-th"' + (pic && i.mv ? ' data-open="' + esc(x.id) + '" role="button" aria-label="사진 열어 측정"' : '') + '></div>') +
+          '<div class="ss-nm"><b>' + esc(i.name) + (i.sd ? ' <small>' + i.sd + '</small>' : '') + '</b><em class="' + (nv ? "" : i.jd.cls) + '">' + esc(sub) + '</em></div>' +
+          (edit ? '<label class="ss-in"><input type="number" inputmode="numeric" min="0" max="200" value="' + (nv ? "" : x.value) + '" data-val="' + esc(x.id) + '">°</label>' +
             (i.mv ? '<button aria-label="사진 열어 점 수정" type="button" class="ss-ico" data-open="' + esc(x.id) + '" title="사진 열어 점 수정">✎</button>' : '') + '<button aria-label="삭제" type="button" class="ss-ico ss-x" data-del="' + esc(x.id) + '" title="삭제">✕</button>'
-          : '<b class="ss-v ' + i.jd.cls + '">' + x.value + '°</b><button aria-label="삭제" type="button" class="ss-ico ss-x" data-del="' + esc(x.id) + '" title="삭제">✕</button>') + '</div>';
+          : '<b class="ss-v ' + (nv ? "" : i.jd.cls) + '">' + romValTxt(x.value) + '</b><button aria-label="삭제" type="button" class="ss-ico ss-x" data-del="' + esc(x.id) + '" title="삭제">✕</button>') + '</div>';
       }).join("") + '</div></div>';
     });
     $("mbSessTitle").textContent = m.name + " · " + round + "차 측정";
@@ -13764,8 +13772,8 @@
     if($("ssSave")) $("ssSave").onclick = function(){
       var jobs = [];
       B.querySelectorAll("[data-val]").forEach(function(inp){
-        var x = find(inp.getAttribute("data-val")), v = Math.max(0, Math.round(+inp.value));
-        if(!x || !isFinite(v) || v === x.value) return;
+        var x = find(inp.getAttribute("data-val")), v = ssParseVal(inp.value);
+        if(!x || v == null || v === x.value) return;
         var i = mbRomInfo(x), upd = Object.assign({}, x, { value: v, pct: i.mv && i.mv.normal ? Math.round(v / i.mv.normal * 100) : null, editedAt: Date.now() });
         jobs.push(rawPut("roms", upd));
       });
@@ -13787,7 +13795,7 @@
     };
     B.querySelectorAll("[data-del]").forEach(function(b){ b.onclick = function(){
       var x = find(b.getAttribute("data-del")), i = x && mbRomInfo(x); if(!x) return;
-      if(!window.confirm(i.name + (i.sd ? " (" + i.sd + ")" : "") + " " + x.value + "° 기록을 삭제할까요?")) return;
+      if(!window.confirm(i.name + (i.sd ? " (" + i.sd + ")" : "") + " " + romValTxt(x.value) + " 기록을 삭제할까요?")) return;
       dbDel("roms", x.id).then(function(){ romRenderCache = {}; toast("삭제했어요."); reopen(edit); });
     }; });
     B.querySelectorAll("[data-open]").forEach(function(b){ b.onclick = function(){

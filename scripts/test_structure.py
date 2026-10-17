@@ -163,3 +163,16 @@ def test_agent_models_are_valid():
         model = _frontmatter(f).get("model")
         assert model in (None, "sonnet", "opus", "haiku", "inherit"), f"{f.name}: {model}"
     assert _frontmatter(CLAUDE / "agents" / "privacy-guard.md").get("model") is None   # 개인정보 점검은 낮추지 않음
+
+
+def test_mattpocock_ports_wired_and_credited():
+    for c in ("wait-what", "retro", "grill-with-docs", "improve-codebase-architecture"):
+        text = (CLAUDE / "commands" / f"{c}.md").read_text(encoding="utf-8")
+        assert "mattpocock/skills" in text, c
+    for s in ("doc-grilling", "codebase-design"):
+        assert (CLAUDE / "skills" / s / "SKILL.md").exists(), s
+    notices = (ROOT / "THIRD_PARTY_NOTICES.md").read_text(encoding="utf-8")
+    assert "MIT License" in notices and "Copyright (c) 2026 Matt Pocock" in notices
+    # 사용자 PC 의 grill-me·grilling(사용자 스킬)과 이름이 겹치지 않게
+    assert not (CLAUDE / "skills" / "grilling").exists()
+    assert not (CLAUDE / "commands" / "grill-me.md").exists()

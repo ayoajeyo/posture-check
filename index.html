@@ -221,7 +221,7 @@
   .rep-rounds-h span{font-size:12px; color:var(--ink-soft); line-height:1.45;}
   .rep-rounds-list{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none;}
   .rep-rounds-list::-webkit-scrollbar{display:none;}
-  .rep-base{display:flex; align-items:center; gap:8px; margin-top:8px;} .rep-base > span{font-size:13px; font-weight:600; color:var(--ink-soft); white-space:nowrap;} .rep-base .sel{min-height:44px;}
+  .rep-base{display:flex; align-items:center; gap:8px; margin-top:12px;} .rep-base > span{font-size:13px; font-weight:600; color:var(--ink-soft); white-space:nowrap;} .rep-base .sel{min-height:44px; flex:0 1 auto; width:auto;}   /* 내용 폭만 — 회차 칩보다 가볍게 */
   .rep-rounds-list button{flex:0 0 auto; min-width:84px; font-family:inherit; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 10px; border-radius:12px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); cursor:pointer;}
   .rep-rounds-list button b{font-size:15px; font-weight:800;}
   .rep-rounds-list button em{font-style:normal; font-size:11.5px; color:var(--ink-soft); white-space:nowrap;}
@@ -326,7 +326,7 @@
   .rzc svg{width:100%; height:auto; display:block; overflow:visible;}
   .rzc p{margin:0; font-size:15px; color:var(--ink-soft); line-height:1.55;}
   /* 06 측정 사진 */
-  .rcmp{display:grid; grid-template-columns:1fr 1fr; gap:16px 12px;}
+  .rcmp{display:grid; grid-template-columns:1fr 1fr; gap:24px 20px;}   /* v307 쌍 안(6px) < 카드 사이: 어느 둘이 한 쌍인지 보이게 */
   .rcp{display:flex; flex-direction:column; gap:6px; min-width:0;}
   .rcp .t{display:flex; justify-content:space-between; align-items:baseline; gap:6px; font-size:13px; font-weight:600;} .rcp .t span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .rcp .pair{display:grid; grid-template-columns:1fr 1fr; gap:6px;} .rcp .pair.one{grid-template-columns:1fr;}
@@ -6127,13 +6127,13 @@
     // 06 측정 사진 — 3개씩 한 줄 (사진이 준비된 것만)
     var P6 = (photos.pairs || []).filter(function(it){ return it.b && it.b.cv; });
     if(P6.length){
-      var pcW = (RCW - 32) / 3, phW = (pcW - 6) / 2, phH = Math.round(phW * 4 / 3), rowH6 = 22 + phH + 22;
+      var pcW = (RCW - 40) / 3, phW = (pcW - 6) / 2, phH = Math.round(phW * 4 / 3), rowH6 = 22 + phH + 22;
       title("측정 사진", doc.multi ? base.n + "차 → " + cur.n + "차" : cur.n + "차", "");
       for(var k6 = 0; k6 < P6.length; k6 += 3){
         (function(list){
           B.push({ h: rowH6 + 12, draw: function(g, y){
             list.forEach(function(it, i){
-              var x = x0 + i * (pcW + 16), p = it.p, one = !(it.a && it.a.cv), w1 = one ? pcW : phW;
+              var x = x0 + i * (pcW + 20), p = it.p, one = !(it.a && it.a.cv), w1 = one ? pcW : phW;
               rT(g, p.label, x, y + 13, { s: 12.5, w: 600 }); if(!one) rDelta(g, p, x + pcW, y + 13, { right: true });
               if(!one) rPhoto(g, it.a.cv, x, y + 22, w1, phH); rPhoto(g, it.b.cv, one ? x : x + w1 + 6, y + 22, w1, phH);
               var cy2 = y + 22 + phH + 16;

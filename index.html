@@ -6656,12 +6656,11 @@
     if(v === state.view) { if(v === "report") renderReport(); return; }
     /* v299 회원 화면에서 회원을 열어 둔 채 측정·리포트로 가면 그 회원으로 바꾼다
             (전에는 측정 화면에 열려 있던 다른 회원 기록이 그대로 나왔다) · 저장 안 한 측정이 있으면 먼저 확인 */
-    var adopt = mbAdoptFor(v, state.view, mbCurrent && !$("mbDetail").hidden ? mbCurrent : null, state.member);
+    var adopt = mbAdoptFor(v, state.view, mbCurrent && !$("mbDetail").hidden ? mbCurrent : null, state.member, hasPhotos() ? state.photoMid : null);
     if(adopt){
       if(!confirmDiscard()) return;   // 앱 확인창 → [확인] 을 누르면 같은 단추가 다시 눌려 여기로 돌아온다
-      clearAllModes(); state.sessionId = null; state.savedSig = null; state.editingOld = false; $("repSaved").hidden = true;
-      setMember(adopt);
-      if(state.phase !== "live") resetToIdle();
+      startFreshSession(); state.pendingSave = false;
+      setMember(adopt); resetToIdle();
       toast(adopt.name + " 회원으로 바꿨어요.");
     }
     if(v !== "analyze" && state.phase === "live"){ pauseCamera(); goIdleFromLive(); }
@@ -7149,10 +7148,11 @@
 
   /* ---- 회원 목록 ---- */
   var mbCurrent = null, mbSel = [];
-  function mbAdoptFor(v, from, viewed, cur){   // v299 바꿀 회원(없으면 null): 회원 화면에서 상세를 연 회원 → 측정·리포트 화면으로 갈 때
+  function mbAdoptFor(v, from, viewed, cur, photoMid){   // v299 바꿀 회원(없으면 null): 회원 화면에서 상세를 연 회원 → 측정·리포트 화면으로 갈 때
     if(from !== "members" || !viewed) return null;
     if(MSR_VIEWS.indexOf(v) < 0 && v !== "report") return null;
-    return cur && cur.id === viewed.id ? null : viewed;
+    if(cur && cur.id === viewed.id && !(photoMid && photoMid !== viewed.id)) return null;   // 같은 회원이어도 열린 체형 사진이 다른 회원 것이면 비운다
+    return viewed;
   }
   // v75: 검색할 때마다 전체를 다시 읽지 않도록 잠깐 보관 (저장·삭제하면 바로 비움)
   var laCache = null, laTimer = null;
@@ -7196,6 +7196,7 @@
 
   /* ---- 회원 상세 ---- */
   function mbOpenDetail(id){
+    if(!state.member || state.member.id !== id) state.openSeq++;   // v299 다른 회원 기록을 불러오던 중이면 취소 (늦게 도착해 측정 화면을 덮지 않게)
     loadAll().then(function(res){
       var m = res[0].find(function(x){ return x.id === id; });
       if(!m){ mbShowList(); return; }
@@ -7986,9 +7987,10 @@
   };
   window.__nativeConfirm = nativeConfirm;
   function confirmDiscard(){ return !isDirty() || window.confirm("저장하지 않은 측정이 있어요. 저장하지 않고 넘어갈까요?\n(저장하려면 취소 후 [측정 저장]을 눌러주세요)"); }
+  function startFreshSession(){ clearAllModes(); state.sessionId = null; state.savedSig = null; state.editingOld = false; $("repSaved").hidden = true; }   // 사진·회차를 비우고 새 측정으로
   $("btnSessNext").addEventListener("click", function(){
     if(!confirmDiscard()) return;
-    clearAllModes(); state.sessionId = null; state.savedSig = null; state.editingOld = false; $("repSaved").hidden = true;
+    startFreshSession();
     showView("analyze"); if(state.mode !== "front") selectMode("front"); else resetToIdle();
     refreshRound().then(function(){ toast(state.member ? state.member.name + " 회원 · 정면 " + state.rnd.f + "차 · 측면 " + state.rnd.s + "차 측정을 시작해요." : "새 측정을 시작해요."); });
   });

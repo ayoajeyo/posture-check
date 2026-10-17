@@ -14,7 +14,7 @@ const grab = (start, end) => {
 const ctx = {};
 vm.createContext(ctx);
 vm.runInContext('var MSR_VIEWS = ["analyze", "rom", "fhp", "scol"];', ctx);
-vm.runInContext(grab("  function mbAdoptFor(v, from, viewed, cur){", "\n  }\n") + "\n  }\n", ctx);
+vm.runInContext(grab("  function mbAdoptFor(v, from, viewed, cur, photoMid){", "\n  }\n") + "\n  }\n", ctx);
 const adopt = vm.runInContext("mbAdoptFor", ctx);
 
 const HONG = { id: "m-hong", name: "홍길동" }, KIM = { id: "m-kim", name: "김철수" };
@@ -34,4 +34,10 @@ test("회원 목록만 보고(상세를 안 열고) 가거나, 다른 화면에�
   assert.equal(adopt("analyze", "members", null, KIM), null);
   assert.equal(adopt("analyze", "dash", HONG, KIM), null);
   assert.equal(adopt("settings", "members", HONG, KIM), null, "측정·리포트가 아닌 화면");
+});
+
+test("같은 회원이어도 측정 화면에 다른 회원 사진이 열려 있으면 비우고 새로 시작한다", () => {
+  assert.equal(adopt("analyze", "members", HONG, HONG, "m-kim"), HONG);
+  assert.equal(adopt("analyze", "members", HONG, HONG, "m-hong"), null, "자기 사진이면 그대로");
+  assert.equal(adopt("analyze", "members", HONG, HONG, null), null, "사진이 없으면 그대로");
 });

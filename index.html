@@ -317,7 +317,7 @@
   .rrom .bar svg{width:100%; height:16px; display:block; overflow:visible;}
   .rrom .bar .v{font-family:var(--font-num); font-size:13px; white-space:nowrap; text-align:right;} .rrom .bar .v b{font-weight:600;} .rrom .bar .v small{color:var(--ink-soft); margin-left:4px;}
   .rrom .j{display:flex; align-items:center; gap:8px; flex-wrap:wrap;} .rrom .j small{font-size:13px; color:var(--ink-soft); white-space:nowrap;}
-  /* 05 척추 균형·거북목 */
+  /* 05 거북목·척추 균형 */
   .rzone{display:grid; gap:20px;}
   .rzc{display:flex; flex-direction:column; gap:8px; min-width:0;}
   .rzc .t{display:flex; justify-content:space-between; align-items:baseline; gap:8px;} .rzc .t b{font-size:14px; font-weight:600;} .rzc .t b small{font-weight:400; color:var(--ink-soft); margin-left:6px; font-size:13px;}
@@ -331,7 +331,7 @@
   .rcp .t{display:flex; justify-content:space-between; align-items:baseline; gap:6px; font-size:13px; font-weight:600;} .rcp .t span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .rcp .pair{display:grid; grid-template-columns:1fr 1fr; gap:6px;} .rcp .pair.one{grid-template-columns:1fr;}
   .rsec.rcmp-start{margin-top:24px; padding-top:16px; border-top:3px solid var(--navy);} .rcmp-lead{margin:0; font-size:14px; font-weight:700; color:var(--navy);}   /* v309 회차 비교 시작 구분 */
-  .rph{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px;} .rph figure{margin:0; min-width:0;} .rph figcaption{display:flex; justify-content:space-between; align-items:baseline; gap:4px; margin-top:4px; font-family:var(--font-num); font-size:13px; color:var(--ink-soft); white-space:nowrap;} .rph figcaption b{color:var(--ink); font-weight:600;}   /* v308 수치 아래 선택 회차 사진 */
+  .rph{display:grid; grid-template-columns:minmax(0, min(calc((100% - 16px) * 0.4), 288px)); justify-content:center;}   /* v311 거북목·척추 균형 사진 한 칸: 예전(3칸 중 한 칸) 폭의 1.2배로 가운데 · 넓은 화면은 288px(관절 가동범위 사진 240px 의 1.2배)까지 */ .rph figure{margin:0; min-width:0;} .rph figcaption{display:flex; justify-content:space-between; align-items:baseline; gap:4px; margin-top:4px; font-family:var(--font-num); font-size:13px; color:var(--ink-soft); white-space:nowrap;} .rph figcaption b{color:var(--ink); font-weight:600;}   /* v308 수치 아래 선택 회차 사진 */
   .rrom .rgrp{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px 12px; padding:14px 0; border-bottom:1px solid var(--line);} .rrom .rgrp:last-child{border-bottom:0;} .rrom .rc.l{grid-column:1;}   /* v310 같은 부위 2장씩 · 좌·우 짝은 같은 줄 */
   @media (min-width:760px){ .rrom .rgrp{grid-template-columns:repeat(2, minmax(0, 240px));} }   /* 넓은 화면에서 사진이 지나치게 커지지 않게 */
   .rrom .rc{display:flex; flex-direction:column; gap:6px; min-width:0;} .rrom .rct b{display:block; font-size:14px; font-weight:600;} .rrom .rct b span{font-weight:500; color:var(--ink-soft);} .rrom .rct small{display:block; font-size:13px; color:var(--ink-soft);}
@@ -6124,13 +6124,13 @@
         rDot(g, lx + 4, ly - 4, 4, RC.navy); rT(g, cur.n + "차 값", lx + 13, ly, { s: 11.5, c: RC.muted }); rT(g, "세로 눈금 70% · 90% = 판정 경계", lx + 70, ly, { s: 11.5, c: RC.muted });
       } });
     }
-    // 05 척추 균형 · 거북목
+    // 05 거북목 · 척추 균형
     if(doc.zones.length){
       var Z = doc.zones, zW = Z.length > 1 ? (RCW - 24) / 2 : RCW, hasZ = Z.some(function(z){ return z.prev != null; });
       var zTextH = Z.reduce(function(a, z){ return Math.max(a, rParaH(g2, z.text, zW, { s: 12.5, lh: 19 })); }, 0), h5 = 24 + 36 + 54 + 8 + zTextH;
       var PZ = photos.cur || {}, zk = function(z){ return z.k === "cva" ? "fhp|C|cva" : "scol|C|atr"; }, ph5W = ((RCW - 40) / 3 - 6) / 2, ph5H = Math.round(ph5W * 4 / 3), hasPZ = Z.some(function(z){ return PZ[zk(z)]; });
       if(hasPZ) h5 += ph5H + 30;   // v308 선택 회차 사진
-      title("척추 균형 · 거북목", "판정 구간 위의 위치");
+      title("거북목 · 척추 균형", "판정 구간 위의 위치");   // v311 내용 순서와 같게
       B.push({ h: h5, draw: function(g, y){
         Z.forEach(function(z, i){
           var x = x0 + i * (zW + 24), gm = L.zoneGeom(z.spec, z.prev, z.value, { w: zW }), top = y + 60 + 18, bh = 14, cy = top + bh / 2;
@@ -8407,12 +8407,12 @@
     h += '</div><div class="rlegend">' + (hasA ? '<span><i class="pdot"></i>' + doc.base.n + '차 값</span>' : '') + '<span><i class="dot"></i>' + cur.n + '차 값</span><span>막대 = 정상 대비 % · 세로 눈금 70% · 90% = 판정 경계</span></div>';
     sec.innerHTML = h; rdShots(sec);
   }
-  /* 05 척추 균형 · 거북목 — 판정 구간 띠 위의 ○ → ● */
+  /* 05 거북목 · 척추 균형 — 판정 구간 띠 위의 ○ → ● */
   function rdZone(doc){
     var sec = $("rsZone"), Z = doc.zones; sec.hidden = !Z.length; if(!Z.length) return;
     var L = window.AYO_LOGIC, w = repDoc.w.zone || 340, hasA = Z.some(function(z){ return z.prev != null; });
     var bgOf = { good: "var(--good-soft)", warn: "var(--warn-soft)", crit: "var(--crit-soft)" };
-    var h = '<h2><span class="no"></span>척추 균형 · 거북목 <small>판정 구간 위의 위치</small>' + '</h2><div class="rzone">';
+    var h = '<h2><span class="no"></span>거북목 · 척추 균형 <small>판정 구간 위의 위치</small>' + '</h2><div class="rzone">';   // v311 내용 순서(거북목 → 척추 균형)와 같게
     Z.forEach(function(z){
       var g = L.zoneGeom(z.spec, z.prev, z.value, { w: w }), top = 18, bh = 14, H = 54, cy = top + bh / 2;
       var sv = '<svg viewBox="0 0 ' + w + ' ' + H + '" role="img" aria-label="' + esc(z.title) + ' 구간">';

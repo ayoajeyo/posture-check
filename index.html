@@ -9508,7 +9508,7 @@
      같은 점수면 꼭짓점 옆 → 아래 모서리 → 위 모서리. 직전 자리가 크게 나쁘지 않으면 그대로 둔다(점을 끄는 동안 이리저리 튀지 않게) */
   function romLblPick(o){
     var k = o.k || 1, m = 8 * k, W = o.W, H = o.H, bw = o.bw, bh = o.bh, P = o.pts || [], segs = o.segs || [];
-    var boxes = P.map(function(p){ return { x0: p.x - 100 * k, x1: p.x + 100 * k, y0: p.y - 32 * k, y1: p.y + 18 * k }; });
+    var boxes = P.map(function(p){ return { x0: p.x - 80 * k, x1: p.x + 80 * k, y0: p.y - 32 * k, y1: p.y + 18 * k }; });
     if(o.loupe){ var lr = 106 * k; boxes.push({ x0: 0, x1: lr, y0: 0, y1: lr }, { x0: W - lr, x1: W, y0: 0, y1: lr }); }
     var cand = [o.a, { x: 0, y: H }, { x: W, y: H }, { x: 0, y: 0 }, { x: W, y: 0 }], all = [], best = null;
     cand.forEach(function(c, ci){
@@ -9533,8 +9533,8 @@
     var RP = romS.pts || [], mv = romMove(), vfx = !!(mv && mv.vfix);
     var pts = RP.map(function(p, i){ return p && !(vfx && i === 1) ? sp(p) : null; }).filter(Boolean);   // 목 세로선 끝(자동)은 점·이름표가 없다
     var segs = romSegs().filter(function(sg){ return RP[sg[0]] && RP[sg[1]]; }).map(function(sg){ return [sp(RP[sg[0]]), sp(RP[sg[1]])]; });
-    var best = romLblPick({ W: W, H: H, bw: bw, bh: bh, k: dpr, a: sp({ x: L.x, y: L.y }), pts: pts, segs: segs, loupe: romLoupeOn(), prev: romS._lblAt });
-    romS._lblAt = best.i;
+    var best = romLblPick({ W: W, H: H, bw: bw, bh: bh, k: dpr, a: sp({ x: L.x, y: L.y }), pts: pts, segs: segs, loupe: romLoupeOn(), prev: romS.drag >= 0 ? romS._lblAt : null });
+    romS._lblAt = romS.drag >= 0 ? best.i : null;   // 끄는 동안에만 자리를 기억 (손을 떼면 다시 꼭짓점 옆부터)
     g.fillStyle = "rgba(13,21,40,.9)"; rr(g, best.x - bw / 2, best.y - bh / 2, bw, bh, 10 * dpr); g.fill();
     g.textAlign = "center"; g.textBaseline = "middle"; g.fillStyle = "#fff";
     if(L.sub){

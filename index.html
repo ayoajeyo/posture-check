@@ -12647,6 +12647,8 @@
         return x;
       });
     })).then(admxRoundFill).then(function(L2){
+      return dbAll("members").catch(function(){ return []; }).then(function(ms){ admxOrphans(L2, ms); return L2; });
+    }).then(function(L2){
       // 회원 미지정 예전 기록만: 같은 이름·같은 종류 안에서 측정 날짜 순으로 번호
       var grp = {};
       L2.forEach(function(x){ if(x.round) return; var g = (x.mid || x.member || "") + "|" + x.kind; (grp[g] = grp[g] || []).push(x); });
@@ -12656,6 +12658,18 @@
       });
       return L2;
     });
+  }
+  /* v304 원래 측정 기록이 지워진(삭제·중복 정리) 보관 자료: 회원을 이름으로만 묶어 회원 목록에 같은 이름이 두 번 나오고,
+          그쪽 '1차' 는 날짜로 따로 세어 진짜 1차와 다른 날짜의 엑셀이 됐다 → 같은 이름의 회원이 하나뿐이면 그 회원에 붙이고 회차는 '삭제된 기록' 으로 */
+  function admxOrphans(L, members){
+    var byName = {};
+    (members || []).forEach(function(m){ if(m && m.id && !m.deleted && m.name) (byName[m.name] = byName[m.name] || []).push(m.id); });
+    L.forEach(function(x){
+      if(x.mid || x.rec0 || x.legacy || !x.member) return;
+      var ids = byName[x.member]; if(!ids || ids.length !== 1) return;   // 동명이인이면 붙이지 않음
+      x.mid = ids[0]; x.round = "del";
+    });
+    return L;
   }
   // v265 회차 번호가 저장되지 않은 예전 기록: 앱 화면과 같은 규칙으로 번호
   //   체형분석 = 측정 순서(poseRounds — 같은 날 두 번 측정하면 1차·2차) · ROM = 측정 날짜 순, 거북목은 따로(romRoundOf 와 같음)
@@ -12726,9 +12740,10 @@
   function admxFillRounds(){
     var mk = $("admXlsMember").value, rs = {};
     admxCache.filter(function(x){ return admxMKey(x) === mk; }).forEach(function(x){ var r = rs[x.round] = rs[x.round] || { n: 0, at: x.at }; r.n++; if(x.at < r.at) r.at = x.at; });
-    var ks = Object.keys(rs).map(Number).sort(function(a, b){ return a - b; });
+    var ks = Object.keys(rs).filter(function(k){ return k !== "del"; }).map(Number).sort(function(a, b){ return a - b; });
     $("admXlsRound").innerHTML = ks.map(function(k){ return '<option value="' + k + '">' + k + '차 · ' + fmtDate(rs[k].at).slice(0, 10) + ' (' + rs[k].n + '건)</option>'; }).join("") +
-      (ks.length > 1 ? '<option value="all">전체 회차 (' + ks.reduce(function(a, k){ return a + rs[k].n; }, 0) + '건)</option>' : "");
+      (rs.del ? '<option value="del">삭제된 기록 · ' + fmtDate(rs.del.at).slice(0, 10) + ' (' + rs.del.n + '건)</option>' : "") +   // v304 원래 기록이 지워진 보관 자료
+      (ks.length + (rs.del ? 1 : 0) > 1 ? '<option value="all">전체 회차 (' + Object.keys(rs).reduce(function(a, k){ return a + rs[k].n; }, 0) + '건)</option>' : "");
     if(ks.length) $("admXlsRound").value = String(ks[ks.length - 1]);
   }
   $("admXlsMember").addEventListener("change", admxFillRounds);
@@ -12951,7 +12966,7 @@
       if(!L.length){ toast("선택한 회원·회차에 보관된 기록이 없어요."); return; }
       var nm = (L[0].member || "회원미지정").replace(/[\\/:*?"<>|]/g, "").trim() || "회원미지정";
       var d0 = new Date(Math.min.apply(null, L.map(function(x){ return x.at || Date.now(); }))), z0 = function(n){ return (n < 10 ? "0" : "") + n; };
-      fname = "아요바디요-" + nm + "-" + (selR === "all" ? "전체회차" : selR + "차") + "-" + d0.getFullYear() + z0(d0.getMonth() + 1) + z0(d0.getDate()) + ".xlsx";
+      fname = "아요바디요-" + nm + "-" + (selR === "all" ? "전체회차" : selR === "del" ? "삭제된기록" : selR + "차") + "-" + d0.getFullYear() + z0(d0.getMonth() + 1) + z0(d0.getDate()) + ".xlsx";
       var ord = function(x){
         if(x.kind === "body") return [0, x.mode === "front" ? 0 : 1, 0, 0];
         var ji = ADMX_ORDER.indexOf(x.joint), J = ROM_ALL.find(function(j){ return j.k === x.joint; }), mi = J ? J.moves.findIndex(function(m){ return m.k === x.move; }) : 99;

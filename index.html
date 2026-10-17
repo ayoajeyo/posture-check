@@ -1207,7 +1207,7 @@
   .ss-row{display:flex; align-items:center; gap:10px; background:var(--surface-2); border-radius:12px; padding:7px 9px;}
   .ss-th{width:44px; height:44px; border-radius:8px; object-fit:cover; background:#E6E9F0; flex:0 0 auto; cursor:pointer;}
   div.ss-th{background:var(--surface); cursor:default;}
-  .ss-go{display:flex; align-items:center; justify-content:center; border:0; padding:0; font-family:inherit; font-size:13px; font-weight:700; color:var(--ink-soft);}   /* v298 비운 기록: 눌러서 사진 열고 다시 측정 */
+  .ss-go{display:flex; align-items:center; justify-content:center; padding:0; font-family:inherit; font-size:13px; font-weight:700; background:var(--surface); border:1px solid var(--line); color:var(--accent);}   /* v298 비운 기록: 눌러서 사진 열고 다시 측정 */
   .ss-v.none{font-family:inherit; font-size:13px; font-weight:600; color:var(--ink-soft);}
   .ss-nm{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;}
   .ss-nm b{font-size:14px;} .ss-nm b small{font-size:11px; color:var(--blue); font-weight:800; margin-left:3px;}
@@ -10555,7 +10555,7 @@
   function openScolCompare(mk){
     if(!isPro()){ openProGate("scol"); return; }
     var mv = SCOL_JOINT.moves.find(function(m){ return m.k === mk; }), H = rom.all.filter(function(r){ return r.joint === "scol" && r.move === mk && r.value != null; });   // v298 비운 기록 제외
-    if(!H.length){ toast("아직 비교할 측정값이 없어요."); return; }
+    if(!H.length){ toast("비교할 측정값이 없어요. 먼저 측정해 주세요."); return; }
     var first = H[0], last = H[H.length - 1], prev = H.length >= 2 ? H[H.length - 2] : null, d1 = last.value - first.value, dp = prev ? last.value - prev.value : null;
     var tcls = function(a, b){ if(a == null || b == null) return ""; var t = trendOf(mv, a, b).t; return t > 0 ? "up" : t < 0 ? "down" : ""; }, sg = function(d){ return d == null ? "–" : (d > 0 ? "+" : "") + d + "°"; };
     var body = '<div class="rcmp-kpi"><div><span>이전 회차' + (prev ? ' (' + romRoundOf(prev) + '차)' : '') + '</span><b>' + (prev ? prev.value + '°' : '–') + '</b><em>' + (prev ? fmtDate(prev.at).slice(0, 10) : '이전 기록 없음') + '</em></div>' +
@@ -10609,7 +10609,7 @@
   function openFhpCompare(mk){
     if(!isPro()){ openProGate("scol"); return; }
     var mv = FHP_JOINT.moves.find(function(m){ return m.k === mk; }), H = rom.all.filter(function(r){ return r.joint === "fhp" && r.move === mk && r.value != null; });   // v298 비운 기록 제외
-    if(!H.length){ toast("아직 비교할 측정값이 없어요."); return; }
+    if(!H.length){ toast("비교할 측정값이 없어요. 먼저 측정해 주세요."); return; }
     var first = H[0], last = H[H.length - 1], prev = H.length >= 2 ? H[H.length - 2] : null, d1 = last.value - first.value, dp = prev ? last.value - prev.value : null;
     var tcls = function(a, b){ if(a == null || b == null) return ""; var t = trendOf(mv, a, b).t; return t > 0 ? "up" : t < 0 ? "down" : ""; }, sg = function(d){ return d == null ? "–" : (d > 0 ? "+" : "") + d + "°"; };
     var body = '<div class="rcmp-kpi"><div><span>이전 회차' + (prev ? ' (' + romRoundOf(prev) + '차)' : '') + '</span><b>' + (prev ? prev.value + '°' : '–') + '</b><em>' + (prev ? fmtDate(prev.at).slice(0, 10) : '이전 기록 없음') + '</em></div>' +
@@ -10943,7 +10943,7 @@
     var J = romJoint(), sideTxt = (J.single && !romLrAny(J)) ? "좌우 공통" : (rom.side === "R" ? "우측" : "좌측"), body = "";
     if(mk){
       var mv = J.moves.find(function(m){ return m.k === mk; }), H = romHist(J.k, romSd(J, mv), mk);
-      if(!H.length){ toast("아직 비교할 측정값이 없어요."); return; }   // v298 이번 기록이 비운 것뿐이면 (전에는 오류로 반응 없음)
+      if(!H.length){ toast("비교할 측정값이 없어요. 먼저 측정해 주세요."); return; }   // v298 이번 기록이 비운 것뿐이면 (전에는 오류로 반응 없음)
       sideTxt = romSd(J, mv) === "C" ? "좌우 공통" : (rom.side === "R" ? "우측" : "좌측");
       $("romCmpTitle").textContent = J.n + " " + mv.n + " · " + sideTxt + " 회차 비교";
       var first = H[0], last = H[H.length - 1], d = last.value - first.value, tr = trendOf(mv, first.value, last.value);   // v149 공통 판정
@@ -13750,7 +13750,7 @@
       h += '<div class="ss-list">' + sec[2].map(function(o){
         var x = o.x, i = o.i, nv = x.value == null, pic = !!(x.img || x.blob);
         var dup = nv && sec[2].some(function(q){ return q.x !== x && q.x.value != null && q.x.joint === x.joint && q.x.side === x.side && q.x.move === x.move; });   // v298 같은 항목의 측정값이 따로 있는 비운 기록
-        var sub = nv ? (dup ? "측정 전 · 같은 항목 다른 기록 있음" : pic ? "사진 있음 · 측정 전" : "미측정") : i.jd.txt + (i.mv && !i.scol ? ' · 정상 0–' + i.mv.normal + '°' : '');
+        var sub = nv ? (dup ? "같은 항목 다른 기록 있음" : pic ? "사진 있음" : "") : i.jd.txt + (i.mv && !i.scol ? ' · 정상 0–' + i.mv.normal + '°' : '');
         return '<div class="ss-row" data-rid="' + esc(x.id) + '">' + (x.thumb ? '<img class="ss-th" src="' + safeSrc(x.thumb) + '" alt=""' + (i.mv ? ' data-open="' + esc(x.id) + '"' : '') + '>' : pic && i.mv ? '<button type="button" class="ss-th ss-go" data-open="' + esc(x.id) + '" aria-label="사진 열어 측정">측정</button>' : '<div class="ss-th"></div>') +
           '<div class="ss-nm"><b>' + esc(i.name) + (i.sd ? ' <small>' + i.sd + '</small>' : '') + '</b><em class="' + (nv ? "" : i.jd.cls) + '">' + esc(sub) + '</em></div>' +
           (edit ? '<label class="ss-in"><input type="number" inputmode="numeric" min="0" max="200" value="' + (nv ? "" : x.value) + '" data-val="' + esc(x.id) + '">°</label>' +

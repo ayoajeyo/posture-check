@@ -7085,7 +7085,7 @@
   }
   $("mfConsent").addEventListener("change", function(){ if(this.checked) mfAskSign(); else mfSignSync(); });
   $("btnMfResign").addEventListener("click", mfAskSign);
-  // 리포트 1쪽용 서명 이미지 (미리 불러 둠)
+  // 리포트 마지막 장 '회원 확인' 칸용 서명 이미지 (미리 불러 둠 · v292 전에는 1쪽)
   var signImgCache = { src: null, img: null };
   function signImgOf(m){
     var src = m && m.consentSign; if(!src) return null;

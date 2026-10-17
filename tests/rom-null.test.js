@@ -38,6 +38,7 @@ test("회차 상세 수정 칸이 비어 있으면 0° 로 저장하지 않는�
   assert.equal(ssParseVal("0"), 0);
   assert.equal(ssParseVal("-5"), 0);
   assert.equal(ssParseVal("88.6"), 89);
+  assert.equal(ssParseVal("999"), 200, "입력칸 최대 200° 를 넘지 않는다");
 });
 
 test("전후 비교: 같은 항목에 비운 기록(값 없음)이 더 늦어도 측정값을 쓴다", () => {

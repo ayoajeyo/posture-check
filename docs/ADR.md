@@ -143,7 +143,8 @@
 **이유**: 얼굴 앞 윤곽은 사람 실루엣에서 자동으로 잡히고 머리카락에 덜 흔들린다. 발목과 같은 장치를 쓰므로 새 코드가 거의 없다.
 **대안**: 정수리 기준 유지 + 보조선만 표시 — 보기에만 달라지고 흔들림은 그대로라 안 함.
 **트레이드오프**: 같은 '목 굴곡'인데 옛 기록(정수리 기준)과 새 기록(얼굴 선 기준)의 숫자 기준이 달라 회차 비교에서 값이 튈 수 있다. 옛 기록은 `romAuxLegacy`(점 3개)로 옛 방식 그대로 열리고 값도 바뀌지 않는다.
-**영향받는 파일**: index.html(ROM_JOINTS 목, ROM_PTNAME·ROM_PART·ROM_DERIV, romGet, romRefine, romAuxGeo, romDefaultPts, romPlace, romFixVUp, ROM_GD, openRomGuide), tests/rom-aux.test.js, docs/TESTING.md
+**보완(2026-10-17, v293)**: ①선 '세로 기준선' 은 **화면(중력) 기준 수직**이다. 화면은 사진을 폰 기울기만큼 되돌려 보여 주므로, 사진 좌표에서만 세우면 보정각(최대 25°)만큼 기울어 보이고 각도도 그만큼 틀어졌다. `romFixVUp` 이 `romRotRef` 로 기울기를 미리 되돌린다(`romSynthA` 의 vup·vdown·hz 기준선과 같은 방식). 저장된 기록을 다시 그릴 때는 `romS.frozen` 으로 저장한 점·각도를 그대로 쓴다.
+**영향받는 파일**: index.html(ROM_JOINTS 목, ROM_PTNAME·ROM_PART·ROM_DERIV, romGet, romRefine, romAuxGeo, romDefaultPts, romPlace, romFixVUp, romRotRef, romRenderRecordRaw, ROM_GD, openRomGuide), tests/rom-aux.test.js, docs/TESTING.md
 
 ### ADR-014: 측정 비우기는 앱 안에 두고, 백업 없이는 실행되지 않게 한다
 **상태**: 채택 (2026-10-16) — 계획서 `docs/PLANS/2026-10-16-측정기록-초기화-사진유지.md`

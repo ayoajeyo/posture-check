@@ -157,6 +157,43 @@ for (const roll of [-1.3, 2.4]) {
   });
 }
 
+// 검토 지적: 저장된 기록을 리포트 사진으로 다시 그릴 때 각도를 다시 계산하면
+// 사진 속 숫자(바로잡힌 값)와 표의 숫자(저장값)가 한 리포트 안에서 어긋난다.
+test("저장된 기록을 다시 그릴 때는 저장한 점 그대로 (frozen)", () => {
+  const saved = [{ x: 300, y: 400 }, { x: 300, y: 0 }, { x: 320, y: 300 }, { x: 320, y: 200 }];
+  ctx3.romS = { mv: "flex", pts: saved.map((q) => ({ x: q.x, y: q.y })), roll: -1.3, w: 800, h: 600, frozen: true };
+  vm.runInContext("romFixVUp()", ctx3);
+  assert.equal(ctx3.romS.pts[1].x, 300, "저장된 ①선 끝점이 바뀌면 안 됨");
+  assert.equal(ctx3.romS.pts[1].y, 0);
+});
+
+test("기울기가 보정 한계(±25°)를 넘어도 그리기와 같은 한계로 자른다", () => {
+  // romRotA 는 ±25° 까지만 돌린다 → 기준선도 25° 로 맞춰야 화면에서 수직이 유지된다
+  ctx3.romS = { mv: "flex", pts: [{ x: 400, y: 500 }, { x: 999, y: 999 }, { x: 420, y: 300 }, { x: 420, y: 200 }], roll: -35, w: 800, h: 600 };
+  vm.runInContext("romFixVUp()", ctx3);
+  const V = ctx3.romS.pts[0], E = ctx3.romS.pts[1], v = screenVec(V, E, -25);   // 그리기도 -25° 로 돌린다
+  assert.ok(Math.abs(v.x) < 0.01, "화면에서 수직이 아님 (x=" + v.x.toFixed(2) + ")");
+});
+
+test("목관절이 사진 가장자리여도 방향은 정확히 유지된다", () => {
+  for (const V0 of [{ x: 0, y: 0 }, { x: 800, y: 600 }, { x: 0, y: 300 }]) {
+    ctx3.romS = { mv: "flex", pts: [V0, { x: 9, y: 9 }, { x: 320, y: 300 }, { x: 320, y: 200 }], roll: 2.4, w: 800, h: 600 };
+    vm.runInContext("romFixVUp()", ctx3);
+    const E = ctx3.romS.pts[1], v = screenVec(V0, E, 2.4);
+    assert.ok(Math.hypot(v.x, v.y) > 1, "길이가 0이면 각도를 못 잰다 " + JSON.stringify(V0));
+    assert.ok(Math.abs(v.x) < 0.01, "방향이 틀어짐 " + JSON.stringify(V0));
+    assert.ok(v.y < 0, "위쪽으로 그어져야 함 " + JSON.stringify(V0));
+  }
+});
+
+test("사진 크기를 아직 모를 때도(w·h 없음) 깨지지 않는다", () => {
+  ctx3.romS = { mv: "flex", pts: [{ x: 300, y: 400 }, { x: 9, y: 9 }, { x: 320, y: 300 }, { x: 320, y: 200 }], roll: -1.3 };
+  vm.runInContext("romFixVUp()", ctx3);
+  const E = ctx3.romS.pts[1];
+  assert.ok(isFinite(E.x) && isFinite(E.y), "좌표가 NaN");
+  assert.ok(Math.abs(screenVec(ctx3.romS.pts[0], E, -1.3).x) < 0.01, "방향이 틀어짐");
+});
+
 test("기울기 정보가 없는 사진(갤러리)은 사진 기준 수직 그대로", () => {
   ctx3.romS = { mv: "flex", pts: [{ x: 300, y: 400 }, { x: 999, y: 999 }, { x: 320, y: 300 }, { x: 320, y: 200 }], roll: null, w: 800, h: 600 };
   vm.runInContext("romFixVUp()", ctx3);

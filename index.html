@@ -9416,12 +9416,13 @@
   function romFixVUp(){
     var mv = romS && romS.mv ? romMove() : null;
     if(!mv || !mv.vfix || !romS.pts || !romS.pts[0]) return;
+    if(romS.frozen) return;   // v293 저장된 기록을 다시 그릴 때(리포트 사진 등)는 저장한 점·저장한 각도 그대로 — 사진 속 숫자와 표의 숫자가 어긋나지 않게
     if(romAuxLegacy(mv) || romS.pts.length < 4) return;   // v273 옛 기록(점 3개)은 그대로 — pts[1]이 정수리라 덮어쓰면 각도가 0°가 된다
     var V = romS.pts[0], W = romS.w || 1e9, H = romS.h || 1e9;
     var d = (typeof romRotRef === "function") ? romRotRef({ x: 0, y: -1 }, romS.roll) : { x: 0, y: -1 };
-    var tx = d.x > 1e-6 ? (W - V.x) / d.x : d.x < -1e-6 ? -V.x / d.x : 1e9;   // 사진 밖으로 나가지 않게 (방향은 그대로)
+    var tx = d.x > 1e-6 ? (W - V.x) / d.x : d.x < -1e-6 ? -V.x / d.x : 1e9;   // 되도록 사진 안에서 끝나게 (방향은 절대 바꾸지 않는다)
     var ty = d.y < -1e-6 ? -V.y / d.y : 1e9, len = Math.min(tx, ty);
-    if(!isFinite(len) || len <= 0) len = Math.max(W, H) * 0.5;
+    if(!isFinite(len) || len <= 0) len = Math.max(romS.w || 0, romS.h || 0, 100) * 0.3;   // 목관절이 사진 가장자리면 사진 밖으로 조금 나간다 — 각도는 방향으로만 정해지므로 방향을 우선한다
     romS.pts[1] = { x: V.x + d.x * len, y: V.y + d.y * len };
   }
   function romDraw(){
@@ -10419,7 +10420,7 @@
         try{
           rom.joint = rec.joint; if(rec.side === "L" || rec.side === "R") rom.side = rec.side;
           Object.assign(romS, { mv: rec.move, img: im, w: im.naturalWidth, h: im.naturalHeight, pts: (rec.pts || []).map(function(q){ return { x: q.x * k, y: q.y * k }; }),
-            roll: rec.roll == null ? null : rec.roll, footOff: rec.footOff == null ? null : rec.footOff, sel: null, drag: -1, gridOn: !!cut, cut: cut });
+            roll: rec.roll == null ? null : rec.roll, footOff: rec.footOff == null ? null : rec.footOff, sel: null, drag: -1, gridOn: !!cut, cut: cut, frozen: true });   // v293 저장된 그대로
           c = romResultCanvas(maxW || 900);
         }catch(e){ console.warn("[pair]", e); }
         Object.keys(romS).forEach(function(kk){ delete romS[kk]; }); Object.assign(romS, save.S); rom.joint = save.joint; rom.side = save.side;
@@ -11085,9 +11086,12 @@
     }
     return out;
   }
+  /* 기준선(세로·가로)을 화면 기준으로 돌린다 — romPaint 의 romRotA 와 정확히 상쇄된다.
+     CRITICAL: 한계(±25°)·null 처리를 romRotA 와 같게 유지한다. 다르면 기준선만 더 돌아 각도가 틀어진다.
+     CRITICAL: 이 함수부터 romAngleOf 사이는 테스트가 잘라 쓴다 (tests/rom-refline.test.js · rom-aux.test.js) */
   function romRotRef(d, roll){
-    if(roll == null) return d;
-    var r = roll * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+    if(roll == null || !isFinite(roll)) return d;
+    var r = Math.max(-25, Math.min(25, roll)) * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
     return { x: d.x * c - d.y * s, y: d.x * s + d.y * c };
   }
   function romAngleOf(V, D, d){

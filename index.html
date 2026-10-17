@@ -332,8 +332,11 @@
   .rcp .pair{display:grid; grid-template-columns:1fr 1fr; gap:6px;} .rcp .pair.one{grid-template-columns:1fr;}
   .rsec.rcmp-start{margin-top:24px; padding-top:16px; border-top:3px solid var(--navy);} .rcmp-lead{margin:0; font-size:14px; font-weight:700; color:var(--navy);}   /* v309 회차 비교 시작 구분 */
   .rph{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px;} .rph figure{margin:0; min-width:0;} .rph figcaption{display:flex; justify-content:space-between; align-items:baseline; gap:4px; margin-top:4px; font-family:var(--font-num); font-size:13px; color:var(--ink-soft); white-space:nowrap;} .rph figcaption b{color:var(--ink); font-weight:600;}   /* v308 수치 아래 선택 회차 사진 */
-  .rcp .ph, .rph .ph{aspect-ratio:3/4; background:var(--surface-2); border:1px solid var(--line); display:grid; place-items:center; overflow:hidden; max-width:100%; border-radius:6px; font-size:13px; color:var(--ink-soft); cursor:pointer;}
-  .rcp .ph img, .rph .ph img{width:100%; height:100%; object-fit:cover; display:block;}
+  .rrom .rgrp{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px 12px; padding:14px 0; border-bottom:1px solid var(--line);} .rrom .rgrp:last-child{border-bottom:0;}   /* v310 같은 부위 2장씩 */
+  .rrom .rc{display:flex; flex-direction:column; gap:6px; min-width:0;} .rrom .rct b{display:block; font-size:14px; font-weight:600;} .rrom .rct b span{font-weight:500; color:var(--ink-soft);} .rrom .rct small{display:block; font-size:13px; color:var(--ink-soft);}
+  .rrom .rcbar svg{width:100%; height:16px; display:block; overflow:visible;} .rrom .rcv{display:flex; align-items:center; gap:6px; flex-wrap:wrap;} .rrom .rcv b{font-family:var(--font-num); font-size:15px; font-weight:600;} .rrom .rcv small{font-family:var(--font-num); font-size:13px; color:var(--ink-soft);} .rrom .rcd{font-size:13px; color:var(--ink-soft);}
+  .rcp .ph, .rph .ph, .rrom .rc .ph{aspect-ratio:3/4; background:var(--surface-2); border:1px solid var(--line); display:grid; place-items:center; overflow:hidden; max-width:100%; border-radius:6px; font-size:13px; color:var(--ink-soft); cursor:pointer;}
+  .rcp .ph img, .rph .ph img, .rrom .rc .ph img{width:100%; height:100%; object-fit:cover; display:block;}
   .rcp .cap{display:grid; grid-template-columns:1fr 1fr; gap:6px; font-family:var(--font-num); font-size:13px; color:var(--ink-soft);} .rcp .cap.one{grid-template-columns:1fr;} .rcp .cap span{display:flex; justify-content:space-between; align-items:baseline; white-space:nowrap;} .rcp .cap b{color:var(--ink); font-weight:600;}   /* v307 '2차 · 130°' 가 좁은 칸에서 두 줄로 갈라지던 것 → 회차 왼쪽·값 오른쪽 한 줄 */
   /* 07 측정 기록 */
   .rhist{overflow-x:auto; -webkit-overflow-scrolling:touch;}
@@ -8254,7 +8257,7 @@
   function rdFit(){
     if(!repDoc.doc || $("rdBody").hidden) return;
     var mw = function(sel){ var e = document.querySelector(sel); return e ? Math.round(e.getBoundingClientRect().width) : 0; };
-    var wr = mw("#rsRom .bar svg"), wd = mw("#rsBody .rdv svg"), wz = mw("#rsZone .rzc svg"), wt = mw("#rsTrend .rtr svg");
+    var wr = mw("#rsRom .rcbar svg"), wd = mw("#rsBody .rdv svg"), wz = mw("#rsZone .rzc svg"), wt = mw("#rsTrend .rtr svg");
     if(wt && wt !== repDoc.w.trend){ repDoc.w.trend = wt; rdTrend(repDoc.doc); }
     if(wr && wr !== repDoc.w.rom){ repDoc.w.rom = wr; rdRom(repDoc.doc); }
     if(wd && wd !== repDoc.w.dv){ repDoc.w.dv = wd; rdDvFill(repDoc.doc); }
@@ -8375,22 +8378,32 @@
   /* 04 관절 가동범위 — 정상 대비 % 막대, ○ 기준 회차 → ● 선택 회차 · v308 동작마다 선택 회차 사진 */
   function rdRom(doc){
     var sec = $("rsRom"), rows = doc.rom.rows; sec.hidden = !rows.length; if(!rows.length) return;
-    var L = window.AYO_LOGIC, w = repDoc.w.rom || 300, hasA = rows.some(function(r){ return r.sides.some(function(s){ return s.aN != null; }); }), cur = doc.cur;
-    var h = '<h2><span class="no"></span>관절 가동범위 <small>ROM · 정상 범위 대비</small>' + '</h2><div class="rrom">';
-    h += '<div class="rh"><span class="nmh">부위 · 동작</span><span class="scw"><span></span><span class="sc"><span>0%</span><span>70%</span><span>90%</span><span>100% 정상</span></span><span></span></span><span class="jh">판정</span></div>';
+    var L = window.AYO_LOGIC, w = repDoc.w.rom || 150, hasA = rows.some(function(r){ return r.sides.some(function(s){ return s.aN != null; }); }), cur = doc.cur;
+    var JTXT = { good: "정상", warn: "주의", crit: "개선 필요" };
+    // v310 같은 부위(관절)끼리 한 묶음 — 동작·좌우마다 카드 [이름 → 사진 → 막대 → 값·판정], 폰 가로 2장
+    var groups = [];
     rows.forEach(function(r){
-      h += '<div class="rr"><div class="nm">' + esc(r.label) + '<small>' + esc(r.sub) + '</small></div><div class="bars">';
-      r.sides.forEach(function(s){
-        var g = L.romBarGeom(s, { w: w });
-        var sv = '<svg viewBox="0 0 ' + w + ' 16" aria-hidden="true"><rect x="0" y="4" width="' + w + '" height="8" rx="4" style="fill:var(--line)"/><rect x="0" y="4" width="' + g.xb + '" height="8" rx="4" style="fill:var(--navy)"/>' +
-          g.ticks.map(function(t){ return '<line x1="' + t + '" x2="' + t + '" y1="0" y2="16" style="stroke:var(--surface)" stroke-width="2"/><line x1="' + t + '" x2="' + t + '" y1="0" y2="16" style="stroke:var(--ink-soft)" stroke-width="1"/>'; }).join("") +
-          (g.xa != null ? '<circle cx="' + g.xa + '" cy="8" r="4" style="fill:var(--surface);stroke:var(--ink-soft)" stroke-width="1.5"/>' : '') + '<circle cx="' + g.xb + '" cy="8" r="4.5" style="fill:var(--navy);stroke:var(--surface)" stroke-width="2"/></svg>';
-        h += '<div class="bar"><span class="s">' + (s.side || "·") + '</span>' + sv + '<span class="v"><b>' + esc(s.txt) + '</b><small>' + s.pct + '%</small></span></div>';
-      });
-      var ph = r.sides.map(function(s){ var pc = rdCurPic(s.key); return pc ? rdCurPh(pc, '<span>' + (s.side ? esc(s.side) + ' · ' : '') + doc.cur.n + '차</span><b>' + esc(s.txt) + '</b>') : ''; }).join("");
-      h += '</div><div class="j">' + rdChip(r.cls, r.judge) + '<small>' + esc(r.diffTxt) + '</small></div>' + (ph ? '<div class="rph">' + ph + '</div>' : '') + '</div>';
+      var jk = r.key.split("|")[0], g = groups[groups.length - 1];
+      if(!g || g.jk !== jk){ g = { jk: jk, cards: [] }; groups.push(g); }
+      r.sides.forEach(function(s, k){ g.cards.push({ r: r, s: s, last: k === r.sides.length - 1 }); });
     });
-    h += '</div><div class="rlegend">' + (hasA ? '<span><i class="pdot"></i>' + doc.base.n + '차 값</span>' : '') + '<span><i class="dot"></i>' + cur.n + '차 값</span><span>세로 눈금 70% · 90% = 판정 경계</span></div>';
+    var h = '<h2><span class="no"></span>관절 가동범위 <small>ROM · 정상 범위 대비</small></h2><div class="rrom">';
+    groups.forEach(function(g){
+      h += '<div class="rgrp">';
+      g.cards.forEach(function(c){
+        var r = c.r, s = c.s, gm = L.romBarGeom(s, { w: w }), pc = rdCurPic(s.key);
+        var sv = '<svg viewBox="0 0 ' + w + ' 16" aria-hidden="true"><rect x="0" y="4" width="' + w + '" height="8" rx="4" style="fill:var(--line)"/><rect x="0" y="4" width="' + gm.xb + '" height="8" rx="4" style="fill:var(--navy)"/>' +
+          gm.ticks.map(function(t){ return '<line x1="' + t + '" x2="' + t + '" y1="0" y2="16" style="stroke:var(--surface)" stroke-width="2"/><line x1="' + t + '" x2="' + t + '" y1="0" y2="16" style="stroke:var(--ink-soft)" stroke-width="1"/>'; }).join("") +
+          (gm.xa != null ? '<circle cx="' + gm.xa + '" cy="8" r="4" style="fill:var(--surface);stroke:var(--ink-soft)" stroke-width="1.5"/>' : '') + '<circle cx="' + gm.xb + '" cy="8" r="4.5" style="fill:var(--navy);stroke:var(--surface)" stroke-width="2"/></svg>';
+        h += '<div class="rc"><div class="rct"><b>' + esc(r.label) + (s.side ? ' <span>(' + esc(s.side) + ')</span>' : '') + '</b><small>' + esc(r.sub) + '</small></div>' +
+          (pc ? rdFig(pc) : '<div class="ph"><span>사진 없음</span></div>') +
+          '<div class="rcbar">' + sv + '</div>' +
+          '<div class="rcv"><b>' + esc(s.txt) + '</b><small>' + s.pct + '%</small>' + rdChip(s.cls, JTXT[s.cls] || "미측정") + '</div>' +
+          (c.last && r.sides.length > 1 ? '<small class="rcd">' + esc(r.diffTxt) + '</small>' : '') + '</div>';
+      });
+      h += '</div>';
+    });
+    h += '</div><div class="rlegend">' + (hasA ? '<span><i class="pdot"></i>' + doc.base.n + '차 값</span>' : '') + '<span><i class="dot"></i>' + cur.n + '차 값</span><span>막대 = 정상 대비 % · 세로 눈금 70% · 90% = 판정 경계</span></div>';
     sec.innerHTML = h; rdShots(sec);
   }
   /* 05 척추 균형 · 거북목 — 판정 구간 띠 위의 ○ → ● */

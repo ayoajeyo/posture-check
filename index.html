@@ -10695,12 +10695,13 @@
     if(!rec.img || !window.__detectPose) return Promise.resolve(null);
     return new Promise(function(res){ var im = new Image(); im.onload = function(){ res(im); }; im.onerror = function(){ res(null); }; im.src = rec.img; }).then(function(im){
       if(!im) return null;
-      var w = im.naturalWidth, h = im.naturalHeight;
-      return window.__detectPose(im).then(function(lm){
-        if(!lm) return null;
+      var w = im.naturalWidth, h = im.naturalHeight, late = {};
+      // 인식 모델을 못 받고 멈춘 네트워크(병원 와이파이 등)에서 리포트 사진이 영영 안 뜨지 않게 12초까지만 기다림 → 넘으면 측정점 방식
+      return Promise.race([window.__detectPose(im), new Promise(function(r){ setTimeout(function(){ r(late); }, 12000); })]).then(function(lm){
+        if(lm === late || !lm) return late;   // 시간 초과·인식 실패는 기억하지 않음 (다음에 다시 시도)
         return AYO_LOGIC.pairTorso(lm.map(function(p){ return { x: p.x * w, y: p.y * h, v: p.visibility === undefined ? 1 : p.visibility }; }), w, h);
-      });
-    }).catch(function(){ return null; }).then(function(t){ romTorsoMemo[key] = t; return t; });
+      }).then(function(t){ if(t === late) return null; romTorsoMemo[key] = t; return t; });   // 몸통이 안 보여 null 인 것은 기억 (다시 재도 같음)
+    }).catch(function(){ return null; });
   }
   function romPairLeft(recL, recR, maxW){
     var L = window.AYO_LOGIC, cR = null, cL = null, fL = null;

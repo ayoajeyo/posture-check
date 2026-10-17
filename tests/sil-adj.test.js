@@ -5,7 +5,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8").replace(/\r\n/g, "\n");   // 윈도우 PC(CRLF)에서도 같은 글자로 찾게
 const BOX = {   // x0, x1, y0, y1 (그림 대비 0~1)
   ankle_L_dorsi:   { x0: 0.150, x1: 1.000, y0: 0.444, y1: 0.818 },
   ankle_R_dorsi:   { x0: 0.000, x1: 0.679, y0: 0.313, y1: 0.725 },

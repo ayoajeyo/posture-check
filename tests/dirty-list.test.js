@@ -6,7 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
-const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8").replace(/\r\n/g, "\n");   // 윈도우 PC(CRLF)에서도 같은 글자로 찾게
 const grab = (start, end) => {
   const i = html.indexOf(start), j = html.indexOf(end, i);
   assert.ok(i >= 0 && j > i, "index.html 에서 못 찾음: " + start);

@@ -6259,7 +6259,7 @@
   function repDocPhotos(doc, onStep){
     var out = { body: {}, pairs: [], cur: {} }, items = rdPhotoItems(doc), r = computeReport();
     // v314 쪽(2000px 폭)에 들어가는 실제 픽셀 폭으로 바로 그린다 — 04 카드·05 사진·06 비교 쌍 (repDocBlocks 의 칸 크기와 같은 식)
-    var PX = { w4: Math.round(RK * (RCW - 60) / 4), w5: Math.round(RK * Math.min(0.4 * ((doc.zones.length > 1 ? (RCW - 24) / 2 : RCW) - 16), 288)), w6: Math.round(RK * ((RCW - 40) / 3 - 6) / 2) }, OPT = { minLine: 1 };
+    var PX = { w4: Math.round(RK * (RCW - 60) / 4), w5: Math.round(RK * Math.min(0.4 * ((doc.zones.length > 1 ? (RCW - 24) / 2 : RCW) - 16), 288)), w6: Math.round(RK * ((RCW - 40) / 3 - 6) / 2) }, OPT = { minLine: 1, ar: 4 / 3 };
     var curKeys = [], curW = {};   // v308 04·05 수치 아래 선택 회차 사진
     doc.rom.rows.forEach(function(rw){ rw.sides.forEach(function(sd){ curKeys.push(sd.key); curW[sd.key] = PX.w4; }); });
     doc.zones.forEach(function(z){ var k5 = z.k === "cva" ? "fhp|C|cva" : "scol|C|atr"; curKeys.push(k5); curW[k5] = PX.w5; });
@@ -6271,16 +6271,15 @@
     var loadC = function(src){ return new Promise(function(res){ if(!src){ res(null); return; } var im = new Image(); im.onload = function(){ var c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0); res(c); }; im.onerror = function(){ res(null); }; im.src = src; }); };
     var th = repDoc.act && repDoc.act.rec && repDoc.act.rec.thumbs;
     var jobs = ["front", "side"].map(function(m){ return out.body[m] || !(th && th[m]) ? Promise.resolve() : loadC(th[m]).then(function(c){ if(c) out.body[m] = c; }); });
-    // 칸은 모두 세로 3:4 로 꽉 채워 그린다(rPhoto). 가로로 넓은 사진(누워서 재는 고관절·무릎 등)은 높이에 맞춰 늘어나 흐려지므로, 그만큼 넉넉한 폭으로 다시 그림
-    var sharp = function(make, w){ return make(w).then(function(c){ if(!c || !c.height) return c; var need = Math.min(1600, Math.ceil(w * (4 / 3) * c.width / c.height)); return need > w * 1.05 ? make(need) : c; }); };
-    var one = function(x, w){ if(!x) return Promise.resolve(null); if(x.img) return loadC(x.img); return sharp(function(ww){ return romRenderRecord(x.rec, ww, OPT); }, w || PX.w6).catch(function(){ return null; }); };
+    // v315 ROM 사진은 칸과 같은 세로 3:4 로 그린다(OPT.ar) — 잘리거나 늘어나지 않음
+    var one = function(x, w){ if(!x) return Promise.resolve(null); if(x.img) return loadC(x.img); return romRenderRecord(x.rec, w || PX.w6, OPT).catch(function(){ return null; }); };
     return Promise.all(jobs).then(function(){ return new Promise(function(res){
       var i = 0, ci = 0, tot = curKeys.length + items.length;
       (function next(){
         if(ci < curKeys.length){
           var ck = curKeys[ci++]; if(onStep) onStep(ci, tot);
           var pk = rdCurPic(ck), pr = rdPairR(ck);   // v312 좌측은 우측 몸 크기에 맞춰
-          (pk && pr ? sharp(function(ww){ return romPairLeft(pk.rec, pr, ww, OPT); }, curW[ck]) : one(pk, curW[ck])).then(function(c){ if(c) out.cur[ck] = c; }).catch(function(e){ console.warn("[repDocPhotos]", e); }).then(function(){ setTimeout(next, 30); });
+          (pk && pr ? romPairLeft(pk.rec, pr, curW[ck], OPT) : one(pk, curW[ck])).then(function(c){ if(c) out.cur[ck] = c; }).catch(function(e){ console.warn("[repDocPhotos]", e); }).then(function(){ setTimeout(next, 30); });
           return;
         }
         if(i >= items.length){ res(out); return; }
@@ -9948,22 +9947,25 @@
 
   window.addEventListener("resize", function(){ if(!$("romSheet").hidden && romS.img) romDraw(); });
 
-  function romResultCanvas(maxW, view){   // view = { z, ax, ay } — v312 리포트 좌·우 맞추기에서만 (측정 화면·저장 그림은 view 없이 지금 그대로)
+  function romResultCanvas(maxW, view){   // view = { z, ax, ay, ar, minLine } — 리포트에서만 (측정 화면·저장 그림은 view 없이 지금 그대로)
     var mv = romMove(), J = romJoint(), val = romAngle(), jd = romJudge(mv, val);
     var k = Math.min(1, (maxW || 1200) / romS.w), W = Math.round(romS.w * k), H = Math.round(romS.h * k), HEAD = Math.round(150 * Math.max(0.6, W / 1200));
-    var c = document.createElement("canvas"); c.width = W; c.height = H + HEAD;
+    // v315 리포트(view.ar): 그림 전체를 세로 3:4 로 — 정사각 사진 + 머리글은 3:4 칸보다 넓어 양옆(머리글 글자·손발)이 잘렸다. 남는 위아래는 격자로 채움
+    var PH = H, kk = k, ox = 0, oy = 0;
+    if(view && view.ar){ PH = Math.round(W * view.ar) - HEAD; kk = Math.min(k, PH / romS.h); ox = (W - romS.w * kk) / 2; oy = (PH - romS.h * kk) / 2; }
+    var c = document.createElement("canvas"); c.width = W; c.height = PH + HEAD;
     var g = c.getContext("2d"), F = "'IBM Plex Sans KR', sans-serif", s2 = HEAD / 150;
     g.imageSmoothingQuality = "high";   // v314 사진을 줄여 그릴 때 격자선이 끊겨 보이지 않게
-    g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, H + HEAD);
-    g.save(); g.translate(0, HEAD); g.scale(k, k); g.beginPath(); g.rect(0, 0, romS.w, romS.h); g.clip();
-    var u0 = 1.6 / k * (W / 1200);
-    if(view && view.minLine) u0 = Math.max(u0, view.minLine / k);   // v314 PDF 는 쪽에 들어가는 크기로 바로 그린다 — 선이 1px 밑으로 가늘어지면 격자가 끊겨 보임
+    g.fillStyle = "#F4F6F8"; g.fillRect(0, 0, W, PH + HEAD);
+    g.save(); g.translate(0, HEAD); g.beginPath(); if(romS.gridOn) g.rect(0, 0, W, PH); else g.rect(ox, oy, romS.w * kk, romS.h * kk); g.clip(); g.translate(ox, oy); g.scale(kk, kk);   // 격자가 없으면 사진 범위만 (남는 곳이 어두운 띠가 되지 않게)
+    var u0 = 1.6 / kk * (W / 1200);
+    if(view && view.minLine) u0 = Math.max(u0, view.minLine / kk);   // v314 PDF 는 쪽에 들어가는 크기로 바로 그린다 — 선이 1px 밑으로 가늘어지면 격자가 끊겨 보임
     if(view && view.z > 0 && view.z !== 1){
       var vax = view.ax, vay = view.ay, ra = romRotA();   // 회전 보정된 사진은 그림에서 돌아간 자리를 중심으로
       if(ra && vax != null){ var dx = vax - romS.w / 2, dy = vay - romS.h / 2; vax = romS.w / 2 + dx * Math.cos(ra) - dy * Math.sin(ra); vay = romS.h / 2 + dx * Math.sin(ra) + dy * Math.cos(ra); }
       var pv = AYO_LOGIC.pairView(romS.w, romS.h, view.z, vax, vay); g.scale(view.z, view.z); g.translate(-pv.x0, -pv.y0); u0 /= view.z;   // 선 굵기·글자는 배율과 상관없이 같게
     }
-    romPaint(g, u0, true); g.restore();
+    romPaint(g, u0, true); g.restore(); c._k = kk;   // 원본 1px → 그림 몇 px (좌·우 맞추기용)
     g.fillStyle = "#1E2A4A"; g.font = "700 " + Math.round(18 * s2) + "px " + F;
     g.fillText(brandLabel(J.k === "scol" ? "척추 균형 체크" : J.k === "fhp" ? "거북목 (CVA)" : "ROM 관절가동범위", J.k === "scol" ? "척추 균형 체크" : J.k === "fhp" ? "거북목 (CVA)" : "ROM 관절가동범위") + (state.member ? "  ·  " + state.member.name : ""), 24 * s2, 38 * s2);
     g.fillStyle = "#17212B"; g.font = "800 " + Math.round(36 * s2) + "px " + F;
@@ -10721,7 +10723,7 @@
     var full = function(rec){ return !rec.img && rec.blob ? dbFull("roms", rec).then(function(f){ return f && f.img ? f : rec; }) : Promise.resolve(rec); };
     var plain = function(){ return romRenderRecord(recL, maxW, opt); };
     return romRenderRecord(recR, maxW, opt).then(function(c){ cR = c; return full(recL); }).then(function(r){   // 한꺼번에 그리지 않고 우측 → 좌측 차례로 (폰이 멈추지 않게)
-      fL = r; return r.img ? romRenderRecordRaw(r, maxW, null, true) : null;   // 좌측 크기 재기용 — 사람 분리 없이 (캐시 안 함)
+      fL = r; return r.img ? romRenderRecordRaw(r, maxW, opt || null, true) : null;   // 좌측 크기 재기용 — 사람 분리 없이 (캐시 안 함) · v315 우측과 같은 모양(3:4)으로
     }).then(function(c){
       cL = c;
       if(!cL || !cR || !cL._pair || !cR._pair || !L || !L.pairZoom) return plain();   // 원본 없이 미리보기만 있는 예전 기록은 그대로
@@ -10729,7 +10731,7 @@
       return full(recR).then(function(fR){ return romPairTorso(fR); }).then(function(tR){ return romPairTorso(fL).then(function(tL){
         // 좌·우 모두 몸통이 보이면 몸통 길이, 아니면(발목 근접 사진 등) 둘 다 측정점 길이 — 항상 같은 방법끼리 비교
         var both = tL && tR;
-        var m = function(c, t){ return { size: both ? t : L.pairBodySize(c._pair.pts, c._pair.names), w: c._pair.w, cw: c.width, ch: c.height }; };
+        var m = function(c, t){ return { size: both ? t : L.pairBodySize(c._pair.pts, c._pair.names), w: c._k ? c.width / c._k : c._pair.w, cw: c.width, ch: c.height }; };   // v315 w = 그림 폭을 원본 단위로 (3:4 로 맞추며 줄어든 만큼까지)
         var z = L.pairZoom(m(cL, tL), m(cR, tR)); if(z === 1) return plain();
         var a = L.pairAnchor(cL._pair.pts, cL._pair.names) || { x: cL._pair.w / 2, y: cL._pair.h / 2 };
         return romRenderRecord(recL, maxW, Object.assign({ z: z, ax: a.x, ay: a.y }, opt || {}));
@@ -10748,7 +10750,7 @@
         try{
           rom.joint = rec.joint; if(rec.side === "L" || rec.side === "R") rom.side = rec.side;
           Object.assign(romS, { mv: rec.move, img: im, w: im.naturalWidth, h: im.naturalHeight, pts: (rec.pts || []).map(function(q){ return { x: q.x * k, y: q.y * k }; }),
-            roll: rec.roll == null ? null : rec.roll, footOff: rec.footOff == null ? null : rec.footOff, sel: null, drag: -1, gridOn: !!cut, cut: cut, frozen: true, _gridExt: !!(view && view.z < 1) });   // v293 저장된 그대로
+            roll: rec.roll == null ? null : rec.roll, footOff: rec.footOff == null ? null : rec.footOff, sel: null, drag: -1, gridOn: !!cut, cut: cut, frozen: true, _gridExt: !!(view && (view.z < 1 || view.ar)) });   // v293 저장된 그대로
           c = romResultCanvas(maxW || 900, view);
           if(c) c._pair = { w: romS.w, h: romS.h, pts: romS.pts, names: romPts().slice() };   // v312 좌·우 몸 크기 비교용 (원본 좌표 · 그림에만 붙임)
         }catch(e){ console.warn("[pair]", e); }
@@ -11105,6 +11107,7 @@
   // v202 사진(thumb)이 없는 기록은 측정 사진을 한 장씩 차례로 그려 넣음 (한꺼번에 그리면 폰이 멈춤)
   var repShotSeq = 0;
   function noPic(el){ if(el.tagName === "IMG") return; var f = el.closest && el.closest(".rep-mfig"); if(f) f.remove(); else el.textContent = "사진 없음"; }   // v250 저장된 미리보기는 그대로 둠   // v210 사진 없는 측정 카드는 숨김
+  var REP_AR = { ar: 4 / 3 };   // v315 리포트 사진 칸(세로 3:4)과 같은 모양으로 그림
   function repShotFill(RS){
     var my = ++repShotSeq, els = [].slice.call(document.querySelectorAll("#rsRom [data-need], #rsZone [data-need], #rsPhotos [data-need]")), pool = (RS.all || []).concat(rom.all || []);
     (function next(){
@@ -11112,7 +11115,7 @@
       var el = els.shift(), rec = pool.find(function(x){ return x.id === el.getAttribute("data-need"); });
       if(!rec){ noPic(el); setTimeout(next, 0); return; }
       var pr = el.closest && el.closest("#rsRom") && repDoc.pairL ? repDoc.pairL[rec.id] : null;
-      (pr ? romPairLeft(rec, pr, 480) : romRenderRecord(rec, 480)).then(function(c){
+      (pr ? romPairLeft(rec, pr, 480, REP_AR) : romRenderRecord(rec, 480, REP_AR)).then(function(c){
         if(my !== repShotSeq || !el.isConnected) return;
         if(c){ var im = new Image(); im.alt = ""; im.src = c.toDataURL("image/jpeg", 0.8); el.replaceWith(im); } else noPic(el);
       }, function(){ noPic(el); }).then(function(){ setTimeout(next, 30); });

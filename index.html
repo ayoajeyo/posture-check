@@ -589,7 +589,7 @@
   .sh-it button.stop.arm{background:var(--crit); color:#fff; border-color:var(--crit);}
   .sh-empty{padding:10px 0 2px; font-size:12.5px; color:var(--ink-soft);}
   .confirm-box{background:var(--surface); color:var(--ink); border-radius:18px; padding:22px 20px 16px; width:100%; max-width:340px; box-shadow:0 20px 50px rgba(0,0,0,.35); border:1px solid var(--line);}
-  .confirm-msg{margin:0 0 18px; font-size:15px; line-height:1.6; font-weight:600; text-align:center; word-break:keep-all;}
+  .confirm-msg{margin:0 0 18px; font-size:15px; line-height:1.6; font-weight:600; text-align:center; word-break:keep-all; white-space:pre-line;}   /* v301 줄바꿈(저장 안 된 것 목록) */
   .confirm-btns{display:flex; gap:8px;}
   /* v99 관리자 모드 */
   .adm-chip{font-size:11px; font-weight:800; letter-spacing:.04em; color:#0B1222; background:#FFB547; border-radius:6px; padding:3px 7px; white-space:nowrap;}
@@ -7725,6 +7725,23 @@
               Math.round((s.rot || 0) * 10), isFinite(s.centerX) ? Math.round(s.centerX) : null];
     })) + "|" + ($("htField").value || "");
   }
+  /* v301 저장 안 된 것 목록 (확인창에 보여 줌): saved·now = sessSig() 값 */
+  function sessDiffList(saved, now){
+    var cut = function(x){ var k = x == null ? -1 : x.lastIndexOf("|"); if(k < 0) return null; try{ return { m: JSON.parse(x.slice(0, k)), ht: x.slice(k + 1) }; }catch(e){ return null; } };
+    var A = cut(saved), B = cut(now), out = [], nm = ["정면", "측면"], J = function(v){ return JSON.stringify(v); };
+    if(!B) return out;
+    [0, 1].forEach(function(i){
+      var a = A ? A.m[i] : null, b = B.m[i];
+      if(!b){ if(a) out.push(nm[i] + " 사진을 지움"); return; }
+      if(!a){ out.push(nm[i] + " 사진·측정점 (아직 저장 안 함)"); return; }
+      if(J(a.slice(0, 3)) !== J(b.slice(0, 3))){ out.push(nm[i] + " 사진"); return; }
+      if(J(a[3]) !== J(b[3])) out.push(nm[i] + " 측정점 위치");
+      if(a[4] !== b[4]) out.push(nm[i] + " 기울기 보정");
+      if(a[5] !== b[5]) out.push(nm[i] + " 중심선");
+    });
+    if(A && A.ht !== B.ht) out.push("키 " + (A.ht || "없음") + " → " + (B.ht || "없음") + (B.ht ? "cm" : ""));
+    return out;
+  }
   function hasPhotos(){ return !!(state.byMode.front.img || state.byMode.side.img); }
   function isDirty(){ return hasPhotos() && sessSig() !== state.savedSig; }
 
@@ -7988,7 +8005,11 @@
     return false;
   };
   window.__nativeConfirm = nativeConfirm;
-  function confirmDiscard(){ return !isDirty() || window.confirm("저장하지 않은 측정이 있어요. 저장하지 않고 넘어갈까요?\n(저장하려면 취소 후 [측정 저장]을 눌러주세요)"); }
+  function confirmDiscard(){
+    if(!isDirty()) return true;
+    var L = sessDiffList(state.savedSig, sessSig()), who = state.member ? state.member.name + " 회원 · " + sessRndTxt() : "회원 미지정";   // v301 무엇이 저장되지 않았는지 보여 줌
+    return window.confirm("저장하지 않은 측정이 있어요 (" + who + ")" + (L.length ? "\n· " + L.join("\n· ") : "") + "\n저장하지 않고 넘어갈까요? 저장하려면 [취소] 후 측정 화면에서 [측정 저장] 을 눌러 주세요.");
+  }
   function startFreshSession(){ clearAllModes(); state.sessionId = null; state.savedSig = null; state.editingOld = false; $("repSaved").hidden = true; }   // 사진·회차를 비우고 새 측정으로
   $("btnSessNext").addEventListener("click", function(){
     if(!confirmDiscard()) return;

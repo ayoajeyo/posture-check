@@ -330,6 +330,7 @@
   .rcp{display:flex; flex-direction:column; gap:6px; min-width:0;}
   .rcp .t{display:flex; justify-content:space-between; align-items:baseline; gap:6px; font-size:13px; font-weight:600;} .rcp .t span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .rcp .pair{display:grid; grid-template-columns:1fr 1fr; gap:6px;} .rcp .pair.one{grid-template-columns:1fr;}
+  .rsec.rcmp-start{margin-top:24px; padding-top:16px; border-top:3px solid var(--navy);} .rcmp-lead{margin:0; font-size:14px; font-weight:700; color:var(--navy);}   /* v309 회차 비교 시작 구분 */
   .rph{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px;} .rph figure{margin:0; min-width:0;} .rph figcaption{display:flex; justify-content:space-between; align-items:baseline; gap:4px; margin-top:4px; font-family:var(--font-num); font-size:13px; color:var(--ink-soft); white-space:nowrap;} .rph figcaption b{color:var(--ink); font-weight:600;}   /* v308 수치 아래 선택 회차 사진 */
   .rcp .ph, .rph .ph{aspect-ratio:3/4; background:var(--surface-2); border:1px solid var(--line); display:grid; place-items:center; overflow:hidden; max-width:100%; border-radius:6px; font-size:13px; color:var(--ink-soft); cursor:pointer;}
   .rcp .ph img, .rph .ph img{width:100%; height:100%; object-fit:cover; display:block;}
@@ -6046,10 +6047,10 @@
     // 03 체형 정렬
     if(doc.body){
       var Bd = doc.body, colW = (RCW - 24) / 2, PW = 118, PH = Math.round(PW * 4 / 3);
-      var dvH = function(d){ return d ? 20 + d.rows.length * 24 + 18 : 0; };
-      var h3 = 30 + Math.max(PH, Math.max(dvH(Bd.front), dvH(Bd.side)));
+      var dvH = function(d){ return d ? 20 + d.rows.length * 24 + 18 : 0; }, dvMax = Math.max(dvH(Bd.front), dvH(Bd.side));
+      var h3 = 30 + Math.max(PH, dvMax);
       title("체형 정렬", "정면 · 측면", "0을 기준으로 벗어난 방향과 크기");
-      B.push({ h: h3, draw: function(g, y){
+      var blk3 = { h: h3, draw: function(g, y){
         [["front", "정면", "좌우 높낮이", Bd.front], ["side", "측면", "플럼라인 편위", Bd.side]].forEach(function(q, i){
           var x = x0 + i * (colW + 24), d = q[3];
           var tw2 = rT(g, q[1], x, y + 16, { s: 14, w: 600 }); rT(g, q[2], x + tw2 + 8, y + 16, { s: 12.5, c: RC.muted });
@@ -6069,31 +6070,36 @@
           var ay = py + 20 + d.rows.length * 24 + 12, ticks = bw < 180 ? [-d.t2, 0, d.t2] : [-d.t2, -d.t1, 0, d.t1, d.t2];
           ticks.forEach(function(t){ rT(g, t ? AYO_LOGIC.fmtNum(Math.abs(t)) + d.u : "0", dx + nmW + 6 + (t + d.max) / (2 * d.max) * bw, ay, { s: 11.5, c: RC.muted, m: true, a: "center" }); });
         });
-      } });
+      } };
+      // v309 쪽 아래에 남는 여백만큼 정면·측면 사진을 키운다 (막대 칸이 너무 좁아지지 않게 칸 폭의 45% 까지)
+      blk3.grow = function(extra){
+        var maxPH = Math.round(colW * 0.45 * 4 / 3), nPH = Math.min(maxPH, Math.max(PH, dvMax) + extra);
+        if(nPH <= PH) return 0;
+        var nh = 30 + Math.max(nPH, dvMax), add = nh - blk3.h;
+        if(add > extra) return 0;
+        PH = nPH; PW = Math.round(PH * 3 / 4); blk3.h = nh; return add;
+      };
+      B.push(blk3);
     }
-    // 04 관절 가동범위
+    // 04 관절 가동범위 — v309 동작마다 한 블록(쪽이 동작 사이에서 넘어가 한 쪽에 줄여 넣지 않음) · 선택 회차 사진은 06 비교 사진과 같은 크기
     if(doc.rom.rows.length){
       var rows4 = doc.rom.rows, hasA = rows4.some(function(r){ return r.sides.some(function(s){ return s.aN != null; }); });
-      var nmW4 = 150, jW = 76, barsX = x0 + nmW4 + 12, barsW = RCW - nmW4 - 12 - jW - 12, sW = 16, vW = 92, bw4 = barsW - sW - vW - 16;
-      var PC = photos.cur || {}, ph4W = 104, ph4H = Math.round(ph4W * 4 / 3), ph4 = function(r){ return r.sides.filter(function(s){ return PC[s.key]; }); };   // v308 선택 회차 사진
-      var rowH4 = function(r){ return 20 + r.sides.length * 22 + (ph4(r).length ? ph4H + 26 : 0); };
-      var h4 = 24 + rows4.reduce(function(a, r){ return a + rowH4(r); }, 0) + 26;
+      var nmW4 = 150, jW = 76, barsX = x0 + nmW4 + 12, barsW = RCW - nmW4 - 12 - jW - 12, sW = 16, vW = 92, bw4 = barsW - sW - vW - 16, bx0 = barsX + sW + 8;
+      var PC = photos.cur || {}, ph4W = ((RCW - 40) / 3 - 6) / 2, ph4H = Math.round(ph4W * 4 / 3), ph4 = function(r){ return r.sides.filter(function(s){ return PC[s.key]; }); };
       title("관절 가동범위", "ROM · 정상 범위 대비");
-      B.push({ h: h4, draw: function(g, y){
+      B.push({ h: 22, t: true, draw: function(g, y){
         rT(g, "부위 · 동작", x0, y + 12, { s: 11.5, c: RC.muted }); rT(g, "판정", RLW - RPAD, y + 12, { s: 11.5, c: RC.muted, a: "right" });
-        var bx0 = barsX + sW + 8; [["0%", 0, "left", 0], ["70%", 70, "center", 0], ["90%", 90, "right", -3], ["100% 정상", 100, "left", 4]].forEach(function(t){ rT(g, t[0], bx0 + bw4 * t[1] / 100 + t[3], y + 12, { s: 11.5, c: RC.muted, m: true, a: t[2] }); });
+        [["0%", 0, "left", 0], ["70%", 70, "center", 0], ["90%", 90, "right", -3], ["100% 정상", 100, "left", 4]].forEach(function(t){ rT(g, t[0], bx0 + bw4 * t[1] / 100 + t[3], y + 12, { s: 11.5, c: RC.muted, m: true, a: t[2] }); });
         rLine(g, x0, y + 20, RLW - RPAD, y + 20);
-        var ry = y + 24;
-        rows4.forEach(function(r, i){
-          var rh = rowH4(r), my = ry + rh / 2;
-          var pl = ph4(r), barH = 20 + r.sides.length * 22; my = ry + barH / 2;
+      } });
+      rows4.forEach(function(r, i){
+        var pl = ph4(r), barH = 20 + r.sides.length * 22, rh = barH + (pl.length ? ph4H + 30 : 0) + 6;
+        B.push({ h: rh, gap: 0, draw: function(g, ry){
+          if(i) rLine(g, x0, ry, RLW - RPAD, ry);
+          var my = ry + 4 + barH / 2;
           rT(g, r.label, x0, my - 2, { s: 13, w: 600 }); rT(g, r.sub, x0, my + 14, { s: 11.5, c: RC.muted });
-          pl.forEach(function(s, k){
-            var px = barsX + k * (ph4W + 12), py = ry + barH + 2; rPhoto(g, PC[s.key], px, py, ph4W, ph4H);
-            rT(g, (s.side ? s.side + " · " : "") + cur.n + "차", px, py + ph4H + 16, { s: 11, c: RC.muted, m: true }); rT(g, s.txt, px + ph4W, py + ph4H + 16, { s: 11, w: 600, m: true, a: "right" });
-          });
           r.sides.forEach(function(s, k){
-            var by = ry + 10 + k * 22, gm = L.romBarGeom(s, { w: bw4 }), bx = bx0;
+            var by = ry + 14 + k * 22, gm = L.romBarGeom(s, { w: bw4 }), bx = bx0;
             rT(g, s.side || "·", barsX + sW / 2, by + 12, { s: 11.5, w: 600, c: RC.muted, a: "center" });
             rRect(g, bx, by + 4, bw4, 8, RC.line, 4); rRect(g, bx, by + 4, gm.xb, 8, RC.navy, 4);
             gm.ticks.forEach(function(t){ rLine(g, bx + t, by, bx + t, by + 16, RC.bg, 2); rLine(g, bx + t, by, bx + t, by + 16, RC.muted, 1); });
@@ -6102,9 +6108,14 @@
             var pw = rW(g, s.pct + "%", { s: 11, m: true }); rT(g, s.pct + "%", bx + bw4 + vW, by + 12, { s: 11, c: RC.muted, m: true, a: "right" }); rT(g, s.txt, bx + bw4 + vW - pw - 4, by + 12, { s: 12, w: 600, m: true, a: "right" });
           });
           rChip(g, RLW - RPAD, my - 20, r.cls, r.judge, true); rT(g, r.diffTxt, RLW - RPAD, my + 16, { s: 11, c: RC.muted, a: "right" });
-          ry += rh; if(i < rows4.length - 1) rLine(g, x0, ry, RLW - RPAD, ry);
-        });
-        var ly = ry + 20, lx = x0;
+          pl.forEach(function(s, k){   // 06 비교 사진과 같은 크기·같은 줄맞춤 (왼쪽부터 6px 간격)
+            var px = x0 + k * (ph4W + 6), py = ry + 4 + barH + 2; rPhoto(g, PC[s.key], px, py, ph4W, ph4H);
+            rT(g, (s.side ? s.side + " · " : "") + cur.n + "차", px, py + ph4H + 16, { s: 11, c: RC.muted, m: true }); rT(g, s.txt, px + ph4W, py + ph4H + 16, { s: 11, w: 600, m: true, a: "right" });
+          });
+        } });
+      });
+      B.push({ h: 22, gap: 6, draw: function(g, y){
+        var ly = y + 14, lx = x0;
         if(hasA){ rDot(g, lx + 4, ly - 4, 4, RC.bg, { c: RC.prev, w: 1.5 }); rT(g, base.n + "차 값", lx + 13, ly, { s: 11.5, c: RC.muted }); lx += 60; }
         rDot(g, lx + 4, ly - 4, 4, RC.navy); rT(g, cur.n + "차 값", lx + 13, ly, { s: 11.5, c: RC.muted }); rT(g, "세로 눈금 70% · 90% = 판정 경계", lx + 70, ly, { s: 11.5, c: RC.muted });
       } });
@@ -6113,7 +6124,7 @@
     if(doc.zones.length){
       var Z = doc.zones, zW = Z.length > 1 ? (RCW - 24) / 2 : RCW, hasZ = Z.some(function(z){ return z.prev != null; });
       var zTextH = Z.reduce(function(a, z){ return Math.max(a, rParaH(g2, z.text, zW, { s: 12.5, lh: 19 })); }, 0), h5 = 24 + 36 + 54 + 8 + zTextH;
-      var PZ = photos.cur || {}, zk = function(z){ return z.k === "cva" ? "fhp|C|cva" : "scol|C|atr"; }, ph5W = 104, ph5H = Math.round(ph5W * 4 / 3), hasPZ = Z.some(function(z){ return PZ[zk(z)]; });
+      var PZ = photos.cur || {}, zk = function(z){ return z.k === "cva" ? "fhp|C|cva" : "scol|C|atr"; }, ph5W = ((RCW - 40) / 3 - 6) / 2, ph5H = Math.round(ph5W * 4 / 3), hasPZ = Z.some(function(z){ return PZ[zk(z)]; });
       if(hasPZ) h5 += ph5H + 30;   // v308 선택 회차 사진
       title("척추 균형 · 거북목", "판정 구간 위의 위치");
       B.push({ h: h5, draw: function(g, y){
@@ -6139,7 +6150,11 @@
     var P6 = (photos.pairs || []).filter(function(it){ return it.b && it.b.cv; });
     if(P6.length){
       var pcW = (RCW - 40) / 3, phW = (pcW - 6) / 2, phH = Math.round(phW * 4 / 3), rowH6 = 22 + phH + 22;
-      title("측정 사진", doc.multi ? base.n + "차 → " + cur.n + "차" : cur.n + "차", "");
+      no++; var nn6 = (no < 10 ? "0" : "") + no;
+      B.push({ h: 34 + (doc.multi ? 46 : 0), t: true, gap: doc.multi ? 40 : null, draw: function(g, y){   // v309 여기부터 회차 비교 — 굵은 선으로 구분
+        if(doc.multi){ rRect(g, x0, y, RCW, 3, RC.navy); rT(g, "회차 비교", x0, y + 26, { s: 13, w: 700, c: RC.navy }); y += 46; }
+        rSecTitle(g, y, nn6, doc.multi ? "측정 비교" : "측정 사진", doc.multi ? "(" + base.n + "차 - " + cur.n + "차)" : cur.n + "차", "");
+      } });
       for(var k6 = 0; k6 < P6.length; k6 += 3){
         (function(list){
           B.push({ h: rowH6 + 12, draw: function(g, y){
@@ -6200,15 +6215,20 @@
   function buildReportPages(doc, photos){
     var live = !!repDoc.live, tmp = document.createElement("canvas"), g2 = tmp.getContext("2d");
     var blocks = repDocBlocks(doc, photos || {}, g2), FOOT = 50, GAP = 24, plan = [], P = null;
+    var gapOf = function(list){ return list[0].gap != null ? list[0].gap : GAP; };   // v309 블록이 정한 위 간격 (동작 행은 0)
+    var growPage = function(P, avail){   // v309 다음 블록이 안 들어가 쪽을 넘길 때, 남는 여백만큼 키울 수 있는 블록(체형 사진)을 키움
+      var left = avail - P.tot;
+      P.groups.forEach(function(q){ q.list.forEach(function(b){ if(b.grow && left > 8){ var add = b.grow(left); if(add > 0){ q.h += add; P.tot += add; left -= add; } } }); });
+    };
     var open = function(first){ P = { groups: [], start: rHeadH(first) + 20, tot: 0, first: first }; plan.push(P); };
     open(true);
     var gi = 0;
     while(gi < blocks.length){
-      var grp = [blocks[gi]]; if(blocks[gi].t && blocks[gi + 1]) grp.push(blocks[gi + 1]);
+      var grp = [blocks[gi]]; while(grp[grp.length - 1].t && blocks[gi + grp.length]) grp.push(blocks[gi + grp.length]);   // v309 t 블록은 다음 블록과 같은 쪽 (제목 → 머리줄 → 첫 동작처럼 이어서)
       gi += grp.length;
       var gh = grp.reduce(function(a, b){ return a + b.h; }, 0) + (grp.length > 1 ? 8 : 0);
-      var avail = RPH - FOOT - P.start, tot = P.tot + (P.groups.length ? GAP : 0) + gh;
-      if(P.groups.length && tot > avail){ open(false); avail = RPH - FOOT - P.start; tot = gh; }
+      var avail = RPH - FOOT - P.start, tot = P.tot + (P.groups.length ? gapOf(grp) : 0) + gh;
+      if(P.groups.length && tot > avail){ growPage(P, avail); open(false); avail = RPH - FOOT - P.start; tot = gh; }
       P.groups.push({ list: grp, h: gh }); P.tot = tot;
     }
     return plan.map(function(P, pn){
@@ -6218,7 +6238,7 @@
       rHead(g, doc, P.first, live); rFoot(g, pn + 1, plan.length);
       var avail = RPH - FOOT - P.start, k = Math.min(1, avail / P.tot), yy = P.start;
       g.save(); if(k < 1){ g.translate(RLW * (1 - k) / 2, P.start); g.scale(k, k); yy = 0; }
-      P.groups.forEach(function(q){ q.list.forEach(function(b, i){ b.draw(g, yy); yy += b.h + (i < q.list.length - 1 ? 8 : 0); }); yy += GAP; });
+      P.groups.forEach(function(q, qi){ if(qi) yy += gapOf(q.list); q.list.forEach(function(b, i){ b.draw(g, yy); yy += b.h + (i < q.list.length - 1 ? 8 : 0); }); });
       g.restore(); g.restore();
       return cv;
     });
@@ -8418,7 +8438,8 @@
   }
   function rdPhotos(doc){
     var sec = $("rsPhotos"), items = rdPhotoItems(doc); sec.hidden = !items.length; if(!items.length) return;
-    var h = '<h2><span class="no"></span>측정 사진 ' + (doc.multi ? '<small>' + doc.base.n + '차 → ' + doc.cur.n + '차</small>' : '<small>' + doc.cur.n + '차</small>') + '</h2><div class="rcmp">';
+    sec.classList.toggle("rcmp-start", !!doc.multi);   // v309 여기부터 회차 비교 — 굵은 선으로 구분
+    var h = (doc.multi ? '<p class="rcmp-lead">회차 비교</p>' : '') + '<h2><span class="no"></span>' + (doc.multi ? '측정 비교 <small>(' + doc.base.n + '차 - ' + doc.cur.n + '차)</small>' : '측정 사진 <small>' + doc.cur.n + '차</small>') + '</h2><div class="rcmp">';
     items.forEach(function(it){
       var p = it.p, one = !it.a;
       h += '<div class="rcp"><div class="t"><span>' + esc(p.label) + '</span>' + (it.a ? rdDelta(p) : '') + '</div><div class="pair' + (one ? ' one' : '') + '">' + rdFig(it.a) + rdFig(it.b) + '</div>' +

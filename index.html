@@ -6100,7 +6100,7 @@
       groups4.forEach(function(g4, gi){
         for(var c0 = 0; c0 < g4.cards.length; c0 += 4){
           (function(list, first){
-            B.push({ h: cardH + (first ? 0 : 0), gap: first && gi ? 18 : 10, draw: function(g, y){
+            B.push({ h: cardH, gap: first && gi ? 18 : 10, draw: function(g, y){
               if(first && gi) rLine(g, x0, y - 9, RLW - RPAD, y - 9);   // 부위가 바뀌는 곳에 얇은 선
               list.forEach(function(c, i){
                 var r = c.r, s = c.s, x = x0 + i * (cw4 + 20);
@@ -6154,7 +6154,7 @@
     // 06 측정 사진 — 3개씩 한 줄 (사진이 준비된 것만)
     var P6 = (photos.pairs || []).filter(function(it){ return it.b && it.b.cv; });
     if(P6.length){
-      var pcW = (RCW - 40) / 3, phW = (pcW - 6) / 2, phH = Math.round(phW * 4 / 3), rowH6 = 22 + phH + 22;
+      var pcW = (RCW - 40) / 3, phW = (pcW - 6) / 2, phH = Math.round(phW * 4 / 3);
       no++; var nn6 = (no < 10 ? "0" : "") + no;
       B.push({ h: 34 + (doc.multi ? 46 : 0), t: true, gap: doc.multi ? 40 : null, draw: function(g, y){   // v309 여기부터 회차 비교 — 굵은 선으로 구분
         if(doc.multi){ rRect(g, x0, y, RCW, 3, RC.navy); rT(g, "회차 비교", x0, y + 26, { s: 13, w: 700, c: RC.navy }); y += 46; }
@@ -6271,14 +6271,16 @@
     var loadC = function(src){ return new Promise(function(res){ if(!src){ res(null); return; } var im = new Image(); im.onload = function(){ var c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0); res(c); }; im.onerror = function(){ res(null); }; im.src = src; }); };
     var th = repDoc.act && repDoc.act.rec && repDoc.act.rec.thumbs;
     var jobs = ["front", "side"].map(function(m){ return out.body[m] || !(th && th[m]) ? Promise.resolve() : loadC(th[m]).then(function(c){ if(c) out.body[m] = c; }); });
-    var one = function(x, w){ if(!x) return Promise.resolve(null); if(x.img) return loadC(x.img); return romRenderRecord(x.rec, w || PX.w6, OPT).catch(function(){ return null; }); };
+    // 칸은 모두 세로 3:4 로 꽉 채워 그린다(rPhoto). 가로로 넓은 사진(누워서 재는 고관절·무릎 등)은 높이에 맞춰 늘어나 흐려지므로, 그만큼 넉넉한 폭으로 다시 그림
+    var sharp = function(make, w){ return make(w).then(function(c){ if(!c || !c.height) return c; var need = Math.min(1600, Math.ceil(w * (4 / 3) * c.width / c.height)); return need > w * 1.05 ? make(need) : c; }); };
+    var one = function(x, w){ if(!x) return Promise.resolve(null); if(x.img) return loadC(x.img); return sharp(function(ww){ return romRenderRecord(x.rec, ww, OPT); }, w || PX.w6).catch(function(){ return null; }); };
     return Promise.all(jobs).then(function(){ return new Promise(function(res){
       var i = 0, ci = 0, tot = curKeys.length + items.length;
       (function next(){
         if(ci < curKeys.length){
           var ck = curKeys[ci++]; if(onStep) onStep(ci, tot);
           var pk = rdCurPic(ck), pr = rdPairR(ck);   // v312 좌측은 우측 몸 크기에 맞춰
-          (pk && pr ? romPairLeft(pk.rec, pr, curW[ck], OPT) : one(pk, curW[ck])).then(function(c){ if(c) out.cur[ck] = c; }).catch(function(e){ console.warn("[repDocPhotos]", e); }).then(function(){ setTimeout(next, 30); });
+          (pk && pr ? sharp(function(ww){ return romPairLeft(pk.rec, pr, ww, OPT); }, curW[ck]) : one(pk, curW[ck])).then(function(c){ if(c) out.cur[ck] = c; }).catch(function(e){ console.warn("[repDocPhotos]", e); }).then(function(){ setTimeout(next, 30); });
           return;
         }
         if(i >= items.length){ res(out); return; }

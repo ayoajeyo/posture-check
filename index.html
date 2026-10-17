@@ -7742,6 +7742,7 @@
     if(A && A.ht !== B.ht) out.push("키 " + (A.ht || "없음") + " → " + (B.ht || "없음") + (B.ht ? "cm" : ""));
     return out;
   }
+  function sigKeep(saved, before, after){ return saved != null && before != null && saved === before ? after : null; }   // v301 바꾸기 전에 저장된 그대로였으면 바꾼 뒤 지문으로, 아니면 '저장 안 됨'
   function hasPhotos(){ return !!(state.byMode.front.img || state.byMode.side.img); }
   function isDirty(){ return hasPhotos() && sessSig() !== state.savedSig; }
 
@@ -8028,7 +8029,9 @@
   setMember = function(m){
     if(m && hasPhotos() && !state.photoMid) state.photoMid = m.id;   // v202 회원 없이 찍은 사진 → 처음 고른 회원 것으로
     if(typeof repForeignAsk !== "undefined") repForeignAsk = null;
-    _setMember(m); state.editingOld = false; state.savedSig = null;
+    var was = hasPhotos() ? sessSig() : null;
+    _setMember(m); state.editingOld = false;
+    state.savedSig = sigKeep(state.savedSig, was, hasPhotos() ? sessSig() : null);   // v301 저장된 기록을 보던 중이면 회원을 바꿔도 '저장 안 됨' 이 아니다 (전에는 무조건 null → 거짓 확인창)
     refreshRound().then(function(){
       if(state.pendingSave && m){ state.pendingSave = false; saveMeasurement(); }
     });
@@ -8080,7 +8083,7 @@
     state.sessionId = rec.id; state.editingOld = true; state.sessRound = round;
     if(rec.height){ $("htField").value = rec.height; }
     Promise.all([restoreMode("front", rec.photos.front, tok), restoreMode("side", rec.photos.side, tok)]).then(function(){
-      if(tok !== state.openSeq) return;
+      if(tok !== state.openSeq){ state.savedSig = sessSig(); return; }   // v301 중간에 취소돼도 저장된 기록 사진이라 '저장 안 됨' 으로 남기지 않음
       ["front", "side"].forEach(function(m){ var x = state.byMode[m], o = null; if(x.img){ o = {}; Object.keys(x.points).forEach(function(k){ o[k] = { x: x.points[k].x, y: x.points[k].y }; }); } x.recPos = o; });   // v262 불러온 기록의 점 = 이번 수정의 '수정 전' (관리자 보관용)
       $("htField").dispatchEvent(new Event("input"));
       showView("analyze");
@@ -8400,7 +8403,7 @@
       if(tok !== state.openSeq) return;
       var P = rec && rec.photos;
       Promise.all([restoreMode("front", P && P.front, tok), restoreMode("side", P && P.side, tok)]).then(function(){
-        if(tok !== state.openSeq || !state.member || state.member.id !== mid) return;
+        if(tok !== state.openSeq || !state.member || state.member.id !== mid){ state.savedSig = sessSig(); return; }   // v301 위와 같음
         state.sessionId = rec ? rec.id : null; state.editingOld = !!rec; state.sessRound = ss.round;
         $("htField").value = rec && rec.height ? rec.height : (state.member && state.member.height ? state.member.height : "");
         $("htField").dispatchEvent(new Event("input"));

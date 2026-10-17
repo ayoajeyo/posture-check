@@ -332,7 +332,7 @@
   .rcp .pair{display:grid; grid-template-columns:1fr 1fr; gap:6px;} .rcp .pair.one{grid-template-columns:1fr;}
   .rcp .ph{aspect-ratio:3/4; background:var(--surface-2); border:1px solid var(--line); display:grid; place-items:center; overflow:hidden; max-width:100%; border-radius:6px; font-size:13px; color:var(--ink-soft); cursor:pointer;}
   .rcp .ph img{width:100%; height:100%; object-fit:cover; display:block;}
-  .rcp .cap{display:grid; grid-template-columns:1fr 1fr; gap:6px; font-family:var(--font-num); font-size:13px; color:var(--ink-soft);} .rcp .cap.one{grid-template-columns:1fr;} .rcp .cap b{color:var(--ink); font-weight:600;}
+  .rcp .cap{display:grid; grid-template-columns:1fr 1fr; gap:6px; font-family:var(--font-num); font-size:13px; color:var(--ink-soft);} .rcp .cap.one{grid-template-columns:1fr;} .rcp .cap span{display:flex; justify-content:space-between; align-items:baseline; white-space:nowrap;} .rcp .cap b{color:var(--ink); font-weight:600;}   /* v307 '2차 · 130°' 가 좁은 칸에서 두 줄로 갈라지던 것 → 회차 왼쪽·값 오른쪽 한 줄 */
   /* 07 측정 기록 */
   .rhist{overflow-x:auto; -webkit-overflow-scrolling:touch;}
   .rhist table{width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums;}
@@ -2086,7 +2086,7 @@
       <p class="rep-rounds-h"><b>회차 선택</b><span id="repRoundSub">회차를 누르면 그 회차의 체형·ROM·척추 균형 결과로 리포트를 보여줘요</span></p>
       <div class="rep-rounds-list" id="repRounds"></div>
       <!-- v307 비교할 두 회차: 뒤 회차 = 누른 회차, 앞 회차를 고른다. 짝이 하나뿐(누른 회차가 1·2차)이면 숨김 -->
-      <label class="rep-base" id="repBaseWrap" hidden><span>비교</span><select class="sel" id="repBase" aria-label="비교할 회차"></select></label>
+      <label class="rep-base" id="repBaseWrap" hidden><span>비교 기준</span><select class="sel" id="repBase" aria-label="비교할 회차"></select></label>
     </div>
     <div class="rep-head" id="repHead" hidden>
       <span class="rep-meta" id="repMeta"></span>
@@ -8164,7 +8164,7 @@
      회차 묶음 S 는 repRoundsRender 가 만든 것(mbBuildSessions)을 그대로 받는다(회차 번호 출처 하나).
      숫자·문장·판정은 js/logic/report-model.js buildReportDoc · 좌표는 report-charts.js — 여기서는 HTML/SVG 만 만든다.
      공유 이미지(buildReportPages)는 같은 repDoc.doc 을 캔버스에 그린다. */
-  var repDoc = { S: [], SS: [], act: null, mid: null, tl: null, doc: null, live: null, w: {} };
+  var repDoc = { S: [], SS: [], act: null, mid: null, tl: null, doc: null, live: null, w: {}, baseKey: null };
   function rdJ(){ return { romJudge: romJudge, scolJudge: scolJudge, scoreBand: scoreBand }; }
   function rdCenter(){ var b = brand(); return { name: b && b.name ? b.name : "", contact: b && b.contact ? b.contact : "", logo: (b && b.logo && brandImg && brandImg.naturalWidth) ? brandImg.src : "" }; }
   function rdChip(cls, label){ return '<span class="rst ' + (cls || "") + '">' + esc(label) + '</span>'; }
@@ -8180,7 +8180,6 @@
     ss.roms.forEach(function(x){ if(x.value != null && x.joint === p[0] && (x.side || "C") === p[1] && x.move === p[2] && (!best || x.at > best.at)) best = x; });
     return best;
   }
-  function rdCurKey(){ var R = repDoc.tl ? repDoc.tl.rounds : []; return R.length ? R[R.length - 1].key : null; }
   function renderRepDoc(S, act){
     var el = $("rdoc"); if(!el) return;
     var L = window.AYO_LOGIC;
@@ -8229,7 +8228,7 @@
   function rdBaseSel(doc){
     var R = doc.rounds, cur = doc.cur, wrap = $("repBaseWrap"), sel = $("repBase");
     wrap.hidden = R.length < 3; if(wrap.hidden) return;
-    sel.innerHTML = R.slice(0, -1).map(function(r){ return '<option value="' + esc(r.key) + '">' + r.n + '차 → ' + cur.n + '차 비교</option>'; }).join("");
+    sel.innerHTML = R.slice(0, -1).map(function(r){ return '<option value="' + esc(r.key) + '">' + r.n + '차 · ' + esc(r.day.slice(5)) + ' → ' + cur.n + '차</option>'; }).join("");
     sel.value = doc.base.key;
   }
   $("repBase").addEventListener("change", function(){ repDoc.baseKey = this.value || null; renderRepDoc(repDoc.S, repDoc.act); });
@@ -8318,7 +8317,7 @@
     var ticks = (w < 180 ? [-d.t2, 0, d.t2] : [-d.t2, -d.t1, 0, d.t1, d.t2]).map(function(t){ return '<i style="left:' + ((t + d.max) / (2 * d.max) * 100) + '%">' + (t ? AYO_LOGIC.fmtNum(Math.abs(t)) + d.u : "0") + '</i>'; }).join("");
     return h + '<div class="axis"><span></span><span>' + ticks + '</span><span></span></div>';
   }
-  /* 04 관절 가동범위 — 정상 대비 % 막대, ○ 1차 → ● 선택 회차 */
+  /* 04 관절 가동범위 — 정상 대비 % 막대, ○ 기준 회차 → ● 선택 회차 */
   function rdRom(doc){
     var sec = $("rsRom"), rows = doc.rom.rows; sec.hidden = !rows.length; if(!rows.length) return;
     var L = window.AYO_LOGIC, w = repDoc.w.rom || 300, hasA = rows.some(function(r){ return r.sides.some(function(s){ return s.aN != null; }); }), cur = doc.cur;
@@ -8390,7 +8389,7 @@
     items.forEach(function(it){
       var p = it.p, one = !it.a;
       h += '<div class="rcp"><div class="t"><span>' + esc(p.label) + '</span>' + (it.a ? rdDelta(p) : '') + '</div><div class="pair' + (one ? ' one' : '') + '">' + fig(it.a) + fig(it.b) + '</div>' +
-        '<div class="cap' + (one ? ' one' : '') + '">' + (it.a ? '<span>' + p.aN + '차 · <b>' + AYO_LOGIC.fmtNum(p.aVal) + p.unit + '</b></span>' : '') + '<span>' + p.bN + '차 · <b>' + AYO_LOGIC.fmtNum(p.bVal) + p.unit + '</b></span></div></div>';
+        '<div class="cap' + (one ? ' one' : '') + '">' + (it.a ? '<span>' + p.aN + '차<b>' + AYO_LOGIC.fmtNum(p.aVal) + p.unit + '</b></span>' : '') + '<span>' + p.bN + '차<b>' + AYO_LOGIC.fmtNum(p.bVal) + p.unit + '</b></span></div></div>';
     });
     sec.innerHTML = h + '</div>';
     var RS = repRomSrc(), pool = (RS.all || []).concat(rom.all || []);

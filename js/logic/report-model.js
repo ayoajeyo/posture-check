@@ -212,7 +212,7 @@
   function historyRows(tl, bi){
     var rows = [], put = function(label, unit, vals, hiBetter, pct){
       if(!vals.some(function(v){ return v != null; })) return;
-      var fi = firstIdx(vals, bi), li = lastIdx(vals), d = fi < li ? deltaOf(vals[fi], vals[li], unit, hiBetter) : { delta: null, deltaTxt: "", better: null };
+      var fi = firstIdx(vals, bi), li = lastIdx(vals), d = fi >= 0 && fi < li ? deltaOf(vals[fi], vals[li], unit, hiBetter) : { delta: null, deltaTxt: "", better: null };
       if(pct && fi < li && d.delta){ d.better = pct[li] > pct[fi] ? true : pct[li] < pct[fi] ? false : null; }
       rows.push({ label: label, unit: unit, vals: vals, txt: vals.map(function(v){ return v == null ? "–" : fmtNum(v) + unit; }), deltaTxt: d.deltaTxt, better: d.better });
     };

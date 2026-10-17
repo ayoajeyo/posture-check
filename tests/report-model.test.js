@@ -137,13 +137,53 @@ test("05 구간 띠: 값이 축을 벗어나면 축을 넓힌다", () => {
   assert.equal(z[1].text, "5° 미만이 정상입니다. 지금은 '상담 권장' 구간입니다.");
 });
 
-test("06 사진 비교 후보: 변화 큰 순, 체형 정면·측면 먼저", () => {
+test("06 사진 후보: 체형 정면·측면 먼저, 그다음 04 표와 같은 부위 순서 (전부, 변화 큰 순 아님)", () => {
   const p = doc3().photos;
   assert.deepEqual(p.slice(0, 2).map((x) => x.kind), ["body-front", "body-side"]);
-  const romKeys = p.filter((x) => x.kind === "rom").map((x) => x.key);
-  assert.equal(romKeys[0], "shoulder|L|flex", "굴곡 좌 71→88% (Δ17) 가 외전 좌 78→94% (Δ16) 보다 큰 변화 — 각도가 같이 +30° 면 정상 대비 % 변화로");
+  assert.deepEqual(p.filter((x) => x.kind === "rom").map((x) => x.key), ["shoulder|L|flex", "shoulder|R|flex", "shoulder|L|abd", "knee|L|flex", "fhp|C|cva", "scol|C|atr"]);
+  assert.ok(p.every((x) => x.mag === undefined), "변화 크기 정렬값은 더 쓰지 않는다");
+  assert.ok(p.every((x) => x.bVal != null), "사진 카드마다 선택 회차 수치가 같이 간다");
   const f = p.find((x) => x.key === "fhp|C|cva");
   assert.deepEqual([f.aN, f.bN, f.aVal, f.bVal, f.deltaTxt, f.better], [1, 3, 44, 52, "▲ 8°", true]);
+});
+
+test("06 사진 후보: 1회차뿐이면 그 회차 항목이 전부 단일 사진(비교 없음)으로", () => {
+  const p = RM.buildReportDoc({ tl: TL.buildTimeline([S3[0]], CATALOG, J), body: null, J }).photos;
+  const romP = p.filter((x) => x.kind === "rom");
+  assert.equal(romP.length, 6);
+  assert.ok(romP.every((x) => x.aN === null && x.bN === 1 && x.bVal != null));
+});
+
+// 비교 기준 회차 선택 (baseKey) — 기본은 1차, 고르면 01·04·05·06·07 의 ○값·변화·문장이 그 회차 기준
+const docBase = (baseKey) => RM.buildReportDoc({ tl: TL.buildTimeline(S3, CATALOG, J), body: BODY3, J, baseKey });
+
+test("비교 기준 2차: 요약·ROM·구간·사진·기록표가 2차 → 3차 기준으로", () => {
+  const d = docBase("r2");
+  assert.equal(d.base.n, 2); assert.equal(d.cur.n, 3);
+  const [sc, cva, atr] = d.summary;
+  assert.deepEqual([sc.deltaTxt, sc.baseN, cva.deltaTxt, atr.deltaTxt], ["▲ 5점", 2, "▲ 3°", "▼ 2°"]);
+  const sf = d.rom.rows[0]; assert.deepEqual([sf.sides[0].aVal, sf.sides[0].aN], [150, 2]);
+  assert.equal(d.rom.rows[2].sides[0].aVal, null, "2차에 없는 무릎 굴곡은 비교 없이 선택 회차 값만");
+  assert.deepEqual([d.zones[0].prev, d.zones[0].prevN], [49, 2]);
+  assert.equal(d.zones[1].text, "5° 미만이 정상입니다. 2차 '관찰 필요' 구간에서 정상 범위로 들어왔습니다.");
+  const f = d.photos.find((x) => x.key === "fhp|C|cva"); assert.deepEqual([f.aN, f.aVal, f.deltaTxt], [2, 49, "▲ 3°"]);
+  assert.equal(d.history.rows[0].deltaTxt, "▲ 5점");
+  assert.deepEqual(d.history.cols.map((c) => c.n), [1, 2, 3], "기록표 열은 전 회차 그대로");
+  assert.doesNotMatch(d.note, /1차/); assert.match(d.note, /^두 번의 측정 동안/);
+});
+
+test("비교 기준: 없거나 모르는 키·선택 회차 자신이면 1차 (기존과 같음)", () => {
+  const ref = doc3();
+  [undefined, "없는키", "r3"].forEach((k) => {
+    const d = docBase(k);
+    assert.equal(d.base.n, 1); assert.equal(d.summary[0].deltaTxt, ref.summary[0].deltaTxt); assert.equal(d.note, ref.note);
+  });
+});
+
+test("비교 기준 2차: 나빠진 항목이 있으면 소견에 '2차보다'", () => {
+  const S = S3.map((s) => s.key !== "r3" ? s : Object.assign({}, s, { roms: s.roms.map((r) => r.move === "cva" ? Object.assign({}, r, { value: 48 }) : r) }));
+  const d = RM.buildReportDoc({ tl: TL.buildTimeline(S, CATALOG, J), body: BODY3, J, baseKey: "r2" });
+  assert.match(d.note, /^2차보다 좋아진 항목은 /); assert.match(d.note, /나빠진 항목은 거북목 각도입니다/);
 });
 
 test("07 기록표: 회차 열 + 항목 행 + 1차→선택 회차 변화", () => {

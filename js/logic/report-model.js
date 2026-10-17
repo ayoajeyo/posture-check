@@ -1,7 +1,7 @@
 /* 리포트 문서 데이터 모델 — 섹션 01~07 에 들어갈 숫자·문장·판정을 만드는 순수 함수 (화면·캔버스를 모름)
    브라우저: index.html 이 먼저 불러와 window.AYO_LOGIC 으로 씀 · Node: require (테스트: tests/report-model.test.js)
 
-   입력 buildReportDoc({ tl, body, J })
+   입력 buildReportDoc({ tl, body, J, baseKey })
      tl   = report-timeline.js buildTimeline() 결과 (선택 회차까지 잘라서 줌 — 마지막 칸이 선택 회차)
      body = index.html computeReport() 결과 { score, f[], sd[] } 또는 null (선택 회차의 체형)
      J    = { romJudge, scolJudge, scoreBand }
@@ -13,7 +13,7 @@
   function normCls(c){ c = String(c || ""); return c.indexOf("good") >= 0 ? "good" : c.indexOf("warn") >= 0 ? "warn" : c.indexOf("crit") >= 0 ? "crit" : ""; }
   function worstCls(list){ var w = ""; list.forEach(function(c){ if(c && (w === "" || CLS_RANK[c] < CLS_RANK[w])) w = c; }); return w; }
   function fmtNum(v){ if(v == null || !isFinite(v)) return "–"; var r = Math.round(v * 10) / 10; return String(r); }
-  function firstIdx(a){ for(var i = 0; i < a.length; i++) if(a[i] != null) return i; return -1; }
+  function firstIdx(a, from){ for(var i = from || 0; i < a.length; i++) if(a[i] != null) return i; return -1; }   // from = 비교 기준 회차 칸(그 회차부터 찾는다)
   function lastIdx(a){ for(var i = a.length - 1; i >= 0; i--) if(a[i] != null) return i; return -1; }
   function parseNum(s){ var m = /-?\d+(\.\d+)?/.exec(String(s == null ? "" : s)); return m ? parseFloat(m[0]) : null; }
   var CLS_TXT = { good: "정상", warn: "주의", crit: "개선 필요", "": "미측정" };
@@ -41,11 +41,11 @@
   function romAvgLabel(p){ return p == null ? "미측정" : p >= 90 ? "정상" : p >= 70 ? "주의" : "개선 필요"; }
 
   /* 01 요약표 4행 (측정한 항목만) */
-  function summaryRows(tl, J, multi){
+  function summaryRows(tl, J, multi, bi){
     var N = tl.rounds.length, out = [];
     var mk = function(k, label, sub, series, unit, ref, judge, hiBetter, refV){
       var li = lastIdx(series); if(li !== N - 1) return;   // 선택 회차에 없는 항목은 요약에서 뺀다
-      var v = series[li], fi = firstIdx(series), base = fi < li ? series[fi] : null;
+      var v = series[li], fi = firstIdx(series, bi), base = fi < li ? series[fi] : null;
       var jd = judge(v), d = multi ? deltaOf(base, v, unit, hiBetter) : { delta: null, deltaTxt: "", better: null };
       out.push({ k: k, label: label, sub: sub, value: v, unit: unit, txt: fmtNum(v) + unit, ref: ref, refV: refV, hiBetter: hiBetter,
                  cls: jd.cls, judge: jd.label, base: base, baseN: base != null ? fi + 1 : null, delta: d.delta, deltaTxt: d.deltaTxt, better: d.better });
@@ -64,7 +64,8 @@
     return fmtNum(g) + (s.unit === "%" ? "%p" : s.unit);
   }
   /* 01 소견 한 줄 — 규칙으로 조립 (담당자 자유 입력은 범위 밖) */
-  function noteText(sum, N, multi){
+  function noteText(sum, N, multi, bi){
+    bi = bi || 0; var bN = bi + 1;   // 비교 기준 회차 (기본 1차)
     if(!sum.length) return "";
     var good = sum.filter(function(s){ return s.cls === "good"; }), notGood = sum.filter(function(s){ return s.cls !== "good"; });
     var goodTxt = good.length ? (function(t){ return t + topic(t) + " 정상 범위"; })(joinKo(good.map(function(s){ return NOTE_NAME[s.k]; }))) : "";
@@ -78,10 +79,10 @@
     }
     var cmp = sum.filter(function(s){ return s.better != null; }), up = cmp.filter(function(s){ return s.better; }), dn = cmp.filter(function(s){ return !s.better; });
     var first;
-    if(cmp.length && up.length === cmp.length) first = korN(N) + " 번의 측정 동안 " + (cmp.length === sum.length ? korN(cmp.length) + " 항목이 모두" : korN(cmp.length) + " 항목이") + " 좋아졌습니다.";
-    else if(cmp.length && dn.length === cmp.length) first = "1차보다 " + joinKo(dn.map(function(s){ return NOTE_NAME[s.k]; })) + "가 나빠졌습니다.";
-    else if(cmp.length) first = "1차보다 좋아진 항목은 " + joinKo(up.map(function(s){ return NOTE_NAME[s.k]; })) + ", 나빠진 항목은 " + joinKo(dn.map(function(s){ return NOTE_NAME[s.k]; })) + "입니다.";
-    else first = "1차와 비교할 수 있는 항목이 없습니다.";
+    if(cmp.length && up.length === cmp.length) first = korN(N - bi) + " 번의 측정 동안 " + (cmp.length === sum.length ? korN(cmp.length) + " 항목이 모두" : korN(cmp.length) + " 항목이") + " 좋아졌습니다.";
+    else if(cmp.length && dn.length === cmp.length) first = bN + "차보다 " + joinKo(dn.map(function(s){ return NOTE_NAME[s.k]; })) + "가 나빠졌습니다.";
+    else if(cmp.length) first = bN + "차보다 좋아진 항목은 " + joinKo(up.map(function(s){ return NOTE_NAME[s.k]; })) + ", 나빠진 항목은 " + joinKo(dn.map(function(s){ return NOTE_NAME[s.k]; })) + "입니다.";
+    else first = bN + "차와 비교할 수 있는 항목이 없습니다.";
     var second = [goodTxt ? goodTxt + (notTxt ? "이고" : "입니다") : "", notTxt].filter(Boolean).join(", ");
     return (first + " " + (second ? second + "." : "")).replace(/\s+$/, "");
   }
@@ -132,13 +133,13 @@
   }
 
   /* 04 ROM — 동작별 좌/우 막대. 선택 회차(마지막 칸)에 값이 있는 쪽만, ○ = 그 쪽의 가장 이른 회차 */
-  function romRows(tl){
+  function romRows(tl, bi){
     var N = tl.rounds.length, groups = {}, order = [];
     Object.keys(tl.rom).map(function(k){ return tl.rom[k]; }).sort(function(a, b){ return a.ord - b.ord; }).forEach(function(it){
       var li = lastIdx(it.vals); if(li !== N - 1) return;
       var p = it.key.split("|"), gk = p[0] + "|" + p[2];
       if(!groups[gk]){ groups[gk] = { key: gk, label: it.label.replace(/ \((좌|우)\)$/, ""), normal: it.normal, sub: it.normal > 0 ? "정상 " + it.normal + "°" : "정상 0° (완전히 펴짐)", sides: [] }; order.push(gk); }
-      var fi = firstIdx(it.vals), hasA = fi < li;
+      var fi = firstIdx(it.vals, bi), hasA = fi < li;
       groups[gk].sides.push({ side: it.side === "L" ? "좌" : it.side === "R" ? "우" : "", key: it.key,
         aVal: hasA ? it.vals[fi] : null, aPct: hasA ? it.pct[fi] : null, aN: hasA ? fi + 1 : null,
         bVal: it.vals[li], pct: it.pct[li], cls: it.cls[li], bN: li + 1, txt: fmtNum(it.vals[li]) + "°" });
@@ -163,17 +164,17 @@
     var zones = z.zones.map(function(q, i){ return { from: i === 0 ? min : q[0], to: i === z.zones.length - 1 ? max : q[1], cls: q[2], label: q[3] }; });
     return { min: min, max: max, u: "°", zones: zones };
   }
-  function zoneStrips(tl, J, multi){
+  function zoneStrips(tl, J, multi, bi){
     var N = tl.rounds.length, out = [];
     var mk = function(k, title, sub, series, label, hiBetter, refV){
       var li = lastIdx(series); if(li !== N - 1) return;
-      var v = series[li], fi = firstIdx(series), prev = fi < li ? series[fi] : null, lab = label(v), cls = normCls(J.scolJudge({ grade: k }, v).cls);
+      var v = series[li], fi = firstIdx(series, bi), prev = fi < li ? series[fi] : null, lab = label(v), cls = normCls(J.scolJudge({ grade: k }, v).cls);
       var d = multi ? deltaOf(prev, v, "°", hiBetter) : { delta: null, deltaTxt: "", better: null };
       var spec = zoneSpec(k, [v, prev]), text = ZONE[k].ok + " ";
       var gap = hiBetter ? refV - v : v - refV, gapT = fmtNum(Math.abs(gap)) + "°";
       if(prev != null && multi){
         var pl = label(prev);
-        if(cls === "good") text += prev != null && label(prev) !== "정상" ? fi + 1 + "차 '" + pl + "' 구간에서 정상 범위로 들어왔습니다." : "1차에 이어 정상 범위를 유지하고 있습니다.";
+        if(cls === "good") text += prev != null && label(prev) !== "정상" ? fi + 1 + "차 '" + pl + "' 구간에서 정상 범위로 들어왔습니다." : fi + 1 + "차에 이어 정상 범위를 유지하고 있습니다.";
         else if(pl !== lab) text += fi + 1 + "차 '" + pl + "'에서 '" + lab + "'" + (d.better ? "까지 올라왔고, " + gapT + "를 더 회복하면 정상 범위입니다." : "로 내려왔습니다. 정상 범위까지 " + gapT + "가 남았습니다.");
         else text += fi + 1 + "차와 같은 '" + lab + "' 구간입니다. " + gapT + "를 더 회복하면 정상 범위입니다.";
       } else text += cls === "good" ? "지금은 정상 범위입니다." : "지금은 '" + lab + "' 구간입니다.";
@@ -185,33 +186,33 @@
     return out;
   }
 
-  /* 06 사진 비교 후보 — 렌더러가 사진이 있는 것만 골라 최대 6개. 체형 정면·측면 먼저, 그다음 변화 큰 순 */
-  function photoItems(tl, multi){
+  /* 06 사진 후보 — 렌더러가 사진이 있는 것만 전부 그린다. 체형 정면·측면 먼저, 그다음 04 표와 같은 부위 순서, 거북목·척추 균형 (v307: 최대 6·변화 큰 순 → 전부·부위 순) */
+  function photoItems(tl, multi, bi){
     var N = tl.rounds.length, out = [], ln = N - 1;
-    var sc = tl.score, sfi = firstIdx(sc), sli = lastIdx(sc);
+    var sc = tl.score, sfi = firstIdx(sc, bi), sli = lastIdx(sc);
     if(sli === ln){ var dS = multi && sfi < sli ? deltaOf(sc[sfi], sc[sli], "점", true) : { deltaTxt: "", better: null, delta: 0 };
-      ["front", "side"].forEach(function(m){ out.push({ kind: "body-" + m, key: "body|" + m, label: m === "front" ? "체형 정면" : "체형 측면", aN: multi && sfi < sli ? sfi + 1 : null, bN: sli + 1, aVal: sfi < sli ? sc[sfi] : null, bVal: sc[sli], unit: "점", deltaTxt: dS.deltaTxt, better: dS.better, mag: 1e9 }); }); }
+      ["front", "side"].forEach(function(m){ out.push({ kind: "body-" + m, key: "body|" + m, label: m === "front" ? "체형 정면" : "체형 측면", aN: multi && sfi < sli ? sfi + 1 : null, bN: sli + 1, aVal: sfi < sli ? sc[sfi] : null, bVal: sc[sli], unit: "점", deltaTxt: dS.deltaTxt, better: dS.better }); }); }
     var romL = [];
     Object.keys(tl.rom).forEach(function(k){
       var it = tl.rom[k], li = lastIdx(it.vals); if(li !== ln) return;
-      var fi = firstIdx(it.vals), hasA = multi && fi < li, d = hasA ? deltaOf(it.vals[fi], it.vals[li], "°", true) : { deltaTxt: "", better: null, delta: 0 };
+      var fi = firstIdx(it.vals, bi), hasA = multi && fi < li, d = hasA ? deltaOf(it.vals[fi], it.vals[li], "°", true) : { deltaTxt: "", better: null, delta: 0 };
       if(hasA){ d.better = it.pct[li] > it.pct[fi] ? true : it.pct[li] < it.pct[fi] ? false : null; }
-      romL.push({ kind: "rom", key: k, label: it.label, aN: hasA ? fi + 1 : null, bN: li + 1, aVal: hasA ? it.vals[fi] : null, bVal: it.vals[li], unit: "°", deltaTxt: d.deltaTxt, better: d.better, mag: hasA ? Math.abs(it.pct[li] - it.pct[fi]) + Math.abs(d.delta) / 1000 : 0, ord: it.ord });
+      romL.push({ kind: "rom", key: k, label: it.label, aN: hasA ? fi + 1 : null, bN: li + 1, aVal: hasA ? it.vals[fi] : null, bVal: it.vals[li], unit: "°", deltaTxt: d.deltaTxt, better: d.better, ord: it.ord });
     });
-    [["cva", tl.cva, "fhp|C|cva", "거북목 CVA", true], ["atr", tl.atr, "scol|C|atr", "척추 균형 ATR", false]].forEach(function(q){
+    [["cva", tl.cva, "fhp|C|cva", "거북목 CVA", true, 500], ["atr", tl.atr, "scol|C|atr", "척추 균형 ATR", false, 501]].forEach(function(q){
       var s = q[1], li = lastIdx(s); if(li !== ln) return;
-      var fi = firstIdx(s), hasA = multi && fi < li, d = hasA ? deltaOf(s[fi], s[li], "°", q[4]) : { deltaTxt: "", better: null, delta: 0 };
-      romL.push({ kind: "rom", key: q[2], label: q[3], aN: hasA ? fi + 1 : null, bN: li + 1, aVal: hasA ? s[fi] : null, bVal: s[li], unit: "°", deltaTxt: d.deltaTxt, better: d.better, mag: hasA ? Math.abs(d.delta) : 0, ord: 500 });
+      var fi = firstIdx(s, bi), hasA = multi && fi < li, d = hasA ? deltaOf(s[fi], s[li], "°", q[4]) : { deltaTxt: "", better: null, delta: 0 };
+      romL.push({ kind: "rom", key: q[2], label: q[3], aN: hasA ? fi + 1 : null, bN: li + 1, aVal: hasA ? s[fi] : null, bVal: s[li], unit: "°", deltaTxt: d.deltaTxt, better: d.better, ord: q[5] });
     });
-    romL.sort(function(a, b){ return b.mag - a.mag || (a.ord || 0) - (b.ord || 0); });
+    romL.sort(function(a, b){ return (a.ord || 0) - (b.ord || 0); });
     return out.concat(romL);
   }
 
   /* 07 기록표 */
-  function historyRows(tl){
+  function historyRows(tl, bi){
     var rows = [], put = function(label, unit, vals, hiBetter, pct){
       if(!vals.some(function(v){ return v != null; })) return;
-      var fi = firstIdx(vals), li = lastIdx(vals), d = fi < li ? deltaOf(vals[fi], vals[li], unit, hiBetter) : { delta: null, deltaTxt: "", better: null };
+      var fi = firstIdx(vals, bi), li = lastIdx(vals), d = fi < li ? deltaOf(vals[fi], vals[li], unit, hiBetter) : { delta: null, deltaTxt: "", better: null };
       if(pct && fi < li && d.delta){ d.better = pct[li] > pct[fi] ? true : pct[li] < pct[fi] ? false : null; }
       rows.push({ label: label, unit: unit, vals: vals, txt: vals.map(function(v){ return v == null ? "–" : fmtNum(v) + unit; }), deltaTxt: d.deltaTxt, better: d.better });
     };
@@ -233,14 +234,16 @@
   ];
   var DISCLAIMER = "이 리포트는 촬영 거리·각도·자세에 따라 달라질 수 있는 스크리닝 참고 자료이며, 의학적 진단을 대신하지 않습니다. 통증이나 뚜렷한 변형이 있으면 전문가와 상담하세요.";
 
+  /* o.baseKey = 비교 기준 회차의 key (v307). 없거나 모르는 키·선택 회차 자신이면 1차 */
   function buildReportDoc(o){
-    var tl = o.tl, J = o.J, N = tl.rounds.length, multi = N >= 2;
-    var cur = N ? tl.rounds[N - 1] : null, base = multi ? tl.rounds[0] : null;
-    var sum = summaryRows(tl, J, multi);
+    var tl = o.tl, J = o.J, N = tl.rounds.length, multi = N >= 2, bi = 0;
+    tl.rounds.forEach(function(r, i){ if(o.baseKey != null && r.key === o.baseKey && i < N - 1) bi = i; });
+    var cur = N ? tl.rounds[N - 1] : null, base = multi ? tl.rounds[bi] : null;
+    var sum = summaryRows(tl, J, multi, bi);
     return { rounds: tl.rounds, cur: cur, base: base, multi: multi,
-             summary: sum, note: noteText(sum, N, multi), trend: multi ? trendSeries(tl) : [],
-             body: bodyRows(o.body), rom: { rows: romRows(tl) }, zones: zoneStrips(tl, J, multi),
-             photos: photoItems(tl, multi), history: historyRows(tl) };
+             summary: sum, note: noteText(sum, N, multi, bi), trend: multi ? trendSeries(tl) : [],
+             body: bodyRows(o.body), rom: { rows: romRows(tl, bi) }, zones: zoneStrips(tl, J, multi, bi),
+             photos: photoItems(tl, multi, bi), history: historyRows(tl, bi) };
   }
 
   var api = { buildReportDoc: buildReportDoc, fmtNum: fmtNum, deltaOf: deltaOf, cvaLabel: cvaLabel, atrLabel: atrLabel, ZONE: ZONE, CRITERIA: CRITERIA, DISCLAIMER: DISCLAIMER };

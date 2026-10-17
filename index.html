@@ -10129,7 +10129,7 @@
     // v196 사람 분리가 됐으면, 측정점 색 영역(pm)은 사람 윤곽 바로 옆(사진 크기의 1.2%)까지만 보탬 — 측정점이 벽 쪽에 잘못 찍혀도 벽이 붙지 않게
     var Bn = null;
     if(pm){
-      var B0 = new Uint8Array(n); for(y = 0; y < h; y++) for(x = 0; x < w; x++) if(at(base, x, y) >= 0.3 && !(Near && !Near[y * w + x])) B0[y * w + x] = 1;   // v302 걸러낸 영역 기준
+      var B0 = new Uint8Array(n); for(y = 0; y < h; y++) for(x = 0; x < w; x++) if(at(base, x, y) >= (Near ? 0.5 : 0.3) && !(Near && !Near[y * w + x])) B0[y * w + x] = 1;   // v302 걸러낸 영역 기준 (v303 문턱도 같게)
       var rd = Math.max(1, Math.round(Math.max(w, h) * 0.003)), T1 = new Uint8Array(n); Bn = new Uint8Array(n);   // v250 1.2% → 0.3% (사람 윤곽 밖 회색 띠 방지)
       for(y = 0; y < h; y++){ var run = -1e9; for(x = 0; x < w; x++){ if(B0[y * w + x]) run = x; if(x - run <= rd) T1[y * w + x] = 1; } run = 1e9; for(x = w - 1; x >= 0; x--){ if(B0[y * w + x]) run = x; if(run - x <= rd) T1[y * w + x] = 1; } }
       for(x = 0; x < w; x++){ var rn = -1e9; for(y = 0; y < h; y++){ if(T1[y * w + x]) rn = y; if(y - rn <= rd) Bn[y * w + x] = 1; } rn = 1e9; for(y = h - 1; y >= 0; y--){ if(T1[y * w + x]) rn = y; if(rn - y <= rd) Bn[y * w + x] = 1; } }

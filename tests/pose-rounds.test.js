@@ -105,6 +105,20 @@ test("빈 번호 사이에 이 기록보다 먼저 잰 기록이 있으면 당�
   assert.deepEqual([PR.b.f, PR.c.f], [2, 3]);
 });
 
+test("당겨진 기록을 다시 저장하기 전에 새로 잰 3차는 3차로 남는다 (겹침으로 4차가 되지 않음)", () => {
+  // 1차 기록은 아직 저장 번호가 3, 새 측정은 화면에 보인 '다음 3차' 로 rf 3 저장
+  const PR = poseRounds([body("b1", D(9), { rf: 3, rs: 1 }), wiped("b2", D(11), { rf: 2, rs: 2 }), body("n", D(15), { rf: 3, rs: 3 })]);
+  assert.deepEqual([PR.b1.f, PR.b2.f, PR.n.f], [1, 2, 3]);
+  assert.deepEqual([PR.b1.s, PR.b2.s, PR.n.s], [1, 2, 3]);
+  assert.deepEqual(plain(PR._next), { f: 4, s: 4 });
+});
+
+test("밀린 기록이 둘이어도 빈 번호 없이 당긴다", () => {
+  const PR = poseRounds([body("a", D(9), { rf: 3 }), body("b", D(11), { rf: 4 }), body("c", D(13), { rf: 2 })]);
+  assert.deepEqual([PR.a.f, PR.b.f, PR.c.f], [1, 3, 2], "가장 먼저 잰 a 가 1차, a 가 비운 3을 b 가 이어 씀 (c 의 저장 번호 2는 그대로)");
+  assert.equal(PR._next.f, 4, "빈 번호 없이 다음은 4차");
+});
+
 // keepRounds: saveMeasurement 가 기록을 새로 만들어 저장할 때 이번에 저장하지 않은 쪽의 회차 번호를 이어받음
 const keepRounds = vm.runInContext("keepRounds", ctx);
 test("다시 저장할 때 정면이 빠져도 정면 회차 번호(rf)는 남는다", () => {

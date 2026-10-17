@@ -10061,7 +10061,25 @@
      - 인물 분리가 발·발목을 놓쳐도 측정점 사이 부위(+발끝 쪽)는 항상 남김
      - 남색·파란색(치료 침대)은 측정 부위 가까이가 아니면 지움 (검정·회색 옷, 피부는 그대로 · v300 사람 분리 모델이 '옷' 으로 본 곳도 그대로)
      - 측정 부위와 떨어진 작은 조각(침대 다리 등)은 지움 */
-  function romMaskMerge(img, base, pm, P, kind){
+  /* v302 사람 분리 모델이 사람과 맞닿은 배경(커튼 등)을 '옷' 으로 볼 때가 있다(확신은 약함 ~0.7).
+          확신이 큰 곳(S) 중 측정 부위(K)에 닿은 덩어리를 씨앗으로 삼고, 그 둘레 r 칸 안만 사람으로 인정 → 씨앗이 없으면 null(예전대로) */
+  function romStrongNear(S, K, w, h, r){
+    var n = w * h, lab = new Uint8Array(n), keep = new Uint8Array(n), st = [], any = false, i;
+    for(i = 0; i < n; i++){
+      if(!S[i] || lab[i]) continue;
+      var cmp = [], touch = false; lab[i] = 1; st.push(i);
+      while(st.length){ var j = st.pop(), jx = j % w; cmp.push(j); if(K[j]) touch = true;
+        if(jx > 0 && S[j - 1] && !lab[j - 1]){ lab[j - 1] = 1; st.push(j - 1); } if(jx < w - 1 && S[j + 1] && !lab[j + 1]){ lab[j + 1] = 1; st.push(j + 1); }
+        if(j >= w && S[j - w] && !lab[j - w]){ lab[j - w] = 1; st.push(j - w); } if(j + w < n && S[j + w] && !lab[j + w]){ lab[j + w] = 1; st.push(j + w); } }
+      if(touch){ any = true; cmp.forEach(function(q){ keep[q] = 1; }); }
+    }
+    if(!any) return null;
+    var T = new Uint8Array(n), out = new Uint8Array(n), x, y;   // 가로 → 세로로 r 칸 넓히기
+    for(y = 0; y < h; y++){ var run = -1e9; for(x = 0; x < w; x++){ if(keep[y * w + x]) run = x; if(x - run <= r) T[y * w + x] = 1; } run = 1e9; for(x = w - 1; x >= 0; x--){ if(keep[y * w + x]) run = x; if(run - x <= r) T[y * w + x] = 1; } }
+    for(x = 0; x < w; x++){ var rn = -1e9; for(y = 0; y < h; y++){ if(T[y * w + x]) rn = y; if(y - rn <= r) out[y * w + x] = 1; } rn = 1e9; for(y = h - 1; y >= 0; y--){ if(T[y * w + x]) rn = y; if(rn - y <= r) out[y * w + x] = 1; } }
+    return out;
+  }
+  function romMaskMerge(img, base, pm, P, kind, seg){   // seg: base 가 사람 분리 모델 결과(측정점 색 영역이 아님)
     var W = img.naturalWidth || img.width, H = img.naturalHeight || img.height;
     var k = Math.min(1, 640 / Math.max(W, H)), w = Math.max(8, Math.round(W * k)), h = Math.max(8, Math.round(H * k)), n = w * h, i, x, y;
     var c = document.createElement("canvas"); c.width = w; c.height = h; var g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(img, 0, 0, w, h);
@@ -10083,6 +10101,12 @@
       for(y = 0; y < h; y++) for(x = 0; x < w; x++){ if(at(base, x, y) < 0.5 || dseg(x + 0.5, y + 0.5) > near * 4) continue; nt++; i = y * w + x; if(romIsBlue(px[i * 4], px[i * 4 + 1], px[i * 4 + 2])) nb++; }
       blueCloth = romBlueCloth(nb, nt);
     }
+    var Near = null;
+    if(seg){   // v302 커튼처럼 사람에 붙은 약한 '사람' 영역 걸러내기
+      var Sg = new Uint8Array(n), Kc = new Uint8Array(n);
+      for(y = 0; y < h; y++) for(x = 0; x < w; x++){ i = y * w + x; if(at(base, x, y) >= 0.85) Sg[i] = 1; if(dseg(x + 0.5, y + 0.5) <= core) Kc[i] = 1; }
+      Near = romStrongNear(Sg, Kc, w, h, Math.max(2, Math.round(Math.max(w, h) * 0.03)));
+    }
     // v196 사람 분리가 됐으면, 측정점 색 영역(pm)은 사람 윤곽 바로 옆(사진 크기의 1.2%)까지만 보탬 — 측정점이 벽 쪽에 잘못 찍혀도 벽이 붙지 않게
     var Bn = null;
     if(pm){
@@ -10092,7 +10116,7 @@
       for(x = 0; x < w; x++){ var rn = -1e9; for(y = 0; y < h; y++){ if(T1[y * w + x]) rn = y; if(y - rn <= rd) Bn[y * w + x] = 1; } rn = 1e9; for(y = h - 1; y >= 0; y--){ if(T1[y * w + x]) rn = y; if(rn - y <= rd) Bn[y * w + x] = 1; } }
     }
     for(y = 0; y < h; y++) for(x = 0; x < w; x++){
-      i = y * w + x; var v = Math.max(at(base, x, y), (!Bn || Bn[i]) ? at(pm, x, y) : 0); if(v < 0.3) continue;
+      i = y * w + x; var v = Math.max(Near && !Near[i] ? 0 : at(base, x, y), (!Bn || Bn[i]) ? at(pm, x, y) : 0); if(v < 0.3) continue;
       var d = dseg(x + 0.5, y + 0.5); if(d <= core) C[i] = 1;
       if(!blueCloth && d > near && at(CM, x, y) < 0.5 && romIsBlue(px[i * 4], px[i * 4 + 1], px[i * 4 + 2])) continue;   // 파란·남색 (침대) 지우기 — 옷이면 하지 않음
       M[i] = 1;
@@ -10120,7 +10144,7 @@
     try{
       var pm = romPtsMaskOf(romS.img, P, kind), base = romS.mask || null;
       if(!pm && !base) return;
-      var mm = romMaskMerge(romS.img, base || pm, base ? pm : null, P, kind);
+      var mm = romMaskMerge(romS.img, base || pm, base ? pm : null, P, kind, !!base);
       romS.cut = romCutBuild(romS.img, mm, base ? null : (romS.cutL || null));   // 인물 분리가 실패했으면 관절 뼈대도 함께
     }catch(e){ console.warn("[ptscut]", e); }
   }
@@ -10405,7 +10429,7 @@
       if(ptsOk){
         try{
           var pm = romPtsMaskOf(img, P, kind);
-          if(pm || base) return romCutBuild(img, romMaskMerge(img, base || pm, base ? pm : null, P, kind), null);
+          if(pm || base) return romCutBuild(img, romMaskMerge(img, base || pm, base ? pm : null, P, kind, !!base), null);
         }catch(e){ console.warn("[cutfor]", e); }
       }
       return good ? romCutBuild(img, m, null) : null;

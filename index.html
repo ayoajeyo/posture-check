@@ -6659,9 +6659,10 @@
     var adopt = mbAdoptFor(v, state.view, mbCurrent && !$("mbDetail").hidden ? mbCurrent : null, state.member, hasPhotos() ? state.photoMid : null);
     if(adopt){
       if(!confirmDiscard()) return;   // 앱 확인창 → [확인] 을 누르면 같은 단추가 다시 눌려 여기로 돌아온다
+      var chg = !state.member || state.member.id !== adopt.id;
       startFreshSession(); state.pendingSave = false;
       setMember(adopt); resetToIdle();
-      toast(adopt.name + " 회원으로 바꿨어요.");
+      toast(adopt.name + (chg ? " 회원을 선택했어요." : " 회원 측정을 새로 열었어요."));   // 회원 고르기 창과 같은 문구
     }
     if(v !== "analyze" && state.phase === "live"){ pauseCamera(); goIdleFromLive(); }
     if((v === "settings" || v === "report") && state.view !== v) proPrevView = state.view;

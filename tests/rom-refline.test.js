@@ -153,3 +153,23 @@ test("vup(허리 측방굴곡 등) 기준선도 폰 기울기와 무관하게 �
     assert.ok(A.x >= 0 && A.x <= W && A.y >= 0 && A.y <= H, "끝점이 사진 밖");
   }
 });
+
+/* v294 아요 보고: 고관절 굴곡의 가로 기준선이 좌·우가 뒤바뀐 쪽에 그어졌다.
+   규칙(v103)은 "좌측 측정 = 화면 왼쪽 · 우측 측정 = 화면 오른쪽" 인데,
+   누운 사진에서 어깨가 화면 밖이라 자동 인식이 엉뚱한 자리를 집으면 그 쪽으로 뒤집혔다. */
+test("고관절 굴곡 가로 기준선: 좌측=화면 왼쪽 · 우측=화면 오른쪽 (어깨 인식과 무관)", () => {
+  const V = { x: 700, y: 1400 }, D = { x: 1100, y: 1380 };   // 고관절 → 무릎
+  const saveJoint = ctx.romJoint;
+  ctx.romJoint = () => ({ k: "hip", kind: "dir", pts: ["hip", "femend", "hzside"] });
+  const shoulders = (sx) => { const a = []; a[11] = { x: sx, y: 1100, v: 0.9 }; a[12] = { x: sx, y: 1120, v: 0.9 }; return a; };
+  for (const side of ["L", "R"]) {
+    ctx.rom.side = side;
+    const want = side === "R" ? 1 : -1;
+    for (const sx of [80, 1360, null]) {   // 어깨가 왼쪽·오른쪽에 잡히거나, 못 잡히거나
+      const A = vm.runInContext("romSynthA", ctx)("hzside", V, D, sx == null ? null : shoulders(sx), W, H, 0);
+      assert.equal(Math.sign(A.x - V.x), want, `${side}측 · 어깨 x=${sx}: 기준선이 ${A.x > V.x ? "오른쪽" : "왼쪽"} 으로 갔다`);
+      assert.equal(Math.round(A.y), Math.round(V.y), "가로 기준선은 수평이어야 함");
+    }
+  }
+  ctx.romJoint = saveJoint; ctx.rom.side = "L";
+});

@@ -11640,6 +11640,17 @@
     if(Math.abs(a - b) < Math.max(0.04, sh * 0.25)) return null;   // 정면·뒤에서 찍어 깊이 차이가 거의 없으면 판단 안 함
     return a < b ? "L" : "R";
   }
+  // v305 누워서 재는 고관절·무릎 굴곡: 재는 다리는 구부려 올리고 반대쪽은 펴 둔다 → 무릎이 뚜렷하게 더 굽은 쪽 (관리자 수정 기록: 펴 둔 다리를 잡아 8°·26° 로 나옴)
+  function romBentSide(L){
+    var ang = function(a, b, c){
+      if(!L[a] || !L[b] || !L[c] || Math.min(L[a].v, L[b].v, L[c].v) < 0.3) return null;
+      var u = { x: L[a].x - L[b].x, y: L[a].y - L[b].y }, w = { x: L[c].x - L[b].x, y: L[c].y - L[b].y };
+      return Math.acos(Math.max(-1, Math.min(1, (u.x * w.x + u.y * w.y) / ((Math.hypot(u.x, u.y) * Math.hypot(w.x, w.y)) || 1)))) * 180 / Math.PI;
+    };
+    var aL = ang(23, 25, 27), aR = ang(24, 26, 28);
+    if(aL == null || aR == null || Math.abs(aL - aR) < 30) return null;
+    return aL < aR ? "L" : "R";
+  }
   function romPickSide(L){
     romS.sideSwap = false;
     if(!L || romJoint().single || romJoint().k === "scol") return L;
@@ -11652,6 +11663,7 @@
       if(wm && wo && wo.v > 0.15 && Math.hypot(wo.x - cx, wo.y - cy) > Math.hypot(wm.x - cx, wm.y - cy) + tl * 0.35) near = other;
       else if(wm && wo && Math.hypot(wm.x - cx, wm.y - cy) > Math.hypot(wo.x - cx, wo.y - cy) + tl * 0.35) near = rom.side;
     }
+    if(["hip", "knee"].indexOf(romJoint().k) >= 0 && romS.mv === "flex"){ var bs = romBentSide(L); if(bs) near = bs; }
     var me = romQual(L, rom.side), ot = romQual(L, other);
     if(near === other || (near == null && ot > me + 0.12)){ romS.sideSwap = true; return romSwapLR(L); }
     return L;

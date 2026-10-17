@@ -102,3 +102,4 @@ syncPull: ayo_items 를 updated_at 기준으로 받아 IndexedDB 에 반영 (커
 - 저장: `dbPut/dbGet/dbDel` 헬퍼, localStorage 는 `lsGet/lsSet`.
 - 계산 로직은 대부분 아직 index.html 안에 섞여 있다. `js/logic/` 로 하나씩 옮기며 테스트를 붙인다(ADR-011, 현재 `judge.js`·`report-timeline.js`·`report-charts.js`·`report-model.js` 4개).
 - 문서형 리포트(v292): `repRoundsRender()` 가 만든 회차 묶음 S 를 `renderRepDoc(S, act, rs)` 가 받아 `buildTimeline`(선택 회차까지) → `buildReportDoc` 으로 **데이터 한 벌(repDoc.doc)** 을 만들고, 화면은 HTML/SVG(`rdSum`·`rdTrend`·`rdBodySec`·`rdRom`·`rdZone`·`rdPhotos`·`rdHist`), 이미지는 `buildReportPages` 가 같은 doc 을 캔버스에 그린다(좌표 함수 공유). 저장 전 '지금 측정 중' 체형은 마지막 회차(`__live`)로 붙여 계산. 모듈을 못 받으면 오류 상태 + [다시 시도].
+  - 비교 기준 회차(v307): `repDoc.baseKey` → `buildReportDoc` 의 `baseKey` (화면 메모리에만, 없거나 모르는 키면 1차).

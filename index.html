@@ -6212,7 +6212,7 @@
       return cv;
     });
   }
-  /* 이미지용 사진 준비: 03 체형(정면·측면) + 06 사진 쌍(최대 6) — 한 장씩 그려 폰이 멈추지 않게 */
+  /* 이미지용 사진 준비: 03 체형(정면·측면) + 06 사진 쌍(사진 있는 항목 전부 · v307) — 한 장씩 그려 폰이 멈추지 않게 */
   function repDocPhotos(doc, onStep){
     var out = { body: {}, pairs: [] }, items = rdPhotoItems(doc), r = computeReport();
     ["front", "side"].forEach(function(m){

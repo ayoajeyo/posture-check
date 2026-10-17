@@ -12663,11 +12663,12 @@
           그쪽 '1차' 는 날짜로 따로 세어 진짜 1차와 다른 날짜의 엑셀이 됐다 → 같은 이름의 회원이 하나뿐이면 그 회원에 붙이고 회차는 '삭제된 기록' 으로 */
   function admxOrphans(L, members){
     var byName = {};
-    (members || []).forEach(function(m){ if(m && m.id && !m.deleted && m.name) (byName[m.name] = byName[m.name] || []).push(m.id); });
+    (members || []).forEach(function(m){ if(m && m.id && !m.deleted && m.name) (byName[m.name] = byName[m.name] || []).push(m); });
     L.forEach(function(x){
       if(x.mid || x.rec0 || x.legacy || !x.member) return;
-      var ids = byName[x.member]; if(!ids || ids.length !== 1) return;   // 동명이인이면 붙이지 않음
-      x.mid = ids[0]; x.round = "del";
+      var ms = byName[x.member]; if(!ms || ms.length !== 1) return;   // 동명이인이면 붙이지 않음
+      if(ms[0].createdAt && x.at && ms[0].createdAt > x.at) return;   // 측정보다 나중에 등록한 회원 = 지운 예전 회원과 이름만 같은 다른 사람일 수 있음
+      x.mid = ms[0].id; x.round = "del";
     });
     return L;
   }

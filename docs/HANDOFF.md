@@ -13,7 +13,7 @@
 ## 다음 할 일 (순서대로, 바로 입력할 명령 포함)
 1. **병원 PC 새로 받기** (집 PC 는 2026-10-17 완료 → 폴더 `C:\Users\USER\posture-check-new` 사용, 예전 `posture-check` 는 열지 않음·push 금지). 예전 폴더 이름 바꾸기는 다른 프로그램이 잡고 있어 실패했으므로 새 이름으로 받는다
    `git clone https://github.com/ayoajeyo/posture-check posture-check-new` → 숨은 파일 2개 복사 `.claude\pii-names.local.txt`(실명 차단 목록, 필수)·`supabase\.temp`(Supabase 연결) → 예전 폴더는 며칠 뒤 삭제
-2. **GitHub 지원팀에 PR #1 캐시 삭제 요청** (아요가 직접, 브라우저) — https://support.github.com/contact → Remove sensitive data · 저장소 ayoajeyo/posture-check · PR #1 · 옛 커밋 03dfc18 28d94e3 a2d4c3a 3b2a3a3 52f0298 a8c14d4
+2. **GitHub 지원팀 답장 대기** — 2026-10-17 티켓 보냄(리포지토리 기능 > 브랜치, 제목 "Sensitive data removal – ayoajeyo/posture-check (PR #1)"). 답장 메일(aesonge26@gmail.com)이 오면 받아서 회신 문장 작성. 문의 양식의 "삭제" 메뉴는 저장소 전체 삭제이니 고르지 않음
 3. 아요 폰 확인 결과 받기 → 어색한 곳은 `/fix` (격자 잘림이 보이면 `romMaskMerge` 의 둘레 1%·확신 0.5 기준 조정)
 4. 다음 후보 `/fix` — 회원을 바꿔도 이전 회원 체형 사진이 남은 채 [측정 저장] 하면 다른 사람 사진이 새 회원 기록으로 저장될 수 있음 (privacy-guard 권장, BACKLOG '지금')
 5. Supabase 가입 메일 Gmail SMTP — 2026-10-23 이후 재시도 (`supabase/SETUP.md` 3번 4, ADR-015). 앱 비밀번호는 Supabase 대시보드에만 입력
